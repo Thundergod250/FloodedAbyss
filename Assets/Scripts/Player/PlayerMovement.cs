@@ -6,8 +6,6 @@ public class PlayerMovement : MonoBehaviour
     [Header("Input Stuff")]
     [SerializeField] private PlayerInput input;
     [SerializeField] private InputAction moveAction;
-    [SerializeField] private InputAction useAction;
-    [SerializeField] private InputAction interactAction;
     [SerializeField] private InputAction jumpAction;
 
     [Header("References")]
@@ -21,8 +19,6 @@ public class PlayerMovement : MonoBehaviour
     {
         input = GetComponent<PlayerInput>();
         moveAction = input.actions.FindAction("Move");
-        useAction = input.actions.FindAction("Use");
-        interactAction = input.actions.FindAction("Interact");
         jumpAction = input.actions.FindAction("Jump");
     }
     private void FixedUpdate()
@@ -41,26 +37,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnEnable()
     {
-        useAction.started += UseItem;
-        interactAction.started += Interact;
         jumpAction.started += Jump;
     }
 
     private void OnDisable()
     {
-        useAction.started -= UseItem;
-        interactAction.started -= Interact;
         jumpAction.started -= Jump;
-    }
-
-    private void UseItem(InputAction.CallbackContext context)
-    {
-        Debug.Log("Use Item!"); // Put condition if something is held 
-    }
-
-    private void Interact(InputAction.CallbackContext context)
-    {
-        Debug.Log("Interacted with item"); // Put condition if looking at item. Raycast?
     }
 
     private void Jump(InputAction.CallbackContext context)
