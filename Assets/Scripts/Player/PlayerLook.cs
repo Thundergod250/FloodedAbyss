@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -5,13 +6,19 @@ public class PlayerLook : MonoBehaviour
 {
     [Header("References")]
     public Transform cameraTransform; // Assign your Camera here
-    public PlayerController controller;
-
+    
     [Header("Settings")]
     public float sensitivity = 2f;
     public float pitchClamp = 80f;
 
+    private PlayerController controller;
     private float xRotation = 0f; // Vertical rotation
+
+    private void Awake()
+    {
+        controller = GetComponent<PlayerController>();
+    }
+    
 
     private void Update()
     {
