@@ -9,7 +9,7 @@ public enum ResourceType
     Food
 }
 
-public class ResourceManager : MonoBehaviour
+public class PlayerResources : MonoBehaviour
 {
     private Dictionary<ResourceType, int> resources = new Dictionary<ResourceType, int>();
 
