@@ -1,16 +1,14 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Interactables : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [Header("Interaction Settings")]
+    [SerializeField] private UnityEvent onInteract;
 
-    // Update is called once per frame
-    void Update()
+    public virtual void Interact()
     {
-        
+        onInteract?.Invoke();
+        Debug.Log($"Interacted with {gameObject.name}");
     }
 }
