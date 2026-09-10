@@ -89,6 +89,7 @@ GameObject:
   - component: {fileID: 8974334110122514219}
   - component: {fileID: 9006729353417903896}
   - component: {fileID: 3984025129540415282}
+  - component: {fileID: 2669741827718484915}
   m_Layer: 5
   m_Name: UI
   m_TagString: Untagged
@@ -192,6 +193,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cdbf7ebe5ca74849879d9a1273b90ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIController
+  uiInteraction: {fileID: 2669741827718484915}
+--- !u!114 &2669741827718484915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6879466495274620806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6dc2cf06d3032b4c9e19a814ae4d921, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIInteraction
+  interactionPanel: {fileID: 3506447074658584587}
 --- !u!1 &6904141660055426174
 GameObject:
   m_ObjectHideFlags: 0

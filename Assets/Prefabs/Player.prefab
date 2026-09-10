@@ -160,6 +160,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc2dd1bf58ecbc440a64995428d2967b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteraction
+  playerCamera: {fileID: 8179508139358318131}
+  rayDistance: 3
+  interactableLayer:
+    serializedVersion: 2
+    m_Bits: 4294967295
   input: {fileID: 0}
   useAction:
     m_Name: Use
@@ -181,7 +186,6 @@ MonoBehaviour:
     m_SingletonActionBindings: []
     m_Flags: 0
     m_Priority: 0
-  interactUI: {fileID: 0}
 --- !u!114 &89433786921011855
 MonoBehaviour:
   m_ObjectHideFlags: 0
