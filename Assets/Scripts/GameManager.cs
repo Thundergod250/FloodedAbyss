@@ -8,9 +8,9 @@ public class GameManager : MonoBehaviour
     [Header("Global References")]
     public UIController uiController;
     public PlayerController playerController;
-    public ResourceManager resourceManager;
+    public ObjectPooling objectPooling;
     public WaterLevel waterLevel;
-
+    
     private void Awake()
     {
         if (Instance != null && Instance != this)

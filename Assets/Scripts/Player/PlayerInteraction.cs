@@ -3,15 +3,12 @@ using UnityEngine.InputSystem;
 
 public class PlayerInteraction : MonoBehaviour
 {
-    [Header("Raycast Settings")]
     [SerializeField] private Camera playerCamera;
     [SerializeField] private float rayDistance = 3f;
     [SerializeField] private LayerMask interactableLayer = ~0; // Default: All layers
 
     [Header("Input Stuff")]
-    [SerializeField] private PlayerInput input;
-    [SerializeField] private InputAction useAction;
-    [SerializeField] private InputAction interactAction;
+    private PlayerController controller;
 
     private PlayerController playerController;
     private Interactables currentInteractable;
@@ -25,32 +22,34 @@ public class PlayerInteraction : MonoBehaviour
             playerCamera = GetComponentInChildren<Camera>();
         }
 
-        if (input == null)
+        if (controller == null)
         {
-            input = GetComponent<PlayerInput>();
+            controller = GetComponent<PlayerController>();
         }
-
-        useAction = input.actions.FindAction("Use");
-        interactAction = input.actions.FindAction("Interact");
     }
 
-    private void OnEnable()
+    private void Start()
     {
-        useAction.started += UseItem;
-        interactAction.started += Interact;
+        if (controller != null)
+        {
+            controller.UseAction.started += UseItem;
+            controller.InteractAction.started += Interact;
+        }
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
-        useAction.started -= UseItem;
-        interactAction.started -= Interact;
+        if (controller != null)
+        {
+            controller.UseAction.started -= UseItem;
+            controller.InteractAction.started -= UseItem;
+        }
     }
 
     private void Update()
     {
         CheckForInteractable();
     }
-
     private void CheckForInteractable()
     {
         Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
