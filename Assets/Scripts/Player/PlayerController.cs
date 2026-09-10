@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] private UIController playerUI; 
     private PlayerInput playerInput;
     
     public InputAction MoveAction { get; private set; }
