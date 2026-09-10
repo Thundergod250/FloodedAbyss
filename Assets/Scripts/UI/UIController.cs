@@ -2,15 +2,26 @@ using UnityEngine;
 
 public class UIController : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public static UIController Instance { get; private set; }
+
+    [SerializeField] private UIInteraction uiInteraction;
+
+    private void Awake()
     {
-        
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void ToggleInteractionPrompt(bool isVisible)
     {
-        
+        if (uiInteraction != null)
+        {
+            uiInteraction.SetUIActive(isVisible);
+        }
     }
 }
