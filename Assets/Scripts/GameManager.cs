@@ -8,7 +8,8 @@ public class GameManager : MonoBehaviour
     [Header("Global References")]
     public UIController uiController;
     public PlayerController playerController;
-    public ResourceManager resourceManager; 
+    public ResourceManager resourceManager;
+    public WaterLevel waterLevel;
 
     private void Awake()
     {

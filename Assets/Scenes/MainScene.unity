@@ -1969,6 +1969,7 @@ GameObject:
   - component: {fileID: 1447811597}
   - component: {fileID: 1447811598}
   - component: {fileID: 1447811599}
+  - component: {fileID: 1447811600}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -2006,6 +2007,7 @@ MonoBehaviour:
   uiController: {fileID: 1400952131}
   playerController: {fileID: 1269077764}
   resourceManager: {fileID: 1447811599}
+  waterLevel: {fileID: 1447811600}
 --- !u!114 &1447811599
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2018,6 +2020,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 103844a203ad09d4281f5a6c9c2bbf3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResourceManager
+--- !u!114 &1447811600
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1447811596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8faa068a1708d147812d5e4b3b39b58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterLevel
+  waterLevelTransform: {fileID: 1064708557}
 --- !u!1 &1775880986
 GameObject:
   m_ObjectHideFlags: 0
