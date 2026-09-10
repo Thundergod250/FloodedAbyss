@@ -8,17 +8,30 @@ public class PlayerMovement : MonoBehaviour
     public float jumpHeight = 2f;
     public float gravity = -9.81f;
 
-    [SerializeField] private PlayerController controller;
+    private PlayerController controller;
     private CharacterController characterController;
     private Vector3 velocity;
 
     private void Awake()
     {
-        if (characterController == null)
-            characterController = GetComponent<CharacterController>();
-        
-        if (controller == null)
-            controller = GetComponent<PlayerController>();
+        characterController = GetComponent<CharacterController>();
+        controller = GetComponent<PlayerController>();
+    }
+
+    private void Start()
+    {
+        if (controller != null && controller.JumpAction != null)
+        {
+            controller.JumpAction.started += Jump;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (controller != null && controller.JumpAction != null)
+        {
+            controller.JumpAction.started -= Jump;
+        }
     }
 
     private void Update()
@@ -27,21 +40,9 @@ public class PlayerMovement : MonoBehaviour
         ApplyGravity();
     }
 
-    private void OnEnable()
-    {
-        if (controller != null)
-            controller.JumpAction.started += Jump;
-    }
-
-    private void OnDisable()
-    {
-        if (controller != null)
-            controller.JumpAction.started -= Jump;
-    }
-
     private void MovePlayer()
     {
-        if (controller == null) return;
+        if (controller == null || controller.MoveAction == null) return;
 
         Vector2 input = controller.MoveAction.ReadValue<Vector2>();
         Vector3 move = new Vector3(input.x, 0f, input.y);
@@ -53,7 +54,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (characterController.isGrounded && velocity.y < 0)
         {
-            velocity.y = -2f; // small downward force to keep grounded
+            velocity.y = -2f;
         }
 
         velocity.y += gravity * Time.deltaTime;

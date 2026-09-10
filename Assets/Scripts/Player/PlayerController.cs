@@ -3,9 +3,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private UIController playerUI; 
     private PlayerInput playerInput;
-    
+
     public InputAction MoveAction { get; private set; }
     public InputAction JumpAction { get; private set; }
     public InputAction UseAction { get; private set; }
@@ -34,5 +33,13 @@ public class PlayerController : MonoBehaviour
     private void OnDisable()
     {
         playerInput.actions.Disable();
+    }
+
+    public void SetInteractionUI(bool isVisible)
+    {
+        if (UIController.Instance != null)
+        {
+            UIController.Instance.ToggleInteractionPrompt(isVisible);
+        }
     }
 }

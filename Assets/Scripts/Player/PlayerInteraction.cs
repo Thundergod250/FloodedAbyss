@@ -3,50 +3,90 @@ using UnityEngine.InputSystem;
 
 public class PlayerInteraction : MonoBehaviour
 {
-    [Header("Input References")]
-    [SerializeField] private PlayerController controller;
+    [Header("Raycast Settings")]
+    [SerializeField] private Camera playerCamera;
+    [SerializeField] private float rayDistance = 3f;
+    [SerializeField] private LayerMask interactableLayer = ~0; // Default: All layers
 
-    [Header("UI")]
-    [SerializeField] private GameObject interactUI;
+    [Header("Input Stuff")]
+    [SerializeField] private PlayerInput input;
+    [SerializeField] private InputAction useAction;
+    [SerializeField] private InputAction interactAction;
+
+    private PlayerController playerController;
+    private Interactables currentInteractable;
 
     private void Awake()
     {
-        if (controller == null) controller = GetComponent<PlayerController>();
+        playerController = GetComponent<PlayerController>();
+
+        if (playerCamera == null)
+        {
+            playerCamera = GetComponentInChildren<Camera>();
+        }
+
+        if (input == null)
+        {
+            input = GetComponent<PlayerInput>();
+        }
+
+        useAction = input.actions.FindAction("Use");
+        interactAction = input.actions.FindAction("Interact");
     }
 
     private void OnEnable()
     {
-        if (controller != null)
-        {
-            controller.UseAction.started += UseItem;
-            controller.InteractAction.started += Interact;
-        }
+        useAction.started += UseItem;
+        interactAction.started += Interact;
     }
 
     private void OnDisable()
     {
-        if (controller != null)
+        useAction.started -= UseItem;
+        interactAction.started -= Interact;
+    }
+
+    private void Update()
+    {
+        CheckForInteractable();
+    }
+
+    private void CheckForInteractable()
+    {
+        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, rayDistance, interactableLayer))
         {
-            controller.UseAction.started -= UseItem;
-            controller.InteractAction.started -= Interact;
+            Interactables interactable = hit.collider.GetComponent<Interactables>();
+
+            if (interactable != null)
+            {
+                if (currentInteractable != interactable)
+                {
+                    currentInteractable = interactable;
+                    playerController.SetInteractionUI(true);
+                }
+                return;
+            }
+        }
+
+        if (currentInteractable != null)
+        {
+            currentInteractable = null;
+            playerController.SetInteractionUI(false);
         }
     }
+
     private void UseItem(InputAction.CallbackContext context)
     {
-        Debug.Log("Use Item!"); // Put condition if something is held 
+        Debug.Log("Use Item!");
     }
 
     private void Interact(InputAction.CallbackContext context)
     {
-        Debug.Log("Interacted with item"); // Put condition if looking at item. Raycast?
-        if (interactUI.activeSelf)
+        if (currentInteractable != null)
         {
-            interactUI.SetActive(false);
-        }
-        else
-        {
-            interactUI.SetActive(true);
+            currentInteractable.Interact();
         }
     }
-
 }

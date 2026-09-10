@@ -1,17 +1,18 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
-    // Singleton instance
     public static GameManager Instance { get; private set; }
 
     [Header("Global References")]
     public UIController uiController;
     public PlayerController playerController;
-
+    public ObjectPooling objectPooling;
+    public WaterLevel waterLevel;
+    
     private void Awake()
     {
-        // Ensure only one GameManager exists
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -19,6 +20,6 @@ public class GameManager : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject); // Persist across scenes
+        DontDestroyOnLoad(gameObject); 
     }
 }
