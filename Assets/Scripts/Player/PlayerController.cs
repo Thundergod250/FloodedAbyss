@@ -1,16 +1,29 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private PlayerInput playerInput;
+    
+    public InputAction MoveAction { get; private set; }
+    public InputAction JumpAction { get; private set; }
+
+    private void Awake()
     {
-        
+        playerInput = GetComponent<PlayerInput>();
+
+        // Bind actions once
+        MoveAction = playerInput.actions["Move"];
+        JumpAction = playerInput.actions["Jump"];
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnEnable()
     {
-        
+        playerInput.actions.Enable();
+    }
+
+    private void OnDisable()
+    {
+        playerInput.actions.Disable();
     }
 }

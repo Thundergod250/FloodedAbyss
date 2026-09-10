@@ -3,53 +3,68 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("Input Stuff")]
-    [SerializeField] private PlayerInput input;
-    [SerializeField] private InputAction moveAction;
-    [SerializeField] private InputAction jumpAction;
-
-    [Header("References")]
-    [SerializeField] private Rigidbody rb;
-
     [Header("Values")]
-    public float moveSpeed;
-    public float jumpForce;
+    public float moveSpeed = 5f;
+    public float jumpHeight = 2f;
+    public float gravity = -9.81f;
+    
+    private PlayerController controller;
+    private CharacterController characterController;
+    private Vector3 velocity;
 
     private void Awake()
     {
-        input = GetComponent<PlayerInput>();
-        moveAction = input.actions.FindAction("Move");
-        jumpAction = input.actions.FindAction("Jump");
+        if (characterController == null)
+            characterController = GetComponent<CharacterController>();
+        
+        if (controller == null)
+            controller = GetComponent<PlayerController>();
     }
-    private void FixedUpdate()
+
+    private void Update()
     {
         MovePlayer();
-    }
-
-    public void MovePlayer()
-    {
-        Vector2 direction = moveAction.ReadValue<Vector2>();
-
-        Vector3 movement = new Vector3(direction.x, 0f, direction.y);
-
-        rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+        ApplyGravity();
     }
 
     private void OnEnable()
     {
-        jumpAction.started += Jump;
+        if (controller != null)
+            controller.JumpAction.started += Jump;
     }
 
     private void OnDisable()
     {
-        jumpAction.started -= Jump;
+        if (controller != null)
+            controller.JumpAction.started -= Jump;
     }
 
-    private void Jump(InputAction.CallbackContext context)
+    private void MovePlayer()
     {
-        if (gameObject.transform.position.y < 100f)
+        if (controller == null) return;
+
+        Vector2 input = controller.MoveAction.ReadValue<Vector2>();
+        Vector3 move = new Vector3(input.x, 0f, input.y);
+
+        characterController.Move(move * moveSpeed * Time.deltaTime);
+    }
+
+    private void ApplyGravity()
+    {
+        if (characterController.isGrounded && velocity.y < 0)
         {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            velocity.y = -2f; // small downward force to keep grounded
+        }
+
+        velocity.y += gravity * Time.deltaTime;
+        characterController.Move(velocity * Time.deltaTime);
+    }
+
+    private void Jump(InputAction.CallbackContext ctx)
+    {
+        if (characterController.isGrounded)
+        {
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             Debug.Log("Jump");
         }
     }
