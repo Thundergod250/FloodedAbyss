@@ -7,8 +7,8 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 5f;
     public float jumpHeight = 2f;
     public float gravity = -9.81f;
-    
-    private PlayerController controller;
+
+    [SerializeField] private PlayerController controller;
     private CharacterController characterController;
     private Vector3 velocity;
 
