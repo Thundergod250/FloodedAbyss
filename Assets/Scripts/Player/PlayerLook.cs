@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerLook : MonoBehaviour
 {
-    [SerializeField] PlayerController controller;
+    private PlayerController controller;
     [SerializeField] bool invertY = false;
     [SerializeField] float maxPitch = 89f;
     [SerializeField] float lookSensitivity = 1f;
@@ -18,7 +18,7 @@ public class PlayerLook : MonoBehaviour
 
     private void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked; 
+        Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 

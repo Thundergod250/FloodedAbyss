@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public class TemporaryAttack : MonoBehaviour
 {
-    [SerializeField] private PlayerController controller;
+    private PlayerController controller;
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private Transform firePoint;
 
@@ -13,21 +13,25 @@ public class TemporaryAttack : MonoBehaviour
             controller = GetComponent<PlayerController>();
     }
 
-    private void OnEnable()
+    private void Start()
     {
         if (controller != null)
+        {
             controller.AttackAction.started += Shoot;
+        }
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         if (controller != null)
+        {
             controller.AttackAction.started -= Shoot;
+        }
     }
 
     private void Shoot(InputAction.CallbackContext context)
     {
-        GameObject projectile = Instantiate(projectilePrefab, firePoint.position,  firePoint.rotation);
+        GameObject projectile = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
 
         Rigidbody rb = projectile.GetComponent<Rigidbody>();
         rb.AddForce(firePoint.forward * 10f, ForceMode.Impulse);
