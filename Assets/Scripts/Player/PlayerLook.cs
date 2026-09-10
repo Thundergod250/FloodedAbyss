@@ -3,45 +3,29 @@ using UnityEngine.InputSystem;
 
 public class PlayerLook : MonoBehaviour
 {
-    private PlayerController controller;
-    [SerializeField] bool invertY = false;
-    [SerializeField] float maxPitch = 89f;
-    [SerializeField] float lookSensitivity = 1f;
-    [SerializeField] Transform vCam;
+    [Header("References")]
+    public Transform cameraTransform; // Assign your Camera here
+    public PlayerController controller;
 
-    InputAction lookAction;
-    float pitch = 0;
-    private void Awake()
+    [Header("Settings")]
+    public float sensitivity = 2f;
+    public float pitchClamp = 80f;
+
+    private float xRotation = 0f; // Vertical rotation
+
+    private void Update()
     {
-        if (controller == null) controller = GetComponent<PlayerController>();
-    }
+        if (controller == null || controller.LookAction == null) return;
 
-    private void Start()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-    }
+        Vector2 lookInput = controller.LookAction.ReadValue<Vector2>() * (sensitivity * Time.deltaTime);
 
-    void Update()
-    {
-        ProcessLook();
-    }
+        // Horizontal rotation (yaw)
+        transform.Rotate(Vector3.up * lookInput.x);
 
-    private void ProcessLook()
-    {
-        Vector2 lookInput = controller.LookAction.ReadValue<Vector2>();
+        // Vertical rotation (pitch)
+        xRotation -= lookInput.y;
+        xRotation = Mathf.Clamp(xRotation, -pitchClamp, pitchClamp);
 
-        // Up / Down
-        pitch += lookInput.y * lookSensitivity * (invertY ? -1f : 1f);
-        pitch = Mathf.Clamp(pitch, -maxPitch, maxPitch);
-
-        vCam.localRotation = Quaternion.Euler(pitch, 0f, 0f);
-
-        // Left / Right
-        transform.Rotate(
-            0f,
-            lookInput.x * lookSensitivity,
-            0f
-        );
+        cameraTransform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
     }
 }
