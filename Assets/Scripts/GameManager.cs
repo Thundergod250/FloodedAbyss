@@ -9,7 +9,6 @@ public class GameManager : MonoBehaviour
     public UIController uiController;
     public PlayerController playerController;
     public ObjectPooling objectPooling;
-    public ResourceManager resourceManager;
     public WaterLevel waterLevel;
     
     private void Awake()
