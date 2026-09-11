@@ -12,9 +12,9 @@ public class TemporaryBullet : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.TryGetComponent<EnemyHealth>(out EnemyHealth enemyHealth))
+        if (collision.gameObject.TryGetComponent<Health>(out Health goHealth))
         {
-            enemyHealth.TakeDamage(damage);
+            goHealth.TakeDamage(damage);
         }
 
         Debug.Log("Hit: " + collision.gameObject.name);
