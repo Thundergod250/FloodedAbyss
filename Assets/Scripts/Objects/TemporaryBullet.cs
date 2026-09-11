@@ -3,6 +3,7 @@ using UnityEngine;
 public class TemporaryBullet : MonoBehaviour
 {
     [SerializeField] private float lifetime = 3f;
+    [SerializeField] private int damage ;
 
     private void Start()
     {
@@ -11,6 +12,11 @@ public class TemporaryBullet : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (collision.gameObject.TryGetComponent<EnemyHealth>(out EnemyHealth enemyHealth))
+        {
+            enemyHealth.TakeDamage(damage);
+        }
+
         Debug.Log("Hit: " + collision.gameObject.name);
 
         Destroy(gameObject);
