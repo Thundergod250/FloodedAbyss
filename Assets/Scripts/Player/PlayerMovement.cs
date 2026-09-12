@@ -45,10 +45,11 @@ public class PlayerMovement : MonoBehaviour
         if (controller == null || controller.MoveAction == null) return;
 
         Vector2 input = controller.MoveAction.ReadValue<Vector2>();
-        Vector3 move = new Vector3(input.x, 0f, input.y);
+        Vector3 move = transform.right * input.x + transform.forward * input.y;
 
-        characterController.Move(move * moveSpeed * Time.deltaTime);
+        characterController.Move(move * (moveSpeed * Time.deltaTime));
     }
+
 
     private void ApplyGravity()
     {
