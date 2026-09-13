@@ -40,8 +40,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3506312688623432828}
-  - {fileID: 3735254157708167104}
   - {fileID: 4535825291821212753}
+  - {fileID: 3735254157708167104}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8459786515362938190
@@ -204,7 +204,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4a4aa1793f558844a71cd748a7c1817, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  moveSpeed: 10
+  moveSpeed: 15
   jumpHeight: 2
   gravity: -29.43
 --- !u!114 &7214069375529169555
@@ -237,7 +237,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerLook
   cameraTransform: {fileID: 3506312688623432828}
-  sensitivity: 5
+  sensitivity: 10
   pitchClamp: 80
 --- !u!114 &255416882986593019
 MonoBehaviour:
@@ -265,6 +265,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 103844a203ad09d4281f5a6c9c2bbf3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResourceManager
+  stoneText: {fileID: 0}
+  stoneTextAdd: {fileID: 0}
 --- !u!1 &3135511604283639651
 GameObject:
   m_ObjectHideFlags: 0
@@ -289,8 +291,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3135511604283639651}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.53}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.39700317, z: 0.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
