@@ -5,7 +5,10 @@ public class EnemyDrops : MonoBehaviour
     [SerializeField] private Health enemyHealth;
 
     [Header("Drops")]
-    [SerializeField] private GameObject itemToDrop;
+    [SerializeField] private GameObject itemToDrop; 
+
+
+    private PlayerResources playerResources;
 
     private void Awake()
     {
@@ -24,6 +27,14 @@ public class EnemyDrops : MonoBehaviour
 
     private void HandleDeath()
     {
-        Instantiate(itemToDrop, transform.position, Quaternion.identity);
+        if (playerResources != null)
+        {
+            playerResources.AddResource(ResourceType.Stone, 5);
+        }
+    }
+
+    public void GainPlayerReference(PlayerResources resourceScript)
+    {
+        playerResources = resourceScript;
     }
 }
