@@ -1,6 +1,5 @@
-using System;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class Health : MonoBehaviour
 {
@@ -16,15 +15,16 @@ public class Health : MonoBehaviour
     [SerializeField] private int maxHealth = 100;
     [SerializeField] private int currentHealth;
 
-    public event Action OnDied;
+    [Header("Events")]
+    public UnityEvent EvtOnDied;   
 
     private void Start()
     {
         currentHealth = maxHealth;
     }
 
-    #region Functions 
-    public void TakeDamage(int damage) 
+    #region Functions
+    public void TakeDamage(int damage)
     {
         if (currentHealth <= 0)
             return;
@@ -61,9 +61,7 @@ public class Health : MonoBehaviour
 
     private void Die()
     {
-        OnDied?.Invoke();
-
+        EvtOnDied?.Invoke();   // Trigger UnityEvent
         gameObject.SetActive(false);
     }
 }
-

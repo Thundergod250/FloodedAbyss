@@ -5,8 +5,7 @@ public class EnemyDrops : MonoBehaviour
     [SerializeField] private Health enemyHealth;
 
     [Header("Drops")]
-    [SerializeField] private GameObject itemToDrop; 
-
+    [SerializeField] private GameObject itemToDrop;
 
     private PlayerResources playerResources;
 
@@ -17,12 +16,12 @@ public class EnemyDrops : MonoBehaviour
 
     private void OnEnable()
     {
-        enemyHealth.OnDied += HandleDeath;
+        enemyHealth.EvtOnDied.AddListener(HandleDeath);
     }
 
     private void OnDisable()
     {
-        enemyHealth.OnDied -= HandleDeath;
+        enemyHealth.EvtOnDied.RemoveListener(HandleDeath);
     }
 
     private void HandleDeath()
