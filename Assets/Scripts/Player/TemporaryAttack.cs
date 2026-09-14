@@ -34,6 +34,8 @@ public class TemporaryAttack : MonoBehaviour
         GameObject projectile = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
 
         Rigidbody rb = projectile.GetComponent<Rigidbody>();
+        projectile.GetComponent<TemporaryBullet>().SetPlayerResources(GetComponent<PlayerResources>());
+
         rb.AddForce(firePoint.forward * 10f, ForceMode.Impulse);
     }
 }

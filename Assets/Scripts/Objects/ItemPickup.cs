@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class ItemPickup : MonoBehaviour
+public class ItemPickup : Item
 {
-    public void Collect()
+    public override void Activate()
     {
         Debug.Log($"Picked up {gameObject.name}");
         gameObject.SetActive(false);
