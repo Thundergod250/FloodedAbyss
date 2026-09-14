@@ -2,9 +2,11 @@ using UnityEngine;
 
 public class EnemyDrops : MonoBehaviour
 {
-    [SerializeField] private Health enemyHealth;
+    private Health enemyHealth;
 
     [Header("Drops")]
+    [SerializeField] private ResourceType resourceType;
+    [SerializeField] private int amountToDrop;
     [SerializeField] private GameObject itemToDrop;
 
     private PlayerResources playerResources;
@@ -28,7 +30,7 @@ public class EnemyDrops : MonoBehaviour
     {
         if (playerResources != null)
         {
-            playerResources.AddResource(ResourceType.Stone, 5);
+            playerResources.AddResource(resourceType, amountToDrop);
         }
     }
 
