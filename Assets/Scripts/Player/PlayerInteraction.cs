@@ -85,6 +85,7 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (currentInteractable != null)
         {
+            currentInteractable.GainPlayerReference(GetComponent<PlayerResources>());
             currentInteractable.Interact();
         }
     }
