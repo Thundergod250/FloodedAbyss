@@ -7,27 +7,21 @@ public class Interactables : MonoBehaviour
     [SerializeField] private UnityEvent onInteract;
 
     private Item item;
-    private PlayerResources playerResources;
 
     private void Awake()
     {
-        item = GetComponent<ItemPickup>();
+        item = GetComponent<Item>();
     }
 
     public virtual void Interact()
     {
+
         onInteract?.Invoke();
         Debug.Log($"Interacted with {gameObject.name}");
 
         if (item != null)
         {
-            item.GainPlayerReference(playerResources);
             item.Activate();
         }
-    }
-
-    public void GainPlayerReference(PlayerResources resourceScript)
-    {
-        playerResources = resourceScript;
     }
 }
