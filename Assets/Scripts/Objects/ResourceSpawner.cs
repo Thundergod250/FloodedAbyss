@@ -27,7 +27,7 @@ public class ResourceSpawner : MonoBehaviour
         {
             yield return new WaitForSeconds(timer);
 
-            GameObject spawnedResource = Instantiate(objectsToSpawn[0], transform.position, Quaternion.identity);
+            GameObject spawnedResource = Pool.Instantiate(objectsToSpawn[0], transform.position, Quaternion.identity);
 
             spawnedResource.GetComponent<FloatingObject>().targetSurface = targetSurface;
         }
