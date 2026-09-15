@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
     public float jumpHeight = 2f;
     public float gravity = -9.81f; 
     public float swimUpSpeed = 5f;
+    public float runSpeed = 8f;
 
     [Header("Swim")]
     [SerializeField] private float floatDepth;
@@ -36,6 +37,7 @@ public class PlayerMovement : MonoBehaviour
         if (controller != null && controller.JumpAction != null)
         {
             controller.JumpAction.started += Jump;
+            controller.RunAction.started -= Run;
         }
     }
 
@@ -44,6 +46,7 @@ public class PlayerMovement : MonoBehaviour
         if (controller != null && controller.JumpAction != null)
         {
             controller.JumpAction.started -= Jump;
+            controller.RunAction.started -= Run;
         }
     }
 
@@ -68,7 +71,9 @@ public class PlayerMovement : MonoBehaviour
         Vector2 input = controller.MoveAction.ReadValue<Vector2>();
         Vector3 move = transform.right * input.x + transform.forward * input.y;
 
-        characterController.Move(move * (moveSpeed * Time.deltaTime));
+        float currentSpeed = controller.RunAction.IsPressed() ? runSpeed : moveSpeed;
+
+        characterController.Move(move * (currentSpeed * Time.deltaTime));
     }
 
 
@@ -126,6 +131,13 @@ public class PlayerMovement : MonoBehaviour
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             Debug.Log("Jump");
+        }
+    }
+    private void Run(InputAction.CallbackContext ctx)
+    {
+        if (characterController.isGrounded)
+        {
+            moveSpeed += 3f;
         }
     }
 }

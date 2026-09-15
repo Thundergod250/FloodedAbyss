@@ -1,123 +1,112 @@
-﻿// Floating Object for HDRP Water System created by Seta
-// https://www.youtube.com/@SetaLevelDesign
-// Comments added by ChatGPT
-// Licence: Creative Commons
-
-using UnityEngine; // Unity main namespace for game objects, components, and basic functions
-using UnityEngine.Rendering.HighDefinition; // HDRP rendering features for advanced rendering effects
-using Unity.Mathematics; // Provides float3 and other math types for efficient calculations
+﻿using UnityEngine;
+using UnityEngine.Rendering.HighDefinition;
+using Unity.Mathematics;
 
 #if UNITY_EDITOR
-using UnityEditor; // Unity editor namespace for creating custom inspectors and editor functionality
+using UnityEditor;
 #endif
 
-[ExecuteInEditMode] // Allows this script to execute in the editor without entering Play Mode
 public class FloatingObject : MonoBehaviour
 {
     [Header("Water Settings")]
-    public WaterSurface targetSurface; // Reference to the water surface that the object will float on
-    public bool includeDeformers = true; // Whether to include surface deformers (waves, ripples) in calculations
-    public float verticalOffset = 0.0f; // Vertical offset above the water surface for object positioning
+    public WaterSurface targetSurface;
+    public bool includeDeformers = true;
+    public float verticalOffset = 0.0f;
 
     [Header("Follow Settings")]
-    public bool followWaterCurrent = false; // Determines if the object should move along the water current
-    public float currentSpeedMultiplier = 1f; // Multiplier to adjust the influence of water current on object movement
+    public bool followWaterCurrent = false;
+    public float currentSpeedMultiplier = 1f;
 
     [Header("Collision Settings")]
-    public bool useRigidbodyForCollision = false; // Determines if Rigidbody physics should be used for collision detection
-    public LayerMask obstacleLayers; // Layers considered obstacles for collision detection (e.g., shore, rocks)
+    public bool useRigidbodyForCollision = false;
+    public LayerMask obstacleLayers;
 
-
-    private bool disableCurrentFlow = false; // Flag to temporarily stop current-based movement after collision
-    private WaterSearchParameters searchParameters = new WaterSearchParameters(); // Parameters for projecting object onto water surface
-    private WaterSearchResult searchResult = new WaterSearchResult(); // Stores result of the water surface projection
-    private Rigidbody rb; // Reference to the Rigidbody component for physics-based collisions
+    private bool disableCurrentFlow = false;
+    private WaterSearchParameters searchParameters = new WaterSearchParameters();
+    private WaterSearchResult searchResult = new WaterSearchResult();
+    private Rigidbody rb;
 
     void Awake()
     {
-        rb = GetComponent<Rigidbody>(); // Try to get an existing Rigidbody component
-        if (rb == null && useRigidbodyForCollision) // If Rigidbody is required but missing
+        rb = GetComponent<Rigidbody>();
+
+        if (rb == null && useRigidbodyForCollision)
         {
-            rb = gameObject.AddComponent<Rigidbody>(); // Add a new Rigidbody component to enable collisions
+            rb = gameObject.AddComponent<Rigidbody>();
         }
 
-        if (rb != null) // If Rigidbody exists (either found or added)
+        if (rb != null)
         {
-            rb.useGravity = false; // Disable gravity so the object is not affected by physics falling
-            rb.isKinematic = !useRigidbodyForCollision; // Make kinematic if collisions are not enabled to prevent unwanted physics
+            rb.useGravity = false;
+            rb.isKinematic = !useRigidbodyForCollision;
         }
     }
 
     void Update()
     {
-        if (targetSurface == null) return; // Exit early if no water surface is assigned
+        if (targetSurface == null) return;
 
-        // Prepare parameters for projecting the object onto the water surface
-        searchParameters.startPositionWS = (float3)searchResult.candidateLocationWS; // Starting point for water projection
-        searchParameters.targetPositionWS = (float3)transform.position; // Target point (current object position)
-        searchParameters.error = 0.01f; // Tolerance for projection accuracy
-        searchParameters.maxIterations = 8; // Maximum number of iterations for projection solver
-        searchParameters.includeDeformation = includeDeformers; // Include water deformation if enabled
-        searchParameters.excludeSimulation = false; // Include simulation data in projection
+        searchParameters.startPositionWS = (float3)searchResult.candidateLocationWS;
+        searchParameters.targetPositionWS = (float3)transform.position;
+        searchParameters.error = 0.01f;
+        searchParameters.maxIterations = 8;
+        searchParameters.includeDeformation = includeDeformers;
+        searchParameters.excludeSimulation = false;
 
-        if (targetSurface.ProjectPointOnWaterSurface(searchParameters, out searchResult)) // Perform the projection
+        if (targetSurface.ProjectPointOnWaterSurface(searchParameters, out searchResult))
         {
-            Vector3 projectedPosition = (Vector3)searchResult.projectedPositionWS; // Get the projected position on the water surface
-            Vector3 newPosition = projectedPosition + Vector3.up * verticalOffset; // Apply vertical offset above water
+            Vector3 projectedPosition = (Vector3)searchResult.projectedPositionWS;
+            Vector3 newPosition = projectedPosition + Vector3.up * verticalOffset;
 
-            if (followWaterCurrent && !disableCurrentFlow) // Only move with current if enabled and not disabled
+            if (followWaterCurrent && !disableCurrentFlow)
             {
-                Vector3 currentDirection = (Vector3)searchResult.currentDirectionWS; // Get the local water current direction
-                newPosition += currentDirection * currentSpeedMultiplier * Time.deltaTime; // Move object along the current scaled by speed multiplier and deltaTime
+                Vector3 currentDirection = (Vector3)searchResult.currentDirectionWS;
+                newPosition += currentDirection * currentSpeedMultiplier * Time.deltaTime;
             }
 
-            transform.position = newPosition; // Update object's position in the world
+            transform.position = newPosition;
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!useRigidbodyForCollision) return; // Ignore collision if Rigidbody usage is disabled
+        if (!useRigidbodyForCollision) return;
 
-        // Check if the collided object's layer matches any obstacle layers
         if (((1 << collision.gameObject.layer) & obstacleLayers) != 0)
         {
-            disableCurrentFlow = true; // Disable water current movement when hitting an obstacle
-            followWaterCurrent = false; // Stop current-following movement temporarily
+            disableCurrentFlow = true;
+            followWaterCurrent = false;
         }
     }
 
     private void OnCollisionExit(Collision collision)
     {
-        if (!useRigidbodyForCollision) return; // Ignore collision if Rigidbody usage is disabled
+        if (!useRigidbodyForCollision) return;
 
-        // Check if the object exits collision with an obstacle
         if (((1 << collision.gameObject.layer) & obstacleLayers) != 0)
         {
-            disableCurrentFlow = false; // Re-enable current-following movement
+            disableCurrentFlow = false;
         }
     }
 }
 
 #if UNITY_EDITOR
-[CustomEditor(typeof(FloatingObject))] // Define a custom editor for the FloatingObject class
+[CustomEditor(typeof(FloatingObject))]
 public class SimpleFloatingObjectEditor : Editor
 {
     public override void OnInspectorGUI()
     {
-        DrawDefaultInspector(); // Draw default inspector fields automatically
+        DrawDefaultInspector();
 
-        FloatingObject obj = (FloatingObject)target; // Cast the target object to FloatingObject
+        FloatingObject obj = (FloatingObject)target;
 
-        if (obj.useRigidbodyForCollision) // Only check for a Collider if Rigidbody collision is enabled
+        if (obj.useRigidbodyForCollision)
         {
-            Collider col = obj.GetComponent<Collider>(); // Try to get a Collider component
-            if (col == null) // If no Collider exists
+            Collider col = obj.GetComponent<Collider>();
+
+            if (col == null)
             {
-                EditorGUILayout.HelpBox(
-                    "This object requires a Collider to use Rigidbody for collisions. Please add a Collider manually.",
-                    MessageType.Warning // Display as a warning box in the Inspector
-                );
+                EditorGUILayout.HelpBox("This needs collider for rb.", MessageType.Warning);
             }
         }
     }

@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     public InputAction InteractAction { get; private set; }
     public InputAction AttackAction { get; private set; }
     public InputAction LookAction { get; private set; }
+    public InputAction RunAction { get; private set; }
 
     private void Awake()
     {
@@ -23,6 +24,7 @@ public class PlayerController : MonoBehaviour
         InteractAction = playerInput.actions["Interact"];
         AttackAction = playerInput.actions["Shoot"];
         LookAction = playerInput.actions["Look"];
+        RunAction = playerInput.actions["Run"];
     }
 
     private void OnEnable()
