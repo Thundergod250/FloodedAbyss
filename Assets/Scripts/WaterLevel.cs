@@ -6,14 +6,15 @@ public class WaterLevel : MonoBehaviour
 {
     public Transform waterLevelTransform;
 
-    [SerializeField] private GameObject playerRefTest;
     [SerializeField] private float upwardForce = 10f;
 
+    private GameObject playerRefTest;
     private PlayerMovement playerMovement;
 
 
-    private void Awake()
+    private void Start()
     {
+        playerRefTest = GameManager.Instance.playerController.gameObject;
         playerMovement = playerRefTest.GetComponent<PlayerMovement>();
     }
 
