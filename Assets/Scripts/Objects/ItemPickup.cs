@@ -6,6 +6,5 @@ public class ItemPickup : Item
     {
         Debug.Log($"Picked up {gameObject.name}");
         Pool.Destroy(gameObject);
-        //gameObject.SetActive(false);
     }
 }
