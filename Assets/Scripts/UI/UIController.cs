@@ -12,6 +12,9 @@ public class UIController : MonoBehaviour
     [SerializeField] private GameObject dialoguePanel;
     [SerializeField] private TextMeshProUGUI dialogueTextComponent;
 
+    [Header("Shop System")]
+    [SerializeField] private GameObject shopPanel;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -33,22 +36,22 @@ public class UIController : MonoBehaviour
 
     public void ShowDialogue(string text)
     {
-        if (dialoguePanel != null)
-        {
-            dialoguePanel.SetActive(true);
-        }
-
-        if (dialogueTextComponent != null)
-        {
-            dialogueTextComponent.text = text;
-        }
+        if (dialoguePanel != null) dialoguePanel.SetActive(true);
+        if (dialogueTextComponent != null) dialogueTextComponent.text = text;
     }
 
     public void HideDialogue()
     {
-        if (dialoguePanel != null)
-        {
-            dialoguePanel.SetActive(false);
-        }
+        if (dialoguePanel != null) dialoguePanel.SetActive(false);
+    }
+
+    public void ShowShop()
+    {
+        if (shopPanel != null) shopPanel.SetActive(true);
+    }
+
+    public void HideShop()
+    {
+        if (shopPanel != null) shopPanel.SetActive(false);
     }
 }
