@@ -13,9 +13,10 @@ public class PlayerMovement : MonoBehaviour
     [Header("Swim")]
     [SerializeField] private float floatDepth;
     [SerializeField] private float floatForce;
-    [SerializeField] private float surfacingSpeed;
+    [SerializeField] private float surfacingSpeed; 
     [SerializeField] private float waterGravity = -3f;
-    [SerializeField] private float maxSinkSpeed = 3f;
+    [SerializeField] private float sinkSpeed = 3f;
+    [SerializeField] private float minimumFloatDepth;
     public bool isSwimming;
 
     private Transform waterSurface;
@@ -37,7 +38,6 @@ public class PlayerMovement : MonoBehaviour
         if (controller != null && controller.JumpAction != null)
         {
             controller.JumpAction.started += Jump;
-            controller.RunAction.started -= Run;
         }
     }
 
@@ -46,7 +46,6 @@ public class PlayerMovement : MonoBehaviour
         if (controller != null && controller.JumpAction != null)
         {
             controller.JumpAction.started -= Jump;
-            controller.RunAction.started -= Run;
         }
     }
 
@@ -71,7 +70,12 @@ public class PlayerMovement : MonoBehaviour
         Vector2 input = controller.MoveAction.ReadValue<Vector2>();
         Vector3 move = transform.right * input.x + transform.forward * input.y;
 
-        float currentSpeed = controller.RunAction.IsPressed() ? runSpeed : moveSpeed;
+        float currentSpeed = moveSpeed;
+
+        if (!isSwimming && controller.RunAction.IsPressed())
+        {
+            currentSpeed = runSpeed;
+        }
 
         characterController.Move(move * (currentSpeed * Time.deltaTime));
     }
@@ -92,27 +96,35 @@ public class PlayerMovement : MonoBehaviour
     {
         if (waterSurface == null) return;
 
-        float floatingY = waterSurface.position.y - floatDepth;
+        float floatArea = waterSurface.position.y - floatDepth;
+        minimumFloatDepth = waterSurface.transform.position.y - (floatDepth + 0.5f);
 
-        if (controller.JumpAction != null && controller.JumpAction.IsPressed())
+        if (controller.RunAction != null && controller.RunAction.IsPressed())
         {
-            // Hold Space to swim upward
+            velocity.y = -swimUpSpeed;
+        }
+        else if (controller.JumpAction != null && controller.JumpAction.IsPressed())
+        {
             velocity.y = swimUpSpeed;
         }
-        else if (transform.position.y > floatingY)
+        else if (transform.position.y < minimumFloatDepth)
         {
-            // Reduced gravity underwater
+            velocity.y = -sinkSpeed;
+        }
+        else if (transform.position.y > floatArea)
+        {
             velocity.y += waterGravity * Time.deltaTime;
-
-            // Prevent sinking too quickly
-            velocity.y = Mathf.Max(velocity.y, -maxSinkSpeed);
+            velocity.y = Mathf.Max(velocity.y, -sinkSpeed);
+        }
+        else if (transform.position.y < floatArea)
+        {
+            velocity.y = surfacingSpeed;
         }
         else
         {
-            // Buoyancy
             velocity.y = Mathf.MoveTowards(
                 velocity.y,
-                surfacingSpeed,
+                0f,
                 floatForce * Time.deltaTime
             );
         }
@@ -131,13 +143,6 @@ public class PlayerMovement : MonoBehaviour
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             Debug.Log("Jump");
-        }
-    }
-    private void Run(InputAction.CallbackContext ctx)
-    {
-        if (characterController.isGrounded)
-        {
-            moveSpeed += 3f;
         }
     }
 }

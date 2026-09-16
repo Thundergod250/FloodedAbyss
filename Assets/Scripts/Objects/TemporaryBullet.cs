@@ -3,13 +3,18 @@ using UnityEngine;
 public class TemporaryBullet : MonoBehaviour
 {
     [SerializeField] private float lifetime = 3f;
-    [SerializeField] private int damage;
+    [SerializeField] private int damage = 10;
 
     private PlayerResources playerResources;
 
     public void SetPlayerResources(PlayerResources resourceScript)
     {
         playerResources = resourceScript;
+    }
+
+    public void SetDamage(int damageValue)
+    {
+        damage = damageValue;
     }
 
     private void Start()
@@ -29,7 +34,7 @@ public class TemporaryBullet : MonoBehaviour
             drops.GainPlayerReference(playerResources);
         }
 
-        Debug.Log("Hit: " + collision.gameObject.name);
+        Debug.Log($"Hit: {collision.gameObject.name} for {damage} damage");
 
         Destroy(gameObject);
     }
