@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 6666915120885503396}
   - component: {fileID: 5416272122287272659}
   - component: {fileID: 2171674706257986166}
+  - component: {fileID: 351817940941469363}
+  - component: {fileID: 3410526901283094618}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -113,6 +115,33 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &351817940941469363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2558886082468989933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e0329f94d7e7ab4aaa4b566154da0c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopNPC
+--- !u!114 &3410526901283094618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2558886082468989933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 586d09e3430c3fa4bb4b7161e1b7ee7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Interactables
+  onInteract:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5241601505443638276
 GameObject:
   m_ObjectHideFlags: 0
