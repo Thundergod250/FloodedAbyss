@@ -6,7 +6,10 @@ public class WaterLevel : MonoBehaviour
 {
     public Transform waterLevelTransform;
 
-    [SerializeField] private float upwardForce = 10f;
+    public float floatDepth = 2;
+    public float floatForce = 10;
+    public float waterGravity = -10f;
+    public float minimumFloatDepth = 0;
 
     private GameObject playerRefTest;
     private PlayerMovement playerMovement;
