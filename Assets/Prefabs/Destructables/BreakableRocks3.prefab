@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 2406181726751841259}
   - component: {fileID: 3519401434296723019}
   - component: {fileID: 7198941802297106149}
+  - component: {fileID: 1654070391168252417}
+  - component: {fileID: -4300034548573214630}
   m_Layer: 0
   m_Name: BreakableRocks3
   m_TagString: Untagged
@@ -112,3 +114,36 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 1.45
   m_Center: {x: -0.03138966, y: -0.014087975, z: 0.028300948}
+--- !u!114 &1654070391168252417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8938062236205520792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d968c72caf68bcf40acae2bb2f343fcf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyDrops
+  resourceType: 0
+  amountToDrop: 10
+  itemToDrop: {fileID: 0}
+--- !u!114 &-4300034548573214630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8938062236205520792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 919d40c3597b1254d923a1eb8f5d0c99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  category: 0
+  maxHealth: 100
+  currentHealth: 0
+  EvtOnDied:
+    m_PersistentCalls:
+      m_Calls: []

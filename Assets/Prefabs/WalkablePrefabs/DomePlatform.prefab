@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8252005396815850034}
   - component: {fileID: 1088827438306737234}
   - component: {fileID: 2107047913447798213}
+  - component: {fileID: 1462181875938694143}
   m_Layer: 0
   m_Name: DomePlatform
   m_TagString: Untagged
@@ -109,10 +110,32 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 2.3949406, y: 0.05, z: 2.3500955}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!64 &1462181875938694143
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5230006233168333220}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -2124705421725058983, guid: 6319e83fd479a56488474409f1c25b6d, type: 3}
 --- !u!1 &5546410944331673202
 GameObject:
   m_ObjectHideFlags: 0
