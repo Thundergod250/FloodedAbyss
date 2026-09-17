@@ -25,6 +25,11 @@ public class PlayerController : MonoBehaviour
         LookAction = playerInput.actions["Look"];
     }
 
+    private void Start()
+    {
+        SetInputActive(true);
+    }
+
     private void OnEnable()
     {
         playerInput.actions.Enable();
@@ -33,6 +38,22 @@ public class PlayerController : MonoBehaviour
     private void OnDisable()
     {
         playerInput.actions.Disable();
+    }
+
+    public void SetInputActive(bool active)
+    {
+        if (active)
+        {
+            playerInput.actions.Enable();
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        else
+        {
+            playerInput.actions.Disable();
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
     }
 
     public void SetInteractionUI(bool isVisible)
