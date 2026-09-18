@@ -48,7 +48,7 @@ public class ShopUI : MonoBehaviour
         {
             currentUpgradeLevel++;
             playerAttack.AddDamage(damageIncreaseAmount);
-            playerResources.UpdateResourceText();
+            playerResources.UpdateResourceText(ResourceType.Wood);
             UpdateShopUI();
         }
         else
