@@ -133,6 +133,7 @@ MonoBehaviour:
   dialogueTextComponent: {fileID: 7817785521000189887}
   shopPanel: {fileID: 3583333657563022189}
   craftingPanel: {fileID: 119877757386467090}
+  notificationPanel: {fileID: 5481795522764984416}
 --- !u!114 &2669741827718484915
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191,9 +192,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 689209a6eb9981d4b818fc3d73bfef38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UINotification
-  containerParent: {fileID: 0}
-  panelPrefab: {fileID: 0}
+  containerParent: {fileID: 5434038190821661683}
+  panelPrefab: {fileID: 4918986809270964285, guid: 1c165db6509551a4f98df7d162b0a1ab, type: 3}
   maxVisiblePanels: 5
+  enableSelfTesting: 1
+  testSpawnInterval: 0.8
 --- !u!1001 &1417070638215148741
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -281,6 +284,10 @@ PrefabInstance:
     - target: {fileID: 2310586388515965004, guid: 5ad1a9a128e74c74d818e975a6f17d19, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2644281949030489348, guid: 5ad1a9a128e74c74d818e975a6f17d19, type: 3}
+      propertyPath: m_text
+      value: Find a way inside the Cathedral
       objectReference: {fileID: 0}
     - target: {fileID: 2644281949030489348, guid: 5ad1a9a128e74c74d818e975a6f17d19, type: 3}
       propertyPath: m_fontSize
@@ -1250,6 +1257,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f69f80bdb3d12d747a1dbe130c9ea49d, type: 3}
+--- !u!224 &5434038190821661683 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1161807819699517172, guid: f69f80bdb3d12d747a1dbe130c9ea49d, type: 3}
+  m_PrefabInstance: {fileID: 6590462800976489735}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &8952034783559032564 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2831078387854554099, guid: f69f80bdb3d12d747a1dbe130c9ea49d, type: 3}

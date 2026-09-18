@@ -12,7 +12,21 @@ public class UINotification : MonoBehaviour
     [Header("Rules")]
     [SerializeField] private int maxVisiblePanels = 5;
 
+    [Header("Internal Spawner Test")]
+    [SerializeField] private bool enableSelfTesting = false;
+    [SerializeField] private float testSpawnInterval = 0.8f;
+
     private List<UINotificationPanelPrefab> activePanels = new();
+    private float testTimer;
+    private int testCounter = 1;
+
+    private readonly Color[] testColors = new Color[] 
+    { 
+        Color.green, 
+        Color.red, 
+        Color.yellow, 
+        Color.cyan 
+    };
 
     private void Awake()
     {
@@ -20,22 +34,50 @@ public class UINotification : MonoBehaviour
             containerParent = transform;
     }
 
+    private void Update()
+    {
+        // Self-testing auto spawner built directly into UINotification
+        if (!enableSelfTesting) return;
+
+        testTimer += Time.deltaTime;
+        if (testTimer >= testSpawnInterval)
+        {
+            testTimer = 0f;
+            Color randomColor = testColors[Random.Range(0, testColors.Length)];
+            ShowNotification($"+{testCounter * 10} Test Resource #{testCounter}", randomColor);
+            testCounter++;
+        }
+    }
+
     public void ShowNotification(string message, Color color)
     {
-        if (panelPrefab == null || containerParent == null) return;
+        if (panelPrefab == null)
+        {
+            Debug.LogError("[UINotification] Panel Prefab reference is missing in Inspector!");
+            return;
+        }
 
-        // Rule: When spawning the 4th (or higher) item, begin fading out the 1st item immediately
+        if (containerParent == null)
+        {
+            containerParent = transform;
+        }
+
+        // Enforce 5-panel maximum limit rule (dismiss oldest when reaching 4+)
         if (activePanels.Count >= 4 && activePanels.Count > 0)
         {
             UINotificationPanelPrefab oldestPanel = activePanels[0];
-            activePanels.RemoveAt(0); // Unregister immediately so slot opens up
+            activePanels.RemoveAt(0); // Unregister immediately
             oldestPanel.ForceDismiss();
         }
 
-        // Spawn/Fetch from pool instead of standard Instantiate
+        // Fetch / Spawn from pool
         UINotificationPanelPrefab newPanel = Pool.Instantiate(panelPrefab, containerParent);
-        newPanel.Setup(message, color, this);
-        activePanels.Add(newPanel);
+
+        if (newPanel != null)
+        {
+            newPanel.Setup(message, color, this);
+            activePanels.Add(newPanel);
+        }
     }
 
     public void UnregisterPanel(UINotificationPanelPrefab panel)
