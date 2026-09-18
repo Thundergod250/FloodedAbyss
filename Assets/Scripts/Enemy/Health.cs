@@ -16,7 +16,9 @@ public class Health : MonoBehaviour
     [SerializeField] private int currentHealth;
 
     [Header("Events")]
-    public UnityEvent EvtOnDied;   
+    public UnityEvent EvtOnDied;
+
+    public int MaxHealth => maxHealth;
 
     private void Start()
     {

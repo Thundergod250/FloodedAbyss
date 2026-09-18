@@ -15,19 +15,24 @@ public class PlayerMovement : MonoBehaviour
     public float surfacingSpeed; 
     public float sinkSpeed = 3f;
     public bool isSwimming;
+    public bool wasSwimSprinting;
 
     private float currentSpeed;
     private WaterLevel wLevel;
     private Transform waterSurface;
     private PlayerController controller;
     private CharacterController characterController;
-    private Vector3 velocity;
+    private PlayerStamina stamina;
+    private PlayerOxygen oxygen;
+    private Vector3 velocity; 
+    private bool wasRunning;
 
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
         controller = GetComponent<PlayerController>();
-
+        stamina = GetComponent<PlayerStamina>();
+        oxygen = GetComponent<PlayerOxygen>();
     }
 
     private void Start()
@@ -54,7 +59,9 @@ public class PlayerMovement : MonoBehaviour
 
         if (isSwimming)
         {
-            ApplySwimming();
+            ApplySwimming(); 
+            stamina.DrainSwimming();
+            oxygen.DrainSwimSprint();
         }
         else
         {
@@ -69,18 +76,39 @@ public class PlayerMovement : MonoBehaviour
         Vector2 input = controller.MoveAction.ReadValue<Vector2>();
         Vector3 move = transform.right * input.x + transform.forward * input.y;
 
-        if(!isSwimming)
+        if (isSwimming)
         {
-            currentSpeed = moveSpeed;
+            currentSpeed = underwaterMoveSpeed;
+            stamina.DrainSwimming();
         }
         else
         {
-            currentSpeed = underwaterMoveSpeed;
+            bool running = controller.RunAction.IsPressed();
+
+            if (running && !wasRunning)
+            {
+                if (!stamina.StartRunning())
+                {
+                    running = false;
+                }
+            }
+
+            if (running && !stamina.IsExhausted)
+            {
+                currentSpeed = runSpeed;
+                stamina.DrainRunning();
+            }
+            else
+            {
+                currentSpeed = moveSpeed;
+            }
+
+            wasRunning = running;
         }
 
-        if (!isSwimming && controller.RunAction.IsPressed())
+        if (stamina.IsExhausted)
         {
-            currentSpeed = runSpeed;
+            currentSpeed *= stamina.ExhaustionSpeedMultiplier;
         }
 
         characterController.Move(move * (currentSpeed * Time.deltaTime));
@@ -135,6 +163,27 @@ public class PlayerMovement : MonoBehaviour
             );
         }
 
+        bool swimSprinting = controller.RunAction.IsPressed();
+
+        if (swimSprinting && !wasSwimSprinting)
+        {
+            if (!oxygen.StartSwimSprint())
+            {
+                swimSprinting = false;
+            }
+        }
+
+        if (swimSprinting && oxygen.CurrentOxygen > 0f)
+        {
+            currentSpeed = runSpeed;
+            oxygen.DrainSwimSprint();
+        }
+        else
+        {
+            currentSpeed = underwaterMoveSpeed;
+        }
+
+        wasSwimSprinting = swimSprinting;
         characterController.Move(velocity * Time.deltaTime);
     }
 
@@ -147,8 +196,11 @@ public class PlayerMovement : MonoBehaviour
     {
         if (characterController.isGrounded)
         {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            Debug.Log("Jump");
+            if (stamina.UseJump())
+            {
+                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+                Debug.Log("Jump");
+            }
         }
     }
 }
