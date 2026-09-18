@@ -9,9 +9,6 @@ public class UINotification : MonoBehaviour
     [SerializeField] private Transform containerParent;
     [SerializeField] private UINotificationPanelPrefab panelPrefab;
 
-    [Header("Rules")]
-    [SerializeField] private int maxVisiblePanels = 5;
-
     [Header("Internal Spawner Test")]
     [SerializeField] private bool enableSelfTesting = false;
     [SerializeField] private float testSpawnInterval = 0.8f;
@@ -57,10 +54,8 @@ public class UINotification : MonoBehaviour
             return;
         }
 
-        if (containerParent == null)
-        {
+        if (containerParent == null) 
             containerParent = transform;
-        }
 
         // Enforce 5-panel maximum limit rule (dismiss oldest when reaching 4+)
         if (activePanels.Count >= 4 && activePanels.Count > 0)
