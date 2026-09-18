@@ -20,6 +20,9 @@ GameObject:
   - component: {fileID: 255416882986593019}
   - component: {fileID: 7706448228164935026}
   - component: {fileID: 7751867383731023345}
+  - component: {fileID: 801743805254698965}
+  - component: {fileID: 6265330268831849424}
+  - component: {fileID: 4286861164223522833}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -150,6 +153,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 3f6cbc8d-14b8-4d91-9081-ccb3160285c1
     m_ActionName: 'Player/Look[/Mouse/delta]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 56035aaa-d4a2-4004-a8b7-b2059cc853c8
+    m_ActionName: 'Player/Run[/Keyboard/leftShift]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -213,6 +220,7 @@ MonoBehaviour:
   surfacingSpeed: 4
   sinkSpeed: 3
   isSwimming: 0
+  wasSwimSprinting: 0
 --- !u!114 &7214069375529169555
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -287,7 +295,63 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TemporaryPickAxe
   animator: {fileID: 7771387260238589799}
-  attackStateName: Equipment PickAxe Attack Clip
+--- !u!114 &801743805254698965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2668991774076862816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e02f77ee339b19468fc09d5929daba3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStamina
+  maxStamina: 100
+  currentStamina: 100
+  regenRate: 1
+  runStartCost: 20
+  runDrain: 5
+  jumpCost: 20
+  swimDrain: 5
+  exhaustionDelay: 5
+  exhaustionSpeedMultiplier: 0.5
+--- !u!114 &6265330268831849424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2668991774076862816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 919d40c3597b1254d923a1eb8f5d0c99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  category: 0
+  maxHealth: 100
+  currentHealth: 0
+  EvtOnDied:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &4286861164223522833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2668991774076862816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcc1738bc59f1584fa95a2357bf0ba83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerOxygen
+  maxOxygen: 100
+  currentOxygen: 100
+  regenRate: 1
+  sprintStartCost: 20
+  sprintDrain: 5
+  damageInterval: 1
 --- !u!1 &3135511604283639651
 GameObject:
   m_ObjectHideFlags: 0
