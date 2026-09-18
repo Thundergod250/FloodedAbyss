@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1582223053482943062
+--- !u!1 &5571660179230158978
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,48 +8,49 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 9126864300201319948}
-  - component: {fileID: 3603994976187115538}
-  - component: {fileID: 3487966151926089538}
-  - component: {fileID: -7358911603946269566}
-  - component: {fileID: -200183096225520038}
+  - component: {fileID: 3561106310572545257}
+  - component: {fileID: 3460061290879044107}
+  - component: {fileID: 202681376278507084}
+  - component: {fileID: 6873033455674117878}
+  - component: {fileID: 6092121827361934549}
+  - component: {fileID: 1738965243380487456}
   m_Layer: 0
-  m_Name: BreakableRocks2
+  m_Name: Workshop Build Site Placeholder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &9126864300201319948
+--- !u!4 &3561106310572545257
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1582223053482943062}
+  m_GameObject: {fileID: 5571660179230158978}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 42.04159, y: 104.79536, z: -3.4626}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 58.02575, y: 102.3, z: 21.274063}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &3603994976187115538
+--- !u!33 &3460061290879044107
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1582223053482943062}
-  m_Mesh: {fileID: 8058785392158572224, guid: b091c90a31e513343871e0643fcf94e2, type: 3}
---- !u!23 &3487966151926089538
+  m_GameObject: {fileID: 5571660179230158978}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &202681376278507084
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1582223053482943062}
+  m_GameObject: {fileID: 5571660179230158978}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -68,7 +69,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 73c176f402d2c2f4d929aa5da7585d17, type: 2}
+  - {fileID: 2100000, guid: f2b0bcc93d028bd45a8ab7e99ed054af, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -92,13 +93,13 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &-7358911603946269566
-BoxCollider:
+--- !u!135 &6873033455674117878
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1582223053482943062}
+  m_GameObject: {fileID: 5571660179230158978}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -111,21 +112,36 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-200183096225520038
+--- !u!114 &6092121827361934549
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1582223053482943062}
+  m_GameObject: {fileID: 5571660179230158978}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 639eacf06aeade941abe122968d55ace, type: 3}
+  m_Script: {fileID: 11500000, guid: 586d09e3430c3fa4bb4b7161e1b7ee7b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MinableRock
-  health: 30
-  orePrefab: {fileID: 853473947766955555, guid: 362d757d70c53704f9567b713ee67800, type: 3}
-  oreDropCount: 3
-  dropScatterForce: 3
+  m_EditorClassIdentifier: Assembly-CSharp::Interactables
+  onInteract:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &1738965243380487456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5571660179230158978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6087b05d0641cc4394637d1524ad080, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkshopBuildSite
+  requiredResource: 0
+  resourceCost: 0
+  workshopPrefab: {fileID: 5112165904138188660, guid: 73545e380cd28374dbe88b86a7e5c3e1, type: 3}
+  spawnLocation: {fileID: 3561106310572545257}
