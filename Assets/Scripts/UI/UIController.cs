@@ -15,6 +15,8 @@ public class UIController : MonoBehaviour
     [Header("Shop System")]
     [SerializeField] private GameObject shopPanel;
 
+    private PlayerController playerController;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -24,6 +26,22 @@ public class UIController : MonoBehaviour
         }
 
         Instance = this;
+    }
+
+    private PlayerController GetPlayerController()
+    {
+        if (playerController == null)
+        {
+            if (GameManager.Instance != null && GameManager.Instance.playerController != null)
+            {
+                playerController = GameManager.Instance.playerController;
+            }
+            else
+            {
+                playerController = FindAnyObjectByType<PlayerController>();
+            }
+        }
+        return playerController;
     }
 
     public void ToggleInteractionPrompt(bool isVisible)
@@ -48,10 +66,22 @@ public class UIController : MonoBehaviour
     public void ShowShop()
     {
         if (shopPanel != null) shopPanel.SetActive(true);
+
+        PlayerController pc = GetPlayerController();
+        if (pc != null)
+        {
+            pc.SetInputActive(false);
+        }
     }
 
     public void HideShop()
     {
         if (shopPanel != null) shopPanel.SetActive(false);
+
+        PlayerController pc = GetPlayerController();
+        if (pc != null)
+        {
+            pc.SetInputActive(true);
+        }
     }
 }
