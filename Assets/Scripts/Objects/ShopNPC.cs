@@ -19,18 +19,12 @@ public class ShopNPC : Item
     private void OpenShop()
     {
         isShopOpen = true;
-        if (UIController.Instance != null)
-        {
-            UIController.Instance.ShowShop();
-        }
+        GameManager.Instance.uiController?.ShowShop();
     }
 
     public void CloseShop()
     {
         isShopOpen = false;
-        if (UIController.Instance != null)
-        {
-            UIController.Instance.HideShop();
-        }
+        GameManager.Instance.uiController?.HideShop();
     }
 }

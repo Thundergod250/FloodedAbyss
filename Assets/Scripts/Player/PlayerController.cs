@@ -58,11 +58,5 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void SetInteractionUI(bool isVisible)
-    {
-        if (UIController.Instance != null)
-        {
-            UIController.Instance.ToggleInteractionPrompt(isVisible);
-        }
-    }
+    public void SetInteractionUI(bool isVisible) => GameManager.Instance.uiController?.ToggleInteractionPrompt(isVisible);
 }

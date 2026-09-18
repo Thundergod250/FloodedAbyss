@@ -6,13 +6,7 @@ public class CraftingUI : MonoBehaviour
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI statusText;
 
-    public void CloseCraftingMenu()
-    {
-        if (UIController.Instance != null)
-        {
-            UIController.Instance.HideCrafting();
-        }
-    }
+    public void CloseCraftingMenu() => GameManager.Instance.uiController?.HideCrafting();
 
     public void CraftPlaceholderItem(string itemName)
     {

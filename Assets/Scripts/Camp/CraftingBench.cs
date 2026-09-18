@@ -19,18 +19,12 @@ public class CraftingBench : Item
     private void OpenCrafting()
     {
         isCraftingOpen = true;
-        if (UIController.Instance != null)
-        {
-            UIController.Instance.ShowCrafting();
-        }
+        GameManager.Instance.uiController?.ShowCrafting();
     }
 
     public void CloseCrafting()
     {
         isCraftingOpen = false;
-        if (UIController.Instance != null)
-        {
-            UIController.Instance.HideCrafting();
-        }
+        GameManager.Instance.uiController?.HideCrafting();
     }
 }

@@ -3,58 +3,31 @@ using TMPro;
 
 public class UIController : MonoBehaviour
 {
-    public static UIController Instance { get; private set; }
-
-    [SerializeField] private UIInteraction uiInteraction;
-
-    [Header("Dialogue System")]
-    [SerializeField] private GameObject dialoguePanel;
-    [SerializeField] private TextMeshProUGUI dialogueTextComponent;
-
-    [Header("Shop System")]
-    [SerializeField] private GameObject shopPanel;
-
-    [Header("Crafting System")]
-    [SerializeField] private GameObject craftingPanel;
-
-    [Header("Notification System")]
-    [SerializeField] private UINotification notificationPanel;
+    public UIInteraction uiInteraction;
+    public GameObject dialoguePanel;
+    public TextMeshProUGUI dialogueTextComponent;
+    public GameObject shopPanel;
+    public GameObject craftingPanel;
+    public UINotification notificationPanel;
     
     private PlayerController playerController;
-
-    private void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-    }
 
     private PlayerController GetPlayerController()
     {
         if (playerController == null)
         {
             if (GameManager.Instance != null && GameManager.Instance.playerController != null)
-            {
                 playerController = GameManager.Instance.playerController;
-            }
             else
-            {
                 playerController = FindAnyObjectByType<PlayerController>();
-            }
         }
         return playerController;
     }
 
     public void ToggleInteractionPrompt(bool isVisible)
     {
-        if (uiInteraction != null)
-        {
+        if (uiInteraction != null) 
             uiInteraction.SetUIActive(isVisible);
-        }
     }
 
     public void ShowDialogue(string text)
@@ -95,10 +68,8 @@ public class UIController : MonoBehaviour
         if (craftingPanel != null) craftingPanel.SetActive(true);
 
         PlayerController pc = GetPlayerController();
-        if (pc != null)
-        {
+        if (pc != null) 
             pc.SetInputActive(false);
-        }
     }
 
     public void HideCrafting()
@@ -106,9 +77,7 @@ public class UIController : MonoBehaviour
         if (craftingPanel != null) craftingPanel.SetActive(false);
 
         PlayerController pc = GetPlayerController();
-        if (pc != null)
-        {
+        if (pc != null) 
             pc.SetInputActive(true);
-        }
     }
 }
