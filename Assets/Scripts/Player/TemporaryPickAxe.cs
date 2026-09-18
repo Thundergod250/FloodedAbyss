@@ -5,8 +5,9 @@ public class TemporaryPickAxe : MonoBehaviour
 {
     [SerializeField] private Animator animator;
 
-    [SerializeField] private string attackStateName = "Attack";
     private PlayerController controller;
+
+    private static readonly int AttackHash = Animator.StringToHash("Attack");
 
     private void Awake()
     {
@@ -31,6 +32,6 @@ public class TemporaryPickAxe : MonoBehaviour
 
     private void OnAttack(InputAction.CallbackContext context)
     {
-        animator.Play(attackStateName, 0, 0f);
+        animator.SetTrigger(AttackHash);
     }
 }
