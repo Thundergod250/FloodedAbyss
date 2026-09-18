@@ -289,6 +289,7 @@ GameObject:
   - component: {fileID: 9006729353417903896}
   - component: {fileID: 3984025129540415282}
   - component: {fileID: 2669741827718484915}
+  - component: {fileID: 3149196648438469127}
   m_Layer: 5
   m_Name: UI
   m_TagString: Untagged
@@ -414,6 +415,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIInteraction
   interactionPanel: {fileID: 3506447074658584587}
+--- !u!114 &3149196648438469127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6879466495274620806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f0473bd00d774e4a9315b169c364324, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerUI
+  healthBar: {fileID: 6923152327125607836}
+  staminaBar: {fileID: 6768217161635427542}
+  oxygenBar: {fileID: 2273912461020712950}
 --- !u!1001 &1417070638215148741
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -841,6 +857,34 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4787334976417392196, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+      propertyPath: m_Value
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4787334976417392196, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+      propertyPath: m_HandleRect
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6479272046965878740, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.0024165
+      objectReference: {fileID: 0}
+    - target: {fileID: 6479272046965878740, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.0024165
+      objectReference: {fileID: 0}
+    - target: {fileID: 6479272046965878740, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.0024165
+      objectReference: {fileID: 0}
+    - target: {fileID: 9191411646062376718, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+      propertyPath: m_Value
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 9191411646062376718, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+      propertyPath: m_HandleRect
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 4261519390376306641, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
@@ -852,6 +896,39 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3491357390702125011, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
   m_PrefabInstance: {fileID: 2478103047148192728}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2273912461020712950 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4462348985145592878, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+  m_PrefabInstance: {fileID: 2478103047148192728}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
+--- !u!114 &6768217161635427542 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9191411646062376718, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+  m_PrefabInstance: {fileID: 2478103047148192728}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
+--- !u!114 &6923152327125607836 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4787334976417392196, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+  m_PrefabInstance: {fileID: 2478103047148192728}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
 --- !u!1001 &3336977273829824040
 PrefabInstance:
   m_ObjectHideFlags: 0

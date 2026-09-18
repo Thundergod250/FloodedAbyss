@@ -19,6 +19,7 @@ public class Health : MonoBehaviour
     public UnityEvent EvtOnDied;
 
     public int MaxHealth => maxHealth;
+    public int CurrentHealth => currentHealth;
 
     private void Start()
     {
