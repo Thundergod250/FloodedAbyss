@@ -33,8 +33,8 @@ public class ShopUI : MonoBehaviour
         }
         else
         {
-            playerResources = FindAnyObjectByType<PlayerResources>();
-            playerAttack = FindAnyObjectByType<TemporaryAttack>();
+            playerResources = FindFirstObjectByType<PlayerResources>();
+            playerAttack = FindFirstObjectByType<TemporaryAttack>();
         }
     }
 
@@ -48,7 +48,6 @@ public class ShopUI : MonoBehaviour
         {
             currentUpgradeLevel++;
             playerAttack.AddDamage(damageIncreaseAmount);
-            playerResources.UpdateResourceText(ResourceType.Wood);
             UpdateShopUI();
         }
         else
