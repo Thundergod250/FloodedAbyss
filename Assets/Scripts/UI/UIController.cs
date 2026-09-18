@@ -18,6 +18,9 @@ public class UIController : MonoBehaviour
     [Header("Crafting System")]
     [SerializeField] private GameObject craftingPanel;
 
+    [Header("Notification System")]
+    [SerializeField] private UINotification notificationPanel;
+    
     private PlayerController playerController;
 
     private void Awake()
