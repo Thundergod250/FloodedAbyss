@@ -19,6 +19,9 @@ GameObject:
   - component: {fileID: 599560484476306787}
   - component: {fileID: 255416882986593019}
   - component: {fileID: 7706448228164935026}
+  - component: {fileID: 5011022331939074706}
+  - component: {fileID: 3202337842524963063}
+  - component: {fileID: 159086485549072678}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -212,6 +215,7 @@ MonoBehaviour:
   surfacingSpeed: 4
   sinkSpeed: 3
   isSwimming: 0
+  wasSwimSprinting: 0
 --- !u!114 &7214069375529169555
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -273,6 +277,63 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ResourceManager
   stoneText: {fileID: 0}
   stoneTextAdd: {fileID: 0}
+--- !u!114 &5011022331939074706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2668991774076862816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e02f77ee339b19468fc09d5929daba3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStamina
+  maxStamina: 100
+  currentStamina: 100
+  regenRate: 1
+  runStartCost: 20
+  runDrain: 5
+  jumpCost: 20
+  swimDrain: 5
+  exhaustionDelay: 5
+  exhaustionSpeedMultiplier: 0.5
+--- !u!114 &3202337842524963063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2668991774076862816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcc1738bc59f1584fa95a2357bf0ba83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerOxygen
+  maxOxygen: 100
+  currentOxygen: 100
+  regenRate: 1
+  sprintStartCost: 20
+  sprintDrain: 5
+  damageInterval: 1
+--- !u!114 &159086485549072678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2668991774076862816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 919d40c3597b1254d923a1eb8f5d0c99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  category: 0
+  maxHealth: 100
+  currentHealth: 0
+  EvtOnDied:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &3135511604283639651
 GameObject:
   m_ObjectHideFlags: 0
