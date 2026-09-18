@@ -7,9 +7,9 @@ public class MineManager : MonoBehaviour
     public float timeLimit = 60f;
 
     [Header("Water")]
-    public Transform waterLevelTransform;
+/*    public Transform waterLevelTransform;
     public float startingWaterHeight;
-    public float maximumWaterHeight;
+    public float maximumWaterHeight;*/
 
     [Header("Ore Prefabs")]
     public GameObject tinOre;
@@ -23,26 +23,26 @@ public class MineManager : MonoBehaviour
     public int minimumOres = 5;
     public int maximumOres = 10;
 
-    private float currentTime;
-    private bool timerRunning = false;
+/*    private float currentTime;
+    private bool timerRunning = false;*/
 
     private List<GameObject> spawnedOres = new List<GameObject>();
 
 
     private void Start()
     {
-        currentTime = timeLimit;
+/*        currentTime = timeLimit;
 
         if (waterLevelTransform != null)
         {
             startingWaterHeight = waterLevelTransform.position.y;
-        }
+        }*/
     }
 
 
     private void Update()
     {
-        if (!timerRunning)
+/*        if (!timerRunning)
             return;
 
         currentTime -= Time.deltaTime;
@@ -53,20 +53,20 @@ public class MineManager : MonoBehaviour
             timerRunning = false;
         }
 
-        UpdateWaterLevel();
+        UpdateWaterLevel();*/
     }
 
     public void EnterMine()
     {
         Debug.Log("Player entered the mine.");
 
-        currentTime = timeLimit;
+        //currentTime = timeLimit;
 
-        ResetWaterLevel();
+        //ResetWaterLevel();
 
         GenerateOres();
 
-        StartTimer();
+        //StartTimer();
     }
 
 
@@ -74,16 +74,16 @@ public class MineManager : MonoBehaviour
     {
         Debug.Log("Player left the mine.");
 
-        StopTimer();
+        //StopTimer();
 
         ClearOres();
 
-        currentTime = timeLimit;
+        //currentTime = timeLimit;
 
-        ResetWaterLevel();
+        //ResetWaterLevel();
     }
 
-    public void StartTimer()
+/*    public void StartTimer()
     {
         timerRunning = true;
     }
@@ -132,7 +132,7 @@ public class MineManager : MonoBehaviour
 
         waterLevelTransform.position = waterPosition;
     }
-
+*/
 
     public void GenerateOres()
     {
@@ -152,23 +152,19 @@ public class MineManager : MonoBehaviour
 
         oreAmount = Mathf.Min(oreAmount, spawnPoints.Length);
 
-        // Create a list of available spawn points
         List<Transform> availableSpawnPoints =
             new List<Transform>(spawnPoints);
 
         for (int i = 0; i < oreAmount; i++)
         {
-            // Select a random unused spawn point
             int randomSpawnIndex =
                 Random.Range(0, availableSpawnPoints.Count);
 
             Transform spawnPoint =
                 availableSpawnPoints[randomSpawnIndex];
 
-            // Remove it so another ore cannot use it
             availableSpawnPoints.RemoveAt(randomSpawnIndex);
 
-            // Select random ore
             GameObject orePrefab = GetRandomOre();
 
             if (orePrefab == null)

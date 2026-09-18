@@ -2,28 +2,33 @@ using UnityEngine;
 
 public class DungeonExit : MonoBehaviour
 {
-    public GameObject confirmationUI;
-
-    private void Start()
-    {
-        confirmationUI.SetActive(false);
-    }
+    [Header("Mine Manager")]
+    public MineManager mineManager;
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.GetComponent<PlayerController>() != null)
         {
-            confirmationUI.SetActive(true);
+            LeaveDungeon();
         }
     }
 
     public void LeaveDungeon()
     {
-        Debug.Log("Leaving dungeon...");
+        Debug.Log("Player exited the Mine!");
+
+        if (mineManager != null)
+        {
+            mineManager.LeaveMine();
+        }
+        else
+        {
+            Debug.LogWarning("MineManager is not assigned!");
+        }
     }
 
     public void CancelExit()
     {
-        confirmationUI.SetActive(false);
+        // Confirmation UI
     }
 }

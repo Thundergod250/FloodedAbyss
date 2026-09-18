@@ -2,29 +2,33 @@ using UnityEngine;
 
 public class MineEntrance : MonoBehaviour
 {
-    public GameObject confirmationUI;
-
-    private void Start()
-    {
-        confirmationUI.SetActive(false);
-    }
+    [Header("Mine Manager")]
+    public MineManager mineManager;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<PlayerMovement>() != null)
+        if (other.GetComponent<PlayerController>() != null)
         {
-            confirmationUI.SetActive(true);
+            EnterMine();
         }
     }
 
     public void EnterMine()
     {
-        Debug.Log("Entering the mine...");
+        Debug.Log("Player entered the mine!");
 
+        if (mineManager != null)
+        {
+            mineManager.EnterMine();
+        }
+        else
+        {
+            Debug.LogWarning("MineManager is not assigned!");
+        }
     }
 
     public void CancelEntrance()
     {
-        confirmationUI.SetActive(false);
+        // Confirmation UI
     }
 }
