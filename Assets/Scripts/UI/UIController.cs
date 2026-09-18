@@ -15,6 +15,9 @@ public class UIController : MonoBehaviour
     [Header("Shop System")]
     [SerializeField] private GameObject shopPanel;
 
+    [Header("Crafting System")]
+    [SerializeField] private GameObject craftingPanel;
+
     private PlayerController playerController;
 
     private void Awake()
@@ -77,6 +80,28 @@ public class UIController : MonoBehaviour
     public void HideShop()
     {
         if (shopPanel != null) shopPanel.SetActive(false);
+
+        PlayerController pc = GetPlayerController();
+        if (pc != null)
+        {
+            pc.SetInputActive(true);
+        }
+    }
+
+    public void ShowCrafting()
+    {
+        if (craftingPanel != null) craftingPanel.SetActive(true);
+
+        PlayerController pc = GetPlayerController();
+        if (pc != null)
+        {
+            pc.SetInputActive(false);
+        }
+    }
+
+    public void HideCrafting()
+    {
+        if (craftingPanel != null) craftingPanel.SetActive(false);
 
         PlayerController pc = GetPlayerController();
         if (pc != null)
