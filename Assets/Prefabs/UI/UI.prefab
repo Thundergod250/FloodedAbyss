@@ -171,8 +171,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49e6989f47f0ccb409e2608aaa4297cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIDebug
+  playerResources: {fileID: 0}
   debugButtonsPanel: {fileID: 4765305056813242749}
+  resourceGridParent: {fileID: 8670489004698079112}
+  resourceItemPrefab: {fileID: 3755647279164985529, guid: 7ae865444e3dfb440b5a15670b9456e4, type: 3}
   debugToggleAction: {fileID: 2226932210249216780, guid: ad2be89f7caf9e140bb9d6401be0c40b, type: 3}
+  addResource: {fileID: 8366066376200566355}
 --- !u!1001 &1417070638215148741
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -260,10 +264,6 @@ PrefabInstance:
     - target: {fileID: 2310586388515965004, guid: 5ad1a9a128e74c74d818e975a6f17d19, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2644281949030489348, guid: 5ad1a9a128e74c74d818e975a6f17d19, type: 3}
-      propertyPath: m_fontSize
-      value: 70.95
       objectReference: {fileID: 0}
     - target: {fileID: 7360257280719196426, guid: 5ad1a9a128e74c74d818e975a6f17d19, type: 3}
       propertyPath: m_Name
@@ -882,6 +882,11 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3358090231856340574, guid: d84c149d25fda6f4bac44dfb79a265a0, type: 3}
   m_PrefabInstance: {fileID: 3336977273829824040}
   m_PrefabAsset: {fileID: 0}
+--- !u!224 &8670489004698079112 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 6204993718216825248, guid: d84c149d25fda6f4bac44dfb79a265a0, type: 3}
+  m_PrefabInstance: {fileID: 3336977273829824040}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4628210439823568073
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -893,10 +898,6 @@ PrefabInstance:
     - target: {fileID: 151846319240639924, guid: 62ab3a87b66a78c4290b213ab96d376c, type: 3}
       propertyPath: m_Name
       value: Debug Buttons
-      objectReference: {fileID: 0}
-    - target: {fileID: 151846319240639924, guid: 62ab3a87b66a78c4290b213ab96d376c, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1714505269770618912, guid: 62ab3a87b66a78c4290b213ab96d376c, type: 3}
       propertyPath: m_Pivot.x
@@ -1005,6 +1006,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1714505269770618912, guid: 62ab3a87b66a78c4290b213ab96d376c, type: 3}
   m_PrefabInstance: {fileID: 4628210439823568073}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8366066376200566355 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3756153635331250842, guid: 62ab3a87b66a78c4290b213ab96d376c, type: 3}
+  m_PrefabInstance: {fileID: 4628210439823568073}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1001 &4866365583179791943
 PrefabInstance:
   m_ObjectHideFlags: 0
