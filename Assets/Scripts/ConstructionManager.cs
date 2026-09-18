@@ -3,122 +3,116 @@ using UnityEngine;
 public class ConstructionManager : MonoBehaviour
 {
     [Header("Player Resources")]
-    public int stone;
+    public int rock;
     public int wood;
     public int plastic;
 
-    [Header("Construction Costs")]
-    public int workshopStone = 20;
+    [Header("Advanced Materials")]
+    public int tin;
+    public int copper;
+    public int iron;
+    public int bronze;
+
+    [Header("Workshop Cost")]
+    public int workshopRock = 20;
     public int workshopWood = 15;
-    public int workshopPlastic = 10;
+    public int workshopIron = 10;
 
-    public int managementStone = 10;
-    public int managementWood = 10;
-    public int managementPlastic = 5;
+    [Header("Auto Miner Cost")]
+    public int autoMinerBronze = 1;
 
-    public int craftingTableStone = 10;
-    public int craftingTableWood = 15;
-    public int craftingTablePlastic = 5;
-
-    public int residentialStone = 20;
-    public int residentialWood = 25;
-    public int residentialPlastic = 10;
-
-    public int farmStone = 15;
-    public int farmWood = 20;
-    public int farmPlastic = 10;
-
-    public int autoMinerStone = 25;
-    public int autoMinerWood = 30;
-    public int autoMinerPlastic = 15;
+    [Header("Building Status")]
+    public bool workshopBuilt = false;
+    public bool autoMinerBuilt = false;
 
 
-    public bool HasEnoughResources(int requiredStone, int requiredWood, int requiredPlastic)
+    public bool HasEnoughWorkshopResources()
     {
-        return stone >= requiredStone &&
-               wood >= requiredWood &&
-               plastic >= requiredPlastic;
+        return rock >= workshopRock &&
+               wood >= workshopWood &&
+               iron >= workshopIron;
     }
 
 
-    public bool SpendResources(int requiredStone, int requiredWood, int requiredPlastic)
+    public bool HasEnoughAutoMinerResources()
     {
-        if (!HasEnoughResources(requiredStone, requiredWood, requiredPlastic))
-        {
-            Debug.Log("Not enough resources.");
-            return false;
-        }
-
-        stone -= requiredStone;
-        wood -= requiredWood;
-        plastic -= requiredPlastic;
-
-        return true;
+        return bronze >= autoMinerBronze;
     }
-
 
     public bool BuildWorkshop()
     {
-        if (!SpendResources(workshopStone, workshopWood, workshopPlastic))
+        if (workshopBuilt)
+        {
+            Debug.Log("Workshop has already been built.");
             return false;
+        }
+
+        if (!HasEnoughWorkshopResources())
+        {
+            Debug.Log("Not enough resources to build Workshop.");
+            return false;
+        }
+
+        rock -= workshopRock;
+        wood -= workshopWood;
+        iron -= workshopIron;
+
+        workshopBuilt = true;
 
         Debug.Log("Workshop LVL 1 Built!");
 
-        return true;
-    }
-
-
-    public bool UnlockManagementScreen()
-    {
-        if (!SpendResources(managementStone, managementWood, managementPlastic))
-            return false;
-
-        Debug.Log("Management Screen Unlocked!");
-
-        return true;
-    }
-
-
-
-    public bool BuildCraftingTable()
-    {
-        if (!SpendResources(craftingTableStone, craftingTableWood, craftingTablePlastic))
-            return false;
-
-        Debug.Log("Crafting Table LVL 1 Built!");
-
-        return true;
-    }
-
-
-    public bool BuildResidential()
-    {
-        if (!SpendResources(residentialStone, residentialWood, residentialPlastic))
-            return false;
-
-        Debug.Log("Residential Building LVL 1 Built!");
-
-        return true;
-    }
-
-
-    public bool BuildFarm()
-    {
-        if (!SpendResources(farmStone, farmWood, farmPlastic))
-            return false;
-
-        Debug.Log("Farm LVL 1 Built!");
+        ShowBuildingUnlocked("Workshop");
 
         return true;
     }
 
     public bool BuildAutoMiner()
     {
-        if (!SpendResources(autoMinerStone, autoMinerWood, autoMinerPlastic))
+        if (autoMinerBuilt)
+        {
+            Debug.Log("Auto-Miner has already been built.");
             return false;
+        }
+
+        if (!HasEnoughAutoMinerResources())
+        {
+            Debug.Log("Not enough Bronze to build Auto-Miner.");
+            return false;
+        }
+
+        bronze -= autoMinerBronze;
+
+        autoMinerBuilt = true;
 
         Debug.Log("Auto-Miner Built!");
 
+        ShowBuildingUnlocked("Auto-Miner");
+
         return true;
+    }
+
+    public bool CraftBronze()
+    {
+
+        if (tin < 1 || copper < 1)
+        {
+            Debug.Log("Not enough Tin or Copper to make Bronze.");
+            return false;
+        }
+
+        tin -= 1;
+        copper -= 1;
+
+        bronze += 1;
+
+        Debug.Log("1 Bronze crafted!");
+
+        return true;
+    }
+
+    private void ShowBuildingUnlocked(string buildingName)
+    {
+        Debug.Log("NEW BUILDING UNLOCKED: " + buildingName);
+
     }
 }
