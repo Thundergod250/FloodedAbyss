@@ -5,7 +5,6 @@ public class UIController : MonoBehaviour
 {
     public static UIController Instance { get; private set; }
 
-    [Header("Interaction Prompt")]
     [SerializeField] private UIInteraction uiInteraction;
 
     [Header("Dialogue System")]

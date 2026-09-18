@@ -8,7 +8,6 @@ public class UINotificationPanelPrefab : MonoBehaviour
     [SerializeField] private float autoDestroyTime = 3f;
     [SerializeField] private float fadeDuration = 0.5f;
 
-    // Private component references fetched automatically
     private TextMeshProUGUI messageText;
     private CanvasGroup canvasGroup;
 
@@ -20,12 +19,16 @@ public class UINotificationPanelPrefab : MonoBehaviour
     {
         centralManager = manager;
 
-        // Fetch components on setup if not already cached
         if (messageText == null)
             messageText = GetComponentInChildren<TextMeshProUGUI>();
 
         if (canvasGroup == null)
+        {
             canvasGroup = GetComponent<CanvasGroup>();
+            // Fallback: Add CanvasGroup dynamically if missing on prefab root
+            if (canvasGroup == null)
+                canvasGroup = gameObject.AddComponent<CanvasGroup>();
+        }
 
         if (messageText != null)
         {
@@ -37,7 +40,10 @@ public class UINotificationPanelPrefab : MonoBehaviour
         if (canvasGroup != null)
             canvasGroup.alpha = 1f;
 
-        // Stop any active coroutines left over from previous pool usages
+        // Reset transform scale so layout groups calculate sizes cleanly
+        transform.localScale = Vector3.one;
+
+        // Clear active coroutines from previous pool cycles
         if (lifetimeCoroutine != null) StopCoroutine(lifetimeCoroutine);
         if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
 
@@ -77,7 +83,6 @@ public class UINotificationPanelPrefab : MonoBehaviour
         if (centralManager != null)
             centralManager.UnregisterPanel(this);
 
-        // Return to Object Pool
         Pool.Destroy(gameObject);
     }
 }
