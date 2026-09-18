@@ -19,7 +19,6 @@ GameObject:
   - component: {fileID: 599560484476306787}
   - component: {fileID: 255416882986593019}
   - component: {fileID: 7706448228164935026}
-  - component: {fileID: 7751867383731023345}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -274,20 +273,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ResourceManager
   stoneText: {fileID: 0}
   stoneTextAdd: {fileID: 0}
---- !u!114 &7751867383731023345
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2668991774076862816}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b294f78c3436b64eb34502a122940e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TemporaryPickAxe
-  animator: {fileID: 7771387260238589799}
-  attackStateName: Equipment PickAxe Attack Clip
 --- !u!1 &3135511604283639651
 GameObject:
   m_ObjectHideFlags: 0
@@ -604,6 +589,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Equipment
       objectReference: {fileID: 0}
+    - target: {fileID: 7076952708476344729, guid: 45dddfc8a94445a4c9b5d743afc986cd, type: 3}
+      propertyPath: controller
+      value: 
+      objectReference: {fileID: 8781045047027481555}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 7079777631204996187, guid: 45dddfc8a94445a4c9b5d743afc986cd, type: 3}
@@ -614,10 +603,5 @@ PrefabInstance:
 --- !u!4 &4535825291821212753 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1027081308811477915, guid: 45dddfc8a94445a4c9b5d743afc986cd, type: 3}
-  m_PrefabInstance: {fileID: 3509025458154547146}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &7771387260238589799 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 6587380431696349357, guid: 45dddfc8a94445a4c9b5d743afc986cd, type: 3}
   m_PrefabInstance: {fileID: 3509025458154547146}
   m_PrefabAsset: {fileID: 0}

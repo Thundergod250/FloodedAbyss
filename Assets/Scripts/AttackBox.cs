@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class AttackBox : MonoBehaviour
 {
-    [SerializeField] private int damage = 10;
+    public int Damage = 10;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -11,7 +11,7 @@ public class AttackBox : MonoBehaviour
 
         if (other.TryGetComponent(out Health health))
         {
-            health.TakeDamage(damage);
+            health.TakeDamage(Damage);
         }
     }
 }

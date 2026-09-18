@@ -197,6 +197,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8901337723949325212}
   - component: {fileID: 692165862056838219}
+  - component: {fileID: 3514602425638622591}
   m_Layer: 0
   m_Name: PickAxe
   m_TagString: Untagged
@@ -242,6 +243,23 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &3514602425638622591
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8082267876841088395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b294f78c3436b64eb34502a122940e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TemporaryPickAxe
+  animator: {fileID: 692165862056838219}
+  attackBox: {fileID: 8545549691268861234}
+  controller: {fileID: 0}
+  damage: 10
+  attackSpeed: 1
 --- !u!1 &8897258122764049106
 GameObject:
   m_ObjectHideFlags: 0
@@ -427,4 +445,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42e55858ec76db547b8510227ba3ed6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttackBox
-  damage: 10
+  Damage: 10
