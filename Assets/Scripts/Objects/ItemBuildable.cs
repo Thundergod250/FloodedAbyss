@@ -9,13 +9,19 @@ public class ItemBuildable : Item
         public int amount;
     }
 
+    [SerializeField] private PlayerResources playerResources; 
+    
     [Header("Build Requirements")]
     [SerializeField] private ResourceCost requiredResource;
     [SerializeField] private GameObject prefabToSpawn;
 
     public override void Activate()
     {
-        PlayerResources playerResources = FindObjectOfType<PlayerResources>();
+        if (playerResources == null)
+        {
+            Debug.Log("PlayerResources is null on ItemBuildable");
+            return;
+        }
 
         if (playerResources == null)
         {
