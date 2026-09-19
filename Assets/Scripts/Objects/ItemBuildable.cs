@@ -1,48 +1,60 @@
+using System.Collections.Generic;
 using UnityEngine;
+
+public enum BuildableType
+{
+    Standard,
+    CampShop,
+    Workshop
+}
+
+[System.Serializable]
+public class BuildableOption
+{
+    public string title = "New Structure";
+    public Sprite icon;
+    [TextArea(2, 4)]
+    public string description = "Structure description goes here.";
+    public ResourceType resourceType = ResourceType.Stone;
+    public int resourceCost = 10;
+    public GameObject prefabToSpawn;
+}
 
 public class ItemBuildable : Item
 {
-    [System.Serializable]
-    public struct ResourceCost
-    {
-        public ResourceType resourceType;
-        public int amount;
-    }
+    [Header("Buildable Category")]
+    [SerializeField] private BuildableType buildableType = BuildableType.Standard;
 
-    [SerializeField] private PlayerResources playerResources; 
-    
-    [Header("Build Requirements")]
-    [SerializeField] private ResourceCost requiredResource;
-    [SerializeField] private GameObject prefabToSpawn;
+    [Header("Unique / Custom Options")]
+    [Tooltip("Options specific to this buildable base. For CampShop or Workshop, assign their build options here.")]
+    [SerializeField] private List<BuildableOption> customBuildableOptions = new List<BuildableOption>();
+
+    [Header("Spawn Position (Optional)")]
+    [SerializeField] private Transform spawnLocation;
+
+    public BuildableType Type => buildableType;
+    public List<BuildableOption> CustomOptions => customBuildableOptions;
+    public Transform SpawnLocation => spawnLocation != null ? spawnLocation : transform;
 
     public override void Activate()
     {
-        if (playerResources == null)
+        if (GameManager.Instance != null && GameManager.Instance.uiController != null)
         {
-            Debug.Log("PlayerResources is null on ItemBuildable");
-            return;
-        }
-
-        if (playerResources == null)
-        {
-            Debug.LogError("PlayerResources not found in the scene!");
-            return;
-        }
-
-        if (playerResources.SpendResource(requiredResource.resourceType, requiredResource.amount))
-        {
-            Debug.Log($"Successfully built using {requiredResource.amount} {requiredResource.resourceType}");
-
-        if (prefabToSpawn != null)
-            {
-                Instantiate(prefabToSpawn, transform.position, transform.rotation);
-            }
-        
-            gameObject.SetActive(false);
+            GameManager.Instance.uiController.ShowBuildPanel(this);
         }
         else
         {
-            Debug.Log($"Cannot build: Missing {requiredResource.amount} {requiredResource.resourceType}");
+            UIController ui = FindAnyObjectByType<UIController>();
+            if (ui != null)
+            {
+                ui.ShowBuildPanel(this);
+            }
         }
+    }
+
+    public void OnBuildingConstructed(BuildableOption option, GameObject spawnedInstance)
+    {
+        Debug.Log($"Constructed {option.title} at {gameObject.name}");
+        gameObject.SetActive(false);
     }
 }
