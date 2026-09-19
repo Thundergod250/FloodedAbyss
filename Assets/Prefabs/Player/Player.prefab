@@ -275,8 +275,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 103844a203ad09d4281f5a6c9c2bbf3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResourceManager
-  stoneText: {fileID: 0}
-  stoneTextAdd: {fileID: 0}
+  EvtOnResourceChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &5011022331939074706
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -291,12 +292,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStamina
   maxStamina: 100
   currentStamina: 100
-  regenRate: 1
-  runStartCost: 20
-  runDrain: 5
-  jumpCost: 20
-  swimDrain: 5
-  exhaustionDelay: 5
+  regenRate: 15
+  runDrain: 45
+  jumpCost: 40
+  swimDrain: 15
+  exhaustionDelay: 1
   exhaustionSpeedMultiplier: 0.5
 --- !u!114 &3202337842524963063
 MonoBehaviour:

@@ -8,7 +8,6 @@ public class PlayerStamina : MonoBehaviour
     [SerializeField] private float regenRate = 1f;
 
     [Header("Cost")]
-    [SerializeField] private float runStartCost = 20f;
     [SerializeField] private float runDrain = 5f;
     [SerializeField] private float jumpCost = 20f;
     [SerializeField] private float swimDrain = 5f;
@@ -47,15 +46,6 @@ public class PlayerStamina : MonoBehaviour
 
         currentStamina += regenRate * Time.deltaTime;
         currentStamina = Mathf.Min(currentStamina, maxStamina);
-    }
-
-    public bool StartRunning()
-    {
-        if (exhausted || currentStamina < runStartCost)
-            return false;
-
-        currentStamina -= runStartCost;
-        return true;
     }
 
     public void DrainRunning()
