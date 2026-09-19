@@ -57,6 +57,4 @@ public class PlayerController : MonoBehaviour
             Cursor.visible = true;
         }
     }
-
-    public void SetInteractionUI(bool isVisible) => GameManager.Instance.uiController?.ToggleInteractionPrompt(isVisible);
 }

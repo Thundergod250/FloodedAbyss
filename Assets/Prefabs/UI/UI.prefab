@@ -150,6 +150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIInteraction
   interactionPanel: {fileID: 3506447074658584587}
+  interactionText: {fileID: 2904142849303462002}
 --- !u!114 &3149196648438469127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1573,11 +1574,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Interaction Panel
       objectReference: {fileID: 0}
+    - target: {fileID: 6899741034731473690, guid: bc47751b6185a7141b2ade5dc5f4bdb6, type: 3}
+      propertyPath: m_text
+      value: Press F to Respect
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bc47751b6185a7141b2ade5dc5f4bdb6, type: 3}
+--- !u!114 &2904142849303462002 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6899741034731473690, guid: bc47751b6185a7141b2ade5dc5f4bdb6, type: 3}
+  m_PrefabInstance: {fileID: 8614642142803020648}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1 &3506447074658584587 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5126288708803871587, guid: bc47751b6185a7141b2ade5dc5f4bdb6, type: 3}

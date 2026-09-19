@@ -3,25 +3,22 @@ using UnityEngine.Events;
 
 public class Interactables : MonoBehaviour
 {
+    [Header("UI Message")]
+    public string interactionMessage; 
+
     [Header("Interaction Settings")]
     [SerializeField] private UnityEvent onInteract;
 
     private Item item;
 
-    private void Awake()
-    {
-        item = GetComponent<Item>();
-    }
+    private void Awake() => item = GetComponent<Item>();
 
     public virtual void Interact()
     {
-
         onInteract?.Invoke();
         Debug.Log($"Interacted with {gameObject.name}");
 
-        if (item != null)
-        {
+        if (item != null) 
             item.Activate();
-        }
     }
 }

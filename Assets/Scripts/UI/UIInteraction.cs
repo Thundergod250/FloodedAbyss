@@ -4,7 +4,7 @@ using UnityEngine;
 public class UIInteraction : MonoBehaviour
 {
     [SerializeField] private GameObject interactionPanel;
-    [SerializeField] private TextMeshPro interactionText;
+    [SerializeField] private TextMeshProUGUI interactionText;
 
     public void SetUIActive(bool isActive)
     {

@@ -8,41 +8,29 @@ public class PlayerInteraction : MonoBehaviour
     [SerializeField] private LayerMask interactableLayer = ~0; // Default: All layers
 
     [Header("Input Stuff")]
-    private PlayerController controller;
-
     private PlayerController playerController;
     private Interactables currentInteractable;
 
     private void Awake()
     {
         playerController = GetComponent<PlayerController>();
-
-        if (playerCamera == null)
-        {
-            playerCamera = GetComponentInChildren<Camera>();
-        }
-
-        if (controller == null)
-        {
-            controller = GetComponent<PlayerController>();
-        }
     }
 
     private void Start()
     {
-        if (controller != null)
+        if (playerController != null)
         {
-            controller.UseAction.started += UseItem;
-            controller.InteractAction.started += Interact;
+            playerController.UseAction.started += UseItem;
+            playerController.InteractAction.started += Interact;
         }
     }
 
     private void OnDestroy()
     {
-        if (controller != null)
+        if (playerController != null)
         {
-            controller.UseAction.started -= UseItem;
-            controller.InteractAction.started -= UseItem;
+            playerController.UseAction.started -= UseItem;
+            playerController.InteractAction.started -= Interact; // Fixed unsubscribing the correct action
         }
     }
 
@@ -50,20 +38,26 @@ public class PlayerInteraction : MonoBehaviour
     {
         CheckForInteractable();
     }
+
     private void CheckForInteractable()
     {
         Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
 
         if (Physics.Raycast(ray, out RaycastHit hit, rayDistance, interactableLayer))
         {
-            Interactables interactable = hit.collider.GetComponent<Interactables>();
+            Interactables interactable = hit.collider.GetComponentInParent<Interactables>();
+            if (interactable == null)
+            {
+                interactable = hit.collider.GetComponent<Interactables>();
+            }
 
             if (interactable != null)
             {
                 if (currentInteractable != interactable)
                 {
                     currentInteractable = interactable;
-                    playerController.SetInteractionUI(true);
+                    GameManager.Instance.uiController?.ToggleInteractionPrompt(true);
+                    GameManager.Instance.uiController?.uiInteraction.SetText(currentInteractable.interactionMessage); 
                 }
                 return;
             }
@@ -72,7 +66,7 @@ public class PlayerInteraction : MonoBehaviour
         if (currentInteractable != null)
         {
             currentInteractable = null;
-            playerController.SetInteractionUI(false);
+            GameManager.Instance.uiController?.ToggleInteractionPrompt(false);
         }
     }
 
@@ -83,9 +77,7 @@ public class PlayerInteraction : MonoBehaviour
 
     private void Interact(InputAction.CallbackContext context)
     {
-        if (currentInteractable != null)
-        {
+        if (currentInteractable != null) 
             currentInteractable.Interact();
-        }
     }
 }
