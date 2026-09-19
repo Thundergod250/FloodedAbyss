@@ -47,14 +47,12 @@ public class PlayerController : MonoBehaviour
         if (active)
         {
             playerInput.actions.Enable();
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            Debug.LogWarning("INPUT ACTION ENABLED");
         }
         else
         {
             playerInput.actions.Disable();
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            Debug.LogWarning("INPUT ACTION DISABLED");
         }
     }
 }

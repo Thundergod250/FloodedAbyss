@@ -82,7 +82,7 @@ public class UIController : MonoBehaviour
 
         // 3. Centralized Cursor & Player Input Control
         bool isGameplay = (newState == UIState.HUD);
-        SetCursorState(!isGameplay);
+        SetCursorState(isGameplay);
 
         if (playerController != null)
             playerController.SetInputActive(isGameplay);
