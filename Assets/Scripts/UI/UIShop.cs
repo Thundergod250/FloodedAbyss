@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-public class ShopUI : MonoBehaviour
+public class UIShop : UiModals
 {
     [Header("Upgrade Cost Settings")]
     [SerializeField] private ResourceType costResourceType = ResourceType.Stone;
@@ -53,6 +53,14 @@ public class ShopUI : MonoBehaviour
         else
         {
             Debug.Log("Not enough resources for upgrade!");
+        }
+    }
+
+    public void CloseShop()
+    {
+        if (GameManager.Instance != null && GameManager.Instance.uiController != null)
+        {
+            GameManager.Instance.uiController.CloseAllModals();
         }
     }
 

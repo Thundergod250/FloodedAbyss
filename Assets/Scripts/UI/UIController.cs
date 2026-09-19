@@ -1,83 +1,101 @@
+using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 
 public class UIController : MonoBehaviour
 {
+    public enum UIState
+    {
+        HUD,
+        Dialogue,
+        Shop,
+        Crafting,
+        Building
+    }
+
+    [System.Serializable]
+    public struct ModalReference
+    {
+        public UIState state;
+        public UiModals modalScript;
+    }
+
+    [Header("Dependencies")]
+    [SerializeField] private PlayerController playerController;
+
+    [Header("UI Modals Mapping")]
+    [SerializeField] private List<ModalReference> modalList;
+
+    [Header("Persistent UI References")]
     public UIInteraction uiInteraction;
-    public GameObject dialoguePanel;
-    public TextMeshProUGUI dialogueTextComponent;
-    public GameObject shopPanel;
-    public GameObject craftingPanel;
     public UINotification notificationPanel;
+    public UIHUD UIHUD;
+
+    private Dictionary<UIState, UiModals> modalDictionary;
+    private UIState currentState = UIState.HUD;
+
+    private void Awake()
+    {
+        InitializeDictionary();
+    }
+
+    private void Start()
+    {
+        OpenModal(UIState.HUD);
+    }
+
+    private void InitializeDictionary()
+    {
+        modalDictionary = new Dictionary<UIState, UiModals>();
+
+        foreach (var item in modalList)
+        {
+            if (item.modalScript != null && !modalDictionary.ContainsKey(item.state))
+            {
+                modalDictionary.Add(item.state, item.modalScript);
+            }
+        }
+    }
     
-    private PlayerController playerController;
-
-    private PlayerController GetPlayerController()
+    /// Centralized function to change UI state.
+    /// Hides all other panels, opens target state, manages cursor and player inputs.
+    public void OpenModal(UIState newState)
     {
-        if (playerController == null)
+        currentState = newState;
+
+        // 1. Close ALL registered modal panels via their helper method
+        foreach (var modal in modalDictionary.Values)
         {
-            if (GameManager.Instance != null && GameManager.Instance.playerController != null)
-                playerController = GameManager.Instance.playerController;
-            else
-                playerController = FindAnyObjectByType<PlayerController>();
+            if (modal != null)
+            {
+                modal.SetModalActive(false);
+            }
         }
-        return playerController;
-    }
 
-    public void ToggleInteractionPrompt(bool isVisible)
-    {
-        if (uiInteraction != null) 
-            uiInteraction.SetUIActive(isVisible);
-    }
-
-    public void ShowDialogue(string text)
-    {
-        if (dialoguePanel != null) dialoguePanel.SetActive(true);
-        if (dialogueTextComponent != null) dialogueTextComponent.text = text;
-    }
-
-    public void HideDialogue()
-    {
-        if (dialoguePanel != null) dialoguePanel.SetActive(false);
-    }
-
-    public void ShowShop()
-    {
-        if (shopPanel != null) shopPanel.SetActive(true);
-
-        PlayerController pc = GetPlayerController();
-        if (pc != null)
+        // 2. Open ONLY the target modal/HUD state
+        if (modalDictionary.TryGetValue(newState, out UiModals targetModal))
         {
-            pc.SetInputActive(false);
+            if (targetModal != null)
+            {
+                targetModal.SetModalActive(true);
+            }
         }
+
+        // 3. Centralized Cursor & Player Input Control
+        bool isGameplay = (newState == UIState.HUD);
+        SetCursorState(!isGameplay);
+
+        if (playerController != null)
+            playerController.SetInputActive(isGameplay);
     }
 
-    public void HideShop()
+    private void SetCursorState(bool showCursor)
     {
-        if (shopPanel != null) shopPanel.SetActive(false);
-
-        PlayerController pc = GetPlayerController();
-        if (pc != null)
-        {
-            pc.SetInputActive(true);
-        }
+        Cursor.visible = showCursor;
+        Cursor.lockState = showCursor ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
-    public void ShowCrafting()
+    public void CloseAllModals()
     {
-        if (craftingPanel != null) craftingPanel.SetActive(true);
-
-        PlayerController pc = GetPlayerController();
-        if (pc != null) 
-            pc.SetInputActive(false);
-    }
-
-    public void HideCrafting()
-    {
-        if (craftingPanel != null) craftingPanel.SetActive(false);
-
-        PlayerController pc = GetPlayerController();
-        if (pc != null) 
-            pc.SetInputActive(true);
+        OpenModal(UIState.HUD);
     }
 }
