@@ -45,16 +45,8 @@ public class PlayerController : MonoBehaviour
     public void SetInputActive(bool active)
     {
         if (active)
-        {
             playerInput.actions.Enable();
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
         else
-        {
             playerInput.actions.Disable();
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
     }
 }

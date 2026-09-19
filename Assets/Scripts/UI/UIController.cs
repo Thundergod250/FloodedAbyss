@@ -5,7 +5,7 @@ public class UIController : MonoBehaviour
 {
     public enum UIState
     {
-        HuD,
+        HUD,
         Dialogue,
         Shop,
         Crafting,
@@ -31,7 +31,7 @@ public class UIController : MonoBehaviour
     public UIHUD UIHUD;
 
     private Dictionary<UIState, UiModals> modalDictionary;
-    private UIState currentState = UIState.HuD;
+    private UIState currentState = UIState.HUD;
 
     private void Awake()
     {
@@ -40,7 +40,7 @@ public class UIController : MonoBehaviour
 
     private void Start()
     {
-        OpenModal(UIState.HuD);
+        OpenModal(UIState.HUD);
     }
 
     private void InitializeDictionary()
@@ -62,30 +62,27 @@ public class UIController : MonoBehaviour
     {
         currentState = newState;
 
-        // 1. Close ALL registered modal panels
+        // 1. Close ALL registered modal panels via their helper method
         foreach (var modal in modalDictionary.Values)
         {
             if (modal != null)
             {
-                modal.gameObject.SetActive(false);
+                modal.SetModalActive(false);
             }
         }
 
-        // 2. Open ONLY the target modal when not in HuD mode
-        if (newState != UIState.HuD)
+        // 2. Open ONLY the target modal/HUD state
+        if (modalDictionary.TryGetValue(newState, out UiModals targetModal))
         {
-            if (modalDictionary.TryGetValue(newState, out UiModals targetModal))
+            if (targetModal != null)
             {
-                if (targetModal != null)
-                {
-                    targetModal.gameObject.SetActive(true);
-                }
+                targetModal.SetModalActive(true);
             }
         }
 
         // 3. Centralized Cursor & Player Input Control
-        bool isGameplay = (newState == UIState.HuD);
-        SetCursorState(!isGameplay);
+        bool isGameplay = (newState == UIState.HUD);
+        SetCursorState(isGameplay);
 
         if (playerController != null)
             playerController.SetInputActive(isGameplay);
@@ -99,6 +96,6 @@ public class UIController : MonoBehaviour
 
     public void CloseAllModals()
     {
-        OpenModal(UIState.HuD);
+        OpenModal(UIState.HUD);
     }
 }
