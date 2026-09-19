@@ -97,18 +97,6 @@ public class UIController : MonoBehaviour
         Cursor.lockState = showCursor ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
-    public T GetModal<T>() where T : UiModals
-    {
-        foreach (var modal in modalDictionary.Values)
-        {
-            if (modal is T typedModal)
-            {
-                return typedModal;
-            }
-        }
-        return null;
-    }
-
     public void CloseAllModals()
     {
         OpenModal(UIState.HuD);
