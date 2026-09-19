@@ -54,7 +54,7 @@ public class AutoMiner : MonoBehaviour
 
     public float CalculateProductivityMultiplier()
     {
-        float staffingRate = maxWorkerCapacity > 0 ? (float)assignedWorkers / maxWorkerCapacity: 1f;
+        float staffingRate = maxWorkerCapacity > 0 ? (float)assignedWorkers / maxWorkerCapacity : 1f;
 
         float globalHappinessMultiplier = GetGlobalHappinessMultiplier();
 

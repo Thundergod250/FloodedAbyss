@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-public class ShopUI : MonoBehaviour
+public class UIShop : UiModals
 {
     [Header("Upgrade Cost Settings")]
     [SerializeField] private ResourceType costResourceType = ResourceType.Stone;

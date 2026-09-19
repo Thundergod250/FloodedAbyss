@@ -56,7 +56,7 @@ public class PlayerInteraction : MonoBehaviour
                 if (currentInteractable != interactable)
                 {
                     currentInteractable = interactable;
-                    GameManager.Instance.uiController?.ToggleInteractionPrompt(true);
+                    GameManager.Instance.uiController?.UIHUD.UIInteraction.SetPrompt(true); 
                     GameManager.Instance.uiController?.uiInteraction.SetText(currentInteractable.interactionMessage); 
                 }
                 return;
@@ -66,7 +66,7 @@ public class PlayerInteraction : MonoBehaviour
         if (currentInteractable != null)
         {
             currentInteractable = null;
-            GameManager.Instance.uiController?.ToggleInteractionPrompt(false);
+            GameManager.Instance.uiController?.UIHUD.UIInteraction.SetPrompt(false); 
         }
     }
 

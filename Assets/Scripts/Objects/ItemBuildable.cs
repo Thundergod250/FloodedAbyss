@@ -40,14 +40,14 @@ public class ItemBuildable : Item
     {
         if (GameManager.Instance != null && GameManager.Instance.uiController != null)
         {
-            GameManager.Instance.uiController.ShowBuildPanel(this);
+            GameManager.Instance.uiController.OpenModal(UIController.UIState.Building);
         }
         else
         {
             UIController ui = FindAnyObjectByType<UIController>();
             if (ui != null)
             {
-                ui.ShowBuildPanel(this);
+                GameManager.Instance.uiController.OpenModal(UIController.UIState.Building);
             }
         }
     }
