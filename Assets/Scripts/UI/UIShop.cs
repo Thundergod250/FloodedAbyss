@@ -56,6 +56,14 @@ public class UIShop : UiModals
         }
     }
 
+    public void CloseShop()
+    {
+        if (GameManager.Instance != null && GameManager.Instance.uiController != null)
+        {
+            GameManager.Instance.uiController.CloseAllModals();
+        }
+    }
+
     private int GetCurrentCost()
     {
         return baseCost + (currentUpgradeLevel * costIncreasePerLevel);

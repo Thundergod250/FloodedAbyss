@@ -6,25 +6,18 @@ public class ShopNPC : Item
 
     public override void Activate()
     {
-        if (!isShopOpen)
+        if (GameManager.Instance != null && GameManager.Instance.uiController != null)
         {
-            OpenShop();
+            if (!isShopOpen)
+            {
+                isShopOpen = true;
+                GameManager.Instance.uiController.OpenModal(UIController.UIState.Shop);
+            }
+            else
+            {
+                isShopOpen = false;
+                GameManager.Instance.uiController.CloseAllModals();
+            }
         }
-        else
-        {
-            CloseShop();
-        }
-    }
-
-    private void OpenShop()
-    {
-        isShopOpen = true;
-        GameManager.Instance.uiController?.CloseAllModals();
-    }
-
-    public void CloseShop()
-    {
-        isShopOpen = false;
-        GameManager.Instance.uiController?.CloseAllModals();
     }
 }

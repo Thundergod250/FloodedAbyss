@@ -23,36 +23,33 @@ public class BuildableOption
 public class ItemBuildable : Item
 {
     [Header("Buildable Category")]
-    [SerializeField] private BuildableType buildableType = BuildableType.Standard;
+    [SerializeField] protected BuildableType buildableType = BuildableType.Standard;
 
-    [Header("Unique / Custom Options")]
-    [Tooltip("Options specific to this buildable base. For CampShop or Workshop, assign their build options here.")]
-    [SerializeField] private List<BuildableOption> customBuildableOptions = new List<BuildableOption>();
+    [Header("Buildable Options")]
+    [SerializeField] protected List<BuildableOption> buildableOptions = new List<BuildableOption>();
 
     [Header("Spawn Position (Optional)")]
-    [SerializeField] private Transform spawnLocation;
+    [SerializeField] protected Transform spawnLocation;
 
     public BuildableType Type => buildableType;
-    public List<BuildableOption> CustomOptions => customBuildableOptions;
+    public List<BuildableOption> CustomOptions => buildableOptions;
     public Transform SpawnLocation => spawnLocation != null ? spawnLocation : transform;
 
     public override void Activate()
     {
-        if (GameManager.Instance != null && GameManager.Instance.uiController != null)
+        UIBuildPanel buildPanel = FindFirstObjectByType<UIBuildPanel>(FindObjectsInactive.Include);
+
+        if (buildPanel != null)
+        {
+            buildPanel.OpenPanel(this);
+        }
+        else if (GameManager.Instance != null && GameManager.Instance.uiController != null)
         {
             GameManager.Instance.uiController.OpenModal(UIController.UIState.Building);
         }
-        else
-        {
-            UIController ui = FindAnyObjectByType<UIController>();
-            if (ui != null)
-            {
-                GameManager.Instance.uiController.OpenModal(UIController.UIState.Building);
-            }
-        }
     }
 
-    public void OnBuildingConstructed(BuildableOption option, GameObject spawnedInstance)
+    public virtual void OnBuildingConstructed(BuildableOption option, GameObject spawnedInstance)
     {
         Debug.Log($"Constructed {option.title} at {gameObject.name}");
         gameObject.SetActive(false);
