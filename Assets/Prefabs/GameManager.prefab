@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 5441983127171556320}
   - component: {fileID: 4102502547340865364}
   - component: {fileID: 6157991707012487289}
-  - component: {fileID: 6523679944123705603}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -64,7 +63,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterLevel
   waterLevelTransform: {fileID: 0}
-  upwardForce: 10
+  floatDepth: 2
+  floatForce: 10
+  waterGravity: -10
+  minimumFloatDepth: 0
+  buildingsToRaise: []
+  heightChangePerStage: 5
+  moveSpeed: 2
 --- !u!114 &6157991707012487289
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78,24 +83,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectPooling
   ParentObject: {fileID: 0}
---- !u!114 &6523679944123705603
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8026546904625221826}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1486aa0578c492c4abda3418a0cd3d57, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameStateManager
-  rocksToDestroy:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  rockRequiredToDestroy: 3
-  cathedral: {fileID: 0}
-  cathedralHeightIncrease: 5

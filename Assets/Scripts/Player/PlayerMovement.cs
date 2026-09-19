@@ -39,6 +39,8 @@ public class PlayerMovement : MonoBehaviour
     {
         wLevel = GameManager.Instance.GetComponent<WaterLevel>();
 
+        velocity.y = -2f;
+
         if (controller != null && controller.JumpAction != null)
         {
             controller.JumpAction.started += Jump;
@@ -114,7 +116,9 @@ public class PlayerMovement : MonoBehaviour
             velocity.y = -2f;
         }
 
-        velocity.y += gravity * Time.deltaTime;
+        velocity.y += gravity * Time.deltaTime; 
+        velocity.y = Mathf.Max(velocity.y, -12.81f);
+
         characterController.Move(velocity * Time.deltaTime);
     }
 

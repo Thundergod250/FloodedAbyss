@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +10,7 @@ public class WaterForecast : MonoBehaviour
     [Header("UI")]
     [SerializeField] private Image currentTimeline;
     [SerializeField] private Image timeline;
+    [SerializeField] private TextMeshProUGUI waterLevelText;
 
     [Header("Timer")]
     [SerializeField] private float timer;
@@ -24,6 +27,11 @@ public class WaterForecast : MonoBehaviour
         StartCoroutine(ProgressTimeline());
     }
 
+    private void Update()
+    {
+        waterLevelText.text = level.waterLevelTransform.transform.position.y.ToString() + "m";
+    }
+
     private IEnumerator ProgressTimeline()
     {
         float elapsed = 0f;
@@ -37,11 +45,11 @@ public class WaterForecast : MonoBehaviour
             RectTransform timelineRect = timeline.rectTransform;
             RectTransform currentRect = currentTimeline.rectTransform;
 
-            float startX = 0f;
-            float endX = timelineRect.rect.width;
+            float startY = 0f;
+            float endY = timelineRect.rect.height;
 
             Vector2 position = currentRect.anchoredPosition;
-            position.x = Mathf.Lerp(startX, endX, progress);
+            position.y = Mathf.Lerp(startY, endY, progress);
 
             currentRect.anchoredPosition = position;
 
@@ -55,7 +63,7 @@ public class WaterForecast : MonoBehaviour
     {
         foreach (Image eventpoint in eventpoints)
         {
-            if (Mathf.Abs(currentTimeline.rectTransform.anchoredPosition.x - eventpoint.rectTransform.anchoredPosition.x) < 1f) // if distance is below 1
+            if (Mathf.Abs(currentTimeline.rectTransform.anchoredPosition.y - eventpoint.rectTransform.anchoredPosition.y) < 1f) // if distance is below 1
             {
                 Debug.Log("Current timeline reached breakpoint: " + eventpoint.name);
 
