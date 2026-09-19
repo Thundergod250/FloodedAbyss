@@ -85,14 +85,6 @@ public class PlayerMovement : MonoBehaviour
         {
             bool running = controller.RunAction.IsPressed();
 
-            if (running && !wasRunning)
-            {
-                if (!stamina.StartRunning())
-                {
-                    running = false;
-                }
-            }
-
             if (running && !stamina.IsExhausted)
             {
                 currentSpeed = runSpeed;

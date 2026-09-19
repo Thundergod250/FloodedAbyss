@@ -194,7 +194,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UINotification
   containerParent: {fileID: 5434038190821661683}
   panelPrefab: {fileID: 4918986809270964285, guid: 1c165db6509551a4f98df7d162b0a1ab, type: 3}
-  maxVisiblePanels: 5
   enableSelfTesting: 0
   testSpawnInterval: 0.8
 --- !u!1001 &1417070638215148741
@@ -291,7 +290,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2644281949030489348, guid: 5ad1a9a128e74c74d818e975a6f17d19, type: 3}
       propertyPath: m_fontSize
-      value: 70.6
+      value: 71.1
       objectReference: {fileID: 0}
     - target: {fileID: 7360257280719196426, guid: 5ad1a9a128e74c74d818e975a6f17d19, type: 3}
       propertyPath: m_Name
@@ -553,8 +552,12 @@ PrefabInstance:
       value: HUD
       objectReference: {fileID: 0}
     - target: {fileID: 1302339440418125649, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -27.800049
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1302339440418125649, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3491357390702125011, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
       propertyPath: m_Pivot.x
@@ -644,21 +647,13 @@ PrefabInstance:
       propertyPath: m_HandleRect
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 6479272046965878740, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1.0024165
+    - target: {fileID: 4900853359401099162, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6479272046965878740, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.0024165
-      objectReference: {fileID: 0}
-    - target: {fileID: 6479272046965878740, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1.0024165
-      objectReference: {fileID: 0}
-    - target: {fileID: 6479272046965878740, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -26.199951
+    - target: {fileID: 4900853359401099162, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9191411646062376718, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
       propertyPath: m_Value
