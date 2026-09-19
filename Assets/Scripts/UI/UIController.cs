@@ -62,23 +62,23 @@ public class UIController : MonoBehaviour
     {
         currentState = newState;
 
-        // 1. Close ALL registered modal panels
+        // 1. Close ALL registered modal panels via their helper method
         foreach (var modal in modalDictionary.Values)
         {
             if (modal != null)
             {
-                modal.gameObject.SetActive(false);
+                modal.SetModalActive(false);
             }
         }
 
-        // 2. Open ONLY the target modal when not in HuD mode
+        // 2. Open ONLY the target modal when not in HUD mode
         if (newState != UIState.HUD)
         {
             if (modalDictionary.TryGetValue(newState, out UiModals targetModal))
             {
                 if (targetModal != null)
                 {
-                    targetModal.gameObject.SetActive(true);
+                    targetModal.SetModalActive(true);
                 }
             }
         }
@@ -95,18 +95,6 @@ public class UIController : MonoBehaviour
     {
         Cursor.visible = showCursor;
         Cursor.lockState = showCursor ? CursorLockMode.None : CursorLockMode.Locked;
-    }
-
-    public T GetModal<T>() where T : UiModals
-    {
-        foreach (var modal in modalDictionary.Values)
-        {
-            if (modal is T typedModal)
-            {
-                return typedModal;
-            }
-        }
-        return null;
     }
 
     public void CloseAllModals()
