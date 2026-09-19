@@ -71,15 +71,12 @@ public class UIController : MonoBehaviour
             }
         }
 
-        // 2. Open ONLY the target modal when not in HUD mode
-        if (newState != UIState.HUD)
+        // 2. Open ONLY the target modal/HUD state
+        if (modalDictionary.TryGetValue(newState, out UiModals targetModal))
         {
-            if (modalDictionary.TryGetValue(newState, out UiModals targetModal))
+            if (targetModal != null)
             {
-                if (targetModal != null)
-                {
-                    targetModal.SetModalActive(true);
-                }
+                targetModal.SetModalActive(true);
             }
         }
 
