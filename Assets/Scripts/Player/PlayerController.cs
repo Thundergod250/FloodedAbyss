@@ -45,14 +45,8 @@ public class PlayerController : MonoBehaviour
     public void SetInputActive(bool active)
     {
         if (active)
-        {
             playerInput.actions.Enable();
-            Debug.LogWarning("INPUT ACTION ENABLED");
-        }
         else
-        {
             playerInput.actions.Disable();
-            Debug.LogWarning("INPUT ACTION DISABLED");
-        }
     }
 }
