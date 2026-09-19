@@ -27,21 +27,6 @@ public class PlayerController : MonoBehaviour
         RunAction = playerInput.actions["Run"];
     }
 
-    private void Start()
-    {
-        SetInputActive(true);
-    }
-
-    private void OnEnable()
-    {
-        playerInput.actions.Enable();
-    }
-
-    private void OnDisable()
-    {
-        playerInput.actions.Disable();
-    }
-
     public void SetInputActive(bool active)
     {
         if (active)
