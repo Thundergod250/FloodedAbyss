@@ -3,14 +3,15 @@ using TMPro;
 
 public class UIController : MonoBehaviour
 {
+    [Header("Persistent UI")]
     public UIInteraction uiInteraction;
+    public UINotification notificationPanel;
+    
+    [Header("Modals")]
     public GameObject dialoguePanel;
-    public TextMeshProUGUI dialogueTextComponent;
     public GameObject shopPanel;
     public GameObject craftingPanel;
-    public UINotification notificationPanel;
-
-    [Header("Build System")]
+    public TextMeshProUGUI dialogueTextComponent;
     public GameObject buildPanel;
     private BuildPanelUI buildPanelUI;
 
