@@ -8,12 +8,6 @@ public class WaterLevel : MonoBehaviour
     [Header("Water Surface Reference")]
     public Transform waterLevelTransform;
 
-    [Header("Swimming Settings")]
-    public float floatDepth = 2;
-    public float floatForce = 10;
-    public float waterGravity = -10f;
-    public float minimumFloatDepth = 0;
-
     [Header("Draining / Rising Structures")]
     [SerializeField] private Transform[] buildingsToRaise;
     [SerializeField] private float heightChangePerStage = 5f;

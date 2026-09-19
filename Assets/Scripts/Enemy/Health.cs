@@ -16,6 +16,7 @@ public class Health : MonoBehaviour
     [SerializeField] private int currentHealth;
 
     [Header("Events")]
+    public UnityEvent EvtOnHit;
     public UnityEvent EvtOnDied;
 
     public int MaxHealth => maxHealth;
@@ -34,6 +35,8 @@ public class Health : MonoBehaviour
 
         currentHealth -= damage;
         currentHealth = Mathf.Max(currentHealth, 0);
+
+        EvtOnHit?.Invoke();
 
         if (currentHealth <= 0)
         {
