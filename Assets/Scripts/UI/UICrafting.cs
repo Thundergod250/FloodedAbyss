@@ -1,12 +1,12 @@
 using UnityEngine;
 using TMPro;
 
-public class CraftingUI : MonoBehaviour
+public class UICrafting : UiModals
 {
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI statusText;
 
-    public void CloseCraftingMenu() => GameManager.Instance.uiController?.HideCrafting();
+    //public void CloseCraftingMenu() => GameManager.Instance.uiController?.HideCrafting();
 
     public void CraftPlaceholderItem(string itemName)
     {

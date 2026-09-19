@@ -28,13 +28,13 @@ public class NPC : Item
     private void OpenDialogue()
     {
         isTalking = true;
-        GameManager.Instance.uiController?.ShowDialogue(dialogueMessage);
+        //GameManager.Instance.uiController?.ShowDialogue(dialogueMessage);
     }
 
     private void CloseDialogue()
     {
         isTalking = false;
-        GameManager.Instance.uiController?.HideDialogue();
+        GameManager.Instance.uiController?.CloseAllModals();
         StartCoroutine(CooldownRoutine());
     }
 

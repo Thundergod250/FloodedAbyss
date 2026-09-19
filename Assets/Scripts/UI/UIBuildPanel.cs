@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BuildPanelUI : MonoBehaviour
+public class UIBuildPanel : UiModals
 {
     [Header("UI Containers")]
     [SerializeField] private Transform cardContainer;
@@ -23,16 +23,19 @@ public class BuildPanelUI : MonoBehaviour
     public void OpenPanel(ItemBuildable buildableBase)
     {
         currentBuildableBase = buildableBase;
-        gameObject.SetActive(true);
         PopulateCards();
+
+        if (GameManager.Instance != null && GameManager.Instance.uiController != null)
+        {
+            GameManager.Instance.uiController.OpenModal(UIController.UIState.Building);
+        }
     }
 
     public void ClosePanel()
     {
-        gameObject.SetActive(false);
         if (GameManager.Instance != null && GameManager.Instance.uiController != null)
         {
-            GameManager.Instance.uiController.HideBuildPanel();
+            GameManager.Instance.uiController.CloseAllModals();
         }
     }
 

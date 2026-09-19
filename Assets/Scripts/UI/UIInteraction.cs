@@ -17,4 +17,10 @@ public class UIInteraction : MonoBehaviour
         if (interactionText != null) 
             interactionText.text = text;
     }
+    
+    public void SetPrompt(bool isActive, string text = "")
+    {
+        SetText(text);
+        SetUIActive(isActive);
+    }
 }

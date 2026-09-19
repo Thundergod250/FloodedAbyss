@@ -13,9 +13,9 @@ public class BuildCardUI : MonoBehaviour
 
     private BuildableOption currentOption;
     private ItemBuildable activeBuildableBase;
-    private BuildPanelUI parentPanel;
+    private UIBuildPanel parentPanel;
 
-    public void SetupCard(BuildableOption option, ItemBuildable buildableBase, BuildPanelUI panel)
+    public void SetupCard(BuildableOption option, ItemBuildable buildableBase, UIBuildPanel panel)
     {
         currentOption = option;
         activeBuildableBase = buildableBase;
