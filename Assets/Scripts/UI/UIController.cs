@@ -5,7 +5,7 @@ public class UIController : MonoBehaviour
 {
     public enum UIState
     {
-        HuD,
+        HUD,
         Dialogue,
         Shop,
         Crafting,
@@ -31,7 +31,7 @@ public class UIController : MonoBehaviour
     public UIHUD UIHUD;
 
     private Dictionary<UIState, UiModals> modalDictionary;
-    private UIState currentState = UIState.HuD;
+    private UIState currentState = UIState.HUD;
 
     private void Awake()
     {
@@ -40,7 +40,7 @@ public class UIController : MonoBehaviour
 
     private void Start()
     {
-        OpenModal(UIState.HuD);
+        OpenModal(UIState.HUD);
     }
 
     private void InitializeDictionary()
@@ -72,7 +72,7 @@ public class UIController : MonoBehaviour
         }
 
         // 2. Open ONLY the target modal when not in HuD mode
-        if (newState != UIState.HuD)
+        if (newState != UIState.HUD)
         {
             if (modalDictionary.TryGetValue(newState, out UiModals targetModal))
             {
@@ -84,7 +84,7 @@ public class UIController : MonoBehaviour
         }
 
         // 3. Centralized Cursor & Player Input Control
-        bool isGameplay = (newState == UIState.HuD);
+        bool isGameplay = (newState == UIState.HUD);
         SetCursorState(!isGameplay);
 
         if (playerController != null)
@@ -111,6 +111,6 @@ public class UIController : MonoBehaviour
 
     public void CloseAllModals()
     {
-        OpenModal(UIState.HuD);
+        OpenModal(UIState.HUD);
     }
 }
