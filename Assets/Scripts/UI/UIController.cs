@@ -9,7 +9,11 @@ public class UIController : MonoBehaviour
     public GameObject shopPanel;
     public GameObject craftingPanel;
     public UINotification notificationPanel;
-    
+
+    [Header("Build System")]
+    public GameObject buildPanel;
+    private BuildPanelUI buildPanelUI;
+
     private PlayerController playerController;
 
     private PlayerController GetPlayerController()
@@ -26,7 +30,7 @@ public class UIController : MonoBehaviour
 
     public void ToggleInteractionPrompt(bool isVisible)
     {
-        if (uiInteraction != null) 
+        if (uiInteraction != null)
             uiInteraction.SetUIActive(isVisible);
     }
 
@@ -68,7 +72,7 @@ public class UIController : MonoBehaviour
         if (craftingPanel != null) craftingPanel.SetActive(true);
 
         PlayerController pc = GetPlayerController();
-        if (pc != null) 
+        if (pc != null)
             pc.SetInputActive(false);
     }
 
@@ -77,7 +81,41 @@ public class UIController : MonoBehaviour
         if (craftingPanel != null) craftingPanel.SetActive(false);
 
         PlayerController pc = GetPlayerController();
-        if (pc != null) 
+        if (pc != null)
             pc.SetInputActive(true);
+    }
+
+    public void ShowBuildPanel(ItemBuildable buildableBase)
+    {
+        if (buildPanel != null)
+        {
+            if (buildPanelUI == null) buildPanelUI = buildPanel.GetComponent<BuildPanelUI>();
+
+            if (buildPanelUI != null)
+            {
+                buildPanelUI.OpenPanel(buildableBase);
+            }
+            else
+            {
+                buildPanel.SetActive(true);
+            }
+        }
+
+        PlayerController pc = GetPlayerController();
+        if (pc != null)
+        {
+            pc.SetInputActive(false);
+        }
+    }
+
+    public void HideBuildPanel()
+    {
+        if (buildPanel != null) buildPanel.SetActive(false);
+
+        PlayerController pc = GetPlayerController();
+        if (pc != null)
+        {
+            pc.SetInputActive(true);
+        }
     }
 }
