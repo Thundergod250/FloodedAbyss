@@ -35,15 +35,21 @@ public class UiBuilding : UiModals
                 }
             }
 
+            // Check if structure is unlocked via SkillTreeController
+            bool isUnlocked = GameManager.Instance != null &&
+                              GameManager.Instance.SkillTreeController != null &&
+                              GameManager.Instance.SkillTreeController.IsUnlocked(structure);
+
             // Local capture for the click callback
             StructureDataSO currentStructure = structure;
 
-            // Setup card UI elements and pass the build action
+            // Setup card UI elements, pass unlock status, and pass the build action
             cardInstance.SetupCard(
                 currentStructure.StructureName,
                 currentStructure.Description,
                 formattedCosts,
                 currentStructure.StructureIcon,
+                isUnlocked,
                 () => onStructureChosen?.Invoke(currentStructure)
             );
         }
