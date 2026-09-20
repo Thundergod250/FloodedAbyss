@@ -4,10 +4,9 @@ using UnityEngine;
 public class ItemBuildable : Item
 {
     [Header("Available Structures")]
-    [SerializeField] private List<StructureDataSO> availableStructures = new List<StructureDataSO>();
+    [SerializeField] private List<StructureDataSO> availableStructures = new();
 
     [Header("Spawn Settings")]
-    [Tooltip("Optional spawn point transform. If null, uses this object's position and rotation.")]
     [SerializeField] private Transform spawnPoint;
 
     private PlayerResources playerResources;
@@ -15,10 +14,8 @@ public class ItemBuildable : Item
 
     private void Start()
     {
-        if (GameManager.Instance != null && GameManager.Instance.playerController != null)
-        {
+        if (GameManager.Instance != null && GameManager.Instance.playerController != null) 
             playerResources = GameManager.Instance.playerController.PlayerResources;
-        }
     }
 
     public override void Activate()
@@ -35,9 +32,7 @@ public class ItemBuildable : Item
             buildingModal.PopulateMenu(availableStructures, OnBuildStructureSelected);
         }
         else
-        {
             Debug.LogError($"[ItemBuildable] UiBuilding modal instance not found on UIState.Building!");
-        }
     }
 
     private void OnBuildStructureSelected(StructureDataSO selectedStructure)
@@ -48,9 +43,9 @@ public class ItemBuildable : Item
             return;
         }
 
-        if (CanAfford(playerResources, selectedStructure.CostRequirements))
+        // Delegate affordability check + resource deduction to PlayerResources
+        if (playerResources.TrySpendResources(selectedStructure.CostRequirements))
         {
-            DeductResources(playerResources, selectedStructure.CostRequirements);
             BuildStructure(selectedStructure.StructurePrefab);
 
             Debug.Log($"Successfully built {selectedStructure.StructureName}!");
@@ -59,9 +54,7 @@ public class ItemBuildable : Item
             gameObject.SetActive(false);
         }
         else
-        {
             Debug.LogWarning($"Cannot build {selectedStructure.StructureName}: Insufficient resources!");
-        }
     }
 
     private void BuildStructure(GameObject prefabToSpawn)
@@ -86,27 +79,5 @@ public class ItemBuildable : Item
         }
 
         gameObject.SetActive(true);
-    }
-
-    private bool CanAfford(PlayerResources playerResources, IReadOnlyList<StructureDataSO.ResourceRequirement> requirements)
-    {
-        if (requirements == null) return true;
-
-        foreach (var req in requirements)
-        {
-            if (playerResources.GetResource(req.resourceType) < req.amount)
-                return false;
-        }
-        return true;
-    }
-
-    private void DeductResources(PlayerResources playerResources, IReadOnlyList<StructureDataSO.ResourceRequirement> requirements)
-    {
-        if (requirements == null) return;
-
-        foreach (var req in requirements)
-        {
-            playerResources.SpendResource(req.resourceType, req.amount);
-        }
     }
 }
