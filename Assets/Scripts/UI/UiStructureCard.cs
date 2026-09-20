@@ -19,8 +19,11 @@ public class UIStructureCard : MonoBehaviour
 
     [Header("Button Reference")]
     [SerializeField] private Button buildButton;
+
+    [Header("Lock Overlay Setup")]
+    [SerializeField] private GameObject lockOverlayObject;
     
-    public void SetupCard(string name, string description, List<string> costs, Sprite icon, Action onBuildClicked = null)
+    public void SetupCard(string name, string description, List<string> costs, Sprite icon, bool isUnlocked, Action onBuildClicked = null)
     {
         if (structureNameText != null) 
             structureNameText.text = name;
@@ -36,11 +39,19 @@ public class UIStructureCard : MonoBehaviour
 
         PopulateCosts(costs);
 
-        // Setup Build Button Listener
+        // Toggle the lock overlay image (enabled when locked, disabled when unlocked)
+        if (lockOverlayObject != null)
+        {
+            lockOverlayObject.SetActive(!isUnlocked);
+        }
+
+        // Setup Build Button Listener & Interactivity
         if (buildButton != null)
         {
+            buildButton.interactable = isUnlocked;
             buildButton.onClick.RemoveAllListeners();
-            if (onBuildClicked != null)
+
+            if (isUnlocked && onBuildClicked != null)
             {
                 buildButton.onClick.AddListener(() => onBuildClicked.Invoke());
             }

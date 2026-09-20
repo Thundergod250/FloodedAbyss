@@ -31,7 +31,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 2143062266235653644}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5441983127171556320
@@ -50,6 +51,7 @@ MonoBehaviour:
   playerController: {fileID: 0}
   objectPooling: {fileID: 6157991707012487289}
   waterLevel: {fileID: 4102502547340865364}
+  SkillTreeController: {fileID: 4340592379193419187}
 --- !u!114 &4102502547340865364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,10 +65,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterLevel
   waterLevelTransform: {fileID: 0}
-  floatDepth: 2
-  floatForce: 10
-  waterGravity: -10
-  minimumFloatDepth: 0
   buildingsToRaise: []
   heightChangePerStage: 5
   moveSpeed: 2
@@ -83,3 +81,76 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectPooling
   ParentObject: {fileID: 0}
+--- !u!1001 &6332090520443365838
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3096870024065945765}
+    m_Modifications:
+    - target: {fileID: 5358638149052409794, guid: 4232f0074a88c5547be2ea0adcf0c563, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358638149052409794, guid: 4232f0074a88c5547be2ea0adcf0c563, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358638149052409794, guid: 4232f0074a88c5547be2ea0adcf0c563, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358638149052409794, guid: 4232f0074a88c5547be2ea0adcf0c563, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358638149052409794, guid: 4232f0074a88c5547be2ea0adcf0c563, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358638149052409794, guid: 4232f0074a88c5547be2ea0adcf0c563, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358638149052409794, guid: 4232f0074a88c5547be2ea0adcf0c563, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358638149052409794, guid: 4232f0074a88c5547be2ea0adcf0c563, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358638149052409794, guid: 4232f0074a88c5547be2ea0adcf0c563, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358638149052409794, guid: 4232f0074a88c5547be2ea0adcf0c563, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9122580487893391307, guid: 4232f0074a88c5547be2ea0adcf0c563, type: 3}
+      propertyPath: m_Name
+      value: Skill Tree
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4232f0074a88c5547be2ea0adcf0c563, type: 3}
+--- !u!4 &2143062266235653644 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5358638149052409794, guid: 4232f0074a88c5547be2ea0adcf0c563, type: 3}
+  m_PrefabInstance: {fileID: 6332090520443365838}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4340592379193419187 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7772363046972968061, guid: 4232f0074a88c5547be2ea0adcf0c563, type: 3}
+  m_PrefabInstance: {fileID: 6332090520443365838}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94b7914c2fb331c4ea37314f584a5fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkillTreeController
