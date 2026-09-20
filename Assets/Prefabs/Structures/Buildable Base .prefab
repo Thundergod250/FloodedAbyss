@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 5409854241517185380}
   - component: {fileID: 6256475020180302243}
   - component: {fileID: 2736055081336830155}
+  - component: {fileID: 6603426934095653473}
+  - component: {fileID: 1440808720758243613}
   m_Layer: 0
   m_Name: 'Buildable Base '
   m_TagString: Untagged
@@ -112,3 +114,42 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6603426934095653473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5818862190393728103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 586d09e3430c3fa4bb4b7161e1b7ee7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Interactables
+  interactionMessage: '[E] '
+  onInteract:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &1440808720758243613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5818862190393728103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8f325c99518b0c45bbd528ac34bbd94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemBuildable
+  structureName: Shop
+  description: To Upgarde PickAxe and Player Upgrades
+  structureIcon: {fileID: 21300000, guid: 14907929a853e8b4396119acf40f39ed, type: 3}
+  costRequirements:
+  - resourceType: 0
+    amount: 5
+  - resourceType: 2
+    amount: 3
+  - resourceType: 3
+    amount: 1
+  structureCard: {fileID: 0}

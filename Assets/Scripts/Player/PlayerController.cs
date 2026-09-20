@@ -4,6 +4,13 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     private PlayerInput playerInput;
+    public PlayerMovement PlayerMovement;
+    public PlayerInteraction PlayerInteraction;
+    public PlayerLook PlayerLook;
+    public PlayerResources PlayerResources;
+    public PlayerStamina PlayerStamina;
+    public PlayerOxygen PlayerOxygen;
+    public Health PlayerHealth;
 
     public InputAction MoveAction { get; private set; }
     public InputAction JumpAction { get; private set; }
