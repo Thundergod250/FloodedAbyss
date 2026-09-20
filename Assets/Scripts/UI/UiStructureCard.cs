@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,8 +16,11 @@ public class UIStructureCard : MonoBehaviour
     [Header("Cost Display Setup")]
     [SerializeField] private Transform costContainer; 
     [SerializeField] private TextMeshProUGUI costTextPrefab; 
+
+    [Header("Button Reference")]
+    [SerializeField] private Button buildButton;
     
-    public void SetupCard(string name, string description, List<string> costs, Sprite icon)
+    public void SetupCard(string name, string description, List<string> costs, Sprite icon, Action onBuildClicked = null)
     {
         if (structureNameText != null) 
             structureNameText.text = name;
@@ -31,6 +35,16 @@ public class UIStructureCard : MonoBehaviour
         }
 
         PopulateCosts(costs);
+
+        // Setup Build Button Listener
+        if (buildButton != null)
+        {
+            buildButton.onClick.RemoveAllListeners();
+            if (onBuildClicked != null)
+            {
+                buildButton.onClick.AddListener(() => onBuildClicked.Invoke());
+            }
+        }
     }
 
     private void PopulateCosts(List<string> costs)
@@ -49,6 +63,4 @@ public class UIStructureCard : MonoBehaviour
             }
         }
     }
-    
-    
 }

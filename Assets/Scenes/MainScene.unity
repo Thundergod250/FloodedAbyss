@@ -491,17 +491,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 128031168}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &135901525 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 9176341567134475769, guid: 93962ff5bde69f746af840d31223a209, type: 3}
-  m_PrefabInstance: {fileID: 8397806791057057018}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1 &137645393
 GameObject:
   m_ObjectHideFlags: 0
@@ -1168,28 +1157,17 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
---- !u!1 &463831730 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4851357612750621130, guid: 93962ff5bde69f746af840d31223a209, type: 3}
+--- !u!114 &463831734 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8043530788835746016, guid: 93962ff5bde69f746af840d31223a209, type: 3}
   m_PrefabInstance: {fileID: 8397806791057057018}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &463831734
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 463831730}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cdd98d34201a05743ad5ddd0de4a76d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIStructureCard
-  structureNameText: {fileID: 837264077}
-  descriptionText: {fileID: 135901525}
-  structureIconImage: {fileID: 671808558}
-  costContainer: {fileID: 1255933596}
-  costTextPrefab: {fileID: 4377205129318875635, guid: f9a783a337b09f447936aa82c5bbdf80, type: 3}
 --- !u!1 &475419768
 GameObject:
   m_ObjectHideFlags: 0
@@ -1764,9 +1742,12 @@ MonoBehaviour:
   description: To Upgarde PickAxe and Player Upgrades
   structureIcon: {fileID: 21300000, guid: 14907929a853e8b4396119acf40f39ed, type: 3}
   costRequirements:
-  - Wood 5
-  - Stone 5
-  - Plastic 5
+  - resourceType: 0
+    amount: 5
+  - resourceType: 2
+    amount: 3
+  - resourceType: 3
+    amount: 1
   structureCard: {fileID: 463831734}
 --- !u!1 &658136097
 GameObject:
@@ -2185,17 +2166,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 666647918}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &671808558 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1666094426131403620, guid: 93962ff5bde69f746af840d31223a209, type: 3}
-  m_PrefabInstance: {fileID: 8397806791057057018}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &703230149
 GameObject:
   m_ObjectHideFlags: 0
@@ -2344,17 +2314,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 793253192}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &837264077 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 147847515107119181, guid: 93962ff5bde69f746af840d31223a209, type: 3}
-  m_PrefabInstance: {fileID: 8397806791057057018}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1 &911747630
 GameObject:
   m_ObjectHideFlags: 0
@@ -3305,11 +3264,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1184066015}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!224 &1255933596 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 8569566979644804962, guid: 93962ff5bde69f746af840d31223a209, type: 3}
-  m_PrefabInstance: {fileID: 8397806791057057018}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1259641970
 GameObject:
   m_ObjectHideFlags: 0
@@ -5667,27 +5621,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 8464886022942829150, guid: 93962ff5bde69f746af840d31223a209, type: 3}
-    - {fileID: 7523799883488883645, guid: 93962ff5bde69f746af840d31223a209, type: 3}
-    - {fileID: 5601683988733540613, guid: 93962ff5bde69f746af840d31223a209, type: 3}
-    - {fileID: 8699235552420409292, guid: 93962ff5bde69f746af840d31223a209, type: 3}
-    - {fileID: 6127310111079594342, guid: 93962ff5bde69f746af840d31223a209, type: 3}
-    - {fileID: 2510315779263225447, guid: 93962ff5bde69f746af840d31223a209, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4507564295335568400, guid: 93962ff5bde69f746af840d31223a209, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8397806791057057022}
-    - targetCorrespondingSourceObject: {fileID: 4851357612750621130, guid: 93962ff5bde69f746af840d31223a209, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 463831734}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 93962ff5bde69f746af840d31223a209, type: 3}
---- !u!114 &8397806791057057022
+--- !u!114 &8397806791057057022 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 1817679421852728051, guid: 93962ff5bde69f746af840d31223a209, type: 3}
+  m_PrefabInstance: {fileID: 8397806791057057018}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2073251785}
   m_Enabled: 1
