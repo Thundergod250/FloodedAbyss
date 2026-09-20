@@ -56,6 +56,17 @@ public class UIController : MonoBehaviour
         }
     }
     
+    public T GetModal<T>(UIState state) where T : UiModals
+    {
+        if (modalDictionary != null && modalDictionary.TryGetValue(state, out UiModals modal))
+        {
+            return modal as T;
+        }
+
+        Debug.LogWarning($"[UIController] Modal for state {state} not found or invalid type.");
+        return null;
+    }
+    
     /// Centralized function to change UI state.
     /// Hides all other panels, opens target state, manages cursor and player inputs.
     public void OpenModal(UIState newState)

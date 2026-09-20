@@ -152,6 +152,18 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 3f6cbc8d-14b8-4d91-9081-ccb3160285c1
     m_ActionName: 'Player/Look[/Mouse/delta]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 56035aaa-d4a2-4004-a8b7-b2059cc853c8
+    m_ActionName: 'Player/Run[/Keyboard/leftShift]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 931907a0-b34a-46d6-b601-775fdf6a1e6a
+    m_ActionName: 'Player/Build[/Keyboard/q]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0e80b348-5fdb-47e3-8479-2dcb6a29f8d0
+    m_ActionName: 'Player/Debug[/Keyboard/ctrl,/Keyboard/leftBracket]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -194,6 +206,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 937865703e25d6946a0d5aa420f95170, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  PlayerMovement: {fileID: 3151513359486226473}
+  PlayerInteraction: {fileID: 7214069375529169555}
+  PlayerLook: {fileID: 599560484476306787}
+  PlayerResources: {fileID: 7706448228164935026}
+  PlayerStamina: {fileID: 5011022331939074706}
+  PlayerOxygen: {fileID: 3202337842524963063}
+  PlayerHealth: {fileID: 159086485549072678}
 --- !u!114 &3151513359486226473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -212,7 +231,6 @@ MonoBehaviour:
   runSpeed: 12
   underwaterMoveSpeed: 4
   swimUpSpeed: 5
-  surfacingSpeed: 4
   sinkSpeed: 3
   isSwimming: 0
   wasSwimSprinting: 0
@@ -331,6 +349,9 @@ MonoBehaviour:
   category: 0
   maxHealth: 100
   currentHealth: 0
+  EvtOnHit:
+    m_PersistentCalls:
+      m_Calls: []
   EvtOnDied:
     m_PersistentCalls:
       m_Calls: []
