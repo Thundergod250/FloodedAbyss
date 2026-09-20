@@ -12,53 +12,23 @@ public class PlayerStamina : MonoBehaviour
     [SerializeField] private float jumpCost = 20f;
     [SerializeField] private float swimDrain = 5f;
 
-    [Header("Exhaustion")]
-    [SerializeField] private float exhaustionDelay = 5f;
-    [SerializeField] private float exhaustionSpeedMultiplier = 0.5f;
-
-    private bool exhausted;
-    private float exhaustionTimer;
-
     public float CurrentStamina => currentStamina;
     public float MaxStamina => maxStamina;
-    public bool IsExhausted => exhausted;
-    public float ExhaustionSpeedMultiplier => exhaustionSpeedMultiplier;
 
     private void Update()
     {
-        if (exhausted)
-        {
-            exhaustionTimer -= Time.deltaTime;
-
-            if (exhaustionTimer <= 0f)
-            {
-                currentStamina += regenRate * Time.deltaTime;
-                currentStamina = Mathf.Min(currentStamina, maxStamina);
-
-                if (currentStamina >= maxStamina)
-                {
-                    exhausted = false;
-                }
-            }
-
-            return;
-        }
-
         currentStamina += regenRate * Time.deltaTime;
         currentStamina = Mathf.Min(currentStamina, maxStamina);
     }
 
     public void DrainRunning()
     {
-        if (exhausted)
-            return;
-
         DrainStamina(runDrain * Time.deltaTime);
     }
 
     public bool UseJump()
     {
-        if (exhausted || currentStamina < jumpCost)
+        if (currentStamina < jumpCost)
             return false;
 
         DrainStamina(jumpCost);
@@ -67,9 +37,6 @@ public class PlayerStamina : MonoBehaviour
 
     public void DrainSwimming()
     {
-        if (exhausted)
-            return;
-
         DrainStamina(swimDrain * Time.deltaTime);
     }
 
@@ -77,12 +44,5 @@ public class PlayerStamina : MonoBehaviour
     {
         currentStamina -= amount;
         currentStamina = Mathf.Max(currentStamina, 0f);
-
-        if (currentStamina <= 0f)
-        {
-            currentStamina = 0f;
-            exhausted = true;
-            exhaustionTimer = exhaustionDelay;
-        }
     }
 }
