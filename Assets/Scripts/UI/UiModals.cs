@@ -11,6 +11,21 @@ public class UiModals : MonoBehaviour
         Initialize();
     }
     
+    protected virtual void OnEnable()
+    {
+        
+    }
+    
+    protected virtual void OnDisable()
+    {
+        
+    }
+    
+    protected virtual void Start()
+    {
+        
+    }
+    
     protected virtual void Initialize()
     {
         

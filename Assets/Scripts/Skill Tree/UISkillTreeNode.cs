@@ -4,7 +4,7 @@ using TMPro;
 
 public class UISkillTreeNode : MonoBehaviour
 {
-    [Header("Node Data Reference")]
+    /*[Header("Node Data Reference")]
     [SerializeField] private SkillTreeNode nodeData;
 
     [Header("UI Component References")]
@@ -62,6 +62,7 @@ public class UISkillTreeNode : MonoBehaviour
     {
         if (nodeData != null && SkillTreeManager.Instance != null)
         {
+            *//*
             SkillTreeManager.Instance.TryUnlockNode(nodeData);
         }
     }
@@ -69,5 +70,5 @@ public class UISkillTreeNode : MonoBehaviour
     private void OnNodeUnlocked(SkillTreeNode unlockedNode)
     {
         UpdateNodeUI();
-    }
+    }*/
 }
