@@ -9,8 +9,9 @@ public class UIController : MonoBehaviour
         Dialogue,
         Shop,
         Crafting,
-        Building, 
-        SkillTree
+        Building,
+        SkillTree,
+        Structure
     }
 
     [System.Serializable]
@@ -56,7 +57,7 @@ public class UIController : MonoBehaviour
             }
         }
     }
-    
+
     public T GetModal<T>(UIState state) where T : UiModals
     {
         if (modalDictionary != null && modalDictionary.TryGetValue(state, out UiModals modal))
@@ -67,7 +68,7 @@ public class UIController : MonoBehaviour
         Debug.LogWarning($"[UIController] Modal for state {state} not found or invalid type.");
         return null;
     }
-    
+
     /// Centralized function to change UI state.
     /// Hides all other panels, opens target state, manages cursor and player inputs.
     public void OpenModal(UIState newState)
