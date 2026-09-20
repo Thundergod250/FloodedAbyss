@@ -9,7 +9,8 @@ public class UIController : MonoBehaviour
         Dialogue,
         Shop,
         Crafting,
-        Building
+        Building, 
+        SkillTree
     }
 
     [System.Serializable]
