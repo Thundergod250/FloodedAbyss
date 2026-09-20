@@ -9,7 +9,8 @@ public class UIController : MonoBehaviour
         Dialogue,
         Shop,
         Crafting,
-        Building
+        Building,
+        SkillTree
     }
 
     [System.Serializable]
@@ -55,9 +56,11 @@ public class UIController : MonoBehaviour
             }
         }
     }
-    
+
+    /// <summary>
     /// Centralized function to change UI state.
     /// Hides all other panels, opens target state, manages cursor and player inputs.
+    /// </summary>
     public void OpenModal(UIState newState)
     {
         currentState = newState;
@@ -86,6 +89,18 @@ public class UIController : MonoBehaviour
 
         if (playerController != null)
             playerController.SetInputActive(isGameplay);
+    }
+
+    public T GetModal<T>() where T : UiModals
+    {
+        foreach (var modal in modalDictionary.Values)
+        {
+            if (modal is T typedModal)
+            {
+                return typedModal;
+            }
+        }
+        return null;
     }
 
     private void SetCursorState(bool showCursor)
