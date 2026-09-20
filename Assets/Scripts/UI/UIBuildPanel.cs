@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class UIBuildPanel : UiModals
 {
-    [Header("UI Containers")]
+    /*[Header("UI Containers")]
     [SerializeField] private Transform cardContainer;
     [SerializeField] private BuildCardUI cardPrefab;
     [SerializeField] private Button closeButton;
@@ -111,5 +111,5 @@ public class UIBuildPanel : UiModals
             return GameManager.Instance.playerController.GetComponent<PlayerResources>();
         }
         return FindAnyObjectByType<PlayerResources>();
-    }
+    }*/
 }

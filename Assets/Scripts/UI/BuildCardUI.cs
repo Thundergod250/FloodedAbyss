@@ -4,7 +4,7 @@ using TMPro;
 
 public class BuildCardUI : MonoBehaviour
 {
-    [Header("UI Components")]
+    /*[Header("UI Components")]
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private Image pictureImage;
     [SerializeField] private TextMeshProUGUI descriptionText;
@@ -56,5 +56,5 @@ public class BuildCardUI : MonoBehaviour
         {
             parentPanel.TryConstructBuilding(currentOption, activeBuildableBase);
         }
-    }
+    }*/
 }

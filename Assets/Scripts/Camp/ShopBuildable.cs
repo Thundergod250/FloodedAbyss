@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ShopBuildable : ItemBuildable
 {
-    private void Reset()
+    /*private void Reset()
     {
         buildableType = BuildableType.CampShop;
         SetupDefaultOption();
@@ -37,5 +37,5 @@ public class ShopBuildable : ItemBuildable
     {
         base.OnBuildingConstructed(option, spawnedInstance);
         Debug.Log("Camp & Shop NPC successfully constructed!");
-    }
+    }*/
 }
