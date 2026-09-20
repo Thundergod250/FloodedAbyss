@@ -127,7 +127,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDrops
   resourceType: 0
-  amountToDrop: 20
+  amountToDropOnDeath: 0
+  amountToDropOnHit: 1
   itemToDrop: {fileID: 0}
 --- !u!114 &8478732049629315098
 MonoBehaviour:
@@ -144,6 +145,9 @@ MonoBehaviour:
   category: 0
   maxHealth: 100
   currentHealth: 0
+  EvtOnHit:
+    m_PersistentCalls:
+      m_Calls: []
   EvtOnDied:
     m_PersistentCalls:
       m_Calls: []

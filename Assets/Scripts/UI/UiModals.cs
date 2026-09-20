@@ -2,7 +2,9 @@ using UnityEngine;
 
 public class UiModals : MonoBehaviour
 {
-    public GameObject ModalPrefab;
+    [Header("Modal Visual Settings")]
+    [SerializeField] private GameObject ModalPrefab;
+    
     
     protected void Awake()
     {
@@ -12,5 +14,12 @@ public class UiModals : MonoBehaviour
     protected virtual void Initialize()
     {
         
+    }
+    
+    /// Shows or hides the panel without disabling the component itself.
+    public virtual void SetModalActive(bool isActive)
+    {
+        if (ModalPrefab != null)
+            ModalPrefab.SetActive(isActive);
     }
 }

@@ -15,7 +15,6 @@ public class UIHUD : UiModals
         DebugButtons,
         NotificationPanel,
         WaterForecast,
-        DialoguePanel
     }
 
     [System.Serializable]

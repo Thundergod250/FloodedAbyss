@@ -12,7 +12,6 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement-Water")]
     public float underwaterMoveSpeed;
     public float swimUpSpeed = 5f;
-    public float surfacingSpeed; 
     public float sinkSpeed = 3f;
     public bool isSwimming;
     public bool wasSwimSprinting;
@@ -38,6 +37,8 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         wLevel = GameManager.Instance.GetComponent<WaterLevel>();
+
+        velocity.y = -2f;
 
         if (controller != null && controller.JumpAction != null)
         {
@@ -114,7 +115,9 @@ public class PlayerMovement : MonoBehaviour
             velocity.y = -2f;
         }
 
-        velocity.y += gravity * Time.deltaTime;
+        velocity.y += gravity * Time.deltaTime; 
+        velocity.y = Mathf.Max(velocity.y, -12.81f);
+
         characterController.Move(velocity * Time.deltaTime);
     }
 
@@ -122,37 +125,13 @@ public class PlayerMovement : MonoBehaviour
     {
         if (waterSurface == null) return;
 
-        float floatArea = waterSurface.position.y - wLevel.floatDepth;
-        wLevel.minimumFloatDepth = waterSurface.transform.position.y - (wLevel.floatDepth + 0.5f);
-
-        if (controller.RunAction != null && controller.RunAction.IsPressed())
-        {
-            velocity.y = -swimUpSpeed;
-        }
-        else if (controller.JumpAction != null && controller.JumpAction.IsPressed())
+        if (controller.JumpAction != null && controller.JumpAction.IsPressed())
         {
             velocity.y = swimUpSpeed;
         }
-        else if (transform.position.y < wLevel.minimumFloatDepth)
-        {
-            velocity.y = -sinkSpeed;
-        }
-        else if (transform.position.y > floatArea)
-        {
-            velocity.y += wLevel.waterGravity * Time.deltaTime;
-            velocity.y = Mathf.Max(velocity.y, -sinkSpeed);
-        }
-        else if (transform.position.y < floatArea)
-        {
-            velocity.y = surfacingSpeed;
-        }
         else
         {
-            velocity.y = Mathf.MoveTowards(
-                velocity.y,
-                0f,
-                wLevel.floatForce * Time.deltaTime
-            );
+            velocity.y = -sinkSpeed;
         }
 
         bool swimSprinting = controller.RunAction.IsPressed();
@@ -176,6 +155,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         wasSwimSprinting = swimSprinting;
+
         characterController.Move(velocity * Time.deltaTime);
     }
 
