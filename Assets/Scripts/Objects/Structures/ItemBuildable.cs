@@ -3,6 +3,13 @@ using UnityEngine;
 
 public class ItemBuildable : Item
 {
+    [System.Serializable]
+    public struct ResourceRequirement
+    {
+        public ResourceType resourceType;
+        public int amount;
+    }
+
     [Header("Structure Data")]
     [SerializeField] private string structureName;
     [TextArea(2, 5)]
@@ -10,8 +17,7 @@ public class ItemBuildable : Item
     [SerializeField] private Sprite structureIcon;
 
     [Header("Cost Requirements Data")]
-    [Tooltip("List of raw cost strings, e.g. 'Wood 5', 'Stone 5'")]
-    [SerializeField] private List<string> costRequirements = new List<string>();
+    [SerializeField] private List<ResourceRequirement> costRequirements = new();
 
     [Header("Card Target Reference")]
     [SerializeField] private UIStructureCard structureCard;
@@ -21,13 +27,20 @@ public class ItemBuildable : Item
         // 1. Open the Building Modal via UIController
         GameManager.Instance.uiController.OpenModal(UIController.UIState.Building);
 
-        // 2. Pass source strings and sprite directly to the card setup
+        // 2. Format struct requirements into readable strings for UI display
+        List<string> formattedCosts = new List<string>();
+        foreach (var req in costRequirements)
+        {
+            formattedCosts.Add($"{req.resourceType} {req.amount}");
+        }
+
+        // 3. Pass formatted strings and sprite directly to the card setup
         if (structureCard != null)
         {
             structureCard.SetupCard(
                 structureName,
                 description,
-                costRequirements,
+                formattedCosts,
                 structureIcon
             );
         }
@@ -35,5 +48,10 @@ public class ItemBuildable : Item
         {
             Debug.LogWarning($"[ItemBuildable] Target UIStructureCard is missing on {gameObject.name}!");
         }
+    }
+    
+    public List<ResourceRequirement> GetCostRequirements()
+    {
+        return costRequirements;
     }
 }
