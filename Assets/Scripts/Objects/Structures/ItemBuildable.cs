@@ -1,41 +1,24 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ItemBuildable : Item
 {
-    [System.Serializable]
-    public struct ResourceRequirement
-    {
-        public ResourceType resourceType;
-        public int amount;
-    }
-
-    [Header("Structure Data")]
-    [SerializeField] private string structureName;
-    [TextArea(2, 5)]
-    [SerializeField] private string description;
-    [SerializeField] private Sprite structureIcon;
+    [Header("Available Structures")]
+    [SerializeField] private List<StructureDataSO> availableStructures = new List<StructureDataSO>();
 
     [Header("Spawn Settings")]
-    [Tooltip("The actual structure prefab to instantiate when purchased.")]
-    [SerializeField] private GameObject structurePrefab;
     [Tooltip("Optional spawn point transform. If null, uses this object's position and rotation.")]
     [SerializeField] private Transform spawnPoint;
 
-    [Header("Cost Requirements Data")]
-    [SerializeField] private List<ResourceRequirement> costRequirements = new List<ResourceRequirement>();
-
-    [Header("Card Target Reference")]
-    [SerializeField] private UIStructureCard structureCard;
-
     private PlayerResources playerResources;
-    // Stores reference to the active spawned structure instance
     private GameObject spawnedStructureInstance;
 
     private void Start()
     {
-        playerResources = GameManager.Instance.playerController.PlayerResources; 
+        if (GameManager.Instance != null && GameManager.Instance.playerController != null)
+        {
+            playerResources = GameManager.Instance.playerController.PlayerResources;
+        }
     }
 
     public override void Activate()
@@ -43,27 +26,21 @@ public class ItemBuildable : Item
         // 1. Open Building Modal via UIController
         GameManager.Instance.uiController.OpenModal(UIController.UIState.Building);
 
-        // 2. Format struct requirements into readable strings for display
-        List<string> formattedCosts = new List<string>();
-        foreach (var req in costRequirements) 
-            formattedCosts.Add($"{req.resourceType} {req.amount}");
+        // 2. Reference UiBuilding modal instance
+        UiBuilding buildingModal = GameManager.Instance.uiController.GetModal<UiBuilding>(UIController.UIState.Building);
 
-        // 3. Setup Card and pass the Build action callback
-        if (structureCard != null)
+        if (buildingModal != null)
         {
-            structureCard.SetupCard(
-                structureName,
-                description,
-                formattedCosts,
-                structureIcon,
-                OnBuildButtonClicked
-            );
+            // 3. Pass ScriptableObject list and build action callback
+            buildingModal.PopulateMenu(availableStructures, OnBuildStructureSelected);
         }
         else
-            Debug.LogWarning($"[ItemBuildable] Target UIStructureCard is missing on {gameObject.name}!");
+        {
+            Debug.LogError($"[ItemBuildable] UiBuilding modal instance not found on UIState.Building!");
+        }
     }
 
-    private void OnBuildButtonClicked()
+    private void OnBuildStructureSelected(StructureDataSO selectedStructure)
     {
         if (playerResources == null)
         {
@@ -71,42 +48,35 @@ public class ItemBuildable : Item
             return;
         }
 
-        // 1. Check if player has required resources
-        if (CanAfford(playerResources))
+        if (CanAfford(playerResources, selectedStructure.CostRequirements))
         {
-            // 2. Deduct resources
-            DeductResources(playerResources);
+            DeductResources(playerResources, selectedStructure.CostRequirements);
+            BuildStructure(selectedStructure.StructurePrefab);
 
-            // 3. Spawn the purchased structure object
-            BuildStructure();
-
-            // 4. Debug log success
-            Debug.Log($"Successfully built {structureName}!");
-
-            // 5. Close all UI modals
+            Debug.Log($"Successfully built {selectedStructure.StructureName}!");
             GameManager.Instance.uiController.CloseAllModals();
 
-            // 6. Disable this buildable base object (do not destroy)
             gameObject.SetActive(false);
         }
         else
-            Debug.LogWarning($"Cannot build {structureName}: Insufficient resources!");
+        {
+            Debug.LogWarning($"Cannot build {selectedStructure.StructureName}: Insufficient resources!");
+        }
     }
 
-    private void BuildStructure()
+    private void BuildStructure(GameObject prefabToSpawn)
     {
-        if (structurePrefab == null)
+        if (prefabToSpawn == null)
         {
-            Debug.LogError($"[ItemBuildable] Structure Prefab is missing on {gameObject.name}!");
+            Debug.LogError($"[ItemBuildable] Selected structure prefab is missing!");
             return;
         }
 
         Vector3 spawnPos = spawnPoint != null ? spawnPoint.position : transform.position;
         Quaternion spawnRot = spawnPoint != null ? spawnPoint.rotation : transform.rotation;
-        spawnedStructureInstance = Pool.Instantiate(structurePrefab, spawnPos, spawnRot);
+        spawnedStructureInstance = Pool.Instantiate(prefabToSpawn, spawnPos, spawnRot);
     }
-    
-    /// Call this method when selling or destroying the built structure to reclaim the build slot.
+
     public void ResetBuildableSlot()
     {
         if (spawnedStructureInstance != null)
@@ -118,9 +88,11 @@ public class ItemBuildable : Item
         gameObject.SetActive(true);
     }
 
-    private bool CanAfford(PlayerResources playerResources)
+    private bool CanAfford(PlayerResources playerResources, IReadOnlyList<StructureDataSO.ResourceRequirement> requirements)
     {
-        foreach (var req in costRequirements)
+        if (requirements == null) return true;
+
+        foreach (var req in requirements)
         {
             if (playerResources.GetResource(req.resourceType) < req.amount)
                 return false;
@@ -128,9 +100,13 @@ public class ItemBuildable : Item
         return true;
     }
 
-    private void DeductResources(PlayerResources playerResources)
+    private void DeductResources(PlayerResources playerResources, IReadOnlyList<StructureDataSO.ResourceRequirement> requirements)
     {
-        foreach (var req in costRequirements) 
+        if (requirements == null) return;
+
+        foreach (var req in requirements)
+        {
             playerResources.SpendResource(req.resourceType, req.amount);
+        }
     }
 }
