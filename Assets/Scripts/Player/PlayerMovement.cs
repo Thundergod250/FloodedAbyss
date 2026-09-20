@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 5f;
     public float jumpHeight = 2f;
     public float gravity = -9.81f; 
+    public float maxFallSpeed = -9.81f; 
     public float runSpeed = 8f;
 
     [Header("Movement-Water")]
@@ -56,8 +57,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        MovePlayer();
-
+            MovePlayer();   
         if (isSwimming)
         {
             ApplySwimming(); 
@@ -75,18 +75,20 @@ public class PlayerMovement : MonoBehaviour
         if (controller == null || controller.MoveAction == null) return;
 
         Vector2 input = controller.MoveAction.ReadValue<Vector2>();
-        Vector3 move = transform.right * input.x + transform.forward * input.y;
+
+        Vector3 move =
+            transform.right * input.x +
+            transform.forward * input.y;
 
         if (isSwimming)
         {
             currentSpeed = underwaterMoveSpeed;
-            stamina.DrainSwimming();
         }
         else
         {
             bool running = controller.RunAction.IsPressed();
 
-            if (running && !stamina.IsExhausted)
+            if (running)
             {
                 currentSpeed = runSpeed;
                 stamina.DrainRunning();
@@ -95,30 +97,28 @@ public class PlayerMovement : MonoBehaviour
             {
                 currentSpeed = moveSpeed;
             }
-
-            wasRunning = running;
         }
 
-        if (stamina.IsExhausted)
-        {
-            currentSpeed *= stamina.ExhaustionSpeedMultiplier;
-        }
+        Vector3 finalMove =
+            move * currentSpeed +
+            Vector3.up * velocity.y;
 
-        characterController.Move(move * (currentSpeed * Time.deltaTime));
+        characterController.Move(finalMove * Time.deltaTime);
+
     }
 
 
     private void ApplyGravity()
     {
-        if (characterController.isGrounded && velocity.y < 0)
+        if (characterController.isGrounded)
         {
             velocity.y = -2f;
         }
-
-        velocity.y += gravity * Time.deltaTime; 
-        velocity.y = Mathf.Max(velocity.y, -12.81f);
-
-        characterController.Move(velocity * Time.deltaTime);
+        else
+        {
+            velocity.y += gravity * Time.deltaTime;
+            velocity.y = Mathf.Max(velocity.y, maxFallSpeed);
+        }
     }
 
     private void ApplySwimming()
