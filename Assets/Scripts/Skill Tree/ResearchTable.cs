@@ -6,7 +6,7 @@ public class ResearchTable : Item
     {
         if (GameManager.Instance != null && GameManager.Instance.uiController != null)
         {
-            GameManager.Instance.uiController.OpenModal(UIController.UIState.SkillTree);
+            //GameManager.Instance.uiController.OpenModal(UIController.UIState.SkillTree);
         }
     }
 }
