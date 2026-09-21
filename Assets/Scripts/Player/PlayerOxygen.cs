@@ -15,32 +15,29 @@ public class PlayerOxygen : MonoBehaviour
     [SerializeField] private float damageInterval = 1f;
 
     private Health health;
+    private PlayerMovement playerMovement; 
     private float damageTimer;
 
-    public float CurrentOxygen => currentOxygen;
-    public float MaxOxygen => maxOxygen;
-
-    private void Awake()
+    private void Start()
     {
         health = GetComponent<Health>();
+        playerMovement = GetComponent<PlayerMovement>();
     }
 
     private void Update()
     {
-        PlayerMovement movement = GetComponent<PlayerMovement>();
+        if (playerMovement == null) 
+            return;
 
-        if (movement == null) return;
-
-        if (!movement.isSwimming)
-        {
+        if (!playerMovement.isSwimming) 
             RegenerateOxygen();
-        }
 
-        if (currentOxygen <= 0f)
-        {
+        if (currentOxygen <= 0f) 
             DealOxygenDamage();
-        }
     }
+    
+    public float GetCurrentOxygen() => currentOxygen;
+    public float GetMaxOxygen() => maxOxygen;
 
     private void RegenerateOxygen()
     {
@@ -54,10 +51,7 @@ public class PlayerOxygen : MonoBehaviour
         currentOxygen = Mathf.Max(currentOxygen, 0f);
     }
 
-    public void DrainSwimSprint()
-    {
-        DrainOxygen(sprintDrain * Time.deltaTime);
-    }
+    public void DrainSwimSprint() => DrainOxygen(sprintDrain * Time.deltaTime);
 
     public bool StartSwimSprint()
     {
@@ -71,7 +65,6 @@ public class PlayerOxygen : MonoBehaviour
     private void DealOxygenDamage()
     {
         damageTimer -= Time.deltaTime;
-
         if (damageTimer <= 0f)
         {
             if (health != null)
@@ -79,8 +72,32 @@ public class PlayerOxygen : MonoBehaviour
                 int damage = Mathf.CeilToInt(health.GetMaxHealth() * 0.1f);
                 health.TakeDamage(damage);
             }
-
             damageTimer = damageInterval;
         }
+    }
+    
+    public void IncreaseMaxOxygen(float amount, bool fillCurrent = false)
+    {
+        if (amount <= 0f) return;
+
+        maxOxygen += amount;
+        if (fillCurrent)
+            currentOxygen += amount;
+
+        currentOxygen = Mathf.Min(currentOxygen, maxOxygen);
+    }
+
+    public void DecreaseMaxOxygen(float amount)
+    {
+        if (amount <= 0f) return;
+
+        maxOxygen = Mathf.Max(1f, maxOxygen - amount);
+        currentOxygen = Mathf.Min(currentOxygen, maxOxygen);
+    }
+
+    public void SetMaxOxygen(float newMaxOxygen)
+    {
+        maxOxygen = Mathf.Max(1f, newMaxOxygen);
+        currentOxygen = Mathf.Min(currentOxygen, maxOxygen);
     }
 }

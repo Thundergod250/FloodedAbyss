@@ -27,6 +27,6 @@ public class PlayerUI : MonoBehaviour
     {
         healthBar.value = playerH.GetCurrentHealth();
         staminaBar.value = playerSt.GetCurrentStamina();
-        oxygenBar.value = playerOxygen.CurrentOxygen;
+        oxygenBar.value = playerOxygen.GetCurrentOxygen();
     }
 }

@@ -144,7 +144,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        if (swimSprinting && oxygen.CurrentOxygen > 0f)
+        if (swimSprinting && oxygen.GetCurrentOxygen() > 0f)
         {
             currentSpeed = runSpeed;
             oxygen.DrainSwimSprint();
