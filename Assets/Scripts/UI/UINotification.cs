@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class UINotification : MonoBehaviour
 {
-    public static UINotification Instance { get; private set; }
-
     [Header("UI References")]
     [SerializeField] private Transform containerParent;
     [SerializeField] private UINotificationPanelPrefab panelPrefab;
@@ -25,7 +23,7 @@ public class UINotification : MonoBehaviour
         Color.cyan 
     };
 
-    private void Awake()
+    private void Start()
     {
         if (containerParent == null)
             containerParent = transform;

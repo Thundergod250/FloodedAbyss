@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -14,10 +15,19 @@ public class PlayerResources : MonoBehaviour
 {
     [Header("Events")]
     public UnityEvent<ResourceType, int> EvtOnResourceChanged;
+
+    [Header("Notification Settings")]
+    [SerializeField] private Color gainColor = Color.green;
+    [SerializeField] private Color spendColor = Color.red;
     
     private Dictionary<ResourceType, int> resources = new();
+    private UINotification uiNotification;
 
-    private void Awake() => InitializeResources();
+    private void Start()
+    {
+        InitializeResources();
+        uiNotification = GameManager.Instance.uiController.uiNotification; 
+    }
 
     private void InitializeResources()
     {
@@ -27,20 +37,33 @@ public class PlayerResources : MonoBehaviour
 
     public void AddResource(ResourceType type, int amount)
     {
+        if (amount <= 0) return;
+
         resources[type] += amount;
         Debug.Log($"{type} increased by {amount}. Total: {resources[type]}");
         
         EvtOnResourceChanged?.Invoke(type, resources[type]);
+
+        // Send UI Notification
+        if (uiNotification != null) 
+            uiNotification.ShowNotification($"+{amount} {type}", gainColor);
     }
 
     public bool SpendResource(ResourceType type, int amount)
     {
+        if (amount <= 0) return true;
+
         if (resources[type] >= amount)
         {
             resources[type] -= amount;
             Debug.Log($"{type} decreased by {amount}. Total: {resources[type]}");
             
             EvtOnResourceChanged?.Invoke(type, resources[type]);
+
+            // Send UI Notification
+            if (uiNotification != null) 
+                uiNotification.ShowNotification($"-{amount} {type}", spendColor);
+
             return true;
         }
 
@@ -59,7 +82,6 @@ public class PlayerResources : MonoBehaviour
     public bool CanAfford(IReadOnlyList<StructureDataSO.ResourceRequirement> requirements)
     {
         if (requirements == null) return true;
-
         foreach (var req in requirements)
         {
             if (GetResource(req.resourceType) < req.amount)
@@ -73,6 +95,9 @@ public class PlayerResources : MonoBehaviour
         if (!CanAfford(requirements))
         {
             Debug.LogWarning("Transaction failed: Insufficient resources!");
+            if (uiNotification) 
+                uiNotification.ShowNotification("Not enough resources!", Color.yellow);
+
             return false;
         }
 

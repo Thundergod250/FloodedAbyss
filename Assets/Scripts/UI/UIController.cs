@@ -29,7 +29,7 @@ public class UIController : MonoBehaviour
 
     [Header("Persistent UI References")]
     public UIInteraction uiInteraction;
-    public UINotification notificationPanel;
+    public UINotification uiNotification;
     public UIHUD UIHUD;
 
     private Dictionary<UIState, UiModals> modalDictionary;
