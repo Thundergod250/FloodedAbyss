@@ -25,7 +25,6 @@ public class UINotificationPanelPrefab : MonoBehaviour
         if (canvasGroup == null)
         {
             canvasGroup = GetComponent<CanvasGroup>();
-            // Fallback: Add CanvasGroup dynamically if missing on prefab root
             if (canvasGroup == null)
                 canvasGroup = gameObject.AddComponent<CanvasGroup>();
         }
@@ -40,25 +39,35 @@ public class UINotificationPanelPrefab : MonoBehaviour
         if (canvasGroup != null)
             canvasGroup.alpha = 1f;
 
-        // Reset transform scale so layout groups calculate sizes cleanly
+        // Reset transform scale
         transform.localScale = Vector3.one;
 
         // Clear active coroutines from previous pool cycles
-        if (lifetimeCoroutine != null) StopCoroutine(lifetimeCoroutine);
-        if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
+        StopAllCoroutines();
 
-        lifetimeCoroutine = StartCoroutine(LifetimeRoutine());
+        // Safely start lifetime routine if active
+        if (gameObject.activeInHierarchy)
+        {
+            lifetimeCoroutine = StartCoroutine(LifetimeRoutine());
+        }
     }
 
     public void ForceDismiss()
     {
-        if (lifetimeCoroutine != null)
-            StopCoroutine(lifetimeCoroutine);
+        StopAllCoroutines();
 
-        if (fadeCoroutine != null)
-            StopCoroutine(fadeCoroutine);
+        if (gameObject.activeInHierarchy)
+        {
+            fadeCoroutine = StartCoroutine(FadeAndDestroyRoutine());
+        }
+        else
+        {
+            // If inactive, unregister and return directly to pool without coroutines
+            if (centralManager != null)
+                centralManager.UnregisterPanel(this);
 
-        fadeCoroutine = StartCoroutine(FadeAndDestroyRoutine());
+            Pool.Destroy(gameObject);
+        }
     }
 
     private IEnumerator LifetimeRoutine()

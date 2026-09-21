@@ -21,32 +21,22 @@ public class PlayerResources : MonoBehaviour
     [SerializeField] private Color spendColor = Color.red;
     
     private Dictionary<ResourceType, int> resources = new();
-    private UINotification uiNotification;
 
-    private void Start()
-    {
-        InitializeResources();
-        uiNotification = GameManager.Instance.uiController.uiNotification; 
-    }
+    private void Start() => InitializeResources();
 
     private void InitializeResources()
     {
-        foreach (ResourceType type in System.Enum.GetValues(typeof(ResourceType))) 
+        foreach (ResourceType type in Enum.GetValues(typeof(ResourceType))) 
             resources[type] = 0;
     }
 
     public void AddResource(ResourceType type, int amount)
     {
         if (amount <= 0) return;
-
         resources[type] += amount;
         Debug.Log($"{type} increased by {amount}. Total: {resources[type]}");
-        
         EvtOnResourceChanged?.Invoke(type, resources[type]);
-
-        // Send UI Notification
-        if (uiNotification != null) 
-            uiNotification.ShowNotification($"+{amount} {type}", gainColor);
+        Notification.Display($"+{amount} {type}", gainColor);
     }
 
     public bool SpendResource(ResourceType type, int amount)
@@ -57,13 +47,8 @@ public class PlayerResources : MonoBehaviour
         {
             resources[type] -= amount;
             Debug.Log($"{type} decreased by {amount}. Total: {resources[type]}");
-            
             EvtOnResourceChanged?.Invoke(type, resources[type]);
-
-            // Send UI Notification
-            if (uiNotification != null) 
-                uiNotification.ShowNotification($"-{amount} {type}", spendColor);
-
+            Notification.Display($"-{amount} {type}", spendColor);
             return true;
         }
 
@@ -75,7 +60,7 @@ public class PlayerResources : MonoBehaviour
 
     public void AddTenToAllResources()
     {
-        foreach (ResourceType type in System.Enum.GetValues(typeof(ResourceType))) 
+        foreach (ResourceType type in Enum.GetValues(typeof(ResourceType))) 
             AddResource(type, 10);
     }
     
@@ -95,9 +80,7 @@ public class PlayerResources : MonoBehaviour
         if (!CanAfford(requirements))
         {
             Debug.LogWarning("Transaction failed: Insufficient resources!");
-            if (uiNotification) 
-                uiNotification.ShowNotification("Not enough resources!", Color.yellow);
-
+            Notification.ShowWarning("Not enough resources!");
             return false;
         }
 
