@@ -21,6 +21,7 @@ public class MineExit : MonoBehaviour
 
     public void LeaveMine()
     {
+        mineManager.LeaveMine();
         Debug.Log("Leaving Mine...");
     }
 

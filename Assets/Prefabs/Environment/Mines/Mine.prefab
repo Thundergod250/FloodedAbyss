@@ -237,6 +237,7 @@ GameObject:
   - component: {fileID: 1862827068140732023}
   - component: {fileID: 466352636124519197}
   - component: {fileID: 1453838994625517703}
+  - component: {fileID: 2074466179393971907}
   m_Layer: 0
   m_Name: Exit
   m_TagString: Untagged
@@ -252,14 +253,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 397086870714864193}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.7685529, z: -0, w: 0.6397863}
-  m_LocalPosition: {x: 2.133, y: 0.8470001, z: 18.27}
-  m_LocalScale: {x: 0.25207, y: 1, z: 0.27472}
+  m_LocalRotation: {x: -0, y: 0.7026732, z: -0, w: 0.7115128}
+  m_LocalPosition: {x: 2.112, y: 0.48457003, z: 18.28}
+  m_LocalScale: {x: 0.25207, y: 0.27513, z: 0.27472}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7431606118415856650}
   m_Father: {fileID: 3898805235190863765}
-  m_LocalEulerAnglesHint: {x: 0, y: 100.448, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 89.284, z: 0}
 --- !u!33 &8320374162477072450
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -275,7 +276,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 397086870714864193}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -332,7 +333,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -350,6 +351,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1fe9297145788b49a47ffb928e476af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MineExit
+  mineManager: {fileID: 0}
+--- !u!114 &2074466179393971907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397086870714864193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 586d09e3430c3fa4bb4b7161e1b7ee7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Interactables
+  interactionMessage: '[E]'
+  onInteract:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1453838994625517703}
+        m_TargetAssemblyTypeName: MineExit, Assembly-CSharp
+        m_MethodName: LeaveMine
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1143324085234008092
 GameObject:
   m_ObjectHideFlags: 0

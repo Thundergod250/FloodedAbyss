@@ -28,8 +28,10 @@ public class MineManager : MonoBehaviour
 
     [Header("Mine Area")]
     [SerializeField] private GameObject minePrefab;
-    [SerializeField] private Transform exitLocation;
-     private GameObject spawnedMine;
+    [SerializeField] private Transform exitLocation; 
+    private System.Random mineRandom;
+    private int mineSeed;
+    private GameObject spawnedMine;
 
     /*    private float currentTime;
         private bool timerRunning = false;*/
@@ -69,7 +71,10 @@ public class MineManager : MonoBehaviour
 
     public void EnterMine()
     {
-        Debug.Log("Player entered the mine.");
+        mineSeed = System.Guid.NewGuid().GetHashCode();
+        mineRandom = new System.Random(mineSeed);
+
+        Debug.Log("Mine Seed: " + mineSeed);
 
         SpawnMine();
 
@@ -161,7 +166,7 @@ public class MineManager : MonoBehaviour
             return;
         }
 
-        int oreAmount = Random.Range(
+        int oreAmount = mineRandom.Next(
             minimumOres,
             maximumOres + 1
         );
@@ -174,7 +179,7 @@ public class MineManager : MonoBehaviour
         for (int i = 0; i < oreAmount; i++)
         {
             int randomSpawnIndex =
-                Random.Range(0, availableSpawnPoints.Count);
+                mineRandom.Next(0, availableSpawnPoints.Count);
 
             Transform spawnPoint =
                 availableSpawnPoints[randomSpawnIndex];
@@ -192,12 +197,18 @@ public class MineManager : MonoBehaviour
                 spawnPoint.rotation
             );
 
-            newOre.transform.SetParent(spawnedMine.transform, true);
+            newOre.transform.SetParent(
+                spawnedMine.transform,
+                true
+            );
 
             spawnedOres.Add(newOre);
         }
 
-        Debug.Log("Generated " + oreAmount + " ores.");
+        Debug.Log(
+            "Generated " + oreAmount +
+            " ores. Seed: " + mineSeed
+        );
     }
 
 
