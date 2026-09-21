@@ -1,58 +1,170 @@
+using System.Collections;
 using UnityEngine;
 using TMPro;
 
 public class UIShop : UiModals
 {
-    [Header("Upgrade Cost Settings")]
-    [SerializeField] private ResourceType costResourceType = ResourceType.Stone;
-    [SerializeField] private int baseCost = 10;
-    [SerializeField] private int costIncreasePerLevel = 5;
-    [SerializeField] private int damageIncreaseAmount = 5;
+    public enum UpgradeType
+    {
+        PickaxeAttack,
+        PickaxeSpeed,
+        PlayerStamina,
+        PlayerOxygen
+    }
 
-    [Header("UI References")]
-    [SerializeField] private TextMeshProUGUI damageText;
-    [SerializeField] private TextMeshProUGUI costText;
-    [SerializeField] private GameObject buyDamageButton;
+    [System.Serializable]
+    public class UpgradeConfig
+    {
+        public UpgradeType upgradeType;
+        public string title;
+        public Sprite icon;
+        [TextArea(2, 3)] public string description;
+
+        [Header("Cost Settings")]
+        public ResourceType costResourceType = ResourceType.Stone;
+        public int baseCost = 10;
+        public int costIncreasePerLevel = 10;
+
+        [Header("Stat Increase Settings")]
+        public float valueIncreasePerLevel = 5f;
+        public int maxLevel = 10;
+
+        [Header("UI Card Assignment")]
+        public UIShopCard shopCardUI;
+
+        [HideInInspector] public int currentLevel = 0;
+
+        public int GetCurrentCost() => baseCost + (currentLevel * costIncreasePerLevel);
+        public bool IsMaxLevel => currentLevel >= maxLevel;
+    }
+
+    [Header("Upgrade Configurations (4 Items)")]
+    [SerializeField] private UpgradeConfig pickaxeAttackUpgrade;
+    [SerializeField] private UpgradeConfig pickaxeSpeedUpgrade;
+    [SerializeField] private UpgradeConfig playerStaminaUpgrade;
+    [SerializeField] private UpgradeConfig playerOxygenUpgrade;
 
     private PlayerResources playerResources;
-    private TemporaryAttack playerAttack;
-    private int currentUpgradeLevel = 0;
 
-    private void OnEnable()
+    protected override void OnEnable()
     {
-        FindPlayerReferences();
-        UpdateShopUI();
+        base.OnEnable();
+        RefreshShopUI();
     }
 
-    private void FindPlayerReferences()
+    public override void SetModalActive(bool active)
     {
-        if (GameManager.Instance != null && GameManager.Instance.playerController != null)
+        base.SetModalActive(active);
+        if (active)
         {
-            playerResources = GameManager.Instance.playerController.GetComponent<PlayerResources>();
-            playerAttack = GameManager.Instance.playerController.GetComponent<TemporaryAttack>();
-        }
-        else
-        {
-            playerResources = FindFirstObjectByType<PlayerResources>();
-            playerAttack = FindFirstObjectByType<TemporaryAttack>();
+            RefreshShopUI();
         }
     }
 
-    public void PurchaseDamageUpgrade()
+    public void RefreshShopUI()
     {
-        if (playerResources == null || playerAttack == null) return;
+        FindDependencies();
 
-        int currentCost = GetCurrentCost();
+        SetupUpgradeCard(pickaxeAttackUpgrade);
+        SetupUpgradeCard(pickaxeSpeedUpgrade);
+        SetupUpgradeCard(playerStaminaUpgrade);
+        SetupUpgradeCard(playerOxygenUpgrade);
+    }
 
-        if (playerResources.SpendResource(costResourceType, currentCost))
+    private void SetupUpgradeCard(UpgradeConfig config)
+    {
+        if (config == null || config.shopCardUI == null) return;
+
+        int currentCost = config.GetCurrentCost();
+        bool canAfford = CheckCanAfford(config.costResourceType, currentCost);
+
+        string levelInfo = config.IsMaxLevel ? "MAX LEVEL" : $"Lvl {config.currentLevel} / {config.maxLevel}";
+        string costInfo = config.IsMaxLevel ? "MAX" : $"{config.costResourceType}: {currentCost}";
+
+        config.shopCardUI.SetupCard(
+            config.title,
+            config.icon,
+            config.description,
+            levelInfo,
+            costInfo,
+            canAfford,
+            config.IsMaxLevel,
+            () => PurchaseUpgrade(config)
+        );
+    }
+
+    private bool CheckCanAfford(ResourceType resourceType, int amount)
+    {
+        if (playerResources == null) return false;
+
+        // Uses GetResource from PlayerResources to check balance
+        return playerResources.GetResource(resourceType) >= amount;
+    }
+
+    private void PurchaseUpgrade(UpgradeConfig config)
+    {
+        if (config == null || config.IsMaxLevel) return;
+
+        FindDependencies();
+
+        int cost = config.GetCurrentCost();
+
+        // Uses SpendResource from PlayerResources to perform transaction
+        if (playerResources != null && playerResources.SpendResource(config.costResourceType, cost))
         {
-            currentUpgradeLevel++;
-            playerAttack.AddDamage(damageIncreaseAmount);
-            UpdateShopUI();
+            config.currentLevel++;
+            ApplyUpgradeEffect(config);
+            RefreshShopUI();
+            Debug.Log($"[UIShop] Purchased {config.title} (Level {config.currentLevel})");
         }
         else
         {
-            Debug.Log("Not enough resources for upgrade!");
+            Debug.LogWarning($"[UIShop] Cannot afford {config.title}!");
+        }
+    }
+
+    private void ApplyUpgradeEffect(UpgradeConfig config)
+    {
+        if (GameManager.Instance == null || GameManager.Instance.playerController == null) return;
+
+        GameObject player = GameManager.Instance.playerController.gameObject;
+
+        switch (config.upgradeType)
+        {
+            case UpgradeType.PickaxeAttack:
+                TemporaryAttack attackComp = player.GetComponent<TemporaryAttack>();
+                if (attackComp != null)
+                {
+                    attackComp.AddDamage(Mathf.RoundToInt(config.valueIncreasePerLevel));
+                }
+                break;
+
+            case UpgradeType.PickaxeSpeed:
+                Debug.Log($"[UIShop] Increased Pickaxe Swing Speed by {config.valueIncreasePerLevel}%");
+                break;
+
+            case UpgradeType.PlayerStamina:
+                Debug.Log($"[UIShop] Increased Max Stamina by {config.valueIncreasePerLevel}");
+                break;
+
+            case UpgradeType.PlayerOxygen:
+                Debug.Log($"[UIShop] Increased Max Oxygen by {config.valueIncreasePerLevel}");
+                break;
+        }
+    }
+
+    private void FindDependencies()
+    {
+        if (playerResources == null)
+        {
+            if (GameManager.Instance != null && GameManager.Instance.playerController != null)
+            {
+                playerResources = GameManager.Instance.playerController.GetComponent<PlayerResources>();
+            }
+            else
+            {
+                playerResources = FindAnyObjectByType<PlayerResources>();
+            }
         }
     }
 
@@ -61,24 +173,6 @@ public class UIShop : UiModals
         if (GameManager.Instance != null && GameManager.Instance.uiController != null)
         {
             GameManager.Instance.uiController.CloseAllModals();
-        }
-    }
-
-    private int GetCurrentCost()
-    {
-        return baseCost + (currentUpgradeLevel * costIncreasePerLevel);
-    }
-
-    public void UpdateShopUI()
-    {
-        if (playerAttack != null && damageText != null)
-        {
-            damageText.text = $"Current Damage: {playerAttack.CurrentDamage}";
-        }
-
-        if (costText != null)
-        {
-            costText.text = $"Upgrade Cost: {GetCurrentCost()} {costResourceType}";
         }
     }
 }
