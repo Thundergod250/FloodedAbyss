@@ -18,8 +18,9 @@ public class UIDebug : MonoBehaviour
     [Header("Input Action")]
     [SerializeField] private InputActionReference debugToggleAction;
 
-    [Header("Resource Debug Buttons")]
+    [Header("Debug Buttons")]
     [SerializeField] private Button addResource;
+    [SerializeField] private Button upgradeStats; // <-- Added button reference
 
     private PlayerResources playerResources;
     private PlayerStats playerStats;
@@ -28,11 +29,14 @@ public class UIDebug : MonoBehaviour
 
     private void Start()
     {
-        playerResources = GameManager.Instance.playerController.PlayerResources;
-        playerStats = GameManager.Instance.playerController.PlayerStats;
+        if (GameManager.Instance != null && GameManager.Instance.playerController != null)
+        {
+            playerResources = GameManager.Instance.playerController.PlayerResources;
+            playerStats = GameManager.Instance.playerController.PlayerStats;
+        }
 
-        if (playerResources == null || playerStats == null)
-            return; 
+        if (playerResources != null)
+            playerResources.EvtOnResourceChanged.AddListener(HandleResourceChanged);
 
         InitializeUI();
         InitializeStatsUI();
@@ -40,6 +44,7 @@ public class UIDebug : MonoBehaviour
 
     private void OnEnable()
     {
+        // Re-subscribe if playerResources was already assigned in Start
         if (playerResources != null) 
             playerResources.EvtOnResourceChanged.AddListener(HandleResourceChanged);
 
@@ -51,6 +56,9 @@ public class UIDebug : MonoBehaviour
 
         if (addResource != null) 
             addResource.onClick.AddListener(OnClick_AddTenToAllResources);
+
+        if (upgradeStats != null)
+            upgradeStats.onClick.AddListener(OnClick_UpgradeAllStats); // <-- Subscribe button listener
     }
 
     private void OnDisable()
@@ -66,6 +74,9 @@ public class UIDebug : MonoBehaviour
 
         if (addResource != null) 
             addResource.onClick.RemoveListener(OnClick_AddTenToAllResources);
+
+        if (upgradeStats != null)
+            upgradeStats.onClick.RemoveListener(OnClick_UpgradeAllStats); // <-- Unsubscribe button listener
     }
 
     private void InitializeUI()
@@ -82,7 +93,6 @@ public class UIDebug : MonoBehaviour
             UIDebugPanel itemInstance = Instantiate(resourceItemPrefab, resourceGridParent);
             int currentAmount = playerResources != null ? playerResources.GetResource(type) : 0;
             
-            // Calls the dynamic resource setup on UIDebugPanel
             itemInstance.SetupResource(type, currentAmount);
             uiItemMap[type] = itemInstance;
         }
@@ -111,7 +121,6 @@ public class UIDebug : MonoBehaviour
         int lvl = playerStats.GetStatLevel(statKey);
         string val = playerStats.GetStatValueString(statKey);
 
-        // Calls the 4-column setup on UIDebugPanel
         itemInstance.SetupStat(category, statType, lvl, val);
         uiStatMap[statKey] = itemInstance;
     }
@@ -153,11 +162,18 @@ public class UIDebug : MonoBehaviour
         }
     }
 
-    // --- Button Callbacks ---
-
     public void OnClick_AddTenToAllResources()
     {
         if (playerResources != null) 
             playerResources.AddTenToAllResources();
+    }
+
+    public void OnClick_UpgradeAllStats()
+    {
+        if (playerStats != null)
+        {
+            playerStats.UpgradeAllStats();
+            RefreshStatsUI(); // Immediately refresh stat values in UI
+        }
     }
 }

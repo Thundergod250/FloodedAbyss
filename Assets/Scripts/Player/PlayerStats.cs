@@ -165,4 +165,13 @@ public class PlayerStats : MonoBehaviour
             basePickAxe.SetAttackSpeed(targetValue);
         }
     }
+    
+    public void UpgradeAllStats()
+    {
+        UpgradeMaxHealth();
+        UpgradeMaxStamina();
+        UpgradeMaxOxygen();
+        UpgradePickAxeDamage();
+        UpgradePickAxeAttackSpeed();
+    }
 }

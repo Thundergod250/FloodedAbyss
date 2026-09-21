@@ -972,12 +972,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49e6989f47f0ccb409e2608aaa4297cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIDebug
-  playerResources: {fileID: 0}
   debugButtonsPanel: {fileID: 5019962930462970511}
   resourceGridParent: {fileID: 2085109047830624426}
   resourceItemPrefab: {fileID: 3755647279164985529, guid: 7ae865444e3dfb440b5a15670b9456e4, type: 3}
+  statsGridParent: {fileID: 1936701887259554869}
+  statItemPrefab: {fileID: 3755647279164985529, guid: 8cfd2fe4601fefb498cd88d1f2842b36, type: 3}
   debugToggleAction: {fileID: 2226932210249216780, guid: ad2be89f7caf9e140bb9d6401be0c40b, type: 3}
   addResource: {fileID: 8327581258961927585}
+  upgradeStats: {fileID: 99891519025110123}
 --- !u!114 &5481795522764984416
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1660,7 +1662,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5292453958516404078, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
       propertyPath: m_fontSize
-      value: 71.1
+      value: 70.65
       objectReference: {fileID: 0}
     - target: {fileID: 6479272046965878740, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
       propertyPath: m_AnchorMax.x
@@ -1675,6 +1677,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+--- !u!114 &99891519025110123 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2522331734113263539, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+  m_PrefabInstance: {fileID: 2478103047148192728}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!224 &1301600331702524939 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3491357390702125011, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
@@ -1688,6 +1701,11 @@ GameObject:
 --- !u!224 &1826023873195298764 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4266222343600507924, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+  m_PrefabInstance: {fileID: 2478103047148192728}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &1936701887259554869 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 4072223340557498349, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
   m_PrefabInstance: {fileID: 2478103047148192728}
   m_PrefabAsset: {fileID: 0}
 --- !u!224 &2085109047830624426 stripped
@@ -1813,7 +1831,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3312997175711709740, guid: 36ec5513dc02c264791744e84cc765ed, type: 3}
       propertyPath: m_SizeDelta.y
-      value: -90
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5877015669600683376, guid: 36ec5513dc02c264791744e84cc765ed, type: 3}
       propertyPath: m_AnchorMax.y
