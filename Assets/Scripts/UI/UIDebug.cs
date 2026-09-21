@@ -6,13 +6,14 @@ using UnityEngine.UI;
 
 public class UIDebug : MonoBehaviour
 {
-    [Header("Dependencies")]
-    [SerializeField] private PlayerResources playerResources;
-
     [Header("UI Dynamic Layout")]
     [SerializeField] private GameObject debugButtonsPanel;
     [SerializeField] private Transform resourceGridParent;
     [SerializeField] private UIDebugPanel resourceItemPrefab;
+
+    [Header("Player Stats Layout")]
+    [SerializeField] private Transform statsGridParent;
+    [SerializeField] private UIDebugPanel statItemPrefab;
 
     [Header("Input Action")]
     [SerializeField] private InputActionReference debugToggleAction;
@@ -20,14 +21,21 @@ public class UIDebug : MonoBehaviour
     [Header("Resource Debug Buttons")]
     [SerializeField] private Button addResource;
 
+    private PlayerResources playerResources;
+    private PlayerStats playerStats;
     private Dictionary<ResourceType, UIDebugPanel> uiItemMap = new();
+    private Dictionary<string, UIDebugPanel> uiStatMap = new();
 
-    private void Awake()
+    private void Start()
     {
-        if (playerResources == null) 
-            return;
+        playerResources = GameManager.Instance.playerController.PlayerResources;
+        playerStats = GameManager.Instance.playerController.PlayerStats;
+
+        if (playerResources == null || playerStats == null)
+            return; 
 
         InitializeUI();
+        InitializeStatsUI();
     }
 
     private void OnEnable()
@@ -67,20 +75,63 @@ public class UIDebug : MonoBehaviour
         foreach (Transform child in resourceGridParent) 
             Pool.Destroy(child.gameObject);
 
+        uiItemMap.Clear();
+
         foreach (ResourceType type in System.Enum.GetValues(typeof(ResourceType)))
         {
             UIDebugPanel itemInstance = Instantiate(resourceItemPrefab, resourceGridParent);
             int currentAmount = playerResources != null ? playerResources.GetResource(type) : 0;
             
-            itemInstance.Setup(type, currentAmount);
+            // Calls the dynamic resource setup on UIDebugPanel
+            itemInstance.SetupResource(type, currentAmount);
             uiItemMap[type] = itemInstance;
+        }
+    }
+
+    private void InitializeStatsUI()
+    {
+        if (statsGridParent == null || statItemPrefab == null || playerStats == null) return;
+
+        foreach (Transform child in statsGridParent)
+            Pool.Destroy(child.gameObject);
+
+        uiStatMap.Clear();
+
+        // Create initial rows for 4-column stats
+        CreateStatRow("Health", "Player", "Max HP");
+        CreateStatRow("Stamina", "Player", "Max Stamina");
+        CreateStatRow("Oxygen", "Player", "Max Oxygen");
+        CreateStatRow("AxeDamage", "Axe", "Damage");
+        CreateStatRow("AxeSpeed", "Axe", "Attack Speed");
+    }
+
+    private void CreateStatRow(string statKey, string category, string statType)
+    {
+        UIDebugPanel itemInstance = Instantiate(statItemPrefab, statsGridParent);
+        int lvl = playerStats.GetStatLevel(statKey);
+        string val = playerStats.GetStatValueString(statKey);
+
+        // Calls the 4-column setup on UIDebugPanel
+        itemInstance.SetupStat(category, statType, lvl, val);
+        uiStatMap[statKey] = itemInstance;
+    }
+
+    public void RefreshStatsUI()
+    {
+        if (playerStats == null) return;
+
+        foreach (var pair in uiStatMap)
+        {
+            int lvl = playerStats.GetStatLevel(pair.Key);
+            string val = playerStats.GetStatValueString(pair.Key);
+            pair.Value.UpdateStat(lvl, val);
         }
     }
 
     private void HandleResourceChanged(ResourceType type, int newAmount)
     {
         if (uiItemMap.TryGetValue(type, out UIDebugPanel uiItem)) 
-            uiItem.UpdateAmount(newAmount);
+            uiItem.UpdateResourceAmount(newAmount);
     }
 
     private void OnToggleDebug(InputAction.CallbackContext context)
@@ -92,7 +143,9 @@ public class UIDebug : MonoBehaviour
 
             debugButtonsPanel.SetActive(willBeActive);
 
-            // Toggle cursor state alongside UI visibility
+            if (willBeActive)
+                RefreshStatsUI();
+
             Cursor.visible = willBeActive;
             Cursor.lockState = willBeActive ? CursorLockMode.None : CursorLockMode.Locked;
 

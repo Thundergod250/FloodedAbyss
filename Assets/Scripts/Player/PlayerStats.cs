@@ -47,6 +47,8 @@ public class PlayerStats : MonoBehaviour
         ApplyPickAxeAttackSpeedLevel();
     }
 
+    // --- Upgrade Methods ---
+
     public void UpgradeMaxHealth()
     {
         if (upgradeData == null || healthLevel >= upgradeData.healthLevels.Length) return;
@@ -86,6 +88,38 @@ public class PlayerStats : MonoBehaviour
         pickAxeAttackSpeedLevel++;
         ApplyPickAxeAttackSpeedLevel();
     }
+
+    // --- Getter Methods for UI Debug Panel ---
+
+    public int GetStatLevel(string statKey)
+    {
+        return statKey switch
+        {
+            "Health" => healthLevel,
+            "Stamina" => staminaLevel,
+            "Oxygen" => oxygenLevel,
+            "AxeDamage" => pickAxeDamageLevel,
+            "AxeSpeed" => pickAxeAttackSpeedLevel,
+            _ => 1
+        };
+    }
+
+    public string GetStatValueString(string statKey)
+    {
+        if (upgradeData == null) return "N/A";
+
+        return statKey switch
+        {
+            "Health" => (healthLevel <= upgradeData.healthLevels.Length) ? upgradeData.healthLevels[healthLevel - 1].ToString() : "MAX",
+            "Stamina" => (staminaLevel <= upgradeData.staminaLevels.Length) ? upgradeData.staminaLevels[staminaLevel - 1].ToString("0.#") : "MAX",
+            "Oxygen" => (oxygenLevel <= upgradeData.oxygenLevels.Length) ? upgradeData.oxygenLevels[oxygenLevel - 1].ToString("0.#") : "MAX",
+            "AxeDamage" => (pickAxeDamageLevel <= upgradeData.pickAxeDamageLevels.Length) ? upgradeData.pickAxeDamageLevels[pickAxeDamageLevel - 1].ToString() : "MAX",
+            "AxeSpeed" => (pickAxeAttackSpeedLevel <= upgradeData.pickAxeAttackSpeedLevels.Length) ? upgradeData.pickAxeAttackSpeedLevels[pickAxeAttackSpeedLevel - 1].ToString("0.#") : "MAX",
+            _ => "0"
+        };
+    }
+
+    // --- Private Apply Methods ---
 
     private void ApplyHealthLevel()
     {

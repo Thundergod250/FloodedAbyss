@@ -151,7 +151,7 @@ GameObject:
   - component: {fileID: 5381753385501506982}
   - component: {fileID: 3755647279164985529}
   m_Layer: 5
-  m_Name: Debug Panel Prefab
+  m_Name: Debug Panel Resources Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -254,8 +254,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bc48430bf6bf3543853ee50ad26e3d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIDebugPanel
-  resourceNameText: {fileID: 608434463301998474}
-  resourceAmountText: {fileID: 3425526268317148740}
+  columnTexts:
+  - {fileID: 608434463301998474}
+  - {fileID: 3425526268317148740}
 --- !u!1 &5099055241105604963
 GameObject:
   m_ObjectHideFlags: 0
