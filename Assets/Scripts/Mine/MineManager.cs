@@ -29,7 +29,7 @@ public class MineManager : MonoBehaviour
     [Header("Mine Area")]
     [SerializeField] private GameObject minePrefab;
     [SerializeField] private Transform exitLocation;
-    private GameObject spawnedMine;
+     private GameObject spawnedMine;
 
     /*    private float currentTime;
         private bool timerRunning = false;*/
@@ -96,6 +96,8 @@ public class MineManager : MonoBehaviour
         //currentTime = timeLimit;
 
         //ResetWaterLevel();
+
+        DespawnMine();
     }
 
     /*    public void StartTimer()
@@ -243,7 +245,15 @@ public class MineManager : MonoBehaviour
     {
         Vector3 spawnPosition = new Vector3(mineLoc.transform.position.x, GameManager.Instance.waterLevel.waterLevelTransform.transform.position.y + 36, mineLoc.transform.position.z);
 
-        spawnedMine = Instantiate(minePrefab, spawnPosition, mineLoc.rotation);
+        if(spawnedMine == null)
+        {
+            spawnedMine = Instantiate(minePrefab, spawnPosition, mineLoc.rotation);
+            spawnedMine.transform.SetParent(GameManager.Instance.objectPooling.ParentObject, true);
+        }
+        else
+        {
+            GameManager.Instance.objectPooling.GetComponent<ObjectPooling>().Spawn(spawnedMine);
+        }
 
         Debug.Log("mineLoc position: " + mineLoc.position);
         Debug.Log("Spawned mine position: " + spawnedMine.transform.position);
@@ -275,5 +285,10 @@ public class MineManager : MonoBehaviour
         }
 
         spawnPoints = oreSpawns.oreSpawnlocations;
+    }
+
+    private void DespawnMine()
+    {
+        GameManager.Instance.objectPooling.GetComponent<ObjectPooling>().Despawn(spawnedMine);
     }
 }
