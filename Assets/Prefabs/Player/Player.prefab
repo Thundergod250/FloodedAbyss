@@ -368,6 +368,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96680e9d0e784084fa7af4449b8e0d4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
+  upgradeData: {fileID: 11400000, guid: 9196bc362143535499d8092fdb33d87f, type: 2}
+  basePickAxe: {fileID: 5946144513090272851}
+  healthLevel: 1
+  staminaLevel: 1
+  oxygenLevel: 1
+  pickAxeDamageLevel: 1
+  pickAxeAttackSpeedLevel: 1
 --- !u!1 &3135511604283639651
 GameObject:
   m_ObjectHideFlags: 0
@@ -700,3 +707,14 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1027081308811477915, guid: 45dddfc8a94445a4c9b5d743afc986cd, type: 3}
   m_PrefabInstance: {fileID: 3509025458154547146}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5946144513090272851 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7076952708476344729, guid: 45dddfc8a94445a4c9b5d743afc986cd, type: 3}
+  m_PrefabInstance: {fileID: 3509025458154547146}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b294f78c3436b64eb34502a122940e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TemporaryPickAxe

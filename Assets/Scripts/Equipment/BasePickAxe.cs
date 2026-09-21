@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class TemporaryPickAxe : MonoBehaviour
+public class BasePickAxe : Equipment
 {
     [Header("References")]
     [SerializeField] private Animator animator;
@@ -64,7 +64,6 @@ public class TemporaryPickAxe : MonoBehaviour
     public void UpgradeDamage(int amount)
     {
         damage += amount;
-
         if (attackBox != null)
             attackBox.Damage = damage;
     }
@@ -72,7 +71,20 @@ public class TemporaryPickAxe : MonoBehaviour
     public void UpgradeAttackSpeed(float amount)
     {
         attackSpeed += amount;
-
         animator.SetFloat(AttackSpeedHash, attackSpeed);
+    }
+    
+    public void SetDamage(int newDamage)
+    {
+        damage = newDamage;
+        if (attackBox != null)
+            attackBox.Damage = damage;
+    }
+
+    public void SetAttackSpeed(float newSpeed)
+    {
+        attackSpeed = newSpeed;
+        if (animator != null)
+            animator.SetFloat(AttackSpeedHash, attackSpeed);
     }
 }
