@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 5011022331939074706}
   - component: {fileID: 3202337842524963063}
   - component: {fileID: 159086485549072678}
+  - component: {fileID: 7928735737565289207}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -213,6 +214,7 @@ MonoBehaviour:
   PlayerStamina: {fileID: 5011022331939074706}
   PlayerOxygen: {fileID: 3202337842524963063}
   PlayerHealth: {fileID: 159086485549072678}
+  PlayerStats: {fileID: 7928735737565289207}
 --- !u!114 &3151513359486226473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -315,8 +317,6 @@ MonoBehaviour:
   runDrain: 45
   jumpCost: 40
   swimDrain: 15
-  exhaustionDelay: 1
-  exhaustionSpeedMultiplier: 0.5
 --- !u!114 &3202337842524963063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -356,6 +356,18 @@ MonoBehaviour:
   EvtOnDied:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7928735737565289207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2668991774076862816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96680e9d0e784084fa7af4449b8e0d4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
 --- !u!1 &3135511604283639651
 GameObject:
   m_ObjectHideFlags: 0

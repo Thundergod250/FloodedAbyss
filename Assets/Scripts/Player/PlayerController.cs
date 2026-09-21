@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     public PlayerStamina PlayerStamina;
     public PlayerOxygen PlayerOxygen;
     public Health PlayerHealth;
+    public PlayerStats PlayerStats;
 
     public InputAction MoveAction { get; private set; }
     public InputAction JumpAction { get; private set; }
