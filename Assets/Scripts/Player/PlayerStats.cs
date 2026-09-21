@@ -1,16 +1,22 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Health))]
 public class PlayerStats : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [Header("Component References")]
+    private Health playerHealth;
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        
+        if (playerHealth == null) 
+            playerHealth = GetComponent<Health>();
+    }
+   
+    public void UpgradeMaxHealth(int amount, bool healCurrent = true)
+    {
+        if (playerHealth != null)
+            playerHealth.IncreaseMaxHealth(amount, healCurrent);
+        else
+            Debug.LogWarning("PlayerStats: Health component reference is missing!");
     }
 }

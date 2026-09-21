@@ -21,17 +21,16 @@ public class Health : MonoBehaviour
 
     private void Start() => currentHealth = maxHealth;
 
-    #region Functions
+    public int GetCurrentHealth() => currentHealth;
+    public int GetMaxHealth() => maxHealth;
+    
     public void TakeDamage(int damage)
     {
         if (currentHealth <= 0)
             return;
-
         currentHealth -= damage;
         currentHealth = Mathf.Max(currentHealth, 0);
-
         EvtOnHit?.Invoke();
-
         if (currentHealth <= 0) 
             Die();
     }
@@ -63,20 +62,20 @@ public class Health : MonoBehaviour
             currentHealth += amount;
         currentHealth = Mathf.Min(currentHealth, maxHealth);
     }
-    
+
     public void DecreaseMaxHealth(int amount)
     {
         if (amount <= 0) return;
+
         maxHealth = Mathf.Max(1, maxHealth - amount);
         currentHealth = Mathf.Min(currentHealth, maxHealth);
     }
-    
+
     public void SetMaxHealth(int newMaxHealth)
-    {        
+    {
         maxHealth = Mathf.Max(1, newMaxHealth);
         currentHealth = Mathf.Min(currentHealth, maxHealth);
     }
-    #endregion
 
     private void Die()
     {

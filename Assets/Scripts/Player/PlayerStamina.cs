@@ -12,25 +12,21 @@ public class PlayerStamina : MonoBehaviour
     [SerializeField] private float jumpCost = 20f;
     [SerializeField] private float swimDrain = 5f;
 
-    public float CurrentStamina => currentStamina;
-    public float MaxStamina => maxStamina;
-
     private void Update()
     {
         currentStamina += regenRate * Time.deltaTime;
         currentStamina = Mathf.Min(currentStamina, maxStamina);
     }
+    
+    public float GetCurrentStamina() => currentStamina;
+    public float GetMaxStamina() => maxStamina;
 
-    public void DrainRunning()
-    {
-        DrainStamina(runDrain * Time.deltaTime);
-    }
+    public void DrainRunning() => DrainStamina(runDrain * Time.deltaTime);
 
     public bool UseJump()
     {
         if (currentStamina < jumpCost)
             return false;
-
         DrainStamina(jumpCost);
         return true;
     }
@@ -44,5 +40,28 @@ public class PlayerStamina : MonoBehaviour
     {
         currentStamina -= amount;
         currentStamina = Mathf.Max(currentStamina, 0f);
+    }
+    
+    public void IncreaseMaxStamina(float amount, bool fillCurrent = false)
+    {
+        if (amount <= 0f) return;
+        maxStamina += amount;
+        if (fillCurrent) 
+            currentStamina += amount;
+        currentStamina = Mathf.Min(currentStamina, maxStamina);
+    }
+    
+    public void DecreaseMaxStamina(float amount)
+    {
+        if (amount <= 0f) return;
+
+        maxStamina = Mathf.Max(1f, maxStamina - amount);
+        currentStamina = Mathf.Min(currentStamina, maxStamina);
+    }
+    
+    public void SetMaxStamina(float newMaxStamina)
+    {
+        maxStamina = Mathf.Max(1f, newMaxStamina);
+        currentStamina = Mathf.Min(currentStamina, maxStamina);
     }
 }

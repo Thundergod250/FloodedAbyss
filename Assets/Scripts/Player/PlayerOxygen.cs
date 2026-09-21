@@ -76,7 +76,7 @@ public class PlayerOxygen : MonoBehaviour
         {
             if (health != null)
             {
-                int damage = Mathf.CeilToInt(health.MaxHealth * 0.1f);
+                int damage = Mathf.CeilToInt(health.GetMaxHealth() * 0.1f);
                 health.TakeDamage(damage);
             }
 
