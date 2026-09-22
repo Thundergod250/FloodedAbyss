@@ -121,58 +121,38 @@ public class PlayerStats : MonoBehaviour
             _ => "0"
         };
     }
+    
+    // --- Helper Method ---
 
-    // --- Private Apply Methods ---
-
-    private void ApplyHealthLevel()
+    private void ApplyStat<T>(T[] levels, int currentLevel, Object targetComponent, System.Action<T> applyAction)
     {
-        if (playerHealth != null && upgradeData != null && healthLevel <= upgradeData.healthLevels.Length)
+        // Validate target component and data array
+        if (targetComponent == null || upgradeData == null || levels == null) return;
+
+        // Guard against index out of bounds (1-based level)
+        int index = currentLevel - 1;
+        if (index >= 0 && index < levels.Length)
         {
-            int targetValue = upgradeData.healthLevels[healthLevel - 1];
-            playerHealth.SetMaxHealth(targetValue);
+            applyAction(levels[index]);
             EvtOnStatChanged?.Invoke();
         }
     }
 
-    private void ApplyStaminaLevel()
-    {
-        if (playerStamina != null && upgradeData != null && staminaLevel <= upgradeData.staminaLevels.Length)
-        {
-            float targetValue = upgradeData.staminaLevels[staminaLevel - 1];
-            playerStamina.SetMaxStamina(targetValue);
-            EvtOnStatChanged?.Invoke();
-        }
-    }
+    // --- Simplified Apply Methods ---
+    private void ApplyHealthLevel() => 
+        ApplyStat(upgradeData?.healthLevels, healthLevel, playerHealth, playerHealth.SetMaxHealth);
 
-    private void ApplyOxygenLevel()
-    {
-        if (playerOxygen != null && upgradeData != null && oxygenLevel <= upgradeData.oxygenLevels.Length)
-        {
-            float targetValue = upgradeData.oxygenLevels[oxygenLevel - 1];
-            playerOxygen.SetMaxOxygen(targetValue);
-            EvtOnStatChanged?.Invoke();
-        }
-    }
+    private void ApplyStaminaLevel() => 
+        ApplyStat(upgradeData?.staminaLevels, staminaLevel, playerStamina, playerStamina.SetMaxStamina);
 
-    private void ApplyPickAxeDamageLevel()
-    {
-        if (basePickAxe != null && upgradeData != null && pickAxeDamageLevel <= upgradeData.pickAxeDamageLevels.Length)
-        {
-            int targetValue = upgradeData.pickAxeDamageLevels[pickAxeDamageLevel - 1];
-            basePickAxe.SetDamage(targetValue);
-            EvtOnStatChanged?.Invoke();
-        }
-    }
+    private void ApplyOxygenLevel() => 
+        ApplyStat(upgradeData?.oxygenLevels, oxygenLevel, playerOxygen, playerOxygen.SetMaxOxygen);
 
-    private void ApplyPickAxeAttackSpeedLevel()
-    {
-        if (basePickAxe != null && upgradeData != null && pickAxeAttackSpeedLevel <= upgradeData.pickAxeAttackSpeedLevels.Length)
-        {
-            float targetValue = upgradeData.pickAxeAttackSpeedLevels[pickAxeAttackSpeedLevel - 1];
-            basePickAxe.SetAttackSpeed(targetValue);
-            EvtOnStatChanged?.Invoke();
-        }
-    }
+    private void ApplyPickAxeDamageLevel() => 
+        ApplyStat(upgradeData?.pickAxeDamageLevels, pickAxeDamageLevel, basePickAxe, basePickAxe.SetDamage);
+
+    private void ApplyPickAxeAttackSpeedLevel() => 
+        ApplyStat(upgradeData?.pickAxeAttackSpeedLevels, pickAxeAttackSpeedLevel, basePickAxe, basePickAxe.SetAttackSpeed);
     
     public void UpgradeAllStats()
     {
