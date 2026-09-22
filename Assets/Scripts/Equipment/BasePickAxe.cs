@@ -20,46 +20,73 @@ public class BasePickAxe : Equipment
     private static readonly int AttackSpeedHash =
         Animator.StringToHash("AttackSpeed");
 
-    private void Awake()
+    private void Start()
     {
-        //controller = GetComponent<PlayerController>();
-
         if (animator == null)
             animator = GetComponent<Animator>();
 
         if (attackBox != null)
             attackBox.Damage = damage;
+        
+        if (animator != null)
+            animator.SetFloat(AttackSpeedHash, attackSpeed);
+
+        // Bind in Start() to ensure PlayerController.Awake() has already run
+        RegisterInput();
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        animator.SetFloat(AttackSpeedHash, attackSpeed);
+        // On re-enabling the tool, register if controller is ready
+        RegisterInput();
+    }
 
-        if (controller != null)
-            controller.AttackAction.started += OnAttack;
+    private void OnDisable()
+    {
+        UnregisterInput();
     }
 
     private void OnDestroy()
     {
-        if (controller != null)
+        UnregisterInput();
+    }
+
+    private void RegisterInput()
+    {
+        if (controller != null && controller.AttackAction != null)
+        {
+            controller.AttackAction.started -= OnAttack; // Avoid duplicate binding
+            controller.AttackAction.started += OnAttack;
+        }
+    }
+
+    private void UnregisterInput()
+    {
+        if (controller != null && controller.AttackAction != null)
+        {
             controller.AttackAction.started -= OnAttack;
+        }
     }
 
     private void OnAttack(InputAction.CallbackContext context)
     {
+        // Block attack if player controls are disabled (e.g., UI modal is open)
+        if (controller != null && !controller.IsInputActive)
+            return;
+
         if (!canAttack)
             return;
 
         canAttack = false;
 
-        animator.SetTrigger(AttackHash);
-        animator.SetFloat(AttackSpeedHash, attackSpeed);
+        if (animator != null)
+        {
+            animator.SetTrigger(AttackHash);
+            animator.SetFloat(AttackSpeedHash, attackSpeed);
+        }
     }
 
-    public void EnableAttack()
-    {
-        canAttack = true;
-    }
+    public void EnableAttack() => canAttack = true;
 
     public void UpgradeDamage(int amount)
     {
@@ -71,7 +98,8 @@ public class BasePickAxe : Equipment
     public void UpgradeAttackSpeed(float amount)
     {
         attackSpeed += amount;
-        animator.SetFloat(AttackSpeedHash, attackSpeed);
+        if (animator != null)
+            animator.SetFloat(AttackSpeedHash, attackSpeed);
     }
     
     public void SetDamage(int newDamage)

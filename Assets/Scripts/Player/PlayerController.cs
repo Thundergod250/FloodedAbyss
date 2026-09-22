@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour
         JumpAction = playerInput.actions["Jump"];
         UseAction = playerInput.actions["Use"];
         InteractAction = playerInput.actions["Interact"];
-        AttackAction = playerInput.actions["Shoot"];
+        AttackAction = playerInput.actions["Use"];
         LookAction = playerInput.actions["Look"];
         RunAction = playerInput.actions["Run"];
     }

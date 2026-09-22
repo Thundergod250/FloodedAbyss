@@ -24,7 +24,6 @@ public class PlayerMovement : MonoBehaviour
     private PlayerStamina stamina;
     private PlayerOxygen oxygen;
     private Vector3 velocity; 
-    private bool wasRunning;
 
     private void Start()
     {
