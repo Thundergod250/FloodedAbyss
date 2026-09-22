@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -6,8 +7,8 @@ using UnityEngine.Events;
 [RequireComponent(typeof(PlayerOxygen))]
 public class PlayerStats : MonoBehaviour
 {
-    public UnityEvent EvtOnStatChanged; 
-    
+    public UnityEvent EvtOnStatChanged;
+
     [Header("Upgrade Settings")]
     [SerializeField] private StatUpgradeData upgradeData;
 
@@ -27,15 +28,10 @@ public class PlayerStats : MonoBehaviour
 
     private void Start()
     {
-        if (playerHealth == null) 
-            playerHealth = GetComponent<Health>();
+        playerHealth ??= GetComponent<Health>();
+        playerStamina ??= GetComponent<PlayerStamina>();
+        playerOxygen ??= GetComponent<PlayerOxygen>();
 
-        if (playerStamina == null)
-            playerStamina = GetComponent<PlayerStamina>();
-
-        if (playerOxygen == null)
-            playerOxygen = GetComponent<PlayerOxygen>();
-        
         ApplyAllStatLevels();
     }
 
@@ -52,84 +48,68 @@ public class PlayerStats : MonoBehaviour
 
     // --- Upgrade Methods ---
 
-    public void UpgradeMaxHealth()
+    public void UpgradeMaxHealth() => TryIncrementLevel(ref healthLevel, upgradeData?.healthLevels, ApplyHealthLevel);
+    public void UpgradeMaxStamina() => TryIncrementLevel(ref staminaLevel, upgradeData?.staminaLevels, ApplyStaminaLevel);
+    public void UpgradeMaxOxygen() => TryIncrementLevel(ref oxygenLevel, upgradeData?.oxygenLevels, ApplyOxygenLevel);
+    public void UpgradePickAxeDamage() => TryIncrementLevel(ref pickAxeDamageLevel, upgradeData?.pickAxeDamageLevels, ApplyPickAxeDamageLevel);
+    public void UpgradePickAxeAttackSpeed() => TryIncrementLevel(ref pickAxeAttackSpeedLevel, upgradeData?.pickAxeAttackSpeedLevels, ApplyPickAxeAttackSpeedLevel);
+
+    public void UpgradeAllStats()
     {
-        if (upgradeData == null || healthLevel >= upgradeData.healthLevels.Length) return;
-
-        healthLevel++;
-        ApplyHealthLevel();
-    }
-
-    public void UpgradeMaxStamina()
-    {
-        if (upgradeData == null || staminaLevel >= upgradeData.staminaLevels.Length) return;
-
-        staminaLevel++;
-        ApplyStaminaLevel();
-    }
-
-    public void UpgradeMaxOxygen()
-    {
-        if (upgradeData == null || oxygenLevel >= upgradeData.oxygenLevels.Length) return;
-
-        oxygenLevel++;
-        ApplyOxygenLevel();
-    }
-
-    public void UpgradePickAxeDamage()
-    {
-        if (upgradeData == null || pickAxeDamageLevel >= upgradeData.pickAxeDamageLevels.Length) return;
-
-        pickAxeDamageLevel++;
-        ApplyPickAxeDamageLevel();
-    }
-
-    public void UpgradePickAxeAttackSpeed()
-    {
-        if (upgradeData == null || pickAxeAttackSpeedLevel >= upgradeData.pickAxeAttackSpeedLevels.Length) return;
-
-        pickAxeAttackSpeedLevel++;
-        ApplyPickAxeAttackSpeedLevel();
+        UpgradeMaxHealth();
+        UpgradeMaxStamina();
+        UpgradeMaxOxygen();
+        UpgradePickAxeDamage();
+        UpgradePickAxeAttackSpeed();
     }
 
     // --- Getter Methods for UI Debug Panel ---
 
-    public int GetStatLevel(string statKey)
+    public int GetStatLevel(string statKey) => statKey switch
     {
-        return statKey switch
-        {
-            "Health" => healthLevel,
-            "Stamina" => staminaLevel,
-            "Oxygen" => oxygenLevel,
-            "AxeDamage" => pickAxeDamageLevel,
-            "AxeSpeed" => pickAxeAttackSpeedLevel,
-            _ => 1
-        };
+        "Health" => healthLevel,
+        "Stamina" => staminaLevel,
+        "Oxygen" => oxygenLevel,
+        "AxeDamage" => pickAxeDamageLevel,
+        "AxeSpeed" => pickAxeAttackSpeedLevel,
+        _ => 1
+    };
+
+    public string GetStatValueString(string statKey) => statKey switch
+    {
+        "Health" => FormatStatValue(upgradeData?.healthLevels, healthLevel),
+        "Stamina" => FormatStatValue(upgradeData?.staminaLevels, staminaLevel, "0.#"),
+        "Oxygen" => FormatStatValue(upgradeData?.oxygenLevels, oxygenLevel, "0.#"),
+        "AxeDamage" => FormatStatValue(upgradeData?.pickAxeDamageLevels, pickAxeDamageLevel),
+        "AxeSpeed" => FormatStatValue(upgradeData?.pickAxeAttackSpeedLevels, pickAxeAttackSpeedLevel, "0.#"),
+        _ => "0"
+    };
+
+    // --- Helper Methods ---
+
+    private void TryIncrementLevel<T>(ref int currentLevel, T[] levelsArray, Action applyAction)
+    {
+        if (levelsArray == null || currentLevel >= levelsArray.Length) return;
+
+        currentLevel++;
+        applyAction?.Invoke();
     }
 
-    public string GetStatValueString(string statKey)
+    private string FormatStatValue<T>(T[] levelsArray, int level, string format = null)
     {
-        if (upgradeData == null) return "N/A";
+        if (levelsArray == null) return "N/A";
+        if (level > levelsArray.Length) return "MAX";
 
-        return statKey switch
-        {
-            "Health" => (healthLevel <= upgradeData.healthLevels.Length) ? upgradeData.healthLevels[healthLevel - 1].ToString() : "MAX",
-            "Stamina" => (staminaLevel <= upgradeData.staminaLevels.Length) ? upgradeData.staminaLevels[staminaLevel - 1].ToString("0.#") : "MAX",
-            "Oxygen" => (oxygenLevel <= upgradeData.oxygenLevels.Length) ? upgradeData.oxygenLevels[oxygenLevel - 1].ToString("0.#") : "MAX",
-            "AxeDamage" => (pickAxeDamageLevel <= upgradeData.pickAxeDamageLevels.Length) ? upgradeData.pickAxeDamageLevels[pickAxeDamageLevel - 1].ToString() : "MAX",
-            "AxeSpeed" => (pickAxeAttackSpeedLevel <= upgradeData.pickAxeAttackSpeedLevels.Length) ? upgradeData.pickAxeAttackSpeedLevels[pickAxeAttackSpeedLevel - 1].ToString("0.#") : "MAX",
-            _ => "0"
-        };
+        T rawValue = levelsArray[level - 1];
+        return !string.IsNullOrEmpty(format) && rawValue is IFormattable formattable
+            ? formattable.ToString(format, null)
+            : rawValue.ToString();
     }
-    
-    // --- Helper Method ---
 
-    private void ApplyStat<T>(T[] levels, int currentLevel, Object targetComponent, System.Action<T> applyAction)
+    private void ApplyStat<T>(T[] levels, int currentLevel, UnityEngine.Object targetComponent, Action<T> applyAction)
     {
-        // Validate target component and data array
         if (targetComponent == null || upgradeData == null || levels == null) return;
 
-        // Guard against index out of bounds (1-based level)
         int index = currentLevel - 1;
         if (index >= 0 && index < levels.Length)
         {
@@ -139,6 +119,7 @@ public class PlayerStats : MonoBehaviour
     }
 
     // --- Simplified Apply Methods ---
+
     private void ApplyHealthLevel() => 
         ApplyStat(upgradeData?.healthLevels, healthLevel, playerHealth, playerHealth.SetMaxHealth);
 
@@ -153,13 +134,4 @@ public class PlayerStats : MonoBehaviour
 
     private void ApplyPickAxeAttackSpeedLevel() => 
         ApplyStat(upgradeData?.pickAxeAttackSpeedLevels, pickAxeAttackSpeedLevel, basePickAxe, basePickAxe.SetAttackSpeed);
-    
-    public void UpgradeAllStats()
-    {
-        UpgradeMaxHealth();
-        UpgradeMaxStamina();
-        UpgradeMaxOxygen();
-        UpgradePickAxeDamage();
-        UpgradePickAxeAttackSpeed();
-    }
 }
