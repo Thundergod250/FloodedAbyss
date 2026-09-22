@@ -18,46 +18,34 @@ public class PlayerMovement : MonoBehaviour
     public bool wasSwimSprinting;
 
     private float currentSpeed;
-    private WaterLevel wLevel;
     private Transform waterSurface;
     private PlayerController controller;
     private CharacterController characterController;
     private PlayerStamina stamina;
     private PlayerOxygen oxygen;
     private Vector3 velocity; 
-    private bool wasRunning;
 
-    private void Awake()
+    private void Start()
     {
         characterController = GetComponent<CharacterController>();
         controller = GetComponent<PlayerController>();
         stamina = GetComponent<PlayerStamina>();
         oxygen = GetComponent<PlayerOxygen>();
-    }
-
-    private void Start()
-    {
-        wLevel = GameManager.Instance.GetComponent<WaterLevel>();
-
+        
         velocity.y = -2f;
-
-        if (controller != null && controller.JumpAction != null)
-        {
+        if (controller != null && controller.JumpAction != null) 
             controller.JumpAction.started += Jump;
-        }
     }
 
     private void OnDestroy()
     {
-        if (controller != null && controller.JumpAction != null)
-        {
+        if (controller != null && controller.JumpAction != null) 
             controller.JumpAction.started -= Jump;
-        }
     }
 
     private void Update()
     {
-            MovePlayer();   
+        MovePlayer();   
         if (isSwimming)
         {
             ApplySwimming(); 
@@ -65,28 +53,25 @@ public class PlayerMovement : MonoBehaviour
             oxygen.DrainSwimSprint();
         }
         else
-        {
             ApplyGravity();
-        }
     }
 
     private void MovePlayer()
     {
         if (controller == null || controller.MoveAction == null) return;
 
-        Vector2 input = controller.MoveAction.ReadValue<Vector2>();
+        // Ignore movement input if gameplay controls are inactive (e.g. UI modal open)
+        Vector2 input = controller.IsInputActive ? controller.MoveAction.ReadValue<Vector2>() : Vector2.zero;
 
         Vector3 move =
             transform.right * input.x +
             transform.forward * input.y;
 
         if (isSwimming)
-        {
             currentSpeed = underwaterMoveSpeed;
-        }
         else
         {
-            bool running = controller.RunAction.IsPressed();
+            bool running = controller.IsInputActive && controller.RunAction.IsPressed();
 
             if (running)
             {
@@ -94,9 +79,7 @@ public class PlayerMovement : MonoBehaviour
                 stamina.DrainRunning();
             }
             else
-            {
                 currentSpeed = moveSpeed;
-            }
         }
 
         Vector3 finalMove =
@@ -104,16 +87,12 @@ public class PlayerMovement : MonoBehaviour
             Vector3.up * velocity.y;
 
         characterController.Move(finalMove * Time.deltaTime);
-
     }
-
 
     private void ApplyGravity()
     {
         if (characterController.isGrounded)
-        {
             velocity.y = -2f;
-        }
         else
         {
             velocity.y += gravity * Time.deltaTime;
@@ -125,23 +104,17 @@ public class PlayerMovement : MonoBehaviour
     {
         if (waterSurface == null) return;
 
-        if (controller.JumpAction != null && controller.JumpAction.IsPressed())
-        {
+        if (controller.IsInputActive && controller.JumpAction != null && controller.JumpAction.IsPressed())
             velocity.y = swimUpSpeed;
-        }
         else
-        {
             velocity.y = -sinkSpeed;
-        }
 
-        bool swimSprinting = controller.RunAction.IsPressed();
+        bool swimSprinting = controller.IsInputActive && controller.RunAction.IsPressed();
 
         if (swimSprinting && !wasSwimSprinting)
         {
-            if (!oxygen.StartSwimSprint())
-            {
+            if (!oxygen.StartSwimSprint()) 
                 swimSprinting = false;
-            }
         }
 
         if (swimSprinting && oxygen.GetCurrentOxygen() > 0f)
@@ -150,22 +123,19 @@ public class PlayerMovement : MonoBehaviour
             oxygen.DrainSwimSprint();
         }
         else
-        {
             currentSpeed = underwaterMoveSpeed;
-        }
 
         wasSwimSprinting = swimSprinting;
-
         characterController.Move(velocity * Time.deltaTime);
     }
 
-    public void SetWaterSurface(Transform surface)
-    {
-        waterSurface = surface;
-    }
+    public void SetWaterSurface(Transform surface) => waterSurface = surface;
 
     private void Jump(InputAction.CallbackContext ctx)
     {
+        // Guard against jumping when gameplay controls are disabled
+        if (controller != null && !controller.IsInputActive) return;
+
         if (characterController.isGrounded)
         {
             if (stamina.UseJump())
