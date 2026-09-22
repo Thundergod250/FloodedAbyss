@@ -20,6 +20,8 @@ public class PlayerController : MonoBehaviour
     public InputAction AttackAction { get; private set; }
     public InputAction LookAction { get; private set; }
     public InputAction RunAction { get; private set; }
+    
+    public bool IsInputActive { get; private set; } = true;
 
     private void Awake()
     {
@@ -35,11 +37,5 @@ public class PlayerController : MonoBehaviour
         RunAction = playerInput.actions["Run"];
     }
 
-    public void SetInputActive(bool active)
-    {
-        if (active)
-            playerInput.actions.Enable();
-        else
-            playerInput.actions.Disable();
-    }
+    public void SetInputActive(bool active) => IsInputActive = active;
 }
