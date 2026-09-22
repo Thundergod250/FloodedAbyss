@@ -1020,6 +1020,8 @@ MonoBehaviour:
   resourceItemPrefab: {fileID: 3755647279164985529, guid: 7ae865444e3dfb440b5a15670b9456e4, type: 3}
   statsGridParent: {fileID: 1936701887259554869}
   statItemPrefab: {fileID: 3755647279164985529, guid: 8cfd2fe4601fefb498cd88d1f2842b36, type: 3}
+  fpsText: {fileID: 6932083770266133233}
+  fpsUpdateInterval: 0.5
   debugToggleAction: {fileID: 2226932210249216780, guid: ad2be89f7caf9e140bb9d6401be0c40b, type: 3}
   addResource: {fileID: 8327581258961927585}
   upgradeStats: {fileID: 99891519025110123}
@@ -1953,6 +1955,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
+--- !u!114 &6932083770266133233 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4778399338359578921, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+  m_PrefabInstance: {fileID: 2478103047148192728}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!114 &7148676788691526540 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4708177228261564500, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
@@ -2624,7 +2637,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 13136116891194005, guid: 36ec5513dc02c264791744e84cc765ed, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2600474276230305882, guid: 36ec5513dc02c264791744e84cc765ed, type: 3}
       propertyPath: m_Pivot.x
