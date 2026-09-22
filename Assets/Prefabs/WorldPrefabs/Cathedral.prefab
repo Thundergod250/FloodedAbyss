@@ -19970,8 +19970,30 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7358167643972870469, guid: 8fd671871b34a2e46ae09edc0a2831bd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7817915897562471351}
   m_SourcePrefab: {fileID: 100100000, guid: 8fd671871b34a2e46ae09edc0a2831bd, type: 3}
+--- !u!1 &1010183151787595450 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7358167643972870469, guid: 8fd671871b34a2e46ae09edc0a2831bd, type: 3}
+  m_PrefabInstance: {fileID: 7501187483047360511}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7817915897562471351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1010183151787595450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b97b60acfa8663a418dac44e9d0b7d62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WallRubble
+  health: {fileID: 0}
+  waterLevelAfterDestruction: 0
 --- !u!4 &2569060741944918181 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5457994858564400986, guid: 8fd671871b34a2e46ae09edc0a2831bd, type: 3}
