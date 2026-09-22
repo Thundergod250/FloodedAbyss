@@ -18,7 +18,7 @@ public class StructurePanel : UiModals
 
     private WorkableStructure targetStructure;
 
-    private void Start()
+    protected override void Start()
     {
         if (addWorkerButton != null) addWorkerButton.onClick.AddListener(OnAddWorkerClicked);
         if (removeWorkerButton != null) removeWorkerButton.onClick.AddListener(OnRemoveWorkerClicked);
