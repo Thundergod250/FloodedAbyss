@@ -8,8 +8,9 @@ public class ItemBuildable : Item
 
     [Header("Spawn Settings")]
     [SerializeField] private Transform spawnPoint;
+    [SerializeField] protected StructureDataSO structurePicked;
 
-    private PlayerResources playerResources;
+    protected PlayerResources playerResources;
     private GameObject spawnedStructureInstance;
 
     private void Start()
@@ -35,7 +36,7 @@ public class ItemBuildable : Item
             Debug.LogError($"[ItemBuildable] UiBuilding modal instance not found on UIState.Building!");
     }
 
-    private void OnBuildStructureSelected(StructureDataSO selectedStructure)
+    public virtual void OnBuildStructureSelected(StructureDataSO selectedStructure)
     {
         if (playerResources == null)
         {
@@ -67,7 +68,9 @@ public class ItemBuildable : Item
 
         Vector3 spawnPos = spawnPoint != null ? spawnPoint.position : transform.position;
         Quaternion spawnRot = spawnPoint != null ? spawnPoint.rotation : transform.rotation;
-        spawnedStructureInstance = Pool.Instantiate(prefabToSpawn, spawnPos, spawnRot);
+        spawnedStructureInstance = Pool.Instantiate(prefabToSpawn, spawnPos, spawnRot); 
+        
+        spawnedStructureInstance.transform.localScale = prefabToSpawn.transform.localScale;
     }
 
     public void ResetBuildableSlot()
