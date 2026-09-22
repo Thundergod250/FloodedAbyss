@@ -69,7 +69,7 @@ public class MineManager : MonoBehaviour
                 UpdateWaterLevel();*/
     }
 
-    public void EnterMine()
+    public void EnterMine(int oreQual)
     {
         mineSeed = System.Guid.NewGuid().GetHashCode();
         mineRandom = new System.Random(mineSeed);
@@ -82,7 +82,7 @@ public class MineManager : MonoBehaviour
 
         //ResetWaterLevel();
 
-        GenerateOres();
+        GenerateOres(oreQual);
 
         //StartTimer();
     }
@@ -156,7 +156,7 @@ public class MineManager : MonoBehaviour
         }
     */
 
-    public void GenerateOres()
+    public void GenerateOres(int oreQuality)
     {
         ClearOres();
 
@@ -165,6 +165,8 @@ public class MineManager : MonoBehaviour
             Debug.LogWarning("No ore spawn points assigned.");
             return;
         }
+
+        oreQuality = Mathf.Clamp(oreQuality, 0, 100);
 
         int oreAmount = mineRandom.Next(
             minimumOres,
@@ -186,7 +188,7 @@ public class MineManager : MonoBehaviour
 
             availableSpawnPoints.RemoveAt(randomSpawnIndex);
 
-            GameObject orePrefab = GetRandomOre();
+            GameObject orePrefab = GetRandomOre(oreQuality);
 
             if (orePrefab == null)
                 continue;
@@ -206,29 +208,26 @@ public class MineManager : MonoBehaviour
         }
 
         Debug.Log(
-            "Generated " + oreAmount +
-            " ores. Seed: " + mineSeed
+            $"Generated {oreAmount} ores. Seed: {mineSeed}, Quality: {oreQuality}"
         );
     }
 
 
-    private GameObject GetRandomOre()
+    private GameObject GetRandomOre(int oreQuality)
     {
-        int randomOre = Random.Range(0, 3);
+        int roll = mineRandom.Next(0, 100);
 
-        switch (randomOre)
+        if (roll < 60 - oreQuality / 2)
         {
-            case 0:
-                return tinOre;
-
-            case 1:
-                return copperOre;
-
-            case 2:
-                return ironOre;
-
-            default:
-                return tinOre;
+            return tinOre;
+        }
+        else if (roll < 90 - oreQuality / 10)
+        {
+            return copperOre;
+        }
+        else
+        {
+            return ironOre;
         }
     }
 
