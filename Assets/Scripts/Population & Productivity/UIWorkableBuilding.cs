@@ -19,14 +19,14 @@ public class UIWorkableBuilding : UiModals
 
     private WorkableStructure currentTargetBuilding;
 
-    private void Awake()
+    protected override void Start()
     {
         if (addWorkerButton != null) addWorkerButton.onClick.AddListener(OnAddWorkerClicked);
         if (removeWorkerButton != null) removeWorkerButton.onClick.AddListener(OnRemoveWorkerClicked);
         if (closeButton != null) closeButton.onClick.AddListener(CloseMenu);
     }
 
-    private void OnEnable()
+    protected override void OnEnable()
     {
         if (PopulationManager.Instance != null)
         {
@@ -34,7 +34,7 @@ public class UIWorkableBuilding : UiModals
         }
     }
 
-    private void OnDisable()
+    protected override void OnDisable()
     {
         if (PopulationManager.Instance != null)
         {
