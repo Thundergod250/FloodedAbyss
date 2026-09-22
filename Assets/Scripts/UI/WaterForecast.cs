@@ -71,4 +71,9 @@ public class WaterForecast : MonoBehaviour
             }
         }
     }
+
+    public void IncDecWaterLevel(float height)
+    {
+        level.waterLevelTransform.transform.position = new Vector3(level.waterLevelTransform.transform.position.x, height, level.waterLevelTransform.transform.position.z);
+    }
 }
