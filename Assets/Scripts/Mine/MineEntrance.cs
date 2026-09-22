@@ -19,7 +19,7 @@ public class MineEntrance : MonoBehaviour
 
         if (mineManager != null)
         {
-            mineManager.EnterMine();
+          //  mineManager.EnterMine();
         }
         else
         {
