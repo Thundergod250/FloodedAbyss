@@ -20,7 +20,7 @@ public class UIDebug : MonoBehaviour
 
     [Header("Debug Buttons")]
     [SerializeField] private Button addResource;
-    [SerializeField] private Button upgradeStats; // <-- Added button reference
+    [SerializeField] private Button upgradeStats;
 
     private PlayerResources playerResources;
     private PlayerStats playerStats;
@@ -29,24 +29,17 @@ public class UIDebug : MonoBehaviour
 
     private void Start()
     {
-        if (GameManager.Instance != null && GameManager.Instance.playerController != null)
-        {
-            playerResources = GameManager.Instance.playerController.PlayerResources;
-            playerStats = GameManager.Instance.playerController.PlayerStats;
-        }
-
-        if (playerResources != null)
-            playerResources.EvtOnResourceChanged.AddListener(HandleResourceChanged);
+        // Fetch references and setup event listeners if not already done in OnEnable
+        BindPlayerReferences();
 
         InitializeUI();
         InitializeStatsUI();
+        RefreshStatsUI(); // Ensure fresh state on startup
     }
 
     private void OnEnable()
     {
-        // Re-subscribe if playerResources was already assigned in Start
-        if (playerResources != null) 
-            playerResources.EvtOnResourceChanged.AddListener(HandleResourceChanged);
+        BindPlayerReferences();
 
         if (debugToggleAction != null)
         {
@@ -58,13 +51,12 @@ public class UIDebug : MonoBehaviour
             addResource.onClick.AddListener(OnClick_AddTenToAllResources);
 
         if (upgradeStats != null)
-            upgradeStats.onClick.AddListener(OnClick_UpgradeAllStats); // <-- Subscribe button listener
+            upgradeStats.onClick.AddListener(OnClick_UpgradeAllStats);
     }
 
     private void OnDisable()
     {
-        if (playerResources != null) 
-            playerResources.EvtOnResourceChanged.RemoveListener(HandleResourceChanged);
+        UnbindPlayerReferences();
 
         if (debugToggleAction != null)
         {
@@ -76,7 +68,42 @@ public class UIDebug : MonoBehaviour
             addResource.onClick.RemoveListener(OnClick_AddTenToAllResources);
 
         if (upgradeStats != null)
-            upgradeStats.onClick.RemoveListener(OnClick_UpgradeAllStats); // <-- Unsubscribe button listener
+            upgradeStats.onClick.RemoveListener(OnClick_UpgradeAllStats);
+    }
+
+    private void BindPlayerReferences()
+    {
+        if (GameManager.Instance != null && GameManager.Instance.playerController != null)
+        {
+            if (playerResources == null)
+            {
+                playerResources = GameManager.Instance.playerController.PlayerResources;
+                if (playerResources != null)
+                    playerResources.EvtOnResourceChanged.AddListener(HandleResourceChanged);
+            }
+
+            if (playerStats == null)
+            {
+                playerStats = GameManager.Instance.playerController.PlayerStats;
+                if (playerStats != null)
+                    playerStats.EvtOnStatChanged.AddListener(RefreshStatsUI);
+            }
+        }
+    }
+
+    private void UnbindPlayerReferences()
+    {
+        if (playerResources != null)
+        {
+            playerResources.EvtOnResourceChanged.RemoveListener(HandleResourceChanged);
+            playerResources = null;
+        }
+
+        if (playerStats != null)
+        {
+            playerStats.EvtOnStatChanged.RemoveListener(RefreshStatsUI);
+            playerStats = null;
+        }
     }
 
     private void InitializeUI()
@@ -107,7 +134,6 @@ public class UIDebug : MonoBehaviour
 
         uiStatMap.Clear();
 
-        // Create initial rows for 4-column stats
         CreateStatRow("Health", "Player", "Max HP");
         CreateStatRow("Stamina", "Player", "Max Stamina");
         CreateStatRow("Oxygen", "Player", "Max Oxygen");
@@ -157,8 +183,6 @@ public class UIDebug : MonoBehaviour
 
             Cursor.visible = willBeActive;
             Cursor.lockState = willBeActive ? CursorLockMode.None : CursorLockMode.Locked;
-
-            Debug.Log($"Debug UI toggled: {willBeActive}");
         }
     }
 
@@ -173,7 +197,6 @@ public class UIDebug : MonoBehaviour
         if (playerStats != null)
         {
             playerStats.UpgradeAllStats();
-            RefreshStatsUI(); // Immediately refresh stat values in UI
         }
     }
 }

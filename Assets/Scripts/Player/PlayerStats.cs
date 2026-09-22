@@ -1,10 +1,13 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(Health))]
 [RequireComponent(typeof(PlayerStamina))]
 [RequireComponent(typeof(PlayerOxygen))]
 public class PlayerStats : MonoBehaviour
 {
+    public UnityEvent EvtOnStatChanged; 
+    
     [Header("Upgrade Settings")]
     [SerializeField] private StatUpgradeData upgradeData;
 
@@ -32,7 +35,7 @@ public class PlayerStats : MonoBehaviour
 
         if (playerOxygen == null)
             playerOxygen = GetComponent<PlayerOxygen>();
-
+        
         ApplyAllStatLevels();
     }
 
@@ -127,6 +130,7 @@ public class PlayerStats : MonoBehaviour
         {
             int targetValue = upgradeData.healthLevels[healthLevel - 1];
             playerHealth.SetMaxHealth(targetValue);
+            EvtOnStatChanged?.Invoke();
         }
     }
 
@@ -136,6 +140,7 @@ public class PlayerStats : MonoBehaviour
         {
             float targetValue = upgradeData.staminaLevels[staminaLevel - 1];
             playerStamina.SetMaxStamina(targetValue);
+            EvtOnStatChanged?.Invoke();
         }
     }
 
@@ -145,6 +150,7 @@ public class PlayerStats : MonoBehaviour
         {
             float targetValue = upgradeData.oxygenLevels[oxygenLevel - 1];
             playerOxygen.SetMaxOxygen(targetValue);
+            EvtOnStatChanged?.Invoke();
         }
     }
 
@@ -154,6 +160,7 @@ public class PlayerStats : MonoBehaviour
         {
             int targetValue = upgradeData.pickAxeDamageLevels[pickAxeDamageLevel - 1];
             basePickAxe.SetDamage(targetValue);
+            EvtOnStatChanged?.Invoke();
         }
     }
 
@@ -163,6 +170,7 @@ public class PlayerStats : MonoBehaviour
         {
             float targetValue = upgradeData.pickAxeAttackSpeedLevels[pickAxeAttackSpeedLevel - 1];
             basePickAxe.SetAttackSpeed(targetValue);
+            EvtOnStatChanged?.Invoke();
         }
     }
     
