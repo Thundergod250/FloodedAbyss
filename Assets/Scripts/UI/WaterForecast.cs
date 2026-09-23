@@ -76,4 +76,42 @@ public class WaterForecast : MonoBehaviour
     {
         level.waterLevelTransform.transform.position = new Vector3(level.waterLevelTransform.transform.position.x, height, level.waterLevelTransform.transform.position.z);
     }
+    public IEnumerator LowerWaterLevel(float targetHeight, float duration)
+    {
+        if (level == null)
+            yield break;
+
+        Transform waterTransform = level.waterLevelTransform;
+
+        float startingHeight = waterTransform.position.y;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+
+            float progress = elapsed / duration;
+
+            // Makes the movement start and stop smoothly
+            progress = Mathf.SmoothStep(0f, 1f, progress);
+
+            float newHeight = Mathf.Lerp(
+                startingHeight,
+                targetHeight,
+                progress
+            );
+
+            Vector3 position = waterTransform.position;
+            position.y = newHeight;
+
+            waterTransform.position = position;
+
+            yield return null;
+        }
+
+        // Make absolutely sure it ends at the exact target
+        Vector3 finalPosition = waterTransform.position;
+        finalPosition.y = targetHeight;
+        waterTransform.position = finalPosition;
+    }
 }
