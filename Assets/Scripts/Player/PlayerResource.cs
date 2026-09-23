@@ -92,4 +92,27 @@ public class PlayerResources : MonoBehaviour
 
         return true;
     }
+    
+    public void ApplyResourceDeathPenalty(float penaltyRatio = 0.5f)
+    {
+        penaltyRatio = Mathf.Clamp01(penaltyRatio);
+        bool lostAny = false;
+
+        foreach (ResourceType type in Enum.GetValues(typeof(ResourceType)))
+        {
+            int currentAmount = GetResource(type);
+            if (currentAmount <= 0) 
+                continue;
+            int amountToLose = Mathf.FloorToInt(currentAmount * penaltyRatio);
+            if (amountToLose > 0)
+            {
+                resources[type] -= amountToLose;
+                EvtOnResourceChanged?.Invoke(type, resources[type]);
+                lostAny = true;
+            }
+        }
+
+        if (lostAny) 
+            Notification.Display($"Lost {penaltyRatio * 100}% of resources on death!", spendColor);
+    }
 }

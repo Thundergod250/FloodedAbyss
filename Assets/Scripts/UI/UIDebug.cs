@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro; // Added for TextMeshPro
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -15,6 +16,10 @@ public class UIDebug : MonoBehaviour
     [SerializeField] private Transform statsGridParent;
     [SerializeField] private UIDebugPanel statItemPrefab;
 
+    [Header("FPS Counter Settings")]
+    [SerializeField] private TextMeshProUGUI fpsText;
+    [SerializeField] private float fpsUpdateInterval = 0.5f;
+
     [Header("Input Action")]
     [SerializeField] private InputActionReference debugToggleAction;
 
@@ -27,6 +32,11 @@ public class UIDebug : MonoBehaviour
     private Dictionary<ResourceType, UIDebugPanel> uiItemMap = new();
     private Dictionary<string, UIDebugPanel> uiStatMap = new();
 
+    // FPS Counter tracking variables
+    private float frameAccumulator = 0f;
+    private int frameCount = 0;
+    private float fpsTimeLeft = 0f;
+
     private void Start()
     {
         // Fetch references and setup event listeners if not already done in OnEnable
@@ -35,6 +45,13 @@ public class UIDebug : MonoBehaviour
         InitializeUI();
         InitializeStatsUI();
         RefreshStatsUI(); // Ensure fresh state on startup
+
+        fpsTimeLeft = fpsUpdateInterval;
+    }
+
+    private void Update()
+    {
+        UpdateFPSCounter();
     }
 
     private void OnEnable()
@@ -69,6 +86,27 @@ public class UIDebug : MonoBehaviour
 
         if (upgradeStats != null)
             upgradeStats.onClick.RemoveListener(OnClick_UpgradeAllStats);
+    }
+
+    private void UpdateFPSCounter()
+    {
+        if (fpsText == null) return;
+
+        fpsTimeLeft -= Time.unscaledDeltaTime;
+        frameAccumulator += Time.unscaledDeltaTime / Time.timeScale;
+        frameCount++;
+
+        // Interval ended - update GUI text and start new interval
+        if (fpsTimeLeft <= 0.0f)
+        {
+            float fps = frameCount / frameAccumulator;
+            fpsText.text = $"FPS: {Mathf.RoundToInt(fps)}";
+
+            // Reset variables for the next sampling period
+            fpsTimeLeft = fpsUpdateInterval;
+            frameAccumulator = 0.0f;
+            frameCount = 0;
+        }
     }
 
     private void BindPlayerReferences()
@@ -194,9 +232,7 @@ public class UIDebug : MonoBehaviour
 
     public void OnClick_UpgradeAllStats()
     {
-        if (playerStats != null)
-        {
+        if (playerStats != null) 
             playerStats.UpgradeAllStats();
-        }
     }
 }
