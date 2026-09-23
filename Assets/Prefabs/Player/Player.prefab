@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 3202337842524963063}
   - component: {fileID: 159086485549072678}
   - component: {fileID: 7928735737565289207}
+  - component: {fileID: 6143270341362621886}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -299,6 +300,8 @@ MonoBehaviour:
   EvtOnResourceChanged:
     m_PersistentCalls:
       m_Calls: []
+  gainColor: {r: 0, g: 1, b: 0, a: 1}
+  spendColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!114 &5011022331939074706
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -368,6 +371,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96680e9d0e784084fa7af4449b8e0d4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
+  EvtOnStatChanged:
+    m_PersistentCalls:
+      m_Calls: []
   upgradeData: {fileID: 11400000, guid: 9196bc362143535499d8092fdb33d87f, type: 2}
   basePickAxe: {fileID: 5946144513090272851}
   healthLevel: 1
@@ -375,6 +381,20 @@ MonoBehaviour:
   oxygenLevel: 1
   pickAxeDamageLevel: 1
   pickAxeAttackSpeedLevel: 1
+--- !u!114 &6143270341362621886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2668991774076862816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bdc9e615ada3314888504a1a560fd39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerDeath
+  respawnPoint: {fileID: 0}
+  resourceLossPercentage: 0.5
 --- !u!1 &3135511604283639651
 GameObject:
   m_ObjectHideFlags: 0

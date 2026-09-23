@@ -10,17 +10,27 @@ public class ItemBuildable : Item
     [SerializeField] private Transform spawnPoint;
     [SerializeField] protected StructureDataSO structurePicked;
 
+    [Header("Save Point Settings")]
+    [SerializeField] private Transform respawnPointTransform;
+
     protected PlayerResources playerResources;
+    private PlayerDeath playerDeath;
     private GameObject spawnedStructureInstance;
 
     private void Start()
     {
         if (GameManager.Instance != null && GameManager.Instance.playerController != null) 
+        {
             playerResources = GameManager.Instance.playerController.PlayerResources;
+            playerDeath = GameManager.Instance.playerController.GetComponent<PlayerDeath>();
+        }
     }
 
     public override void Activate()
     {
+        // Update player's respawn point on activation
+        UpdatePlayerSavePoint();
+
         // 1. Open Building Modal via UIController
         GameManager.Instance.uiController.OpenModal(UIController.UIState.Building);
 
@@ -34,6 +44,23 @@ public class ItemBuildable : Item
         }
         else
             Debug.LogError($"[ItemBuildable] UiBuilding modal instance not found on UIState.Building!");
+    }
+
+    private void UpdatePlayerSavePoint()
+    {
+        // Try to fetch PlayerDeath if not cached yet
+        if (playerDeath == null && GameManager.Instance != null && GameManager.Instance.playerController != null)
+        {
+            playerDeath = GameManager.Instance.playerController.GetComponent<PlayerDeath>();
+        }
+
+        if (playerDeath != null)
+        {
+            // Use respawnPointTransform if assigned, otherwise fallback to spawnPoint or this object's transform
+            Transform targetRespawn = respawnPointTransform != null ? respawnPointTransform : (spawnPoint != null ? spawnPoint : transform);
+            playerDeath.SetRespawnPoint(targetRespawn);
+            Notification.Display("Checkpoint Saved!", Color.cyan);
+        }
     }
 
     public virtual void OnBuildStructureSelected(StructureDataSO selectedStructure)
