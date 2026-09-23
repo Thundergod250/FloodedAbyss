@@ -18,8 +18,8 @@ public class WallRubble : MonoBehaviour
 
     private void Start()
     {
-        if (waterForecast == null)
-            waterForecast = FindFirstObjectByType<WaterForecast>();
+        if (waterForecast == null) 
+            waterForecast = GameManager.Instance.uiController.UIHUD.GetHUDElement<WaterForecast>(UIHUD.HuDPanels.WaterForecast);
     }
 
     private void OnEnable()
@@ -36,14 +36,7 @@ public class WallRubble : MonoBehaviour
 
     private void HandleDestroyed()
     {
-        if (waterForecast != null)
-        {
-            waterForecast.StartCoroutine(
-                waterForecast.LowerWaterLevel(
-                    waterLevelAfterDestruction,
-                    waterLowerDuration
-                )
-            );
-        }
+        if (waterForecast != null) 
+            waterForecast.StartCoroutine(waterForecast.LowerWaterLevel(waterLevelAfterDestruction, waterLowerDuration));
     }
 }

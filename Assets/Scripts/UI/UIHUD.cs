@@ -64,4 +64,22 @@ public class UIHUD : UiModals
                 panel.SetActive(!panel.activeSelf);
         }
     }
+    
+    public T GetHUDElement<T>(HuDPanels panelsType) where T : Component
+    {
+        if (elementDictionary != null && elementDictionary.TryGetValue(panelsType, out GameObject panel))
+        {
+            if (panel != null)
+            {
+                T component = panel.GetComponent<T>();
+                if (component != null) return component;
+
+                Debug.LogWarning($"[UIHUD] Component {typeof(T).Name} not found on GameObject for {panelsType}.");
+                return null;
+            }
+        }
+
+        Debug.LogWarning($"[UIHUD] HUD Panel for state {panelsType} not found.");
+        return null;
+    }
 }
