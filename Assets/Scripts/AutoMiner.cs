@@ -1,78 +1,136 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class AutoMiner : MonoBehaviour
+public class AutoMiner : WorkableStructure
 {
-    [Header("Resource Production")]
-    [SerializeField] private ResourceType resourceType = ResourceType.Stone;
-    [SerializeField] private int baseYieldAmount = 10;
+    [Header("Level Settings")]
+    [SerializeField] private int minerLevel = 1;
+
+    [Header("Resource Production (Level 1: Copper & Tin)")]
+    [SerializeField]
+    private List<ResourceType> targetResources = new List<ResourceType>
+    {
+        ResourceType.Copper,
+        ResourceType.Tin
+    };
+    [SerializeField] private int baseYieldPerResource = 5;
     [SerializeField] private float harvestIntervalSeconds = 10f;
 
-    [Header("Population & Productivity")]
-    [SerializeField] private int maxWorkerCapacity = 5;
-    [SerializeField] private int assignedWorkers = 5;
+    [Header("Storage Settings")]
+    [SerializeField] private int maxStoragePerResource = 100;
+    private Dictionary<ResourceType, int> storedResources = new Dictionary<ResourceType, int>();
 
-    private Coroutine miningCoroutine;
+    private Coroutine autoMinerCoroutine;
+
+    public int MinerLevel => minerLevel;
+    public int MaxStoragePerResource => maxStoragePerResource;
+    public Dictionary<ResourceType, int> StoredResources => storedResources;
+
+    private void Awake()
+    {
+        InitializeStorage();
+    }
+
+    /// <summary>
+    /// Overriding Start prevents WorkableStructure's base ProductionCycleRoutine 
+    /// from running and giving Gold directly to the player inventory.
+    /// </summary>
+    protected override void Start()
+    {
+        // Intentionally left blank to override base.Start()
+    }
 
     private void OnEnable()
     {
-        miningCoroutine = StartCoroutine(MiningRoutine());
+        if (autoMinerCoroutine != null)
+        {
+            StopCoroutine(autoMinerCoroutine);
+        }
+        autoMinerCoroutine = StartCoroutine(AutoMinerProductionRoutine());
     }
 
     private void OnDisable()
     {
-        if (miningCoroutine != null)
+        if (autoMinerCoroutine != null)
         {
-            StopCoroutine(miningCoroutine);
+            StopCoroutine(autoMinerCoroutine);
         }
     }
 
-    private IEnumerator MiningRoutine()
+    private void InitializeStorage()
+    {
+        foreach (ResourceType resourceType in targetResources)
+        {
+            if (!storedResources.ContainsKey(resourceType))
+                storedResources[resourceType] = 0;
+        }
+    }
+
+    public override void Activate()
+    {
+        UIAutoMiner uiMiner = FindAnyObjectByType<UIAutoMiner>(FindObjectsInactive.Include);
+        if (uiMiner != null)
+        {
+            uiMiner.OpenAutoMinerMenu(this);
+        }
+        else if (GameManager.Instance != null && GameManager.Instance.uiController != null)
+        {
+            GameManager.Instance.uiController.OpenModal(UIController.UIState.AutoMiner);
+        }
+    }
+
+    private IEnumerator AutoMinerProductionRoutine()
     {
         while (true)
         {
             yield return new WaitForSeconds(harvestIntervalSeconds);
-            Harvest();
+            HarvestToStorage();
         }
     }
 
-    public void Harvest()
+    private void HarvestToStorage()
+    {
+        int yieldAmount = Mathf.FloorToInt(baseYieldPerResource * TotalProductivity);
+
+        if (yieldAmount <= 0) return;
+
+        foreach (ResourceType resourceType in targetResources)
+        {
+            if (!storedResources.ContainsKey(resourceType))
+                storedResources[resourceType] = 0;
+
+            if (storedResources[resourceType] < maxStoragePerResource)
+            {
+                storedResources[resourceType] = Mathf.Min(storedResources[resourceType] + yieldAmount, maxStoragePerResource);
+            }
+        }
+
+        // Live update the AutoMiner UI panel if currently open
+        UIAutoMiner uiMiner = FindAnyObjectByType<UIAutoMiner>(FindObjectsInactive.Include);
+        if (uiMiner != null && uiMiner.gameObject.activeInHierarchy)
+        {
+            uiMiner.UpdateUI();
+        }
+    }
+
+    public void ClaimResources()
     {
         PlayerResources playerResources = GetPlayerResources();
         if (playerResources == null) return;
 
-        float efficiency = CalculateProductivityMultiplier();
-        int finalYield = Mathf.RoundToInt(baseYieldAmount * efficiency);
-
-        if (finalYield > 0)
+        List<ResourceType> keys = new List<ResourceType>(storedResources.Keys);
+        foreach (ResourceType resource in keys)
         {
-            playerResources.AddResource(resourceType, finalYield);
-
-            Debug.Log($"[Auto-Miner] Generated +{finalYield} {resourceType}!");
+            int amountToClaim = storedResources[resource];
+            if (amountToClaim > 0)
+            {
+                playerResources.AddResource(resource, amountToClaim);
+                storedResources[resource] = 0;
+                Debug.Log($"[{buildingName}] Claimed {amountToClaim} {resource}. Storage reset to 0.");
+            }
         }
     }
-
-    public float CalculateProductivityMultiplier()
-    {
-        float staffingRate = maxWorkerCapacity > 0 ? (float)assignedWorkers / maxWorkerCapacity : 1f;
-
-        float globalHappinessMultiplier = GetGlobalHappinessMultiplier();
-
-        return staffingRate * globalHappinessMultiplier;
-    }
-
-    private float GetGlobalHappinessMultiplier()
-    {
-        return 1.0f;
-    }
-
-    public void SetAssignedWorkers(int count)
-    {
-        assignedWorkers = Mathf.Clamp(count, 0, maxWorkerCapacity);
-    }
-
-    public int AssignedWorkers => assignedWorkers;
-    public int MaxWorkerCapacity => maxWorkerCapacity;
 
     private PlayerResources GetPlayerResources()
     {

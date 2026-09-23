@@ -12,7 +12,8 @@ public class UIController : MonoBehaviour
         Crafting,
         Building,
         SkillTree,
-        Structure
+        Structure,
+        AutoMiner
     }
 
     [System.Serializable]
@@ -65,7 +66,7 @@ public class UIController : MonoBehaviour
 
     private void OnEscapePerformed(InputAction.CallbackContext context)
     {
-        if (currentState != UIState.HUD) 
+        if (currentState != UIState.HUD)
             CloseAllModals();
     }
 
@@ -75,7 +76,7 @@ public class UIController : MonoBehaviour
 
         foreach (var item in modalList)
         {
-            if (item.modalScript != null && !modalDictionary.ContainsKey(item.state)) 
+            if (item.modalScript != null && !modalDictionary.ContainsKey(item.state))
                 modalDictionary.Add(item.state, item.modalScript);
         }
     }
@@ -89,29 +90,22 @@ public class UIController : MonoBehaviour
         return null;
     }
 
-    /// <summary>
-    /// Centralized function to change UI state.
-    /// Hides all other panels, opens target state, manages cursor and player inputs.
-    /// </summary>
     public void OpenModal(UIState newState)
     {
         currentState = newState;
 
-        // 1. Close ALL registered modal panels via their helper method
         foreach (var modal in modalDictionary.Values)
         {
-            if (modal != null) 
+            if (modal != null)
                 modal.SetModalActive(false);
         }
 
-        // 2. Open ONLY the target modal/HUD state
         if (modalDictionary.TryGetValue(newState, out UiModals targetModal))
         {
-            if (targetModal != null) 
+            if (targetModal != null)
                 targetModal.SetModalActive(true);
         }
 
-        // 3. Centralized Cursor & Player Input Control
         bool isGameplay = (newState == UIState.HUD);
         SetCursorState(!isGameplay);
 
