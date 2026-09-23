@@ -8,7 +8,9 @@ public enum ResourceType
     Stone,
     Wood,
     Gold,
-    Food
+    Food,
+    Tin,
+    Copper
 }
 
 public class PlayerResources : MonoBehaviour

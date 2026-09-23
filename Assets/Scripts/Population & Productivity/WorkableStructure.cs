@@ -21,34 +21,20 @@ public class WorkableStructure : Item
     public int AssignedWorkers => assignedWorkers;
     public ResourceType OutputResourceType => outputResourceType;
 
-    /// <summary>
-    /// Staffing Efficiency = Assigned / Max Workers
-    /// </summary>
     public float LocalEfficiency => maxWorkers > 0 ? (float)assignedWorkers / maxWorkers : 0f;
-
-    /// <summary>
-    /// Global Efficiency = Global Happiness Multiplier
-    /// </summary>
     public float GlobalEfficiency => PopulationManager.Instance != null ? PopulationManager.Instance.GlobalHappiness : 1.0f;
-
-    /// <summary>
-    /// Combined Productivity = Local Efficiency * Global Efficiency
-    /// </summary>
     public float TotalProductivity => LocalEfficiency * GlobalEfficiency;
-
-    /// <summary>
-    /// Final Yield = Base Output * Total Productivity
-    /// </summary>
     public int CalculatedYield => Mathf.FloorToInt(baseOutputAmount * TotalProductivity);
 
-    private void Start()
+    // Changed from private void Start() to protected virtual void Start()
+    protected virtual void Start()
     {
         productionCoroutine = StartCoroutine(ProductionCycleRoutine());
     }
 
     public override void Activate()
     {
-        StructurePanel panel = FindFirstObjectByType<StructurePanel>(FindObjectsInactive.Include);
+        StructurePanel panel = FindAnyObjectByType<StructurePanel>(FindObjectsInactive.Include);
         if (panel != null)
         {
             panel.OpenStructurePanel(this);
