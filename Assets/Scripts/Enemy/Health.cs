@@ -9,7 +9,7 @@ public class Health : MonoBehaviour
         Enemy
     }
 
-    [SerializeField] private CharacterCategory category;
+    [SerializeField] private CharacterCategory category = CharacterCategory.Ally;
 
     [Header("Health Values")]
     [SerializeField] private int maxHealth = 100;
@@ -80,6 +80,11 @@ public class Health : MonoBehaviour
     private void Die()
     {
         EvtOnDied?.Invoke();   
-        gameObject.SetActive(false);
+        
+        // Only disable automatically if it's an enemy/NPC, leaving players alive for respawn logic
+        if (category == CharacterCategory.Enemy)
+        {
+            gameObject.SetActive(false);
+        }
     }
 }

@@ -100,4 +100,9 @@ public class PlayerOxygen : MonoBehaviour
         maxOxygen = Mathf.Max(1f, newMaxOxygen);
         currentOxygen = Mathf.Min(currentOxygen, maxOxygen);
     }
+    
+    public void RestoreFullOxygen()
+    {
+        currentOxygen = maxOxygen;
+    }
 }
