@@ -825,6 +825,7 @@ GameObject:
   - component: {fileID: 1820284184899960021}
   - component: {fileID: 1033375170647602457}
   - component: {fileID: 3619474736214723991}
+  - component: {fileID: 7057790596185510790}
   - component: {fileID: 3172976748566373944}
   m_Layer: 5
   m_Name: Crafting Panel
@@ -897,6 +898,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!225 &7057790596185510790
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4765135620356151637}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!114 &3172976748566373944
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -909,6 +922,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00e335fa046152d479aa48705d1a299a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CraftingUI
+  ModalPrefab: {fileID: 0}
+  canvasGroup: {fileID: 0}
   statusText: {fileID: 2884580230077325931}
 --- !u!1 &5085750622948446802
 GameObject:
