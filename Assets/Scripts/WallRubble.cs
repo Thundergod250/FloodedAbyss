@@ -4,11 +4,11 @@ public class WallRubble : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Health health;
+    [SerializeField] private WaterForecast waterForecast;
 
     [Header("Water")]
     [SerializeField] private float waterLevelAfterDestruction;
-
-    private WaterLevel waterLevel;
+    [SerializeField] private float waterLowerDuration = 5f;
 
     private void Awake()
     {
@@ -18,7 +18,8 @@ public class WallRubble : MonoBehaviour
 
     private void Start()
     {
-        waterLevel = GameManager.Instance.waterLevel;
+        if (waterForecast == null)
+            waterForecast = FindFirstObjectByType<WaterForecast>();
     }
 
     private void OnEnable()
@@ -35,23 +36,14 @@ public class WallRubble : MonoBehaviour
 
     private void HandleDestroyed()
     {
-        LowerWaterLevel();
-
-        // Disable the rubble instead of destroying it.
-        gameObject.SetActive(false);
-    }
-
-    private void LowerWaterLevel()
-    {
-        if (waterLevel == null)
-            return;
-
-        Vector3 currentPosition = waterLevel.waterLevelTransform.position;
-
-        waterLevel.waterLevelTransform.position = new Vector3(
-            currentPosition.x,
-            waterLevelAfterDestruction,
-            currentPosition.z
-        );
+        if (waterForecast != null)
+        {
+            waterForecast.StartCoroutine(
+                waterForecast.LowerWaterLevel(
+                    waterLevelAfterDestruction,
+                    waterLowerDuration
+                )
+            );
+        }
     }
 }
