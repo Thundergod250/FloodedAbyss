@@ -11,13 +11,13 @@ public class ItemStructure : Item
     }
 
     [Header("Structure Storage Settings")]
-    [SerializeField] private ResourceRequirement targetResource;
-    [SerializeField] private bool lockDepositedResources = false; // Lock resources once added
+    [SerializeField] protected ResourceRequirement targetResource;
+    [SerializeField] protected bool lockDepositedResources = false;
 
     protected PlayerResources playerResources;
 
     public ResourceRequirement TargetResource => targetResource;
-    public bool CanWithdraw => !lockDepositedResources; // Public check for UI
+    public bool CanWithdraw => !lockDepositedResources;
 
     protected virtual void Start()
     {
@@ -43,7 +43,7 @@ public class ItemStructure : Item
         }
     }
 
-    public bool DepositResource(int amount)
+    public virtual bool DepositResource(int amount)
     {
         if (playerResources == null) return false;
 
@@ -58,6 +58,7 @@ public class ItemStructure : Item
             if (playerResources.TrySpendResource(targetResource.resourceType, transferAmount))
             {
                 targetResource.currentAmount += transferAmount;
+                OnResourceUpdated();
                 return true;
             }
         }
@@ -65,15 +66,9 @@ public class ItemStructure : Item
         return false;
     }
 
-    public bool WithdrawResource(int amount)
+    public virtual bool WithdrawResource(int amount)
     {
-        // Block withdrawal if locked
-        if (lockDepositedResources)
-        {
-            Debug.LogWarning("[ItemStructure] Resources in this structure are locked and cannot be withdrawn!");
-            return false;
-        }
-
+        if (lockDepositedResources) return false;
         if (playerResources == null || targetResource.currentAmount <= 0) return false;
 
         int withdrawAmount = Mathf.Min(amount, targetResource.currentAmount);
@@ -81,6 +76,12 @@ public class ItemStructure : Item
 
         playerResources.AddResource(targetResource.resourceType, withdrawAmount);
         targetResource.currentAmount -= withdrawAmount;
+        OnResourceUpdated();
         return true;
     }
+
+    /// <summary>
+    /// Hook for child classes (like Generator) to react when resources change.
+    /// </summary>
+    protected virtual void OnResourceUpdated() { }
 }
