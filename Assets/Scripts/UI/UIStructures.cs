@@ -7,8 +7,8 @@ public class UIStructures : UiModals
     [Header("UI Elements")]
     [SerializeField] private TMP_Text resourceNameText;
     [SerializeField] private TMP_Text capacityText;
-    [SerializeField] private Button depositButton;   // '>' button
-    [SerializeField] private Button withdrawButton;  // '<' button
+    [SerializeField] private Button increaseButton;   // '>' button
+    [SerializeField] private Button decreaseButton;  // '<' button
 
     [Header("Settings")]
     [SerializeField] private int transferStepAmount = 1; // Amount transferred per click
@@ -19,11 +19,11 @@ public class UIStructures : UiModals
     {
         base.Initialize();
 
-        if (depositButton != null)
-            depositButton.onClick.AddListener(OnDepositClicked);
+        if (increaseButton != null)
+            increaseButton.onClick.AddListener(OnDepositClicked);
 
-        if (withdrawButton != null)
-            withdrawButton.onClick.AddListener(OnWithdrawClicked);
+        if (decreaseButton != null)
+            decreaseButton.onClick.AddListener(OnWithdrawClicked);
     }
 
     public void SetupStructure(ItemStructure structure)
@@ -65,6 +65,17 @@ public class UIStructures : UiModals
 
         if (capacityText != null)
             capacityText.text = $"{res.currentAmount} / {res.maxCapacity}";
+
+        // Lock button visually if structure doesn't allow withdrawals
+        if (decreaseButton != null)
+        {
+            decreaseButton.interactable = currentStructure.CanWithdraw && res.currentAmount > 0;
+        }
+
+        if (increaseButton != null)
+        {
+            increaseButton.interactable = res.currentAmount < res.maxCapacity;
+        }
     }
 
     private void OnCloseClicked()
