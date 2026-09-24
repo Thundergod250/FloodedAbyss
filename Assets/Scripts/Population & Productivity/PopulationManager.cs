@@ -12,7 +12,7 @@ public class PopulationManager : MonoBehaviour
 
     [Header("Global Happiness (0.0 to 1.0)")]
     [Range(0f, 1f)]
-    [SerializeField] private float globalHappiness = 1.0f; // Default 100% happiness
+    [SerializeField] private float globalHappiness = 1.0f;
 
     [Header("Events")]
     public UnityEvent EvtOnPopulationChanged;
@@ -31,6 +31,43 @@ public class PopulationManager : MonoBehaviour
             return;
         }
         Instance = this;
+
+        ResetPopulationStats();
+    }
+
+    private void Start()
+    {
+        RecalculateAllHousingCapacity();
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+    }
+
+    public void ResetPopulationStats()
+    {
+        totalHousingCapacity = 0;
+        totalPopulation = 0;
+        assignedPopulation = 0;
+        EvtOnPopulationChanged?.Invoke();
+    }
+
+    public void RecalculateAllHousingCapacity()
+    {
+        totalHousingCapacity = 0;
+        HousingStructure[] houses = FindObjectsByType<HousingStructure>();
+        foreach (var house in houses)
+        {
+            if (house.gameObject.activeInHierarchy && house.enabled)
+            {
+                totalHousingCapacity += house.HousingCapacity;
+            }
+        }
+        EvtOnPopulationChanged?.Invoke();
     }
 
     #region Housing Management

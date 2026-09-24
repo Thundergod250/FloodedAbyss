@@ -5,15 +5,12 @@ using UnityEngine;
 public class AutoMiner : WorkableStructure
 {
     [Header("Level Settings")]
+    [Tooltip("Manually switch between Level 1 and Level 2 in the Inspector.")]
+    [Range(1, 2)]
     [SerializeField] private int minerLevel = 1;
 
-    [Header("Resource Production (Level 1: Copper & Tin)")]
-    [SerializeField]
-    private List<ResourceType> targetResources = new List<ResourceType>
-    {
-        ResourceType.Copper,
-        ResourceType.Tin
-    };
+    [Header("Resource Production")]
+    [SerializeField] private List<ResourceType> targetResources = new List<ResourceType>();
     [SerializeField] private int baseYieldPerResource = 5;
     [SerializeField] private float harvestIntervalSeconds = 10f;
 
@@ -27,8 +24,14 @@ public class AutoMiner : WorkableStructure
     public int MaxStoragePerResource => maxStoragePerResource;
     public Dictionary<ResourceType, int> StoredResources => storedResources;
 
+    private void OnValidate()
+    {
+        ApplyLevelRules(minerLevel);
+    }
+
     private void Awake()
     {
+        ApplyLevelRules(minerLevel);
         InitializeStorage();
     }
 
@@ -58,8 +61,50 @@ public class AutoMiner : WorkableStructure
         }
     }
 
+    /// <summary>
+    /// Manually or programmatically set the miner level (1 or 2).
+    /// </summary>
+    public void SetLevel(int level)
+    {
+        minerLevel = Mathf.Clamp(level, 1, 2);
+        ApplyLevelRules(minerLevel);
+    }
+
+    [ContextMenu("Switch to Level 1")]
+    public void SetToLevel1() => SetLevel(1);
+
+    [ContextMenu("Switch to Level 2")]
+    public void SetToLevel2() => SetLevel(2);
+
+    private void ApplyLevelRules(int level)
+    {
+        targetResources.Clear();
+
+        if (level == 1)
+        {
+            maxWorkers = 2;
+            targetResources.Add(ResourceType.Stone);
+            targetResources.Add(ResourceType.Tin);
+            targetResources.Add(ResourceType.Copper);
+        }
+        else if (level == 2)
+        {
+            maxWorkers = 4;
+            targetResources.Add(ResourceType.Stone);
+            targetResources.Add(ResourceType.Tin);
+            targetResources.Add(ResourceType.Copper);
+            targetResources.Add(ResourceType.Iron);
+            targetResources.Add(ResourceType.Gold);
+        }
+
+        InitializeStorage();
+    }
+
     private void InitializeStorage()
     {
+        if (storedResources == null)
+            storedResources = new Dictionary<ResourceType, int>();
+
         foreach (ResourceType resourceType in targetResources)
         {
             if (!storedResources.ContainsKey(resourceType))

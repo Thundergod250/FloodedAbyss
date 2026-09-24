@@ -9,6 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8593053712794298031}
+  - component: {fileID: 8637642215116756943}
+  - component: {fileID: 6823216078738868569}
+  - component: {fileID: 3656369716777478276}
   m_Layer: 0
   m_Name: AutoMiner
   m_TagString: Untagged
@@ -35,6 +38,66 @@ Transform:
   - {fileID: 6374201931439370418}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &8637642215116756943
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1532419487396585670}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 7, y: 9, z: 7}
+  m_Center: {x: 0, y: 4, z: 0}
+--- !u!114 &6823216078738868569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1532419487396585670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 586d09e3430c3fa4bb4b7161e1b7ee7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Interactables
+  interactionMessage: '[E]'
+  onInteract:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &3656369716777478276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1532419487396585670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f03e0ed0ee28e7149ac1b9b880e4359f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AutoMiner
+  buildingName: Auto Miner
+  maxWorkers: 2
+  assignedWorkers: 0
+  outputResourceType: 3
+  baseOutputAmount: 5
+  productionIntervalSeconds: 1
+  minerLevel: 1
+  targetResources: 000000000400000005000000i
+  baseYieldPerResource: 5
+  harvestIntervalSeconds: 10
+  maxStoragePerResource: 100
 --- !u!1 &4697612036977395958
 GameObject:
   m_ObjectHideFlags: 0
