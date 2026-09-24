@@ -7,9 +7,14 @@ public class UIStructures : UiModals
     [Header("UI Elements")]
     [SerializeField] private TMP_Text resourceNameText;
     [SerializeField] private TMP_Text capacityText;
-    [SerializeField] private TMP_Text extraStatusText; // Displays current player energy info
+    [SerializeField] private TMP_Text extraStatusText;
     [SerializeField] private Button increaseButton;   // '>' button
     [SerializeField] private Button decreaseButton;  // '<' button
+
+    [Header("Recruitment UI (For StructureHouse)")]
+    [SerializeField] private GameObject recruitmentContainer; 
+    [SerializeField] private Button recruitButton;
+    [SerializeField] private TMP_Text recruitmentCostText;
 
     [Header("Settings")]
     [SerializeField] private int transferStepAmount = 1;
@@ -26,6 +31,9 @@ public class UIStructures : UiModals
 
         if (decreaseButton != null)
             decreaseButton.onClick.AddListener(OnWithdrawClicked);
+
+        if (recruitButton != null)
+            recruitButton.onClick.AddListener(OnRecruitClicked);
     }
 
     public void SetupStructure(ItemStructure structure)
@@ -50,32 +58,41 @@ public class UIStructures : UiModals
         }
     }
 
+    private void OnRecruitClicked()
+    {
+        if (currentStructure is StructureHouse house)
+        {
+            if (house.TryRecruitCitizen())
+            {
+                UpdateUI();
+            }
+        }
+    }
+
     public void UpdateUI()
     {
         if (currentStructure == null) return;
 
         var res = currentStructure.TargetResource;
 
+        // Custom label when inspecting a house
         if (resourceNameText != null)
-            resourceNameText.text = res.resourceType.ToString();
+            resourceNameText.text = currentStructure is StructureHouse ? "Housed Citizens" : res.resourceType.ToString();
 
         if (capacityText != null)
             capacityText.text = $"{res.currentAmount} / {res.maxCapacity}";
 
-        // Show total player Energy when inspecting a Generator
+        // 1. Generator Status Handling
         if (extraStatusText != null)
         {
             if (currentStructure is StructureGenerator)
             {
                 extraStatusText.gameObject.SetActive(true);
-
-                // Fetch total current Energy from PlayerResources
                 int currentEnergy = 0;
                 if (GameManager.Instance != null && GameManager.Instance.playerController != null && GameManager.Instance.playerController.PlayerResources != null)
                 {
                     currentEnergy = GameManager.Instance.playerController.PlayerResources.GetResource(ResourceType.Energy);
                 }
-
                 extraStatusText.text = $"Energy: {currentEnergy}";
             }
             else
@@ -84,6 +101,38 @@ public class UIStructures : UiModals
             }
         }
 
+        // 2. House Recruitment Handling
+        if (recruitmentContainer != null)
+        {
+            if (currentStructure is StructureHouse house)
+            {
+                recruitmentContainer.SetActive(true);
+
+                // Format cost requirements text
+                if (recruitmentCostText != null)
+                {
+                    string costStr = "Cost: ";
+                    foreach (var cost in house.RecruitmentCost)
+                    {
+                        costStr += $"{cost.amount} {cost.resourceType} ";
+                    }
+                    recruitmentCostText.text = costStr;
+                }
+
+                // Check player resources to enable/disable recruit button
+                if (recruitButton != null && GameManager.Instance != null && GameManager.Instance.playerController != null)
+                {
+                    var playerRes = GameManager.Instance.playerController.PlayerResources;
+                    recruitButton.interactable = playerRes != null && playerRes.CanAfford(house.RecruitmentCost);
+                }
+            }
+            else
+            {
+                recruitmentContainer.SetActive(false);
+            }
+        }
+
+        // 3. Arrow Buttons interactability
         if (decreaseButton != null)
             decreaseButton.interactable = currentStructure.CanWithdraw && res.currentAmount > 0;
 

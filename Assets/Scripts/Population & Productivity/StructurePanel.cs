@@ -57,11 +57,11 @@ public class StructurePanel : UiModals
         if (productivityText != null)
             productivityText.text = $"Staffing Efficiency: {targetStructure.LocalEfficiency * 100:F0}%";
 
-        if (happinessMultiplierText != null)
+        /*if (happinessMultiplierText != null)
             happinessMultiplierText.text = $"Happiness Multiplier: {targetStructure.GlobalEfficiency * 100:F0}%";
 
         if (totalOutputText != null)
-            totalOutputText.text = $"Estimated Output: {targetStructure.CalculatedYield} {targetStructure.OutputResourceType}/cycle";
+            totalOutputText.text = $"Estimated Output: {targetStructure.CalculatedYield} {targetStructure.OutputResourceType}/cycle";*/
     }
 
     private void OnAddWorkerClicked()

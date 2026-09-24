@@ -22,9 +22,9 @@ public class WorkableStructure : Item
     public ResourceType OutputResourceType => outputResourceType;
 
     public float LocalEfficiency => maxWorkers > 0 ? (float)assignedWorkers / maxWorkers : 0f;
-    public float GlobalEfficiency => PopulationManager.Instance != null ? PopulationManager.Instance.GlobalHappiness : 1.0f;
-    public float TotalProductivity => LocalEfficiency * GlobalEfficiency;
-    public int CalculatedYield => Mathf.FloorToInt(baseOutputAmount * TotalProductivity);
+    //public float GlobalEfficiency => PopulationManager.Instance != null ? PopulationManager.Instance.GlobalHappiness : 1.0f;
+    //public float TotalProductivity => LocalEfficiency * GlobalEfficiency;
+    //public int CalculatedYield => Mathf.FloorToInt(baseOutputAmount * TotalProductivity);
 
     // Changed from private void Start() to protected virtual void Start()
     protected virtual void Start()
@@ -53,10 +53,10 @@ public class WorkableStructure : Item
             return false;
         }
 
-        if (PopulationManager.Instance != null && !PopulationManager.Instance.TryAssignWorker())
+        /*if (PopulationManager.Instance != null && !PopulationManager.Instance.TryAssignWorker())
         {
             return false;
-        }
+        }*/
 
         assignedWorkers++;
         Debug.Log($"[{buildingName}] Worker added ({assignedWorkers}/{maxWorkers}).");
@@ -68,10 +68,10 @@ public class WorkableStructure : Item
         if (assignedWorkers <= 0) return false;
 
         assignedWorkers--;
-        if (PopulationManager.Instance != null)
+        /*if (PopulationManager.Instance != null)
         {
             PopulationManager.Instance.UnassignWorker();
-        }
+        }*/
 
         Debug.Log($"[{buildingName}] Worker removed ({assignedWorkers}/{maxWorkers}).");
         return true;
@@ -83,9 +83,9 @@ public class WorkableStructure : Item
         {
             yield return new WaitForSeconds(productionIntervalSeconds);
 
-            int yieldAmount = CalculatedYield;
+            //int yieldAmount = CalculatedYield;
 
-            if (yieldAmount > 0)
+            /*if (yieldAmount > 0)
             {
                 PlayerResources playerResources = GetPlayerResources();
                 if (playerResources != null)
@@ -93,7 +93,7 @@ public class WorkableStructure : Item
                     playerResources.AddResource(outputResourceType, yieldAmount);
                     Debug.Log($"[{buildingName}] Produced +{yieldAmount} {outputResourceType}");
                 }
-            }
+            }*/
         }
     }
 

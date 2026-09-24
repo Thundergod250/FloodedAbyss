@@ -21,13 +21,13 @@ public class UIAutoMiner : UiModals
 
     protected override void Start()
     {
-        if (claimButton != null) claimButton.onClick.AddListener(OnClaimClicked);
+        //if (claimButton != null) claimButton.onClick.AddListener(OnClaimClicked);
         if (addWorkerButton != null) addWorkerButton.onClick.AddListener(OnAddWorkerClicked);
         if (removeWorkerButton != null) removeWorkerButton.onClick.AddListener(OnRemoveWorkerClicked);
         if (closeButton != null) closeButton.onClick.AddListener(CloseMenu);
     }
 
-    protected override void OnEnable()
+    /*protected override void OnEnable()
     {
         if (PopulationManager.Instance != null)
         {
@@ -41,7 +41,7 @@ public class UIAutoMiner : UiModals
         {
             PopulationManager.Instance.EvtOnPopulationChanged.RemoveListener(UpdateUI);
         }
-    }
+    }*/
 
     public void OpenAutoMinerMenu(AutoMiner miner)
     {
@@ -74,11 +74,12 @@ public class UIAutoMiner : UiModals
             string storageInfo = "Stored Resources:\n";
             foreach (var kvp in currentTargetMiner.StoredResources)
             {
-                storageInfo += $"• {kvp.Key}: {kvp.Value} / {currentTargetMiner.MaxStoragePerResource}\n";
+                storageInfo += $"ï¿½ {kvp.Key}: {kvp.Value} / {currentTargetMiner.MaxStoragePerResource}\n";
             }
             storageText.text = storageInfo;
         }
 
+        /*
         if (workerCountText != null)
             workerCountText.text = $"Workers: {currentTargetMiner.AssignedWorkers} / {currentTargetMiner.MaxWorkers}";
 
@@ -86,9 +87,10 @@ public class UIAutoMiner : UiModals
             availablePopulationText.text = $"Available Population: {PopulationManager.Instance.AvailablePopulation} / {PopulationManager.Instance.TotalPopulation}";
 
         if (efficiencyText != null)
-            efficiencyText.text = $"Total Productivity: {currentTargetMiner.TotalProductivity * 100:F0}%";
+            efficiencyText.text = $"Total Productivity: {currentTargetMiner.TotalProductivity * 100:F0}%";*/
     }
 
+    /*
     private void OnClaimClicked()
     {
         if (currentTargetMiner != null)
@@ -96,7 +98,7 @@ public class UIAutoMiner : UiModals
             currentTargetMiner.ClaimResources();
             UpdateUI();
         }
-    }
+    }*/
 
     private void OnAddWorkerClicked()
     {

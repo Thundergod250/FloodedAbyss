@@ -19,14 +19,14 @@ public class UIWorkableBuilding : UiModals
 
     private WorkableStructure currentTargetBuilding;
 
-    protected override void Start()
+    /*protected override void Start()
     {
         if (addWorkerButton != null) addWorkerButton.onClick.AddListener(OnAddWorkerClicked);
         if (removeWorkerButton != null) removeWorkerButton.onClick.AddListener(OnRemoveWorkerClicked);
         if (closeButton != null) closeButton.onClick.AddListener(CloseMenu);
-    }
+    }*/
 
-    protected override void OnEnable()
+    /*protected override void OnEnable()
     {
         if (PopulationManager.Instance != null)
         {
@@ -59,9 +59,9 @@ public class UIWorkableBuilding : UiModals
         {
             GameManager.Instance.uiController.CloseAllModals();
         }
-    }
+    }*/
 
-    public void UpdateUI()
+    /*public void UpdateUI()
     {
         if (currentTargetBuilding == null) return;
 
@@ -82,9 +82,9 @@ public class UIWorkableBuilding : UiModals
 
         if (calculatedYieldText != null)
             calculatedYieldText.text = $"Est. Yield per Tick: {currentTargetBuilding.CalculatedYield}";
-    }
+    }*/
 
-    private void OnAddWorkerClicked()
+    /*private void OnAddWorkerClicked()
     {
         if (currentTargetBuilding != null)
         {
@@ -100,5 +100,5 @@ public class UIWorkableBuilding : UiModals
             currentTargetBuilding.TryRemoveWorker();
             UpdateUI();
         }
-    }
+    }*/
 }

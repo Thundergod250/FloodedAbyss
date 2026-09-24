@@ -91,9 +91,9 @@ public class AutoMiner : WorkableStructure
 
     private void HarvestToStorage()
     {
-        int yieldAmount = Mathf.FloorToInt(baseYieldPerResource * TotalProductivity);
+        //int yieldAmount = Mathf.FloorToInt(baseYieldPerResource * TotalProductivity);
 
-        if (yieldAmount <= 0) return;
+        /*if (yieldAmount <= 0) return;
 
         foreach (ResourceType resourceType in targetResources)
         {
@@ -103,17 +103,18 @@ public class AutoMiner : WorkableStructure
             if (storedResources[resourceType] < maxStoragePerResource)
             {
                 storedResources[resourceType] = Mathf.Min(storedResources[resourceType] + yieldAmount, maxStoragePerResource);
-            }
-        }
+            }*/
+        //}
 
         // Live update the AutoMiner UI panel if currently open
         UIAutoMiner uiMiner = FindAnyObjectByType<UIAutoMiner>(FindObjectsInactive.Include);
-        if (uiMiner != null && uiMiner.gameObject.activeInHierarchy)
+        /*if (uiMiner != null && uiMiner.gameObject.activeInHierarchy)
         {
             uiMiner.UpdateUI();
-        }
+        }*/
     }
 
+    /*
     public void ClaimResources()
     {
         PlayerResources playerResources = GetPlayerResources();
@@ -131,13 +132,14 @@ public class AutoMiner : WorkableStructure
             }
         }
     }
+    */
 
-    private PlayerResources GetPlayerResources()
+    /*private PlayerResources GetPlayerResources()
     {
         if (GameManager.Instance != null && GameManager.Instance.playerController != null)
         {
             return GameManager.Instance.playerController.GetComponent<PlayerResources>();
         }
-        return FindAnyObjectByType<PlayerResources>();
-    }
+        //return FindAnyObjectByType<PlayerResources>();
+    }*/
 }

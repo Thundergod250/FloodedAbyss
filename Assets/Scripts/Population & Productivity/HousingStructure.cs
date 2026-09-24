@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class HousingStructure : Item
 {
-    [Header("Housing Settings")]
+    /*[Header("Housing Settings")]
     [SerializeField] private int housingCapacity = 3;
 
     [Header("Hiring Settings")]
@@ -23,14 +23,14 @@ public class HousingStructure : Item
         {
             PopulationManager.Instance.UnregisterHousingCapacity(housingCapacity);
         }
-    }
+    }*/
 
     public override void Activate()
     {
         // Interacting directly buys an employee if under housing limit
-        if (PopulationManager.Instance != null)
+        /*if (PopulationManager.Instance != null)
         {
             PopulationManager.Instance.TryHireEmployee(hiringCostType, hiringCost);
-        }
+        }*/
     }
 }

@@ -3,119 +3,41 @@ using UnityEngine.Events;
 
 public class PopulationManager : MonoBehaviour
 {
-    public static PopulationManager Instance { get; private set; }
-
-    [Header("Housing & Population Stats")]
-    [SerializeField] private int totalHousingCapacity = 0;
-    [SerializeField] private int totalPopulation = 0;
-    [SerializeField] private int assignedPopulation = 0;
-
-    [Header("Global Happiness (0.0 to 1.0)")]
-    [Range(0f, 1f)]
-    [SerializeField] private float globalHappiness = 1.0f; // Default 100% happiness
-
     [Header("Events")]
     public UnityEvent EvtOnPopulationChanged;
 
-    public int TotalHousingCapacity => totalHousingCapacity;
+    [Header("Global Population Stats")]
+    [SerializeField] private int totalPopulation = 0;
+    [SerializeField] private int idlePopulation = 0;
+
     public int TotalPopulation => totalPopulation;
-    public int AssignedPopulation => assignedPopulation;
-    public int AvailablePopulation => Mathf.Max(0, totalPopulation - assignedPopulation);
-    public float GlobalHappiness => globalHappiness;
+    public int IdlePopulation => idlePopulation;
 
-    private void Awake()
+    public void AddIdlePopulation(int amount)
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-    }
+        if (amount <= 0) return;
 
-    #region Housing Management
-    public void RegisterHousingCapacity(int capacity)
-    {
-        totalHousingCapacity += capacity;
+        totalPopulation += amount;
+        idlePopulation += amount;
         EvtOnPopulationChanged?.Invoke();
-        Debug.Log($"[PopulationManager] Housing Capacity increased to {totalHousingCapacity}");
+
+        Notification.Display($"+{amount} Citizen(s) arrived!", Color.cyan);
     }
 
-    public void UnregisterHousingCapacity(int capacity)
+    public bool TryAssignIdle(int amount)
     {
-        totalHousingCapacity = Mathf.Max(0, totalHousingCapacity - capacity);
-        EvtOnPopulationChanged?.Invoke();
-    }
-    #endregion
-
-    #region Employee Hiring
-    public bool CanHireEmployee()
-    {
-        return totalPopulation < totalHousingCapacity;
-    }
-
-    public bool TryHireEmployee(ResourceType costType, int costAmount)
-    {
-        if (!CanHireEmployee())
+        if (idlePopulation >= amount)
         {
-            Debug.LogWarning("[PopulationManager] Cannot hire: Housing limit reached! Build more Tents.");
-            return false;
-        }
-
-        PlayerResources playerResources = GetPlayerResources();
-        if (playerResources == null) return false;
-
-        if (playerResources.SpendResource(costType, costAmount))
-        {
-            totalPopulation++;
+            idlePopulation -= amount;
             EvtOnPopulationChanged?.Invoke();
-            Debug.Log($"[PopulationManager] Employee hired! Population: {totalPopulation}/{totalHousingCapacity}");
             return true;
         }
-
-        Debug.LogWarning($"[PopulationManager] Not enough {costType} to hire employee!");
         return false;
     }
-    #endregion
 
-    #region Worker Assignment
-    public bool TryAssignWorker()
+    public void UnassignToIdle(int amount)
     {
-        if (AvailablePopulation <= 0)
-        {
-            Debug.LogWarning("[PopulationManager] No available unassigned population!");
-            return false;
-        }
-
-        assignedPopulation++;
+        idlePopulation += amount;
         EvtOnPopulationChanged?.Invoke();
-        return true;
-    }
-
-    public void UnassignWorker()
-    {
-        if (assignedPopulation > 0)
-        {
-            assignedPopulation--;
-            EvtOnPopulationChanged?.Invoke();
-        }
-    }
-    #endregion
-
-    #region Happiness Control
-    public void SetGlobalHappiness(float happinessValue)
-    {
-        globalHappiness = Mathf.Clamp01(happinessValue);
-        EvtOnPopulationChanged?.Invoke();
-    }
-    #endregion
-
-    private PlayerResources GetPlayerResources()
-    {
-        if (GameManager.Instance != null && GameManager.Instance.playerController != null)
-        {
-            return GameManager.Instance.playerController.GetComponent<PlayerResources>();
-        }
-        return FindAnyObjectByType<PlayerResources>();
     }
 }

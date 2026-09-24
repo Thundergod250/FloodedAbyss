@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     public ObjectPooling objectPooling;
     public WaterLevel waterLevel;
     public SkillTreeController SkillTreeController;
+    public PopulationManager PopulationManager; 
 
     private void Awake()
     {
