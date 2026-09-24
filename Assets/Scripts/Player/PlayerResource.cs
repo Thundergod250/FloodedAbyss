@@ -33,19 +33,26 @@ public class PlayerResources : MonoBehaviour
             resources[type] = 0;
     }
 
-    public void AddResource(ResourceType type, int amount)
+    /// <summary>
+    /// Adds resources to the player pool. Pass showNotification = false to suppress popups (e.g. per-second generators).
+    /// </summary>
+    public void AddResource(ResourceType type, int amount, bool showNotification = true)
     {
         if (amount <= 0) return;
         resources[type] += amount;
         Debug.Log($"{type} increased by {amount}. Total: {resources[type]}");
         EvtOnResourceChanged?.Invoke(type, resources[type]);
-        Notification.Display($"+{amount} {type}", gainColor);
+
+        if (showNotification)
+        {
+            Notification.Display($"+{amount} {type}", gainColor);
+        }
     }
 
     /// <summary>
-    /// Spends a single resource type if available.
+    /// Spends a single resource type if available. Optional parameter allows suppressing notifications.
     /// </summary>
-    public bool SpendResource(ResourceType type, int amount)
+    public bool SpendResource(ResourceType type, int amount, bool showNotification = true)
     {
         if (amount <= 0) return true;
 
@@ -54,7 +61,12 @@ public class PlayerResources : MonoBehaviour
             resources[type] -= amount;
             Debug.Log($"{type} decreased by {amount}. Total: {resources[type]}");
             EvtOnResourceChanged?.Invoke(type, resources[type]);
-            Notification.Display($"-{amount} {type}", spendColor);
+
+            if (showNotification)
+            {
+                Notification.Display($"-{amount} {type}", spendColor);
+            }
+
             return true;
         }
 
@@ -65,9 +77,9 @@ public class PlayerResources : MonoBehaviour
     /// <summary>
     /// Alternate function to spend a single resource (alias for SpendResource).
     /// </summary>
-    public bool TrySpendResource(ResourceType type, int amount)
+    public bool TrySpendResource(ResourceType type, int amount, bool showNotification = true)
     {
-        return SpendResource(type, amount);
+        return SpendResource(type, amount, showNotification);
     }
 
     /// <summary>
@@ -107,19 +119,20 @@ public class PlayerResources : MonoBehaviour
         return true;
     }
     
-    public bool TrySpendResources(IReadOnlyList<StructureDataSO.ResourceRequirement> requirements)
+    public bool TrySpendResources(IReadOnlyList<StructureDataSO.ResourceRequirement> requirements, bool showNotification = true)
     {
         if (!CanAfford(requirements))
         {
             Debug.LogWarning("Transaction failed: Insufficient resources!");
-            Notification.ShowWarning("Not enough resources!");
+            if (showNotification)
+                Notification.ShowWarning("Not enough resources!");
             return false;
         }
 
         if (requirements != null)
         {
             foreach (var req in requirements) 
-                SpendResource(req.resourceType, req.amount);
+                SpendResource(req.resourceType, req.amount, showNotification);
         }
 
         return true;

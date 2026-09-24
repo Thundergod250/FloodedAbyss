@@ -33,17 +33,15 @@ public class StructureGenerator : ItemStructure
 
     private void ConsumeFuelAndProduceEnergy()
     {
-        // 1. Consume 1 unit of fuel from this structure
         targetResource.currentAmount--;
         generatedEnergySession += energyPerResource;
 
-        // 2. Grant Energy directly to the player's resource pool
+        // Pass false to suppress popups for per-second generation
         if (addDirectlyToPlayer && playerResources != null)
         {
-            playerResources.AddResource(ResourceType.Energy, energyPerResource);
+            playerResources.AddResource(ResourceType.Energy, energyPerResource, showNotification: false);
         }
 
-        // 3. Keep UI updated if open
         RefreshUIIfOpen();
     }
 
