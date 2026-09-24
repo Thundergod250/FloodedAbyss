@@ -41,6 +41,9 @@ public class PlayerResources : MonoBehaviour
         Notification.Display($"+{amount} {type}", gainColor);
     }
 
+    /// <summary>
+    /// Spends a single resource type if available.
+    /// </summary>
     public bool SpendResource(ResourceType type, int amount)
     {
         if (amount <= 0) return true;
@@ -56,6 +59,32 @@ public class PlayerResources : MonoBehaviour
 
         Debug.LogWarning($"Not enough {type}!");
         return false;
+    }
+
+    /// <summary>
+    /// Alternate function to spend a single resource (alias for SpendResource).
+    /// </summary>
+    public bool TrySpendResource(ResourceType type, int amount)
+    {
+        return SpendResource(type, amount);
+    }
+
+    /// <summary>
+    /// Safely attempts to get the current quantity of a resource.
+    /// Returns true if the player holds at least 1 of the requested resource.
+    /// </summary>
+    public bool TryGetResource(ResourceType type, out int currentAmount)
+    {
+        currentAmount = GetResource(type);
+        return currentAmount > 0;
+    }
+
+    /// <summary>
+    /// Checks if the player has at least the required amount of a resource.
+    /// </summary>
+    public bool HasResource(ResourceType type, int requiredAmount)
+    {
+        return GetResource(type) >= requiredAmount;
     }
 
     public int GetResource(ResourceType type) => resources.TryGetValue(type, out int amount) ? amount : 0;
