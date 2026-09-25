@@ -1,5 +1,69 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4765070415320128067
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1129048430384984887}
+  - component: {fileID: 493372461744258617}
+  m_Layer: 0
+  m_Name: EventManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1129048430384984887
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4765070415320128067}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3096870024065945765}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &493372461744258617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4765070415320128067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e653c7db929797f49bf60c82f1ddf7fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EventManager
+  playerResources: {fileID: 0}
+  stoneEvents:
+  - {fileID: 11400000, guid: e0832db8c61aa9a43932aebd517a6ff8, type: 2}
+  - {fileID: 11400000, guid: fab2b885b8e9c0e4c9a7c8ac8766d68f, type: 2}
+  woodEvents:
+  - {fileID: 11400000, guid: 149989750671c4a41910182d93544a3f, type: 2}
+  goldEvents:
+  - {fileID: 11400000, guid: 71b237b846286f84397153a4ba75a1d6, type: 2}
+  foodEvents:
+  - {fileID: 11400000, guid: 60c999e9ae2f4b34bb23fdcd6cec6dc7, type: 2}
+  tinEvents:
+  - {fileID: 11400000, guid: 3c83c0fc832f3ec43b77f8c8db16bd18, type: 2}
+  copperEvents:
+  - {fileID: 11400000, guid: 69b81159502dd9249a6dc1f7746d3d70, type: 2}
+  resourceThreshold: 100
+  minTimerDuration: 60
+  maxTimerDuration: 240
+  eventCooldown: 40
+  eventPanel: {fileID: 0}
+  eventText: {fileID: 0}
 --- !u!1 &8026546904625221826
 GameObject:
   m_ObjectHideFlags: 0
@@ -33,6 +97,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2143062266235653644}
+  - {fileID: 1129048430384984887}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5441983127171556320
