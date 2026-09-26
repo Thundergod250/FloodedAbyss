@@ -7,7 +7,7 @@ public class WorkableStructure : Item
     public string buildingName = "Food Structure";
 
     [Header("Staffing Settings")]
-    [SerializeField] private int maxWorkers = 5;
+    [SerializeField] protected int maxWorkers = 5;
     [SerializeField] private int assignedWorkers = 0;
 
     [Header("Production Settings")]
@@ -26,7 +26,6 @@ public class WorkableStructure : Item
     public float TotalProductivity => LocalEfficiency * GlobalEfficiency;
     public int CalculatedYield => Mathf.FloorToInt(baseOutputAmount * TotalProductivity);
 
-    // Changed from private void Start() to protected virtual void Start()
     protected virtual void Start()
     {
         productionCoroutine = StartCoroutine(ProductionCycleRoutine());
