@@ -36,7 +36,14 @@ public class WallRubble : MonoBehaviour
 
     private void HandleDestroyed()
     {
-        if (waterForecast != null) 
-            waterForecast.StartCoroutine(waterForecast.LowerWaterLevel(waterLevelAfterDestruction, waterLowerDuration));
+        if (waterForecast != null)
+        {
+            waterForecast.StartCoroutine(
+                waterForecast.LowerWaterLevel(
+                    waterLevelAfterDestruction,
+                    waterLowerDuration
+                )
+            );
+        }
     }
 }
