@@ -145,75 +145,12 @@ Transform:
   - {fileID: 8587297493891008870}
   - {fileID: 6099104027752766723}
   - {fileID: 1210658088014650240}
-  - {fileID: 6409368175744041202}
   - {fileID: 181864646448718620}
   - {fileID: 3824804631082560339}
   - {fileID: 4345341679736826898}
   - {fileID: 3672941884775612712}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &442612364712849276
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 6579129507447539624}
-    m_Modifications:
-    - target: {fileID: 4635422907324172013, guid: 98ae5c72c7a410b4b8a978cf6adb087e, type: 3}
-      propertyPath: m_Name
-      value: OmegaPumpLowerLevels
-      objectReference: {fileID: 0}
-    - target: {fileID: 6833895758107602830, guid: 98ae5c72c7a410b4b8a978cf6adb087e, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.5546851
-      objectReference: {fileID: 0}
-    - target: {fileID: 6833895758107602830, guid: 98ae5c72c7a410b4b8a978cf6adb087e, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 5.3909683
-      objectReference: {fileID: 0}
-    - target: {fileID: 6833895758107602830, guid: 98ae5c72c7a410b4b8a978cf6adb087e, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 5.3638363
-      objectReference: {fileID: 0}
-    - target: {fileID: 6833895758107602830, guid: 98ae5c72c7a410b4b8a978cf6adb087e, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6833895758107602830, guid: 98ae5c72c7a410b4b8a978cf6adb087e, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6833895758107602830, guid: 98ae5c72c7a410b4b8a978cf6adb087e, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6833895758107602830, guid: 98ae5c72c7a410b4b8a978cf6adb087e, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6833895758107602830, guid: 98ae5c72c7a410b4b8a978cf6adb087e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6833895758107602830, guid: 98ae5c72c7a410b4b8a978cf6adb087e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6833895758107602830, guid: 98ae5c72c7a410b4b8a978cf6adb087e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 98ae5c72c7a410b4b8a978cf6adb087e, type: 3}
---- !u!4 &6409368175744041202 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6833895758107602830, guid: 98ae5c72c7a410b4b8a978cf6adb087e, type: 3}
-  m_PrefabInstance: {fileID: 442612364712849276}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2381153608112091670
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -832,10 +769,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4526244640494835073, guid: bf265e19e7f2cd544b664c53e26032ee, type: 3}
-      propertyPath: ultraPumpUI
-      value: 
-      objectReference: {fileID: 8366737301632483197}
-    - target: {fileID: 4526244640494835073, guid: bf265e19e7f2cd544b664c53e26032ee, type: 3}
       propertyPath: 'waterPump.Array.data[0]'
       value: 
       objectReference: {fileID: 8393612358173375847}
@@ -1013,14 +946,3 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3, y: 3, z: 3}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8366737301632483197 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 126210451464413629, guid: bf265e19e7f2cd544b664c53e26032ee, type: 3}
-  m_PrefabInstance: {fileID: 8492940639546777280}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c00173456d180524aae88bbdafb20bd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UltraPumpUI
