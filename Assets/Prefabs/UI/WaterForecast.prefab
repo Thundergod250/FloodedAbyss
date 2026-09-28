@@ -386,6 +386,7 @@ MonoBehaviour:
   - {fileID: 6634826538647530132}
   - {fileID: 840329395562874026}
   - {fileID: 3391565679484193850}
+  waterRiseRate: 0
 --- !u!1 &5884751680091866028
 GameObject:
   m_ObjectHideFlags: 0
@@ -475,19 +476,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: heightValue
-      value: -10
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
-      propertyPath: m_Color.b
+    - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: heightIncreaseDuration
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: m_Color.b
+      value: 0.063267946
+      objectReference: {fileID: 0}
+    - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_Color.g
-      value: 0.100815535
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_Color.r
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_Pivot.x
@@ -729,6 +734,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: heightIncreaseDuration
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: m_Color.b
+      value: 0.08701122
+      objectReference: {fileID: 0}
+    - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: m_Color.r
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}

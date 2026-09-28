@@ -5,6 +5,7 @@ using UnityEngine;
 public class TimelineEvents : MonoBehaviour
 {
     [SerializeField] private float heightValue;
+    [SerializeField] private float waterIncreaseVal;
     [SerializeField] private float heightIncreaseDuration = 2f;
 
     private bool triggered;
@@ -14,12 +15,14 @@ public class TimelineEvents : MonoBehaviour
         triggered = false;
     }
 
-    public void IncreaseWaterLevel(Transform ocean)
+    public void IncreaseWaterLevel(WaterForecast waterForecast)
     {
         if (triggered)
             return;
 
-        StartCoroutine(IncreaseWaterLevelOverTime(ocean));
+        triggered = true;
+
+        waterForecast.IncreaseWaterRise(waterIncreaseVal);
     }
 
     private IEnumerator IncreaseWaterLevelOverTime(Transform ocean)
