@@ -22,10 +22,10 @@ public class TimelineEvents : MonoBehaviour
 
         triggered = true;
 
-        waterForecast.IncreaseWaterRise(waterIncreaseVal);
+        waterForecast.ChangeMaximumWater(waterIncreaseVal);
     }
 
-    private IEnumerator IncreaseWaterLevelOverTime(Transform ocean)
+   /* private IEnumerator IncreaseWaterLevelOverTime(Transform ocean)
     {
         triggered = true;
 
@@ -52,5 +52,5 @@ public class TimelineEvents : MonoBehaviour
             targetHeight,
             ocean.position.z
         );
-    }
+    }*/
 }

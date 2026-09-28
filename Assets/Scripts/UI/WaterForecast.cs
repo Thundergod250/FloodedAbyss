@@ -19,19 +19,24 @@ public class WaterForecast : MonoBehaviour
 
     [Header("Water Rise")]
     [SerializeField] private float baseWaterRiseRate = 1f;
-    private float waterRiseRate;
-
-    [Header("Pump Reduction")]
-    private float pumpReductionRate;
+    [SerializeField] private float maximumWaterLevel = 95f;
+    [SerializeField] private float currentMaximumWaterCapacity; 
+    
+    private float targetMaximumWaterCapacity;
+    private float waterRiseRate = 1f;
 
     private bool timelinePaused = true;
     private bool pumpActivated = false;
 
+    private Coroutine maximumCapacityCoroutine;
     private WaterLevel level;
 
     private void Start()
     {
         level = GameManager.Instance.waterLevel;
+
+        currentMaximumWaterCapacity = maximumWaterLevel;
+        targetMaximumWaterCapacity = maximumWaterLevel;
 
         StartCoroutine(ProgressTimeline());
     }
@@ -47,11 +52,14 @@ public class WaterForecast : MonoBehaviour
         if (!pumpActivated)
             return;
 
-        // Water rise - pump reduction = actual water movement
-        float netRate = waterRiseRate - pumpReductionRate;
-
         Vector3 position = level.waterLevelTransform.position;
-        position.y += netRate * Time.deltaTime;
+
+        position.y += waterRiseRate * Time.deltaTime;
+
+        position.y = Mathf.Min(
+            position.y,
+            currentMaximumWaterCapacity
+        );
 
         level.waterLevelTransform.position = position;
     }
@@ -62,24 +70,8 @@ public class WaterForecast : MonoBehaviour
 
         Debug.Log(
             $"Water rise increased by {amount}. " +
-            $"Current rise rate: {waterRiseRate} m/s"
+            $"Current water rise rate: {waterRiseRate}/sec"
         );
-    }
-
-    public void SetPumpReduction(float amount)
-    {
-        pumpReductionRate = Mathf.Max(0f, amount);
-
-        Debug.Log(
-            $"Pump reduction set to {pumpReductionRate} m/s"
-        );
-    }
-
-    public void StopPumpReduction()
-    {
-        pumpReductionRate = 0f;
-
-        Debug.Log("Pump reduction stopped.");
     }
 
     private IEnumerator ProgressTimeline()
@@ -101,7 +93,12 @@ public class WaterForecast : MonoBehaviour
                 float endY = timelineRect.rect.height;
 
                 Vector2 position = currentRect.anchoredPosition;
-                position.y = Mathf.Lerp(startY, endY, progress);
+
+                position.y = Mathf.Lerp(
+                    startY,
+                    endY,
+                    progress
+                );
 
                 currentRect.anchoredPosition = position;
 
@@ -126,9 +123,13 @@ public class WaterForecast : MonoBehaviour
                     eventpoint.name
                 );
 
-                eventpoint
-                    .GetComponent<TimelineEvents>()
-                    .IncreaseWaterLevel(this);
+                TimelineEvents timelineEvent =
+                    eventpoint.GetComponent<TimelineEvents>();
+
+                if (timelineEvent != null)
+                {
+                    timelineEvent.IncreaseWaterLevel(this);
+                }
             }
         }
     }
@@ -157,7 +158,12 @@ public class WaterForecast : MonoBehaviour
             elapsed += Time.deltaTime;
 
             float progress = elapsed / duration;
-            progress = Mathf.SmoothStep(0f, 1f, progress);
+
+            progress = Mathf.SmoothStep(
+                0f,
+                1f,
+                progress
+            );
 
             float newHeight = Mathf.Lerp(
                 startingHeight,
@@ -167,6 +173,7 @@ public class WaterForecast : MonoBehaviour
 
             Vector3 position = waterTransform.position;
             position.y = newHeight;
+
             waterTransform.position = position;
 
             yield return null;
@@ -174,6 +181,52 @@ public class WaterForecast : MonoBehaviour
 
         Vector3 finalPosition = waterTransform.position;
         finalPosition.y = targetHeight;
+
+        waterTransform.position = finalPosition;
+    }
+
+    public IEnumerator AdjustWaterLevelOverTime(float adjustment)
+    {
+        if (level == null)
+            yield break;
+
+        Transform waterTransform = level.waterLevelTransform;
+
+        float startingHeight = waterTransform.position.y;
+        float targetHeight = startingHeight + adjustment;
+
+        float duration = 5f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+
+            float progress = elapsed / duration;
+
+            progress = Mathf.SmoothStep(
+                0f,
+                1f,
+                progress
+            );
+
+            float newHeight = Mathf.Lerp(
+                startingHeight,
+                targetHeight,
+                progress
+            );
+
+            Vector3 position = waterTransform.position;
+            position.y = newHeight;
+
+            waterTransform.position = position;
+
+            yield return null;
+        }
+
+        Vector3 finalPosition = waterTransform.position;
+        finalPosition.y = targetHeight;
+
         waterTransform.position = finalPosition;
     }
 
@@ -184,10 +237,60 @@ public class WaterForecast : MonoBehaviour
 
     public void EnableTimeline()
     {
+        if (pumpActivated)
+            return;
+
         timelinePaused = false;
         pumpActivated = true;
-
-        // Always start at 1 m/s
         waterRiseRate = baseWaterRiseRate;
+
+        Debug.Log(
+            $"Timeline started. Water rise rate: {waterRiseRate}/sec"
+        );
+    }
+
+    private IEnumerator AnimateMaximumWaterCapacity()
+    {
+        float duration = 5f;
+
+        while (!Mathf.Approximately(
+            currentMaximumWaterCapacity,
+            targetMaximumWaterCapacity))
+        {
+            float startingCapacity = currentMaximumWaterCapacity;
+            float elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+
+                float progress = elapsed / duration;
+                progress = Mathf.SmoothStep(0f, 1f, progress);
+
+                currentMaximumWaterCapacity = Mathf.Lerp(
+                    startingCapacity,
+                    targetMaximumWaterCapacity,
+                    progress
+                );
+
+                yield return null;
+            }
+
+            currentMaximumWaterCapacity = targetMaximumWaterCapacity;
+        }
+
+        maximumCapacityCoroutine = null;
+    }
+
+    public void ChangeMaximumWater(float amount)
+    {
+        targetMaximumWaterCapacity += amount;
+
+        if (maximumCapacityCoroutine == null)
+        {
+            maximumCapacityCoroutine = StartCoroutine(
+                AnimateMaximumWaterCapacity()
+            );
+        }
     }
 }

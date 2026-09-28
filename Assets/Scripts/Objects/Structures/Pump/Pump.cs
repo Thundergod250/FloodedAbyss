@@ -14,7 +14,10 @@ public class Pump : Item
     [SerializeField] private int resourceToGive;
     [SerializeField] private int resourceDrain;
     [SerializeField] private int waterLevelReduc;
-    [SerializeField] private float drainInterval = 5f;
+    [SerializeField] private float drainInterval = 5f; 
+    [SerializeField] private float maximumWaterReduction = 10f;
+
+    public float MaximumWaterReduction => maximumWaterReduction;
 
     private bool hasResources;
     private bool stopDrain;
@@ -32,6 +35,7 @@ public class Pump : Item
     public int ResourceDrainPerSecond => resourceDrain;
     public ResourceType ResourceType => resourceType;
     public float WaterAdjustment => waterLevelReduc;
+
     public void SetActive(bool value)
     {
         isActive = value;
@@ -39,7 +43,9 @@ public class Pump : Item
 
     private void Start()
     {
-        playerResources = GameManager.Instance.playerController.GetComponent<PlayerResources>();
+        playerResources =
+            GameManager.Instance.playerController
+                .GetComponent<PlayerResources>();
 
         resourceToGive = 0;
 
@@ -90,7 +96,7 @@ public class Pump : Item
     {
         resourceToGive -= amountToReduce;
 
-        if(resourceToGive < 0)
+        if (resourceToGive < 0)
         {
             resourceToGive = 0;
         }
@@ -113,14 +119,14 @@ public class Pump : Item
     }
 
     public void UpdateText()
-    { 
+    {
         pumpUI.currentResourcesText.text = currentResources.ToString();
         pumpUI.resourcesToGiveText.text = resourceToGive.ToString();
     }
 
     public void DrainResources()
     {
-        if (stopDrain || !isActive)
+        if (stopDrain)
             return;
 
         currentResources -= resourceDrain;
@@ -137,10 +143,5 @@ public class Pump : Item
                 ultraPump.PumpBecameInactive(this);
             }
         }
-    }
-
-    public void SetStopDrain(bool value)
-    {
-        stopDrain = value;
     }
 }
