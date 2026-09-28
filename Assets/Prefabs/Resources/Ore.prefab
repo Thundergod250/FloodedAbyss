@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 2582587172514026720}
   - component: {fileID: 3802251664284629423}
   - component: {fileID: -1924340693094907034}
+  - component: {fileID: -6519696878860428483}
   m_Layer: 0
   m_Name: Ore
   m_TagString: Untagged
@@ -154,6 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 586d09e3430c3fa4bb4b7161e1b7ee7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Interactables
+  interactionMessage: 
   onInteract:
     m_PersistentCalls:
       m_Calls: []
@@ -171,3 +173,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
   resourceType: 0
   resourceAmount: 1
+--- !u!114 &-6519696878860428483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 853473947766955555}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 653caaa430001fd4c95571fe825a1275, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnderwaterResource
