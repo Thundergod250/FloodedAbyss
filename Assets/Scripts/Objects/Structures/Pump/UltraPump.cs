@@ -11,16 +11,6 @@ public class UltraPump : Item
     [Header("UI")]
     [SerializeField] private GameObject ultraPumpUiGO;
 
-    [Header("Pump Reduction Caps")]
-    [SerializeField]
-    private List<float> pumpReductionCaps = new()
-    {
-        10f,  
-        30f,  
-        60f,  
-        100f  
-    };
-
     public IReadOnlyList<Pump> WaterPump => waterPump;
 
     private void Start()
@@ -48,6 +38,22 @@ public class UltraPump : Item
 
     public void UpdatePumpWaterLevel()
     {
+        float totalReduction = 0f;
+
+        foreach (Pump pump in waterPump)
+        {
+            if (pump.HasResources && !pump.IsActive)
+            {
+                totalReduction += pump.MaximumWaterReduction;
+
+                pump.SetActive(true);
+                pump.DrainResources();
+            }
+        }
+
+        if (totalReduction <= 0f)
+            return;
+
         WaterForecast waterForecast =
             GameManager.Instance.uiController
                 .GetComponentInChildren<WaterForecast>();
@@ -55,39 +61,9 @@ public class UltraPump : Item
         if (waterForecast == null)
             return;
 
+        waterForecast.ChangeMaximumWater(-totalReduction);
+
         waterForecast.EnableTimeline();
-
-        int activePumpCount = 0;
-        float totalReduction = 0f;
-
-        foreach (Pump pump in waterPump)
-        {
-            if (pump.HasResources && !pump.IsActive)
-            {
-                pump.SetActive(true);
-            }
-
-            if (!pump.IsActive)
-                continue;
-
-            activePumpCount++;
-            totalReduction += pump.WaterAdjustment;
-        }
-
-        float reductionCap = GetReductionCap(activePumpCount);
-
-        totalReduction = Mathf.Min(
-            totalReduction,
-            reductionCap
-        );
-
-        Debug.Log(
-            $"Active Pumps: {activePumpCount} | " +
-            $"Total Reduction: {totalReduction} | " +
-            $"Cap: {reductionCap}"
-        );
-
-        waterForecast.SetPumpReduction(totalReduction);
     }
 
     public void PumpBecameInactive(Pump pump)
@@ -102,45 +78,15 @@ public class UltraPump : Item
         if (waterForecast == null)
             return;
 
-        int activePumpCount = 0;
-        float totalReduction = 0f;
-
-        foreach (Pump activePump in waterPump)
+        waterForecast.ChangeMaximumWater(pump.MaximumWaterReduction);
+    }
+    public void ActivatePumps()
+    {
+        foreach (Pump pump in waterPump)
         {
-            if (!activePump.IsActive)
-                continue;
-
-            activePumpCount++;
-            totalReduction += activePump.WaterAdjustment;
+            pump.ConfirmResources();
         }
 
-        float reductionCap = GetReductionCap(activePumpCount);
-
-        totalReduction = Mathf.Min(
-            totalReduction,
-            reductionCap
-        );
-
-        Debug.Log(
-            $"Pump inactive: {pump.name} | " +
-            $"Active Pumps: {activePumpCount} | " +
-            $"Total Reduction: {totalReduction} | " +
-            $"Cap: {reductionCap}"
-        );
-
-        waterForecast.SetPumpReduction(totalReduction);
-    }
-
-    private float GetReductionCap(int activePumpCount)
-    {
-        if (activePumpCount <= 0)
-            return 0f;
-
-        int index = activePumpCount - 1;
-
-        if (index >= pumpReductionCaps.Count)
-            return pumpReductionCaps[pumpReductionCaps.Count - 1];
-
-        return pumpReductionCaps[index];
+        UpdatePumpWaterLevel();
     }
 }

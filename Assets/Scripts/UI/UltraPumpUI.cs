@@ -6,22 +6,8 @@ public class UltraPumpUI : MonoBehaviour
 {
     [Header("UI")]
     [SerializeField] private UltraPump ultraPump;
-    [SerializeField] private Button pumpButtonPrefab;
+    [SerializeField] private GameObject pumpUIPrefab;
     [SerializeField] private Transform tabContainer;
-
-    [Header("Pump Information")]
-    [SerializeField] private TextMeshProUGUI resourceDrainPerSecondText;
-    [SerializeField] private TextMeshProUGUI resourceTypeText;
-    [SerializeField] private TextMeshProUGUI waterAdjustmentText;
-
-    public void ApplyPumpInfo(string rdps, string rType, string waterLevel)
-    {
-        resourceDrainPerSecondText.text = rdps;
-
-        resourceTypeText.text = rType;
-
-        waterAdjustmentText.text = waterLevel;
-    }
 
     public void SetUpPumpUI()
     {
@@ -32,34 +18,40 @@ public class UltraPumpUI : MonoBehaviour
 
         foreach (Pump pump in ultraPump.WaterPump)
         {
-            Button newButton = Instantiate(
-                pumpButtonPrefab,
-                tabContainer
-            );
+            GameObject pumpUIObject = Instantiate(pumpUIPrefab, tabContainer);
 
-            newButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = pump.name;
+            PumpUI ui = pumpUIObject.GetComponent<PumpUI>();
 
-            newButton.onClick.AddListener(() =>
+            ui.PopulateText(pump.ResourceTypeShared.ToString(), pump.name, pump.ResourceToGive.ToString());
+
+            ui.PopulateButtons(
+            () =>
             {
-                ApplyPumpInfo(
-                    pump.ResourceDrainPerSecond.ToString(),
-                    pump.ResourceType.ToString(),
-                    pump.WaterAdjustment.ToString()
-                );
-            });
+                pump.IncreaseResourceToGive(1);
+                ui.UpdateResources(pump.ResourceToGive);
+            },
 
-            if (ultraPump.WaterPump.Count > 0)
+            () =>
             {
-                Pump firstPump = ultraPump.WaterPump[0];
+                pump.IncreaseResourceToGive(10);
+                ui.UpdateResources(pump.ResourceToGive);
+            },
 
-                ApplyPumpInfo(
-                    firstPump.ResourceDrainPerSecond.ToString(),
-                    firstPump.ResourceType.ToString(),
-                    firstPump.WaterAdjustment.ToString()
-                );
+            () =>
+            {
+                pump.DecreaseResourceToGive(1);
+                ui.UpdateResources(pump.ResourceToGive);
+            },
+
+            () =>
+            {
+                pump.DecreaseResourceToGive(10);
+                ui.UpdateResources(pump.ResourceToGive);
             }
+        );
         }
     }
+
     public void CloseUI()
     {
         this.gameObject.SetActive(false);
