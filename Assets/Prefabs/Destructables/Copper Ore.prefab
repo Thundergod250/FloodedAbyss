@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &89090023408830206
+--- !u!1 &3488895214508500620
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,9 +8,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8776845967901326148}
-  - component: {fileID: 3490891454671117192}
-  - component: {fileID: 2538886861864411475}
+  - component: {fileID: 3276316529291973737}
+  - component: {fileID: 4354650861169029221}
+  - component: {fileID: 8589560316226022922}
   m_Layer: 0
   m_Name: Copper Ore
   m_TagString: Untagged
@@ -18,36 +18,36 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8776845967901326148
+--- !u!4 &3276316529291973737
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 89090023408830206}
+  m_GameObject: {fileID: 3488895214508500620}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 782433731246241527}
+  m_Father: {fileID: 3662672837900194631}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &3490891454671117192
+--- !u!33 &4354650861169029221
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 89090023408830206}
+  m_GameObject: {fileID: 3488895214508500620}
   m_Mesh: {fileID: 1890680089326083098, guid: a2ff7a331d3781046ae341fca5c3009f, type: 3}
---- !u!23 &2538886861864411475
+--- !u!23 &8589560316226022922
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 89090023408830206}
+  m_GameObject: {fileID: 3488895214508500620}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -90,7 +90,7 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &112611954501577805
+--- !u!1 &6583995618998014555
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -98,9 +98,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 782433731246241527}
-  - component: {fileID: 2677013020309931982}
-  - component: {fileID: 7805835887644889909}
+  - component: {fileID: 3662672837900194631}
+  - component: {fileID: 8401019336294262352}
+  - component: {fileID: 8802407000873632750}
   m_Layer: 0
   m_Name: Copper Ore
   m_TagString: Untagged
@@ -108,30 +108,30 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &782433731246241527
+--- !u!4 &3662672837900194631
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 112611954501577805}
+  m_GameObject: {fileID: 6583995618998014555}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -23.88817, y: 0, z: -13.1152}
+  m_LocalPosition: {x: 15.582899, y: 80.426094, z: 12.390851}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2483069123219428205}
-  - {fileID: 8776845967901326148}
+  - {fileID: 3299860954396717865}
+  - {fileID: 3276316529291973737}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &2677013020309931982
+--- !u!136 &8401019336294262352
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 112611954501577805}
+  m_GameObject: {fileID: 6583995618998014555}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -148,13 +148,13 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0.6, z: 0}
---- !u!114 &7805835887644889909
+--- !u!114 &8802407000873632750
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 112611954501577805}
+  m_GameObject: {fileID: 6583995618998014555}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 639eacf06aeade941abe122968d55ace, type: 3}
@@ -164,7 +164,7 @@ MonoBehaviour:
   orePrefab: {fileID: 0}
   oreDropCount: 3
   dropScatterForce: 3
---- !u!1 &166650511550912067
+--- !u!1 &8104550099015597657
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -172,9 +172,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2483069123219428205}
-  - component: {fileID: 2239161376779357730}
-  - component: {fileID: 9106990257464225479}
+  - component: {fileID: 3299860954396717865}
+  - component: {fileID: 4833518206548146622}
+  - component: {fileID: 5918319492660027246}
   m_Layer: 0
   m_Name: Copper Nest
   m_TagString: Untagged
@@ -182,36 +182,36 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2483069123219428205
+--- !u!4 &3299860954396717865
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 166650511550912067}
+  m_GameObject: {fileID: 8104550099015597657}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 782433731246241527}
+  m_Father: {fileID: 3662672837900194631}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &2239161376779357730
+--- !u!33 &4833518206548146622
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 166650511550912067}
+  m_GameObject: {fileID: 8104550099015597657}
   m_Mesh: {fileID: 8328429524068154827, guid: a2ff7a331d3781046ae341fca5c3009f, type: 3}
---- !u!23 &9106990257464225479
+--- !u!23 &5918319492660027246
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 166650511550912067}
+  m_GameObject: {fileID: 8104550099015597657}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
