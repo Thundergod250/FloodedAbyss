@@ -3,6 +3,7 @@ using UnityEngine;
 public class MineExit : MonoBehaviour
 {
     //public GameObject confirmationUI;
+    public MineManager mineManager;
 
     private void Start()
     {
@@ -14,12 +15,13 @@ public class MineExit : MonoBehaviour
         if (other.GetComponent<PlayerController>() != null)
         {
             //confirmationUI.SetActive(true);
-            LeaveMine();
+            mineManager.LeaveMine();
         }
     }
 
     public void LeaveMine()
     {
+        mineManager.LeaveMine();
         Debug.Log("Leaving Mine...");
     }
 

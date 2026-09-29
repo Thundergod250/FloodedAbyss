@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class UIController : MonoBehaviour
 {
@@ -9,7 +10,10 @@ public class UIController : MonoBehaviour
         Dialogue,
         Shop,
         Crafting,
-        Building
+        Building,
+        SkillTree,
+        Structure,
+        AutoMiner
     }
 
     [System.Serializable]
@@ -22,25 +26,48 @@ public class UIController : MonoBehaviour
     [Header("Dependencies")]
     [SerializeField] private PlayerController playerController;
 
+    [Header("Input Settings")]
+    [SerializeField] private InputActionReference escapeAction;
+
     [Header("UI Modals Mapping")]
     [SerializeField] private List<ModalReference> modalList;
 
     [Header("Persistent UI References")]
     public UIInteraction uiInteraction;
-    public UINotification notificationPanel;
+    public UINotification uiNotification;
     public UIHUD UIHUD;
 
     private Dictionary<UIState, UiModals> modalDictionary;
     private UIState currentState = UIState.HUD;
 
-    private void Awake()
+    public UIState CurrentState => currentState;
+
+    private void Awake() => InitializeDictionary();
+
+    private void OnEnable()
     {
-        InitializeDictionary();
+        if (escapeAction != null)
+        {
+            escapeAction.action.Enable();
+            escapeAction.action.performed += OnEscapePerformed;
+        }
     }
 
-    private void Start()
+    private void OnDisable()
     {
-        OpenModal(UIState.HUD);
+        if (escapeAction != null)
+        {
+            escapeAction.action.performed -= OnEscapePerformed;
+            escapeAction.action.Disable();
+        }
+    }
+
+    private void Start() => OpenModal(UIState.HUD);
+
+    private void OnEscapePerformed(InputAction.CallbackContext context)
+    {
+        if (currentState != UIState.HUD)
+            CloseAllModals();
     }
 
     private void InitializeDictionary()
@@ -50,39 +77,37 @@ public class UIController : MonoBehaviour
         foreach (var item in modalList)
         {
             if (item.modalScript != null && !modalDictionary.ContainsKey(item.state))
-            {
                 modalDictionary.Add(item.state, item.modalScript);
-            }
         }
     }
-    
-    /// Centralized function to change UI state.
-    /// Hides all other panels, opens target state, manages cursor and player inputs.
+
+    public T GetModal<T>(UIState state) where T : UiModals
+    {
+        if (modalDictionary != null && modalDictionary.TryGetValue(state, out UiModals modal))
+            return modal as T;
+
+        Debug.LogWarning($"[UIController] Modal for state {state} not found or invalid type.");
+        return null;
+    }
+
     public void OpenModal(UIState newState)
     {
         currentState = newState;
 
-        // 1. Close ALL registered modal panels via their helper method
         foreach (var modal in modalDictionary.Values)
         {
             if (modal != null)
-            {
                 modal.SetModalActive(false);
-            }
         }
 
-        // 2. Open ONLY the target modal/HUD state
         if (modalDictionary.TryGetValue(newState, out UiModals targetModal))
         {
             if (targetModal != null)
-            {
                 targetModal.SetModalActive(true);
-            }
         }
 
-        // 3. Centralized Cursor & Player Input Control
         bool isGameplay = (newState == UIState.HUD);
-        SetCursorState(isGameplay);
+        SetCursorState(!isGameplay);
 
         if (playerController != null)
             playerController.SetInputActive(isGameplay);
@@ -94,8 +119,5 @@ public class UIController : MonoBehaviour
         Cursor.lockState = showCursor ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
-    public void CloseAllModals()
-    {
-        OpenModal(UIState.HUD);
-    }
+    public void CloseAllModals() => OpenModal(UIState.HUD);
 }

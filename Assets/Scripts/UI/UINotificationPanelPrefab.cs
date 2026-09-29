@@ -7,28 +7,24 @@ public class UINotificationPanelPrefab : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private float autoDestroyTime = 3f;
     [SerializeField] private float fadeDuration = 0.5f;
-
-    private TextMeshProUGUI messageText;
-    private CanvasGroup canvasGroup;
+    [SerializeField] private TextMeshProUGUI messageText;
+    [SerializeField] private CanvasGroup canvasGroup;
 
     private Coroutine lifetimeCoroutine;
-    private Coroutine fadeCoroutine;
     private UINotification centralManager;
+
+    private void OnEnable()
+    {
+        canvasGroup.alpha = 1f;
+        transform.localScale = Vector3.one;
+    }
 
     public void Setup(string message, Color color, UINotification manager)
     {
         centralManager = manager;
 
-        if (messageText == null)
-            messageText = GetComponentInChildren<TextMeshProUGUI>();
-
-        if (canvasGroup == null)
-        {
-            canvasGroup = GetComponent<CanvasGroup>();
-            // Fallback: Add CanvasGroup dynamically if missing on prefab root
-            if (canvasGroup == null)
-                canvasGroup = gameObject.AddComponent<CanvasGroup>();
-        }
+        if (messageText == null || canvasGroup == null)
+            return;
 
         if (messageText != null)
         {
@@ -36,34 +32,44 @@ public class UINotificationPanelPrefab : MonoBehaviour
             messageText.color = color;
         }
 
-        // Reset opacity to maximum for pooled reuse
+        // Reset visual state
         if (canvasGroup != null)
             canvasGroup.alpha = 1f;
 
-        // Reset transform scale so layout groups calculate sizes cleanly
         transform.localScale = Vector3.one;
 
-        // Clear active coroutines from previous pool cycles
-        if (lifetimeCoroutine != null) StopCoroutine(lifetimeCoroutine);
-        if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
+        // Stop any previous instance's routine
+        if (lifetimeCoroutine != null)
+        {
+            StopCoroutine(lifetimeCoroutine);
+            lifetimeCoroutine = null;
+        }
 
-        lifetimeCoroutine = StartCoroutine(LifetimeRoutine());
+        // Safely start lifetime routine
+        if (gameObject.activeInHierarchy) lifetimeCoroutine = StartCoroutine(LifetimeRoutine());
     }
 
     public void ForceDismiss()
     {
         if (lifetimeCoroutine != null)
+        {
             StopCoroutine(lifetimeCoroutine);
+            lifetimeCoroutine = null;
+        }
 
-        if (fadeCoroutine != null)
-            StopCoroutine(fadeCoroutine);
-
-        fadeCoroutine = StartCoroutine(FadeAndDestroyRoutine());
+        if (gameObject.activeInHierarchy)
+            StartCoroutine(FadeAndDestroyRoutine());
+        else
+        {
+            // If inactive, unregister and return directly to pool without coroutines
+            CleanupAndPool();
+        }
     }
 
     private IEnumerator LifetimeRoutine()
     {
-        yield return new WaitForSeconds(autoDestroyTime);
+        // FIX: Use WaitForSecondsRealtime so pausing/timeScale=0 doesn't freeze the timer!
+        yield return new WaitForSecondsRealtime(autoDestroyTime);
         yield return FadeAndDestroyRoutine();
     }
 
@@ -74,12 +80,18 @@ public class UINotificationPanelPrefab : MonoBehaviour
 
         while (elapsed < fadeDuration)
         {
-            elapsed += Time.deltaTime;
+            // FIX: Use unscaledDeltaTime for smooth fading regardless of timeScale
+            elapsed += Time.unscaledDeltaTime;
             if (canvasGroup != null)
                 canvasGroup.alpha = Mathf.Lerp(startAlpha, 0f, elapsed / fadeDuration);
             yield return null;
         }
 
+        CleanupAndPool();
+    }
+
+    private void CleanupAndPool()
+    {
         if (centralManager != null)
             centralManager.UnregisterPanel(this);
 

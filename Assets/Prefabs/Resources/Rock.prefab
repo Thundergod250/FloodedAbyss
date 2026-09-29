@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 101504536160211770}
   - component: {fileID: 4387614438573354712}
   - component: {fileID: 9133982641218321140}
+  - component: {fileID: -8454965714953367436}
   m_Layer: 0
   m_Name: Rock
   m_TagString: Untagged
@@ -148,6 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 586d09e3430c3fa4bb4b7161e1b7ee7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Interactables
+  interactionMessage: 
   onInteract:
     m_PersistentCalls:
       m_Calls: []
@@ -165,3 +167,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
   resourceType: 0
   resourceAmount: 1
+--- !u!114 &-8454965714953367436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2228777151424521069}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 653caaa430001fd4c95571fe825a1275, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnderwaterResource

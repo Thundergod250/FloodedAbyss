@@ -11,8 +11,8 @@ public class AttackBox : MonoBehaviour
 
         if (other.TryGetComponent(out Health health))
         {
-            int currentHp = health.CurrentHealth; 
-            int maxHp = health.MaxHealth;         
+            int currentHp = health.GetCurrentHealth(); 
+            int maxHp = health.GetMaxHealth();         
 
             Debug.Log($"Inflicted {Damage} Damage to ({currentHp}/{maxHp}) {other.gameObject.name}");
 

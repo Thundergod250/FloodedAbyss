@@ -5,7 +5,7 @@ public class NPC : Item
 {
     [Header("Dialogue Configuration")]
     [TextArea(2, 5)]
-    [SerializeField] private string dialogueMessage = "Hello there! Stay standard, traveler.";
+    //[SerializeField] private string dialogueMessage = "Hello there! Stay standard, traveler.";
     [SerializeField] private float cooldownDuration = 2.0f;
 
     private bool isTalking = false;

@@ -7,58 +7,45 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 5f;
     public float jumpHeight = 2f;
     public float gravity = -9.81f; 
+    public float maxFallSpeed = -9.81f; 
     public float runSpeed = 8f;
 
     [Header("Movement-Water")]
     public float underwaterMoveSpeed;
     public float swimUpSpeed = 5f;
-    public float surfacingSpeed; 
     public float sinkSpeed = 3f;
     public bool isSwimming;
     public bool wasSwimSprinting;
 
     private float currentSpeed;
-    private WaterLevel wLevel;
     private Transform waterSurface;
     private PlayerController controller;
     private CharacterController characterController;
     private PlayerStamina stamina;
     private PlayerOxygen oxygen;
     private Vector3 velocity; 
-    private bool wasRunning;
 
-    private void Awake()
+    private void Start()
     {
         characterController = GetComponent<CharacterController>();
         controller = GetComponent<PlayerController>();
         stamina = GetComponent<PlayerStamina>();
         oxygen = GetComponent<PlayerOxygen>();
-    }
-
-    private void Start()
-    {
-        wLevel = GameManager.Instance.GetComponent<WaterLevel>();
-
+        
         velocity.y = -2f;
-
-        if (controller != null && controller.JumpAction != null)
-        {
+        if (controller != null && controller.JumpAction != null) 
             controller.JumpAction.started += Jump;
-        }
     }
 
     private void OnDestroy()
     {
-        if (controller != null && controller.JumpAction != null)
-        {
+        if (controller != null && controller.JumpAction != null) 
             controller.JumpAction.started -= Jump;
-        }
     }
 
     private void Update()
     {
-        MovePlayer();
-
+        MovePlayer();   
         if (isSwimming)
         {
             ApplySwimming(); 
@@ -66,130 +53,89 @@ public class PlayerMovement : MonoBehaviour
             oxygen.DrainSwimSprint();
         }
         else
-        {
             ApplyGravity();
-        }
     }
 
     private void MovePlayer()
     {
         if (controller == null || controller.MoveAction == null) return;
 
-        Vector2 input = controller.MoveAction.ReadValue<Vector2>();
-        Vector3 move = transform.right * input.x + transform.forward * input.y;
+        // Ignore movement input if gameplay controls are inactive (e.g. UI modal open)
+        Vector2 input = controller.IsInputActive ? controller.MoveAction.ReadValue<Vector2>() : Vector2.zero;
+
+        Vector3 move =
+            transform.right * input.x +
+            transform.forward * input.y;
 
         if (isSwimming)
-        {
             currentSpeed = underwaterMoveSpeed;
-            stamina.DrainSwimming();
-        }
         else
         {
-            bool running = controller.RunAction.IsPressed();
+            bool running = controller.IsInputActive && controller.RunAction.IsPressed();
 
-            if (running && !stamina.IsExhausted)
+            if (running)
             {
                 currentSpeed = runSpeed;
                 stamina.DrainRunning();
             }
             else
-            {
                 currentSpeed = moveSpeed;
-            }
-
-            wasRunning = running;
         }
 
-        if (stamina.IsExhausted)
-        {
-            currentSpeed *= stamina.ExhaustionSpeedMultiplier;
-        }
+        Vector3 finalMove =
+            move * currentSpeed +
+            Vector3.up * velocity.y;
 
-        characterController.Move(move * (currentSpeed * Time.deltaTime));
+        characterController.Move(finalMove * Time.deltaTime);
     }
-
 
     private void ApplyGravity()
     {
-        if (characterController.isGrounded && velocity.y < 0)
-        {
+        if (characterController.isGrounded)
             velocity.y = -2f;
+        else
+        {
+            velocity.y += gravity * Time.deltaTime;
+            velocity.y = Mathf.Max(velocity.y, maxFallSpeed);
         }
-
-        velocity.y += gravity * Time.deltaTime; 
-        velocity.y = Mathf.Max(velocity.y, -12.81f);
-
-        characterController.Move(velocity * Time.deltaTime);
     }
 
     private void ApplySwimming()
     {
         if (waterSurface == null) return;
 
-        float floatArea = waterSurface.position.y - wLevel.floatDepth;
-        wLevel.minimumFloatDepth = waterSurface.transform.position.y - (wLevel.floatDepth + 0.5f);
-
-        if (controller.RunAction != null && controller.RunAction.IsPressed())
-        {
-            velocity.y = -swimUpSpeed;
-        }
-        else if (controller.JumpAction != null && controller.JumpAction.IsPressed())
-        {
+        if (controller.IsInputActive && controller.JumpAction != null && controller.JumpAction.IsPressed())
             velocity.y = swimUpSpeed;
-        }
-        else if (transform.position.y < wLevel.minimumFloatDepth)
-        {
-            velocity.y = -sinkSpeed;
-        }
-        else if (transform.position.y > floatArea)
-        {
-            velocity.y += wLevel.waterGravity * Time.deltaTime;
-            velocity.y = Mathf.Max(velocity.y, -sinkSpeed);
-        }
-        else if (transform.position.y < floatArea)
-        {
-            velocity.y = surfacingSpeed;
-        }
         else
-        {
-            velocity.y = Mathf.MoveTowards(
-                velocity.y,
-                0f,
-                wLevel.floatForce * Time.deltaTime
-            );
-        }
+            velocity.y = -sinkSpeed;
 
-        bool swimSprinting = controller.RunAction.IsPressed();
+        bool swimSprinting = controller.IsInputActive && controller.RunAction.IsPressed();
 
         if (swimSprinting && !wasSwimSprinting)
         {
-            if (!oxygen.StartSwimSprint())
-            {
+            if (!oxygen.StartSwimSprint()) 
                 swimSprinting = false;
-            }
         }
 
-        if (swimSprinting && oxygen.CurrentOxygen > 0f)
+        if (swimSprinting && oxygen.GetCurrentOxygen() > 0f)
         {
             currentSpeed = runSpeed;
             oxygen.DrainSwimSprint();
         }
         else
-        {
             currentSpeed = underwaterMoveSpeed;
-        }
 
         wasSwimSprinting = swimSprinting;
         characterController.Move(velocity * Time.deltaTime);
     }
 
-    public void SetWaterSurface(Transform surface)
-    {
-        waterSurface = surface;
-    }
+    public void SetWaterSurface(Transform surface) => waterSurface = surface;
 
     private void Jump(InputAction.CallbackContext ctx)
     {
+        // Guard against jumping when gameplay controls are disabled
+        if (controller != null && !controller.IsInputActive) return;
+
         if (characterController.isGrounded)
         {
             if (stamina.UseJump())

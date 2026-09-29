@@ -10,7 +10,8 @@ public class GameManager : MonoBehaviour
     public PlayerController playerController;
     public ObjectPooling objectPooling;
     public WaterLevel waterLevel;
-    
+    public SkillTreeController SkillTreeController;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)

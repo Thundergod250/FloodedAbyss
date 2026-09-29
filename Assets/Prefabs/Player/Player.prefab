@@ -22,6 +22,8 @@ GameObject:
   - component: {fileID: 5011022331939074706}
   - component: {fileID: 3202337842524963063}
   - component: {fileID: 159086485549072678}
+  - component: {fileID: 7928735737565289207}
+  - component: {fileID: 6143270341362621886}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -152,6 +154,18 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 3f6cbc8d-14b8-4d91-9081-ccb3160285c1
     m_ActionName: 'Player/Look[/Mouse/delta]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 56035aaa-d4a2-4004-a8b7-b2059cc853c8
+    m_ActionName: 'Player/Run[/Keyboard/leftShift]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 931907a0-b34a-46d6-b601-775fdf6a1e6a
+    m_ActionName: 'Player/Build[/Keyboard/q]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0e80b348-5fdb-47e3-8479-2dcb6a29f8d0
+    m_ActionName: 'Player/Debug[/Keyboard/ctrl,/Keyboard/leftBracket]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -194,6 +208,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 937865703e25d6946a0d5aa420f95170, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  PlayerMovement: {fileID: 3151513359486226473}
+  PlayerInteraction: {fileID: 7214069375529169555}
+  PlayerLook: {fileID: 599560484476306787}
+  PlayerResources: {fileID: 7706448228164935026}
+  PlayerStamina: {fileID: 5011022331939074706}
+  PlayerOxygen: {fileID: 3202337842524963063}
+  PlayerHealth: {fileID: 159086485549072678}
+  PlayerStats: {fileID: 7928735737565289207}
 --- !u!114 &3151513359486226473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -208,11 +230,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   moveSpeed: 8
   jumpHeight: 2
-  gravity: -29.43
+  gravity: -40
+  maxFallSpeed: -120
   runSpeed: 12
   underwaterMoveSpeed: 4
   swimUpSpeed: 5
-  surfacingSpeed: 4
   sinkSpeed: 3
   isSwimming: 0
   wasSwimSprinting: 0
@@ -278,6 +300,8 @@ MonoBehaviour:
   EvtOnResourceChanged:
     m_PersistentCalls:
       m_Calls: []
+  gainColor: {r: 0, g: 1, b: 0, a: 1}
+  spendColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!114 &5011022331939074706
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -296,8 +320,6 @@ MonoBehaviour:
   runDrain: 45
   jumpCost: 40
   swimDrain: 15
-  exhaustionDelay: 1
-  exhaustionSpeedMultiplier: 0.5
 --- !u!114 &3202337842524963063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -331,9 +353,48 @@ MonoBehaviour:
   category: 0
   maxHealth: 100
   currentHealth: 0
+  EvtOnHit:
+    m_PersistentCalls:
+      m_Calls: []
   EvtOnDied:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7928735737565289207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2668991774076862816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96680e9d0e784084fa7af4449b8e0d4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
+  EvtOnStatChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  upgradeData: {fileID: 11400000, guid: 9196bc362143535499d8092fdb33d87f, type: 2}
+  basePickAxe: {fileID: 5946144513090272851}
+  healthLevel: 1
+  staminaLevel: 1
+  oxygenLevel: 1
+  pickAxeDamageLevel: 1
+  pickAxeAttackSpeedLevel: 1
+--- !u!114 &6143270341362621886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2668991774076862816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bdc9e615ada3314888504a1a560fd39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerDeath
+  respawnPoint: {fileID: 0}
+  resourceLossPercentage: 0.5
 --- !u!1 &3135511604283639651
 GameObject:
   m_ObjectHideFlags: 0
@@ -666,3 +727,14 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1027081308811477915, guid: 45dddfc8a94445a4c9b5d743afc986cd, type: 3}
   m_PrefabInstance: {fileID: 3509025458154547146}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5946144513090272851 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7076952708476344729, guid: 45dddfc8a94445a4c9b5d743afc986cd, type: 3}
+  m_PrefabInstance: {fileID: 3509025458154547146}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b294f78c3436b64eb34502a122940e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TemporaryPickAxe

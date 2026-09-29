@@ -1,39 +1,62 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro; // Added for TextMeshPro
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class UIDebug : MonoBehaviour
 {
-    [Header("Dependencies")]
-    [SerializeField] private PlayerResources playerResources;
-
     [Header("UI Dynamic Layout")]
     [SerializeField] private GameObject debugButtonsPanel;
     [SerializeField] private Transform resourceGridParent;
     [SerializeField] private UIDebugPanel resourceItemPrefab;
 
+    [Header("Player Stats Layout")]
+    [SerializeField] private Transform statsGridParent;
+    [SerializeField] private UIDebugPanel statItemPrefab;
+
+    [Header("FPS Counter Settings")]
+    [SerializeField] private TextMeshProUGUI fpsText;
+    [SerializeField] private float fpsUpdateInterval = 0.5f;
+
     [Header("Input Action")]
     [SerializeField] private InputActionReference debugToggleAction;
 
-    [Header("Resource Debug Buttons")]
+    [Header("Debug Buttons")]
     [SerializeField] private Button addResource;
+    [SerializeField] private Button upgradeStats;
 
+    private PlayerResources playerResources;
+    private PlayerStats playerStats;
     private Dictionary<ResourceType, UIDebugPanel> uiItemMap = new();
+    private Dictionary<string, UIDebugPanel> uiStatMap = new();
 
-    private void Awake()
+    // FPS Counter tracking variables
+    private float frameAccumulator = 0f;
+    private int frameCount = 0;
+    private float fpsTimeLeft = 0f;
+
+    private void Start()
     {
-        if (playerResources == null) 
-            return;
+        // Fetch references and setup event listeners if not already done in OnEnable
+        BindPlayerReferences();
 
         InitializeUI();
+        InitializeStatsUI();
+        RefreshStatsUI(); // Ensure fresh state on startup
+
+        fpsTimeLeft = fpsUpdateInterval;
+    }
+
+    private void Update()
+    {
+        UpdateFPSCounter();
     }
 
     private void OnEnable()
     {
-        if (playerResources != null) 
-            playerResources.EvtOnResourceChanged.AddListener(HandleResourceChanged);
+        BindPlayerReferences();
 
         if (debugToggleAction != null)
         {
@@ -43,12 +66,14 @@ public class UIDebug : MonoBehaviour
 
         if (addResource != null) 
             addResource.onClick.AddListener(OnClick_AddTenToAllResources);
+
+        if (upgradeStats != null)
+            upgradeStats.onClick.AddListener(OnClick_UpgradeAllStats);
     }
 
     private void OnDisable()
     {
-        if (playerResources != null) 
-            playerResources.EvtOnResourceChanged.RemoveListener(HandleResourceChanged);
+        UnbindPlayerReferences();
 
         if (debugToggleAction != null)
         {
@@ -58,6 +83,65 @@ public class UIDebug : MonoBehaviour
 
         if (addResource != null) 
             addResource.onClick.RemoveListener(OnClick_AddTenToAllResources);
+
+        if (upgradeStats != null)
+            upgradeStats.onClick.RemoveListener(OnClick_UpgradeAllStats);
+    }
+
+    private void UpdateFPSCounter()
+    {
+        if (fpsText == null) return;
+
+        fpsTimeLeft -= Time.unscaledDeltaTime;
+        frameAccumulator += Time.unscaledDeltaTime / Time.timeScale;
+        frameCount++;
+
+        // Interval ended - update GUI text and start new interval
+        if (fpsTimeLeft <= 0.0f)
+        {
+            float fps = frameCount / frameAccumulator;
+            fpsText.text = $"FPS: {Mathf.RoundToInt(fps)}";
+
+            // Reset variables for the next sampling period
+            fpsTimeLeft = fpsUpdateInterval;
+            frameAccumulator = 0.0f;
+            frameCount = 0;
+        }
+    }
+
+    private void BindPlayerReferences()
+    {
+        if (GameManager.Instance != null && GameManager.Instance.playerController != null)
+        {
+            if (playerResources == null)
+            {
+                playerResources = GameManager.Instance.playerController.PlayerResources;
+                if (playerResources != null)
+                    playerResources.EvtOnResourceChanged.AddListener(HandleResourceChanged);
+            }
+
+            if (playerStats == null)
+            {
+                playerStats = GameManager.Instance.playerController.PlayerStats;
+                if (playerStats != null)
+                    playerStats.EvtOnStatChanged.AddListener(RefreshStatsUI);
+            }
+        }
+    }
+
+    private void UnbindPlayerReferences()
+    {
+        if (playerResources != null)
+        {
+            playerResources.EvtOnResourceChanged.RemoveListener(HandleResourceChanged);
+            playerResources = null;
+        }
+
+        if (playerStats != null)
+        {
+            playerStats.EvtOnStatChanged.RemoveListener(RefreshStatsUI);
+            playerStats = null;
+        }
     }
 
     private void InitializeUI()
@@ -67,20 +151,60 @@ public class UIDebug : MonoBehaviour
         foreach (Transform child in resourceGridParent) 
             Pool.Destroy(child.gameObject);
 
+        uiItemMap.Clear();
+
         foreach (ResourceType type in System.Enum.GetValues(typeof(ResourceType)))
         {
             UIDebugPanel itemInstance = Instantiate(resourceItemPrefab, resourceGridParent);
             int currentAmount = playerResources != null ? playerResources.GetResource(type) : 0;
             
-            itemInstance.Setup(type, currentAmount);
+            itemInstance.SetupResource(type, currentAmount);
             uiItemMap[type] = itemInstance;
+        }
+    }
+
+    private void InitializeStatsUI()
+    {
+        if (statsGridParent == null || statItemPrefab == null || playerStats == null) return;
+
+        foreach (Transform child in statsGridParent)
+            Pool.Destroy(child.gameObject);
+
+        uiStatMap.Clear();
+
+        CreateStatRow("Health", "Player", "Max HP");
+        CreateStatRow("Stamina", "Player", "Max Stamina");
+        CreateStatRow("Oxygen", "Player", "Max Oxygen");
+        CreateStatRow("AxeDamage", "Axe", "Damage");
+        CreateStatRow("AxeSpeed", "Axe", "Attack Speed");
+    }
+
+    private void CreateStatRow(string statKey, string category, string statType)
+    {
+        UIDebugPanel itemInstance = Instantiate(statItemPrefab, statsGridParent);
+        int lvl = playerStats.GetStatLevel(statKey);
+        string val = playerStats.GetStatValueString(statKey);
+
+        itemInstance.SetupStat(category, statType, lvl, val);
+        uiStatMap[statKey] = itemInstance;
+    }
+
+    public void RefreshStatsUI()
+    {
+        if (playerStats == null) return;
+
+        foreach (var pair in uiStatMap)
+        {
+            int lvl = playerStats.GetStatLevel(pair.Key);
+            string val = playerStats.GetStatValueString(pair.Key);
+            pair.Value.UpdateStat(lvl, val);
         }
     }
 
     private void HandleResourceChanged(ResourceType type, int newAmount)
     {
         if (uiItemMap.TryGetValue(type, out UIDebugPanel uiItem)) 
-            uiItem.UpdateAmount(newAmount);
+            uiItem.UpdateResourceAmount(newAmount);
     }
 
     private void OnToggleDebug(InputAction.CallbackContext context)
@@ -92,19 +216,23 @@ public class UIDebug : MonoBehaviour
 
             debugButtonsPanel.SetActive(willBeActive);
 
-            // Toggle cursor state alongside UI visibility
+            if (willBeActive)
+                RefreshStatsUI();
+
             Cursor.visible = willBeActive;
             Cursor.lockState = willBeActive ? CursorLockMode.None : CursorLockMode.Locked;
-
-            Debug.Log($"Debug UI toggled: {willBeActive}");
         }
     }
-
-    // --- Button Callbacks ---
 
     public void OnClick_AddTenToAllResources()
     {
         if (playerResources != null) 
             playerResources.AddTenToAllResources();
+    }
+
+    public void OnClick_UpgradeAllStats()
+    {
+        if (playerStats != null) 
+            playerStats.UpgradeAllStats();
     }
 }

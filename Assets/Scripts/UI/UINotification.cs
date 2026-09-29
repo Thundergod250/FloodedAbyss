@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class UINotification : MonoBehaviour
 {
-    public static UINotification Instance { get; private set; }
-
     [Header("UI References")]
     [SerializeField] private Transform containerParent;
     [SerializeField] private UINotificationPanelPrefab panelPrefab;
@@ -25,7 +23,7 @@ public class UINotification : MonoBehaviour
         Color.cyan 
     };
 
-    private void Awake()
+    private void Start()
     {
         if (containerParent == null)
             containerParent = transform;
@@ -57,12 +55,21 @@ public class UINotification : MonoBehaviour
         if (containerParent == null) 
             containerParent = transform;
 
-        // Enforce 5-panel maximum limit rule (dismiss oldest when reaching 4+)
-        if (activePanels.Count >= 4 && activePanels.Count > 0)
+        // Clean up any destroyed or null panels before enforcement
+        activePanels.RemoveAll(panel => panel == null);
+
+        // Enforce maximum active panel limit
+        while (activePanels.Count >= 4)
         {
             UINotificationPanelPrefab oldestPanel = activePanels[0];
-            activePanels.RemoveAt(0); // Unregister immediately
+            // ForceDismiss() will invoke UnregisterPanel() internally to cleanly remove itself
             oldestPanel.ForceDismiss();
+            
+            // Backup check in case ForceDismiss was called on an already inactive object
+            if (activePanels.Count > 0 && activePanels[0] == oldestPanel)
+            {
+                activePanels.RemoveAt(0);
+            }
         }
 
         // Fetch / Spawn from pool
