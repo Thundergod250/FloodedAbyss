@@ -101,6 +101,7 @@ GameObject:
   - component: {fileID: 782433731246241527}
   - component: {fileID: 2677013020309931982}
   - component: {fileID: 7805835887644889909}
+  - component: {fileID: 7243685857351335543}
   m_Layer: 0
   m_Name: Copper Ore
   m_TagString: Untagged
@@ -160,10 +161,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 639eacf06aeade941abe122968d55ace, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MinableRock
-  health: 30
+  resourceType: 5
+  amountToDropOnHit: 1
+  amountToDropOnDeath: 5
   orePrefab: {fileID: 0}
-  oreDropCount: 3
+  oreDropCountOnDeath: 3
   dropScatterForce: 3
+--- !u!114 &7243685857351335543
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 112611954501577805}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 919d40c3597b1254d923a1eb8f5d0c99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  category: 1
+  maxHealth: 100
+  currentHealth: 0
+  EvtOnHit:
+    m_PersistentCalls:
+      m_Calls: []
+  EvtOnDied:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &166650511550912067
 GameObject:
   m_ObjectHideFlags: 0
