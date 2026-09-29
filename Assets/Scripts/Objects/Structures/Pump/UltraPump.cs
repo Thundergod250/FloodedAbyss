@@ -80,4 +80,13 @@ public class UltraPump : Item
 
         waterForecast.ChangeMaximumWater(pump.MaximumWaterReduction);
     }
+    public void ActivatePumps()
+    {
+        foreach (Pump pump in waterPump)
+        {
+            pump.ConfirmResources();
+        }
+
+        UpdatePumpWaterLevel();
+    }
 }

@@ -3,7 +3,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Pump : Item
+public class Pump : MonoBehaviour
 {
     [Header("UltraPump")]
     public UltraPump ultraPump;
@@ -13,31 +13,35 @@ public class Pump : Item
     [SerializeField] private int currentResources;
     [SerializeField] private int resourceToGive;
     [SerializeField] private int resourceDrain;
-    [SerializeField] private int waterLevelReduc;
     [SerializeField] private float drainInterval = 5f; 
     [SerializeField] private float maximumWaterReduction = 10f;
-
-    public float MaximumWaterReduction => maximumWaterReduction;
 
     private bool hasResources;
     private bool stopDrain;
     private float drainTimer;
-
-    [Header("UI")]
-    [SerializeField] private PumpUI pumpUI;
+    private bool blockedByBarnacle;
 
     [SerializeField] private bool isActive;
 
     private PlayerResources playerResources;
 
+    public float MaximumWaterReduction => maximumWaterReduction;
     public bool IsActive => isActive;
     public bool HasResources => currentResources > 0;
-    public int ResourceDrainPerSecond => resourceDrain;
-    public ResourceType ResourceType => resourceType;
-    public float WaterAdjustment => waterLevelReduc;
+    public ResourceType ResourceTypeShared => resourceType;
+    public int ResourceToGive => resourceToGive;
+
+    //public int ResourceDrainPerSecond => resourceDrain;
+    //public float WaterAdjustment => waterLevelReduc;
 
     public void SetActive(bool value)
     {
+        if (blockedByBarnacle)
+        {
+            isActive = false;
+            return;
+        }
+
         isActive = value;
     }
 
@@ -48,30 +52,13 @@ public class Pump : Item
                 .GetComponent<PlayerResources>();
 
         resourceToGive = 0;
-
-        pumpUI.gameObject.SetActive(false);
-    }
-
-    public override void Activate()
-    {
-        resourceToGive = 0;
-
-        pumpUI.gameObject.SetActive(true);
-
-        pumpUI.resourceTypeText.text = resourceType.ToString();
-        pumpUI.currentResourcesText.text = currentResources.ToString();
-        pumpUI.resourcesToGiveText.text = resourceToGive.ToString();
-
-        Time.timeScale = 0f;
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
     }
 
     private void Update()
     {
         hasResources = currentResources > 0;
 
-        if (!isActive || stopDrain || !hasResources)
+        if (!isActive || blockedByBarnacle || stopDrain || !hasResources)
         {
             drainTimer = 0f;
             return;
@@ -89,7 +76,6 @@ public class Pump : Item
     public void IncreaseResourceToGive(int amountToGive)
     {
         resourceToGive += amountToGive;
-        UpdateText();
     }
 
     public void DecreaseResourceToGive(int amountToReduce)
@@ -100,8 +86,6 @@ public class Pump : Item
         {
             resourceToGive = 0;
         }
-
-        UpdateText();
     }
 
     public void ConfirmResources()
@@ -113,15 +97,7 @@ public class Pump : Item
         {
             currentResources += resourceToGive;
             resourceToGive = 0;
-
-            UpdateText();
         }
-    }
-
-    public void UpdateText()
-    {
-        pumpUI.currentResourcesText.text = currentResources.ToString();
-        pumpUI.resourcesToGiveText.text = resourceToGive.ToString();
     }
 
     public void DrainResources()
@@ -131,8 +107,6 @@ public class Pump : Item
 
         currentResources -= resourceDrain;
         currentResources = Mathf.Max(0, currentResources);
-
-        UpdateText();
 
         if (currentResources <= 0)
         {
@@ -144,4 +118,23 @@ public class Pump : Item
             }
         }
     }
+
+    #region Colliders
+    private void OnTriggerEnter(Collider other)
+    {
+        /*if (other.GetComponent<Barnacle>() != null)
+        {
+            blockedByBarnacle = true;
+            SetActive(false);
+        }*/
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        /*if (other.GetComponent<Barnacle>() != null)
+        {
+            blockedByBarnacle = false;
+        }*/
+    }
+    #endregion
 }
