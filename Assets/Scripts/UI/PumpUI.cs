@@ -8,6 +8,7 @@ using UnityEngine.Events;
 public class PumpUI : MonoBehaviour
 {
     [Header("Vars")]
+    public Pump pumpRef;
     public TextMeshProUGUI resourceTypeText;
     public TextMeshProUGUI pumpNameText;
     public TextMeshProUGUI resourcesToGiveText;
@@ -18,6 +19,7 @@ public class PumpUI : MonoBehaviour
 
     [Header("Time left")]
     [SerializeField] private Slider timeLeft;
+    [SerializeField] private GameObject barnacleCover;
 
     public void CloseUI()
     {
@@ -26,6 +28,14 @@ public class PumpUI : MonoBehaviour
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+    }
+
+    private void Update()
+    {
+        if (pumpRef == null)
+            return;
+
+        timeLeft.value = pumpRef.CurrentResources;
     }
 
     public void UpdateResources(int resourcesToGive)
@@ -47,5 +57,18 @@ public class PumpUI : MonoBehaviour
         buttonPlus10.onClick.AddListener(call10);
         buttonMinus1.onClick.AddListener(remove1);
         buttonMinus10.onClick.AddListener(remove10);
+    }
+
+    public void SetCovered(bool covered)
+    {
+        barnacleCover.SetActive(covered);
+    }
+
+    public void SetUpTimeSlider(Pump pump)
+    {
+        pumpRef = pump;
+
+        timeLeft.maxValue = pump.StartingResources;
+        timeLeft.value = pump.CurrentResources;
     }
 }
