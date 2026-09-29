@@ -1,55 +1,32 @@
-using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class UIShop : UiModals
 {
-    public enum UpgradeType
-    {
-        PickaxeAttack,
-        PickaxeSpeed,
-        PlayerStamina,
-        PlayerOxygen
-    }
+    [Header("UI Buttons")]
+    [SerializeField] private Button arrowLeftButton;
+    [SerializeField] private Button arrowRightButton;
+    [SerializeField] private Button tradeButton;
 
-    [System.Serializable]
-    public class UpgradeConfig
-    {
-        public UpgradeType upgradeType;
-        public string title;
-        public Sprite icon;
-        [TextArea(2, 3)] public string description;
+    [Header("UI Displays")]
+    [SerializeField] private TMP_Text depositTextDisplay;      // Displays resource to deposit & total cost
+    [SerializeField] private TMP_Text getContainerTextDisplay; // Displays resource to get & total yield
+    [SerializeField] private TMP_Text tradeAmountText;          // Center circle text showing quantity multiplier
 
-        [Header("Cost Settings")]
-        public ResourceType costResourceType = ResourceType.Stone;
-        public int baseCost = 10;
-        public int costIncreasePerLevel = 10;
+    [Header("Quantity Settings")]
+    [SerializeField] private int minQuantity = 1;
+    [SerializeField] private int quantityStep = 1;
 
-        [Header("Stat Increase Settings")]
-        public float valueIncreasePerLevel = 5f;
-        public int maxLevel = 10;
-
-        [Header("UI Card Assignment")]
-        public UIShopCard shopCardUI;
-
-        [HideInInspector] public int currentLevel = 0;
-
-        public int GetCurrentCost() => baseCost + (currentLevel * costIncreasePerLevel);
-        public bool IsMaxLevel => currentLevel >= maxLevel;
-    }
-
-    [Header("Upgrade Configurations (4 Items)")]
-    [SerializeField] private UpgradeConfig pickaxeAttackUpgrade;
-    [SerializeField] private UpgradeConfig pickaxeSpeedUpgrade;
-    [SerializeField] private UpgradeConfig playerStaminaUpgrade;
-    [SerializeField] private UpgradeConfig playerOxygenUpgrade;
-
+    private ShopNPC activeShopNPC;
+    private int currentQuantity = 1;
     private PlayerResources playerResources;
 
     protected override void OnEnable()
     {
         base.OnEnable();
-        RefreshShopUI();
+        SetupButtonListeners();
+        RefreshTradeUI();
     }
 
     public override void SetModalActive(bool active)
@@ -57,103 +34,149 @@ public class UIShop : UiModals
         base.SetModalActive(active);
         if (active)
         {
-            RefreshShopUI();
+            SetupButtonListeners();
+            RefreshTradeUI();
         }
     }
 
-    public void RefreshShopUI()
+    /// <summary>
+    /// Passes the active ShopNPC configuration into the shop UI.
+    /// </summary>
+    public void OpenTradeShop(ShopNPC shopNPC)
     {
-        FindDependencies();
+        activeShopNPC = shopNPC;
+        currentQuantity = minQuantity;
 
-        SetupUpgradeCard(pickaxeAttackUpgrade);
-        SetupUpgradeCard(pickaxeSpeedUpgrade);
-        SetupUpgradeCard(playerStaminaUpgrade);
-        SetupUpgradeCard(playerOxygenUpgrade);
-    }
-
-    private void SetupUpgradeCard(UpgradeConfig config)
-    {
-        if (config == null || config.shopCardUI == null) return;
-
-        int currentCost = config.GetCurrentCost();
-        bool canAfford = CheckCanAfford(config.costResourceType, currentCost);
-
-        string levelInfo = config.IsMaxLevel ? "MAX LEVEL" : $"Lvl {config.currentLevel} / {config.maxLevel}";
-        string costInfo = config.IsMaxLevel ? "MAX" : $"{config.costResourceType}: {currentCost}";
-
-        config.shopCardUI.SetupCard(
-            config.title,
-            config.icon,
-            config.description,
-            levelInfo,
-            costInfo,
-            canAfford,
-            config.IsMaxLevel,
-            () => PurchaseUpgrade(config)
-        );
-    }
-
-    private bool CheckCanAfford(ResourceType resourceType, int amount)
-    {
-        if (playerResources == null) return false;
-
-        // Uses GetResource from PlayerResources to check balance
-        return playerResources.GetResource(resourceType) >= amount;
-    }
-
-    private void PurchaseUpgrade(UpgradeConfig config)
-    {
-        if (config == null || config.IsMaxLevel) return;
-
-        FindDependencies();
-
-        int cost = config.GetCurrentCost();
-
-        // Uses SpendResource from PlayerResources to perform transaction
-        if (playerResources != null && playerResources.SpendResource(config.costResourceType, cost))
+        if (GameManager.Instance != null && GameManager.Instance.uiController != null)
         {
-            config.currentLevel++;
-            ApplyUpgradeEffect(config);
-            RefreshShopUI();
-            Debug.Log($"[UIShop] Purchased {config.title} (Level {config.currentLevel})");
+            GameManager.Instance.uiController.OpenModal(UIController.UIState.Shop);
+        }
+
+        RefreshTradeUI();
+    }
+
+    private void SetupButtonListeners()
+    {
+        if (arrowLeftButton != null)
+        {
+            arrowLeftButton.onClick.RemoveAllListeners();
+            arrowLeftButton.onClick.AddListener(LeftArrowFunction);
+        }
+
+        if (arrowRightButton != null)
+        {
+            arrowRightButton.onClick.RemoveAllListeners();
+            arrowRightButton.onClick.AddListener(RightArrowFunction);
+        }
+
+        if (tradeButton != null)
+        {
+            tradeButton.onClick.RemoveAllListeners();
+            tradeButton.onClick.AddListener(Trade);
+        }
+    }
+
+    // --- Arrow Functions (Quantity Adjustments) ---
+
+    public void LeftArrowFunction()
+    {
+        currentQuantity = Mathf.Max(minQuantity, currentQuantity - quantityStep);
+        RefreshTradeUI();
+    }
+
+    public void RightArrowFunction()
+    {
+        FindPlayerResources();
+        if (activeShopNPC == null || playerResources == null) return;
+
+        int ownedAmount = playerResources.GetResource(activeShopNPC.DepositResource);
+        int maxAffordableQuantity = Mathf.Max(minQuantity, ownedAmount / Mathf.Max(1, activeShopNPC.DepositCostPerUnit));
+
+        currentQuantity = Mathf.Min(maxAffordableQuantity, currentQuantity + quantityStep);
+        RefreshTradeUI();
+    }
+
+    // --- Trade Execution ---
+
+    public void Trade()
+    {
+        FindPlayerResources();
+        if (activeShopNPC == null || playerResources == null) return;
+
+        int totalDepositCost = activeShopNPC.DepositCostPerUnit * currentQuantity;
+        int totalGetYield = activeShopNPC.GetYieldPerUnit * currentQuantity;
+
+        if (playerResources.SpendResource(activeShopNPC.DepositResource, totalDepositCost))
+        {
+            playerResources.AddResource(activeShopNPC.GetResource, totalGetYield);
+            Debug.Log($"[UIShop] Successfully traded {totalDepositCost} {activeShopNPC.DepositResource} for {totalGetYield} {activeShopNPC.GetResource}!");
+
+            currentQuantity = minQuantity;
+            RefreshTradeUI();
         }
         else
         {
-            Debug.LogWarning($"[UIShop] Cannot afford {config.title}!");
+            Debug.LogWarning($"[UIShop] Not enough {activeShopNPC.DepositResource} to complete trade!");
         }
     }
 
-    private void ApplyUpgradeEffect(UpgradeConfig config)
+    // --- UI Update Helper ---
+
+    public void RefreshTradeUI()
     {
-        if (GameManager.Instance == null || GameManager.Instance.playerController == null) return;
+        FindPlayerResources();
 
-        GameObject player = GameManager.Instance.playerController.gameObject;
-
-        switch (config.upgradeType)
+        if (activeShopNPC == null)
         {
-            case UpgradeType.PickaxeAttack:
-                TemporaryAttack attackComp = player.GetComponent<TemporaryAttack>();
-                if (attackComp != null)
-                {
-                    attackComp.AddDamage(Mathf.RoundToInt(config.valueIncreasePerLevel));
-                }
-                break;
+            if (depositTextDisplay != null) depositTextDisplay.text = "No Shop NPC";
+            if (getContainerTextDisplay != null) getContainerTextDisplay.text = "No Shop NPC";
+            if (tradeAmountText != null) tradeAmountText.text = "0";
+            if (tradeButton != null) tradeButton.interactable = false;
+            return;
+        }
 
-            case UpgradeType.PickaxeSpeed:
-                Debug.Log($"[UIShop] Increased Pickaxe Swing Speed by {config.valueIncreasePerLevel}%");
-                break;
+        int totalDepositCost = activeShopNPC.DepositCostPerUnit * currentQuantity;
+        int totalGetYield = activeShopNPC.GetYieldPerUnit * currentQuantity;
+        int ownedDeposit = playerResources != null ? playerResources.GetResource(activeShopNPC.DepositResource) : 0;
 
-            case UpgradeType.PlayerStamina:
-                Debug.Log($"[UIShop] Increased Max Stamina by {config.valueIncreasePerLevel}");
-                break;
+        // Update Left Container (Deposit Info)
+        if (depositTextDisplay != null)
+        {
+            depositTextDisplay.text = $"DEPOSIT\n{activeShopNPC.DepositResource}\nx{totalDepositCost}\n(Owned: {ownedDeposit})";
+        }
 
-            case UpgradeType.PlayerOxygen:
-                Debug.Log($"[UIShop] Increased Max Oxygen by {config.valueIncreasePerLevel}");
-                break;
+        // Update Right Container (Get Info)
+        if (getContainerTextDisplay != null)
+        {
+            getContainerTextDisplay.text = $"RECEIVE\n{activeShopNPC.GetResource}\nx{totalGetYield}";
+        }
+
+        // Update Center Quantity Display
+        if (tradeAmountText != null)
+        {
+            tradeAmountText.text = currentQuantity.ToString();
+        }
+
+        // Validate Trade & Arrow Buttons
+        bool canAfford = playerResources != null && ownedDeposit >= totalDepositCost && totalDepositCost > 0;
+
+        if (tradeButton != null)
+        {
+            tradeButton.interactable = canAfford;
+        }
+
+        if (arrowLeftButton != null)
+        {
+            arrowLeftButton.interactable = currentQuantity > minQuantity;
+        }
+
+        if (arrowRightButton != null)
+        {
+            arrowRightButton.interactable = ownedDeposit >= (activeShopNPC.DepositCostPerUnit * (currentQuantity + quantityStep));
         }
     }
 
-    private void FindDependencies()
+    private void FindPlayerResources()
     {
         if (playerResources == null)
         {
