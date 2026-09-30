@@ -35,6 +35,8 @@ public class WaterForecast : MonoBehaviour
     {
         level = GameManager.Instance.waterLevel;
 
+        maximumWaterLevel = GameManager.Instance.waterLevel.waterLevelTransform.transform.position.y;
+
         currentMaximumWaterCapacity = maximumWaterLevel;
         targetMaximumWaterCapacity = maximumWaterLevel;
 
