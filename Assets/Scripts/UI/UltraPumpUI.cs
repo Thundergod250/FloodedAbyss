@@ -22,33 +22,41 @@ public class UltraPumpUI : MonoBehaviour
 
             PumpUI ui = pumpUIObject.GetComponent<PumpUI>();
 
-            ui.PopulateText(pump.ResourceTypeShared.ToString(), pump.name, pump.ResourceToGive.ToString());
+            ui.PopulateText(
+                pump.ResourceTypeShared.ToString(),
+                pump.name,
+                pump.ResourceToGive.ToString()
+            );
+
+            ui.SetUpTimeSlider(pump);
+
+            ui.SetCovered(pump.BlockedByBarnacle);
 
             ui.PopulateButtons(
-            () =>
-            {
-                pump.IncreaseResourceToGive(1);
-                ui.UpdateResources(pump.ResourceToGive);
-            },
+                () =>
+                {
+                    pump.IncreaseResourceToGive(1);
+                    ui.UpdateResources(pump.ResourceToGive);
+                },
 
-            () =>
-            {
-                pump.IncreaseResourceToGive(10);
-                ui.UpdateResources(pump.ResourceToGive);
-            },
+                () =>
+                {
+                    pump.IncreaseResourceToGive(10);
+                    ui.UpdateResources(pump.ResourceToGive);
+                },
 
-            () =>
-            {
-                pump.DecreaseResourceToGive(1);
-                ui.UpdateResources(pump.ResourceToGive);
-            },
+                () =>
+                {
+                    pump.DecreaseResourceToGive(1);
+                    ui.UpdateResources(pump.ResourceToGive);
+                },
 
-            () =>
-            {
-                pump.DecreaseResourceToGive(10);
-                ui.UpdateResources(pump.ResourceToGive);
-            }
-        );
+                () =>
+                {
+                    pump.DecreaseResourceToGive(10);
+                    ui.UpdateResources(pump.ResourceToGive);
+                }
+            );
         }
     }
 
