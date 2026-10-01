@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2199849190334230477}
   - component: {fileID: 5418548744687353539}
   - component: {fileID: 1541987948887174600}
+  - component: {fileID: 8244874289572843259}
   m_Layer: 0
   m_Name: Stone 2
   m_TagString: Untagged
@@ -68,7 +69,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -6996273475657345780, guid: bb0c365275837cb4e838aff4031b5fce, type: 3}
+  - {fileID: 2100000, guid: 1b8dcd36f1b134b408a6280f9f2cf8c1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -131,3 +132,24 @@ MonoBehaviour:
   orePrefab: {fileID: 0}
   oreDropCountOnDeath: 3
   dropScatterForce: 3
+--- !u!65 &8244874289572843259
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 398449127670861336}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.025031194, y: 0.026415678, z: 0.013381149}
+  m_Center: {x: -0.00085941004, y: -0.00031871948, z: 0.00085645873}
