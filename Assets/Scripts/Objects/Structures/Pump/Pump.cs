@@ -15,31 +15,40 @@ public class Pump : MonoBehaviour
     [SerializeField] private int resourceDrain;
     [SerializeField] private float drainInterval = 5f; 
     [SerializeField] private float maximumWaterReduction = 10f;
+    [SerializeField] private int startingResources;
+    [SerializeField] private bool isActive;
+    [SerializeField] private Barnacle barnacle; 
+
 
     private bool hasResources;
     private bool stopDrain;
     private float drainTimer;
-    private bool blockedByBarnacle;
 
-    [SerializeField] private bool isActive;
+
 
     private PlayerResources playerResources;
-
+    public bool BlockedByBarnacle => barnacle != null && barnacle.gameObject.activeSelf;
     public float MaximumWaterReduction => maximumWaterReduction;
     public bool IsActive => isActive;
     public bool HasResources => currentResources > 0;
     public ResourceType ResourceTypeShared => resourceType;
     public int ResourceToGive => resourceToGive;
-
-    //public int ResourceDrainPerSecond => resourceDrain;
+    public int ResourceDrainPerSecond => resourceDrain;
+    public int StartingResources => startingResources;
+    public int CurrentResources => currentResources;
     //public float WaterAdjustment => waterLevelReduc;
 
     public void SetActive(bool value)
     {
-        if (blockedByBarnacle)
+        if (BlockedByBarnacle)
         {
             isActive = false;
             return;
+        }
+
+        if (value && !isActive)
+        {
+            startingResources = currentResources;
         }
 
         isActive = value;
@@ -58,7 +67,7 @@ public class Pump : MonoBehaviour
     {
         hasResources = currentResources > 0;
 
-        if (!isActive || blockedByBarnacle || stopDrain || !hasResources)
+        if (!isActive || BlockedByBarnacle || stopDrain || !hasResources)
         {
             drainTimer = 0f;
             return;
@@ -120,21 +129,6 @@ public class Pump : MonoBehaviour
     }
 
     #region Colliders
-    private void OnTriggerEnter(Collider other)
-    {
-        /*if (other.GetComponent<Barnacle>() != null)
-        {
-            blockedByBarnacle = true;
-            SetActive(false);
-        }*/
-    }
 
-    private void OnTriggerExit(Collider other)
-    {
-        /*if (other.GetComponent<Barnacle>() != null)
-        {
-            blockedByBarnacle = false;
-        }*/
-    }
     #endregion
 }

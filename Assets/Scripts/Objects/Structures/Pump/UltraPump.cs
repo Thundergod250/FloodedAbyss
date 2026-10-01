@@ -31,7 +31,6 @@ public class UltraPump : Item
         ultraPumpUiGO.SetActive(true);
         ultraPumpUiGO.GetComponent<UltraPumpUI>().SetUpPumpUI();
 
-        Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
@@ -64,6 +63,8 @@ public class UltraPump : Item
         waterForecast.ChangeMaximumWater(-totalReduction);
 
         waterForecast.EnableTimeline();
+
+        ultraPumpUiGO.SetActive(false);
     }
 
     public void PumpBecameInactive(Pump pump)
