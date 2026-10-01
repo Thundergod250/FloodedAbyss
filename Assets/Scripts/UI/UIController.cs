@@ -13,7 +13,8 @@ public class UIController : MonoBehaviour
         Building,
         SkillTree,
         Structure,
-        AutoMiner
+        AutoMiner, 
+        ApexPump
     }
 
     [System.Serializable]
