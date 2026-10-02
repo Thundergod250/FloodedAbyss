@@ -21,19 +21,64 @@ public class UiApexPump : UiModals
             return;
         }
 
-        // Initialize every individual resource panel
+        // Initialize every individual resource panel & subscribe to events
         foreach (var panel in resourcePanels)
         {
             if (panel != null)
             {
                 panel.Initialize(playerResources);
+
+                panel.OnActiveStateChanged -= HandlePanelActiveStateChanged;
+                panel.OnActiveStateChanged += HandlePanelActiveStateChanged;
             }
         }
+
+        LogAllPumpStates();
     }
 
-    /// <summary>
-    /// Helper method to calculate combined total energy generated across all 5 panels.
-    /// </summary>
+    private void HandlePanelActiveStateChanged(PumpResourcePanel panel, bool isActive)
+    {
+        string state = isActive ? "ACTIVE" : "INACTIVE";
+        Debug.Log($"[UiApexPump Notification] {panel.ResourceType} pump switched to {state}. Total Active Pumps: {GetActivePumpCount()}/{resourcePanels.Count}");
+
+        LogAllPumpStates();
+    }
+
+    public int GetActivePumpCount()
+    {
+        int activeCount = 0;
+        foreach (var panel in resourcePanels)
+        {
+            if (panel != null && panel.IsActive)
+            {
+                activeCount++;
+            }
+        }
+        return activeCount;
+    }
+
+    public void LogAllPumpStates()
+    {
+        List<string> activePumps = new List<string>();
+        List<string> inactivePumps = new List<string>();
+
+        foreach (var panel in resourcePanels)
+        {
+            if (panel == null) continue;
+
+            if (panel.IsActive)
+            {
+                activePumps.Add($"{panel.ResourceType} ({panel.CurrentEnergy})");
+            }
+            else
+            {
+                inactivePumps.Add($"{panel.ResourceType} ({panel.CurrentEnergy})");
+            }
+        }
+
+        Debug.Log($"[UiApexPump Summary] Active ({activePumps.Count}): {string.Join(", ", activePumps)} | Inactive ({inactivePumps.Count}): {string.Join(", ", inactivePumps)}");
+    }
+
     public int GetTotalEnergy()
     {
         int total = 0;
@@ -42,5 +87,16 @@ public class UiApexPump : UiModals
             if (panel != null) total += panel.CurrentEnergy;
         }
         return total;
+    }
+
+    private void OnDestroy()
+    {
+        foreach (var panel in resourcePanels)
+        {
+            if (panel != null)
+            {
+                panel.OnActiveStateChanged -= HandlePanelActiveStateChanged;
+            }
+        }
     }
 }

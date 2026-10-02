@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class PumpResourcePanel : MonoBehaviour
 {
@@ -27,8 +28,11 @@ public class PumpResourcePanel : MonoBehaviour
 
     private PlayerResources playerResources;
 
+    public event Action<PumpResourcePanel, bool> OnActiveStateChanged;
+
     public ResourceType ResourceType => resourceType;
     public int CurrentEnergy => currentEnergy;
+    public bool IsActive => currentEnergy > 0;
 
     public void Initialize(PlayerResources resources)
     {
@@ -73,7 +77,19 @@ public class PumpResourcePanel : MonoBehaviour
             {
                 convertTimer = 0f;
                 depositedResource--;
+
+                bool wasActiveBefore = IsActive;
+
+                // STEP 1: Increment Energy First
                 currentEnergy++;
+
+                // STEP 2: Evaluate state change after energy is incremented
+                if (!wasActiveBefore && IsActive)
+                {
+                    Debug.Log($"[{resourceType} Pump] is now ACTIVE!");
+                    OnActiveStateChanged?.Invoke(this, true);
+                }
+
                 UpdateUI();
             }
         }
@@ -91,7 +107,18 @@ public class PumpResourcePanel : MonoBehaviour
             if (decayTimer >= energyDecayInterval)
             {
                 decayTimer = 0f;
+                bool wasActiveBefore = IsActive;
+
+                // STEP 1: Decrement Energy First
                 currentEnergy--;
+
+                // STEP 2: Evaluate state change after energy is decremented
+                if (wasActiveBefore && !IsActive)
+                {
+                    Debug.Log($"[{resourceType} Pump] is now INACTIVE!");
+                    OnActiveStateChanged?.Invoke(this, false);
+                }
+
                 UpdateUI();
             }
         }
