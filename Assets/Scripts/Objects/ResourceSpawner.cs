@@ -29,7 +29,7 @@ public class ResourceSpawner : MonoBehaviour
 
     void Start()
     {
-        targetSurface = GameManager.Instance.GetComponent<WaterLevel>().waterLevelTransform.gameObject.GetComponent<WaterSurface>();
+        // targetSurface = GameManager.Instance.GetComponent<WaterLevel>().waterLevelTransform.gameObject.GetComponent<WaterSurface>(); Manually Set it as of now
 
         ChangeSpawnerState(true);
         StartCoroutine(SpawnCycle(timerToSpawn));
@@ -45,7 +45,7 @@ public class ResourceSpawner : MonoBehaviour
 
             yield return new WaitForSeconds(timer);
 
-            GameObject spawnedResource = Pool.Instantiate(objectsToSpawn[randomIndex], randomPoint, Quaternion.identity);
+            GameObject spawnedResource = Pool.Instantiate(objectsToSpawn[randomIndex], randomPoint, Quaternion.identity, GameManager.Instance.objectPooling.ParentObject);
 
             spawnedResource.GetComponent<FloatingObject>().targetSurface = targetSurface;
         }

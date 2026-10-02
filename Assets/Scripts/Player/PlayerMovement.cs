@@ -6,8 +6,8 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement")]
     public float moveSpeed = 5f;
     public float jumpHeight = 2f;
-    public float gravity = -9.81f; 
-    public float maxFallSpeed = -9.81f; 
+    public float gravity = -9.81f;
+    public float maxFallSpeed = -9.81f;
     public float runSpeed = 8f;
 
     [Header("Movement-Water")]
@@ -16,6 +16,8 @@ public class PlayerMovement : MonoBehaviour
     public float sinkSpeed = 3f;
     public bool isSwimming;
     public bool wasSwimSprinting;
+    public float surfaceCheckDistance = 0.5f;
+    public float surfaceJumpHeight = 2f;
 
     private float currentSpeed;
     private Transform waterSurface;
@@ -23,7 +25,7 @@ public class PlayerMovement : MonoBehaviour
     private CharacterController characterController;
     private PlayerStamina stamina;
     private PlayerOxygen oxygen;
-    private Vector3 velocity; 
+    private Vector3 velocity;
 
     private void Start()
     {
@@ -31,24 +33,24 @@ public class PlayerMovement : MonoBehaviour
         controller = GetComponent<PlayerController>();
         stamina = GetComponent<PlayerStamina>();
         oxygen = GetComponent<PlayerOxygen>();
-        
+
         velocity.y = -2f;
-        if (controller != null && controller.JumpAction != null) 
+        if (controller != null && controller.JumpAction != null)
             controller.JumpAction.started += Jump;
     }
 
     private void OnDestroy()
     {
-        if (controller != null && controller.JumpAction != null) 
+        if (controller != null && controller.JumpAction != null)
             controller.JumpAction.started -= Jump;
     }
 
     private void Update()
     {
-        MovePlayer();   
+        MovePlayer();
         if (isSwimming)
         {
-            ApplySwimming(); 
+            ApplySwimming();
             stamina.DrainSwimming();
             oxygen.DrainSwimSprint();
         }
@@ -100,20 +102,28 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    #region Swimming-Related
     private void ApplySwimming()
     {
         if (waterSurface == null) return;
 
-        if (controller.IsInputActive && controller.JumpAction != null && controller.JumpAction.IsPressed())
+        bool jumpHeld =
+            controller.IsInputActive &&
+            controller.JumpAction != null &&
+            controller.JumpAction.IsPressed();
+
+        if (jumpHeld)
             velocity.y = swimUpSpeed;
         else
             velocity.y = -sinkSpeed;
 
-        bool swimSprinting = controller.IsInputActive && controller.RunAction.IsPressed();
+        bool swimSprinting =
+            controller.IsInputActive &&
+            controller.RunAction.IsPressed();
 
         if (swimSprinting && !wasSwimSprinting)
         {
-            if (!oxygen.StartSwimSprint()) 
+            if (!oxygen.StartSwimSprint())
                 swimSprinting = false;
         }
 
@@ -123,26 +133,56 @@ public class PlayerMovement : MonoBehaviour
             oxygen.DrainSwimSprint();
         }
         else
+        {
             currentSpeed = underwaterMoveSpeed;
+        }
 
         wasSwimSprinting = swimSprinting;
+
         characterController.Move(velocity * Time.deltaTime);
     }
 
+    private bool IsAtWaterSurface()
+    {
+        if (waterSurface == null)
+            return false;
+
+        float surfaceY = waterSurface.position.y;
+        float playerY = transform.position.y;
+
+        return playerY >= surfaceY - surfaceCheckDistance;
+    }
+
     public void SetWaterSurface(Transform surface) => waterSurface = surface;
+    #endregion
 
     private void Jump(InputAction.CallbackContext ctx)
     {
-        // Guard against jumping when gameplay controls are disabled
-        if (controller != null && !controller.IsInputActive) return;
+        if (controller != null && !controller.IsInputActive)
+            return;
 
+        // Normal ground jump
         if (characterController.isGrounded)
         {
             if (stamina.UseJump())
             {
                 velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-                Debug.Log("Jump");
+                Debug.Log("Ground Jump");
             }
+
+            return;
+        }
+
+        // Jump out of water when near the surface
+        if (isSwimming && IsAtWaterSurface())
+        {
+            velocity.y = Mathf.Sqrt(surfaceJumpHeight * -2f * gravity);
+
+            // Stop swimming so gravity takes over
+            isSwimming = false;
+            wasSwimSprinting = false;
+
+            Debug.Log("Surface Jump");
         }
     }
 }

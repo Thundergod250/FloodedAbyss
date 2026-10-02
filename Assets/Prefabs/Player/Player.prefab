@@ -17,7 +17,6 @@ GameObject:
   - component: {fileID: 3151513359486226473}
   - component: {fileID: 7214069375529169555}
   - component: {fileID: 599560484476306787}
-  - component: {fileID: 255416882986593019}
   - component: {fileID: 7706448228164935026}
   - component: {fileID: 5011022331939074706}
   - component: {fileID: 3202337842524963063}
@@ -233,9 +232,9 @@ MonoBehaviour:
   gravity: -40
   maxFallSpeed: -120
   runSpeed: 12
-  underwaterMoveSpeed: 4
-  swimUpSpeed: 5
-  sinkSpeed: 3
+  underwaterMoveSpeed: 2
+  swimUpSpeed: 1
+  sinkSpeed: 1.5
   isSwimming: 0
   wasSwimSprinting: 0
 --- !u!114 &7214069375529169555
@@ -270,21 +269,6 @@ MonoBehaviour:
   cameraTransform: {fileID: 3506312688623432828}
   sensitivity: 10
   pitchClamp: 80
---- !u!114 &255416882986593019
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2668991774076862816}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0236febdb06c9a940abf8731a7a466d0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TemporaryAttack
-  projectilePrefab: {fileID: 3941790076021738590, guid: 1121e680566e1e44b887523a321a4c67, type: 3}
-  firePoint: {fileID: 3735254157708167104}
-  baseDamage: 10
 --- !u!114 &7706448228164935026
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -334,7 +318,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerOxygen
   maxOxygen: 100
   currentOxygen: 100
-  regenRate: 1
+  regenRate: 10
   sprintStartCost: 20
   sprintDrain: 5
   damageInterval: 1

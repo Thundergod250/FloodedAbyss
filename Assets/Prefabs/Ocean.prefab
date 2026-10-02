@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9030414092572748550}
   - component: {fileID: 1887629784017842931}
+  - component: {fileID: 9210462657719698558}
   m_Layer: 0
   m_Name: Ocean
   m_TagString: Untagged
@@ -27,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 95, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 97, y: 100, z: 95}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -147,7 +148,7 @@ MonoBehaviour:
   waterMaskExtent: {x: 100, y: 100}
   waterMaskOffset: {x: 0, y: 0}
   surfaceType: 0
-  geometryType: 3
+  geometryType: 0
   meshRenderers: []
   timeMultiplier: 1
   scriptInteractions: 1
@@ -187,7 +188,7 @@ MonoBehaviour:
   currentDebugMultiplier: 1
   waterFoamDebugMode: 0
   underWater: 1
-  volumeBounds: {fileID: 0}
+  volumeBounds: {fileID: 9210462657719698558}
   volumeDepth: 50
   volumeHeight: 0
   volumePrority: 0
@@ -198,3 +199,24 @@ MonoBehaviour:
   underWaterRefraction: 0
   decalRegionSize: {x: 200, y: 200}
   decalRegionAnchor: {fileID: 0}
+--- !u!65 &9210462657719698558
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1379626211022956419}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
