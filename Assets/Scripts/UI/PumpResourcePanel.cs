@@ -80,10 +80,9 @@ public class PumpResourcePanel : MonoBehaviour
 
                 bool wasActiveBefore = IsActive;
 
-                // STEP 1: Increment Energy First
+                // Increment energy before evaluating active state change
                 currentEnergy++;
 
-                // STEP 2: Evaluate state change after energy is incremented
                 if (!wasActiveBefore && IsActive)
                 {
                     Debug.Log($"[{resourceType} Pump] is now ACTIVE!");
@@ -109,10 +108,9 @@ public class PumpResourcePanel : MonoBehaviour
                 decayTimer = 0f;
                 bool wasActiveBefore = IsActive;
 
-                // STEP 1: Decrement Energy First
+                // Decrement energy before evaluating state change
                 currentEnergy--;
 
-                // STEP 2: Evaluate state change after energy is decremented
                 if (wasActiveBefore && !IsActive)
                 {
                     Debug.Log($"[{resourceType} Pump] is now INACTIVE!");

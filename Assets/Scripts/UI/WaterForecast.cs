@@ -20,8 +20,8 @@ public class WaterForecast : MonoBehaviour
     [Header("Water Rise")]
     [SerializeField] private float baseWaterRiseRate = 1f;
     [SerializeField] private float maximumWaterLevel = 95f;
-    [SerializeField] private float currentMaximumWaterCapacity; 
-    
+    [SerializeField] private float currentMaximumWaterCapacity;
+
     private float targetMaximumWaterCapacity;
     private float waterRiseRate = 1f;
 
@@ -35,35 +35,40 @@ public class WaterForecast : MonoBehaviour
     {
         level = GameManager.Instance.waterLevel;
 
-        maximumWaterLevel = GameManager.Instance.waterLevel.waterLevelTransform.transform.position.y;
-
-        currentMaximumWaterCapacity = maximumWaterLevel;
-        targetMaximumWaterCapacity = maximumWaterLevel;
+        if (level != null)
+        {
+            maximumWaterLevel = level.CurrentWaterHeight;
+            currentMaximumWaterCapacity = maximumWaterLevel;
+            targetMaximumWaterCapacity = maximumWaterLevel;
+        }
 
         StartCoroutine(ProgressTimeline());
     }
 
     private void Update()
     {
-        if (level == null)
-            return;
+        if (level == null) return;
 
-        waterLevelText.text =
-            level.waterLevelTransform.position.y.ToString("F1") + "m";
+        // Display tracked water height directly from WaterLevel
+        waterLevelText.text = level.CurrentWaterHeight.ToString("F1") + "m";
 
-        if (!pumpActivated)
-            return;
+        if (!pumpActivated) return;
 
-        Vector3 position = level.waterLevelTransform.position;
+        // If below max capacity, continuously increase water level via WaterLevel script
+        if (level.CurrentWaterHeight < currentMaximumWaterCapacity)
+        {
+            float amountToRise = waterRiseRate * Time.deltaTime;
 
-        position.y += waterRiseRate * Time.deltaTime;
-
-        position.y = Mathf.Min(
-            position.y,
-            currentMaximumWaterCapacity
-        );
-
-        level.waterLevelTransform.position = position;
+            // Cap the rise amount so it doesn't overshoot maximum capacity
+            if (level.CurrentWaterHeight + amountToRise > currentMaximumWaterCapacity)
+            {
+                level.SetWaterLevel(currentMaximumWaterCapacity);
+            }
+            else
+            {
+                level.IncreaseWaterLevel(amountToRise);
+            }
+        }
     }
 
     public void IncreaseWaterRise(float amount)
@@ -136,65 +141,49 @@ public class WaterForecast : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Instantly sets the water height using WaterLevel.
+    /// </summary>
     public void IncDecWaterLevel(float height)
     {
-        level.waterLevelTransform.position = new Vector3(
-            level.waterLevelTransform.position.x,
-            height,
-            level.waterLevelTransform.position.z
-        );
+        if (level != null)
+        {
+            level.SetWaterLevel(height);
+        }
     }
 
+    /// <summary>
+    /// Smoothly lowers the water height to targetHeight over duration using WaterLevel calls.
+    /// </summary>
     public IEnumerator LowerWaterLevel(float targetHeight, float duration)
     {
-        if (level == null)
-            yield break;
+        if (level == null) yield break;
 
-        Transform waterTransform = level.waterLevelTransform;
-
-        float startingHeight = waterTransform.position.y;
+        float startingHeight = level.CurrentWaterHeight;
         float elapsed = 0f;
 
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
+            float progress = Mathf.SmoothStep(0f, 1f, elapsed / duration);
 
-            float progress = elapsed / duration;
-
-            progress = Mathf.SmoothStep(
-                0f,
-                1f,
-                progress
-            );
-
-            float newHeight = Mathf.Lerp(
-                startingHeight,
-                targetHeight,
-                progress
-            );
-
-            Vector3 position = waterTransform.position;
-            position.y = newHeight;
-
-            waterTransform.position = position;
+            float newHeight = Mathf.Lerp(startingHeight, targetHeight, progress);
+            level.SetWaterLevel(newHeight);
 
             yield return null;
         }
 
-        Vector3 finalPosition = waterTransform.position;
-        finalPosition.y = targetHeight;
-
-        waterTransform.position = finalPosition;
+        level.SetWaterLevel(targetHeight);
     }
 
+    /// <summary>
+    /// Smoothly adjusts the water height by an offset over 5 seconds using WaterLevel calls.
+    /// </summary>
     public IEnumerator AdjustWaterLevelOverTime(float adjustment)
     {
-        if (level == null)
-            yield break;
+        if (level == null) yield break;
 
-        Transform waterTransform = level.waterLevelTransform;
-
-        float startingHeight = waterTransform.position.y;
+        float startingHeight = level.CurrentWaterHeight;
         float targetHeight = startingHeight + adjustment;
 
         float duration = 5f;
@@ -203,44 +192,25 @@ public class WaterForecast : MonoBehaviour
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
+            float progress = Mathf.SmoothStep(0f, 1f, elapsed / duration);
 
-            float progress = elapsed / duration;
-
-            progress = Mathf.SmoothStep(
-                0f,
-                1f,
-                progress
-            );
-
-            float newHeight = Mathf.Lerp(
-                startingHeight,
-                targetHeight,
-                progress
-            );
-
-            Vector3 position = waterTransform.position;
-            position.y = newHeight;
-
-            waterTransform.position = position;
+            float newHeight = Mathf.Lerp(startingHeight, targetHeight, progress);
+            level.SetWaterLevel(newHeight);
 
             yield return null;
         }
 
-        Vector3 finalPosition = waterTransform.position;
-        finalPosition.y = targetHeight;
-
-        waterTransform.position = finalPosition;
+        level.SetWaterLevel(targetHeight);
     }
 
     public float GetCurrentWaterHeight()
     {
-        return level.waterLevelTransform.position.y;
+        return level != null ? level.CurrentWaterHeight : 0f;
     }
 
     public void EnableTimeline()
     {
-        if (pumpActivated)
-            return;
+        if (pumpActivated) return;
 
         timelinePaused = false;
         pumpActivated = true;

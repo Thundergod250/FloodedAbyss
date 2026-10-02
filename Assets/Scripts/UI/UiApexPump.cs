@@ -6,6 +6,13 @@ public class UiApexPump : UiModals
     [Header("Resource Panels")]
     [SerializeField] private List<PumpResourcePanel> resourcePanels = new List<PumpResourcePanel>();
 
+    [Header("Water Target Thresholds per Pump")]
+    [SerializeField] private float woodTargetHeight = 78f;
+    [SerializeField] private float stoneTargetHeight = 65f;
+    [SerializeField] private float copperTargetHeight = 50f;
+    [SerializeField] private float ironTargetHeight = 35f;
+    [SerializeField] private float goldTargetHeight = 20f;
+
     private PlayerResources playerResources;
 
     protected override void Start()
@@ -21,7 +28,7 @@ public class UiApexPump : UiModals
             return;
         }
 
-        // Initialize every individual resource panel & subscribe to events
+        // Initialize panels & subscribe to events
         foreach (var panel in resourcePanels)
         {
             if (panel != null)
@@ -41,7 +48,46 @@ public class UiApexPump : UiModals
         string state = isActive ? "ACTIVE" : "INACTIVE";
         Debug.Log($"[UiApexPump Notification] {panel.ResourceType} pump switched to {state}. Total Active Pumps: {GetActivePumpCount()}/{resourcePanels.Count}");
 
+        if (isActive)
+        {
+            TriggerWaterDrainForResource(panel.ResourceType);
+        }
+
         LogAllPumpStates();
+    }
+
+    private void TriggerWaterDrainForResource(ResourceType type)
+    {
+        WaterLevel waterLevel = GameManager.Instance != null ? GameManager.Instance.waterLevel : null;
+
+        if (waterLevel == null)
+        {
+            Debug.LogWarning("UiApexPump: GameManager.Instance.waterLevel reference is missing!");
+            return;
+        }
+
+        switch (type)
+        {
+            case ResourceType.Wood:
+                waterLevel.DrainToTargetHeight(woodTargetHeight);
+                break;
+
+            case ResourceType.Stone:
+                waterLevel.DrainToTargetHeight(stoneTargetHeight);
+                break;
+
+            case ResourceType.Copper:
+                waterLevel.DrainToTargetHeight(copperTargetHeight);
+                break;
+
+            case ResourceType.Iron:
+                waterLevel.DrainToTargetHeight(ironTargetHeight);
+                break;
+
+            case ResourceType.Gold:
+                waterLevel.DrainToTargetHeight(goldTargetHeight);
+                break;
+        }
     }
 
     public int GetActivePumpCount()
