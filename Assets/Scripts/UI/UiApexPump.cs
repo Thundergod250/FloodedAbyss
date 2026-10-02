@@ -6,12 +6,22 @@ public class UiApexPump : UiModals
     [Header("Resource Panels")]
     [SerializeField] private List<PumpResourcePanel> resourcePanels = new List<PumpResourcePanel>();
 
-    [Header("Water Target Thresholds per Pump")]
-    [SerializeField] private float woodTargetHeight = 78f;
-    [SerializeField] private float stoneTargetHeight = 65f;
-    [SerializeField] private float copperTargetHeight = 50f;
-    [SerializeField] private float ironTargetHeight = 35f;
-    [SerializeField] private float goldTargetHeight = 20f;
+    [Header("Water Settings when NO pumps are active")]
+    [SerializeField] private float defaultMaxWaterHeight = 87f;
+
+    [Header("Floor Level Heights")]
+    [SerializeField] private float floor1WoodHeight = 78f;
+    [SerializeField] private float floor2StoneHeight = 68f;
+    [SerializeField] private float floor3CopperHeight = 58f;
+    [SerializeField] private float floor4IronHeight = 48f;
+    [SerializeField] private float floor5GoldHeight = 38f;
+
+    [Header("Individual Pump Threshold Values")]
+    [SerializeField] private float woodPumpThreshold = 50f;
+    [SerializeField] private float stonePumpThreshold = 75f;
+    [SerializeField] private float copperPumpThreshold = 100f;
+    [SerializeField] private float ironPumpThreshold = 150f;
+    [SerializeField] private float goldPumpThreshold = 200f;
 
     private PlayerResources playerResources;
 
@@ -28,7 +38,6 @@ public class UiApexPump : UiModals
             return;
         }
 
-        // Initialize panels & subscribe to events
         foreach (var panel in resourcePanels)
         {
             if (panel != null)
@@ -40,6 +49,7 @@ public class UiApexPump : UiModals
             }
         }
 
+        RecalculateActivePumpsAndWaterLevel();
         LogAllPumpStates();
     }
 
@@ -48,15 +58,15 @@ public class UiApexPump : UiModals
         string state = isActive ? "ACTIVE" : "INACTIVE";
         Debug.Log($"[UiApexPump Notification] {panel.ResourceType} pump switched to {state}. Total Active Pumps: {GetActivePumpCount()}/{resourcePanels.Count}");
 
-        if (isActive)
-        {
-            TriggerWaterDrainForResource(panel.ResourceType);
-        }
-
+        RecalculateActivePumpsAndWaterLevel();
         LogAllPumpStates();
     }
 
-    private void TriggerWaterDrainForResource(ResourceType type)
+    /// <summary>
+    /// Recalculates allowable water target depth based on tier progression.
+    /// To reach a lower floor, ALL preceding pumps must remain active.
+    /// </summary>
+    private void RecalculateActivePumpsAndWaterLevel()
     {
         WaterLevel waterLevel = GameManager.Instance != null ? GameManager.Instance.waterLevel : null;
 
@@ -66,28 +76,80 @@ public class UiApexPump : UiModals
             return;
         }
 
-        switch (type)
+        // Track active status for each specific pump tier
+        bool isWoodActive = IsPumpActive(ResourceType.Wood);
+        bool isStoneActive = IsPumpActive(ResourceType.Stone);
+        bool isCopperActive = IsPumpActive(ResourceType.Copper);
+        bool isIronActive = IsPumpActive(ResourceType.Iron);
+        bool isGoldActive = IsPumpActive(ResourceType.Gold);
+
+        // Determine target water height based on tier chain:
+        // If a tier is missing, water cannot drain lower than that tier's floor!
+        float targetHeight = defaultMaxWaterHeight;
+
+        if (isWoodActive)
         {
-            case ResourceType.Wood:
-                waterLevel.DrainToTargetHeight(woodTargetHeight);
-                break;
+            targetHeight = floor1WoodHeight; // 78m
 
-            case ResourceType.Stone:
-                waterLevel.DrainToTargetHeight(stoneTargetHeight);
-                break;
+            if (isStoneActive)
+            {
+                targetHeight = floor2StoneHeight; // 68m
 
-            case ResourceType.Copper:
-                waterLevel.DrainToTargetHeight(copperTargetHeight);
-                break;
+                if (isCopperActive)
+                {
+                    targetHeight = floor3CopperHeight; // 58m
 
-            case ResourceType.Iron:
-                waterLevel.DrainToTargetHeight(ironTargetHeight);
-                break;
+                    if (isIronActive)
+                    {
+                        targetHeight = floor4IronHeight; // 48m
 
-            case ResourceType.Gold:
-                waterLevel.DrainToTargetHeight(goldTargetHeight);
-                break;
+                        if (isGoldActive)
+                        {
+                            targetHeight = floor5GoldHeight; // 38m (All 5 Active)
+                        }
+                    }
+                }
+            }
         }
+        else if (isGoldActive || isIronActive || isCopperActive || isStoneActive)
+        {
+            // If Wood is OFF, but lower pumps are ON, water rises up to Floor 1 (78m) 
+            // because you lost the top-tier drainage foundation.
+            targetHeight = floor1WoodHeight;
+        }
+
+        // Calculate total combined threshold of ALL currently running pumps
+        float totalThreshold = 0f;
+        if (isWoodActive) totalThreshold += woodPumpThreshold;
+        if (isStoneActive) totalThreshold += stonePumpThreshold;
+        if (isCopperActive) totalThreshold += copperPumpThreshold;
+        if (isIronActive) totalThreshold += ironPumpThreshold;
+        if (isGoldActive) totalThreshold += goldPumpThreshold;
+
+        int activeCount = GetActivePumpCount();
+
+        if (activeCount > 0)
+        {
+            Debug.Log($"[UiApexPump] Active Pumps: {activeCount}/5. Water Level target set to: {targetHeight}m (Combined Threshold: {totalThreshold})");
+            waterLevel.DrainToTargetHeight(targetHeight, totalThreshold);
+        }
+        else
+        {
+            Debug.Log($"[UiApexPump] 0 Pumps Active! Water rising back up to default height: {defaultMaxWaterHeight}m");
+            waterLevel.OnAllPumpsDeactivated(defaultMaxWaterHeight);
+        }
+    }
+
+    private bool IsPumpActive(ResourceType type)
+    {
+        foreach (var panel in resourcePanels)
+        {
+            if (panel != null && panel.ResourceType == type)
+            {
+                return panel.IsActive;
+            }
+        }
+        return false;
     }
 
     public int GetActivePumpCount()

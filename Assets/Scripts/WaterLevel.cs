@@ -12,14 +12,16 @@ public class WaterLevel : MonoBehaviour
     [SerializeField] private float moveSpeed = 2f;
 
     [Header("Tug-Of-War Mechanics")]
-    [SerializeField] private float basePumpDrainSpeed = 3f;      // Downward pull speed of an active pump
-    [SerializeField] private float initialFloodSpeed = 1f;       // Starting upward force of flood (1m/s)
-    [SerializeField] private float floodAccelerationRate = 0.1f;  // How fast flood speeds up after grace period
-    [SerializeField] private float gracePeriodDuration = 30f;    // Saving grace period in seconds before flood accelerates
+    [SerializeField] private float basePumpDrainSpeed = 3f;        // Downward pull speed of active pumps
+    [SerializeField] private float defaultFloodRiseSpeed = 2f;     // Rise speed when zero pumps are active
+    [SerializeField] private float initialFloodSpeed = 1f;         // Starting flood speed (1m/s)
+    [SerializeField] private float floodAccelerationRate = 0.1f;    // Speed increase per sec after grace period
+    [SerializeField] private float gracePeriodDuration = 30f;      // Grace period in seconds
 
     [Header("Tracking / Debug")]
     [SerializeField] private float currentWaterHeight;
     [SerializeField] private float currentFloodSpeed = 0f;
+    [SerializeField] private float currentActiveThreshold = 0f;
     [SerializeField] private float gracePeriodTimer = 0f;
     [SerializeField] private bool isTugOfWarActive = false;
     [SerializeField] private bool isGracePeriodActive = false;
@@ -74,33 +76,45 @@ public class WaterLevel : MonoBehaviour
     }
 
     /// <summary>
-    /// Starts the Tug-of-War sequence when a pump activates.
-    /// Includes a 30-second grace period before flood acceleration kicks in.
+    /// Updates the current tug-of-war target height and cumulative threshold.
+    /// Moves water towards target (lowering or rising based on remaining active pumps).
     /// </summary>
-    /// <param name="targetHeight">Lowest depth the pump is trying to reach.</param>
-    public void DrainToTargetHeight(float targetHeight)
+    public void DrainToTargetHeight(float targetHeight, float pumpThreshold)
     {
         if (activeDrainCoroutine != null)
         {
             StopCoroutine(activeDrainCoroutine);
         }
-        activeDrainCoroutine = StartCoroutine(AnimateTugOfWarDrain(targetHeight));
+        activeDrainCoroutine = StartCoroutine(AnimateTugOfWarDrain(targetHeight, pumpThreshold));
     }
 
-    private IEnumerator AnimateTugOfWarDrain(float targetY)
+    /// <summary>
+    /// Called when all pumps turn inactive. Water smoothly rises back up to max floor.
+    /// </summary>
+    public void OnAllPumpsDeactivated(float maxWaterHeight)
+    {
+        if (activeDrainCoroutine != null)
+        {
+            StopCoroutine(activeDrainCoroutine);
+        }
+        activeDrainCoroutine = StartCoroutine(AnimateUncheckedFloodRise(maxWaterHeight));
+    }
+
+    private IEnumerator AnimateTugOfWarDrain(float targetY, float threshold)
     {
         if (waterLevelTransform == null) yield break;
 
         isTugOfWarActive = true;
         isGracePeriodActive = true;
         gracePeriodTimer = gracePeriodDuration;
-        currentFloodSpeed = initialFloodSpeed; // Starts flood at 1m/s
+        currentFloodSpeed = initialFloodSpeed; // Starts at 1m/s
+        currentActiveThreshold = threshold;
 
-        Debug.Log($"[WaterLevel] Pump Activated! Target: {targetY}m | Grace Period Started: {gracePeriodDuration}s");
+        Debug.Log($"[WaterLevel] Updating Water Dynamics | Target Height: {targetY}m | Combined Threshold: {threshold}");
 
         while (isTugOfWarActive)
         {
-            // 1. Handle Saving Grace Period Countdown
+            // 1. Grace Period Timer
             if (isGracePeriodActive)
             {
                 gracePeriodTimer -= Time.deltaTime;
@@ -108,26 +122,37 @@ public class WaterLevel : MonoBehaviour
                 {
                     isGracePeriodActive = false;
                     gracePeriodTimer = 0f;
-                    Debug.Log("[WaterLevel] Grace period ended! Flood is now accelerating!");
+                    Debug.Log("[WaterLevel] Grace period ended! Flood acceleration active.");
                 }
             }
             else
             {
-                // 2. Accelerate the flood over time AFTER grace period ends
+                // 2. Flood Acceleration
                 currentFloodSpeed += floodAccelerationRate * Time.deltaTime;
             }
 
-            // 3. Calculate net movement speed (Pump Pull Down (-) vs Flood Push Up (+))
-            float netSpeed = currentFloodSpeed - basePumpDrainSpeed;
-
-            // 4. Move water surface
             Vector3 pos = waterLevelTransform.position;
-            pos.y += netSpeed * Time.deltaTime;
 
-            // 5. Clamp so water doesn't drain BELOW target line
-            if (pos.y < targetY)
+            // If water is higher than current target height supported by active pumps
+            if (pos.y > targetY)
             {
-                pos.y = targetY;
+                if (currentFloodSpeed <= currentActiveThreshold)
+                {
+                    // Pumps can handle it -> Drain water down towards targetY
+                    pos.y = Mathf.MoveTowards(pos.y, targetY, basePumpDrainSpeed * Time.deltaTime);
+                }
+                else
+                {
+                    // Flood speed exceeded pump threshold -> Water rises
+                    float excessRiseSpeed = currentFloodSpeed - currentActiveThreshold;
+                    pos.y += excessRiseSpeed * Time.deltaTime;
+                }
+            }
+            // If water is LOWER than target height (e.g. lost a pump, so safe floor raised from 20m up to 35m)
+            else if (pos.y < targetY)
+            {
+                // Water smoothly rises back up to the new target level
+                pos.y = Mathf.MoveTowards(pos.y, targetY, defaultFloodRiseSpeed * Time.deltaTime);
             }
 
             waterLevelTransform.position = pos;
@@ -139,9 +164,28 @@ public class WaterLevel : MonoBehaviour
         activeDrainCoroutine = null;
     }
 
-    /// <summary>
-    /// Stops the active flood tug-of-war.
-    /// </summary>
+    private IEnumerator AnimateUncheckedFloodRise(float maxWaterHeight)
+    {
+        if (waterLevelTransform == null) yield break;
+
+        isTugOfWarActive = false;
+        isGracePeriodActive = false;
+
+        Debug.Log($"[WaterLevel] All pumps offline! Water rising back to {maxWaterHeight}m.");
+
+        while (waterLevelTransform.position.y < maxWaterHeight)
+        {
+            Vector3 pos = waterLevelTransform.position;
+            pos.y = Mathf.MoveTowards(pos.y, maxWaterHeight, defaultFloodRiseSpeed * Time.deltaTime);
+            waterLevelTransform.position = pos;
+            currentWaterHeight = pos.y;
+
+            yield return null;
+        }
+
+        activeDrainCoroutine = null;
+    }
+
     public void StopTugOfWar()
     {
         isTugOfWarActive = false;
