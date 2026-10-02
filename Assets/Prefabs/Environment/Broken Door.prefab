@@ -11,6 +11,9 @@ GameObject:
   - component: {fileID: 4939562177391526443}
   - component: {fileID: 8296477362643504526}
   - component: {fileID: 6109121339145025860}
+  - component: {fileID: 7543153568837216213}
+  - component: {fileID: 4539470227813604686}
+  - component: {fileID: 4783898820863161524}
   m_Layer: 0
   m_Name: Broken Door
   m_TagString: Untagged
@@ -26,13 +29,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5748573403951978641}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.4304593, y: -0.4304593, z: 0.56098557, w: 0.56098557}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -9.46, y: -10.01, z: -2.84}
   m_LocalScale: {x: 1.7880851, y: 1.7880851, z: 1.3923819}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: -75, z: 90}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8296477362643504526
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -66,7 +69,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 73c176f402d2c2f4d929aa5da7585d17, type: 2}
+  - {fileID: 2100000, guid: 61df8d789d16f7f49998113590086d2f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -90,3 +93,63 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &7543153568837216213
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5748573403951978641}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.2729078, y: 3.4196353, z: 1.5484082}
+  m_Center: {x: -0.000000022351742, y: 0.70981765, z: 0.516136}
+--- !u!114 &4539470227813604686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5748573403951978641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 919d40c3597b1254d923a1eb8f5d0c99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  category: 1
+  maxHealth: 100
+  currentHealth: 0
+  EvtOnHit:
+    m_PersistentCalls:
+      m_Calls: []
+  EvtOnDied:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &4783898820863161524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5748573403951978641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 639eacf06aeade941abe122968d55ace, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MinableRock
+  resourceType: 1
+  amountToDropOnHit: 1
+  amountToDropOnDeath: 5
+  orePrefab: {fileID: 0}
+  oreDropCountOnDeath: 3
+  dropScatterForce: 3
