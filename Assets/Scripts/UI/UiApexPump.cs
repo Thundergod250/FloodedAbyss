@@ -9,12 +9,21 @@ public class UiApexPump : UiModals
     [Header("Water Settings when NO pumps are active")]
     [SerializeField] private float defaultMaxWaterHeight = 87f;
 
-    [Header("Floor Level Heights")]
-    [SerializeField] private float floor1WoodHeight = 78f;
-    [SerializeField] private float floor2StoneHeight = 68f;
-    [SerializeField] private float floor3CopperHeight = 58f;
-    [SerializeField] private float floor4IronHeight = 48f;
-    [SerializeField] private float floor5GoldHeight = 38f;
+    [Header("Water Target Heights per Active Pump Count")]
+    [Tooltip("Target height when 1 pump is active (Floor 1 level - 4 pumps lost)")]
+    [SerializeField] private float targetHeight1Pump = 78f;
+
+    [Tooltip("Target height when 2 pumps are active (Floor 2 level - 3 pumps lost)")]
+    [SerializeField] private float targetHeight2Pumps = 68f;
+
+    [Tooltip("Target height when 3 pumps are active (Floor 3 level - 2 pumps lost)")]
+    [SerializeField] private float targetHeight3Pumps = 58f;
+
+    [Tooltip("Target height when 4 pumps are active (Floor 4 level - 1 pump lost)")]
+    [SerializeField] private float targetHeight4Pumps = 48f;
+
+    [Tooltip("Target height when all 5 pumps are active (Floor 5 level - All Clear)")]
+    [SerializeField] private float targetHeight5Pumps = 38f;
 
     [Header("Individual Pump Threshold Values")]
     [SerializeField] private float woodPumpThreshold = 50f;
@@ -49,6 +58,7 @@ public class UiApexPump : UiModals
             }
         }
 
+        // Evaluate initial water state on game load
         RecalculateActivePumpsAndWaterLevel();
         LogAllPumpStates();
     }
@@ -63,8 +73,8 @@ public class UiApexPump : UiModals
     }
 
     /// <summary>
-    /// Recalculates allowable water target depth based on tier progression.
-    /// To reach a lower floor, ALL preceding pumps must remain active.
+    /// Recalculates water target height based purely on how many total pumps are active.
+    /// Regardless of WHICH pump turns off, losing 1 pump moves target from 38m to 48m.
     /// </summary>
     private void RecalculateActivePumpsAndWaterLevel()
     {
@@ -76,57 +86,36 @@ public class UiApexPump : UiModals
             return;
         }
 
-        // Track active status for each specific pump tier
-        bool isWoodActive = IsPumpActive(ResourceType.Wood);
-        bool isStoneActive = IsPumpActive(ResourceType.Stone);
-        bool isCopperActive = IsPumpActive(ResourceType.Copper);
-        bool isIronActive = IsPumpActive(ResourceType.Iron);
-        bool isGoldActive = IsPumpActive(ResourceType.Gold);
+        int activeCount = 0;
+        float totalThreshold = 0f;
 
-        // Determine target water height based on tier chain:
-        // If a tier is missing, water cannot drain lower than that tier's floor!
-        float targetHeight = defaultMaxWaterHeight;
-
-        if (isWoodActive)
+        foreach (var panel in resourcePanels)
         {
-            targetHeight = floor1WoodHeight; // 78m
+            if (panel == null || !panel.IsActive) continue;
 
-            if (isStoneActive)
+            activeCount++;
+
+            switch (panel.ResourceType)
             {
-                targetHeight = floor2StoneHeight; // 68m
-
-                if (isCopperActive)
-                {
-                    targetHeight = floor3CopperHeight; // 58m
-
-                    if (isIronActive)
-                    {
-                        targetHeight = floor4IronHeight; // 48m
-
-                        if (isGoldActive)
-                        {
-                            targetHeight = floor5GoldHeight; // 38m (All 5 Active)
-                        }
-                    }
-                }
+                case ResourceType.Wood:
+                    totalThreshold += woodPumpThreshold;
+                    break;
+                case ResourceType.Stone:
+                    totalThreshold += stonePumpThreshold;
+                    break;
+                case ResourceType.Copper:
+                    totalThreshold += copperPumpThreshold;
+                    break;
+                case ResourceType.Iron:
+                    totalThreshold += ironPumpThreshold;
+                    break;
+                case ResourceType.Gold:
+                    totalThreshold += goldPumpThreshold;
+                    break;
             }
         }
-        else if (isGoldActive || isIronActive || isCopperActive || isStoneActive)
-        {
-            // If Wood is OFF, but lower pumps are ON, water rises up to Floor 1 (78m) 
-            // because you lost the top-tier drainage foundation.
-            targetHeight = floor1WoodHeight;
-        }
 
-        // Calculate total combined threshold of ALL currently running pumps
-        float totalThreshold = 0f;
-        if (isWoodActive) totalThreshold += woodPumpThreshold;
-        if (isStoneActive) totalThreshold += stonePumpThreshold;
-        if (isCopperActive) totalThreshold += copperPumpThreshold;
-        if (isIronActive) totalThreshold += ironPumpThreshold;
-        if (isGoldActive) totalThreshold += goldPumpThreshold;
-
-        int activeCount = GetActivePumpCount();
+        float targetHeight = GetTargetHeightForActiveCount(activeCount);
 
         if (activeCount > 0)
         {
@@ -140,16 +129,20 @@ public class UiApexPump : UiModals
         }
     }
 
-    private bool IsPumpActive(ResourceType type)
+    /// <summary>
+    /// Maps the total count of running pumps to allowable water depth.
+    /// </summary>
+    private float GetTargetHeightForActiveCount(int activeCount)
     {
-        foreach (var panel in resourcePanels)
+        switch (activeCount)
         {
-            if (panel != null && panel.ResourceType == type)
-            {
-                return panel.IsActive;
-            }
+            case 5: return targetHeight5Pumps; // 38m (All 5 active - lowest floor)
+            case 4: return targetHeight4Pumps; // 48m (1 pump disabled - lose bottom floor)
+            case 3: return targetHeight3Pumps; // 58m (2 pumps disabled)
+            case 2: return targetHeight2Pumps; // 68m (3 pumps disabled)
+            case 1: return targetHeight1Pump;  // 78m (4 pumps disabled - top floor only)
+            default: return defaultMaxWaterHeight; // 87m (0 active pumps - max flood)
         }
-        return false;
     }
 
     public int GetActivePumpCount()
