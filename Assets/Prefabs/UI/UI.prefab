@@ -1431,12 +1431,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UiApexPump
   ModalPrefab: {fileID: 6395563892326007458}
   canvasGroup: {fileID: 7186096147493832714}
-  btnDepositOne: {fileID: 2642446595218300153}
-  btnDepositTen: {fileID: 3212299955583313103}
-  txtStoneDeposited: {fileID: 3994733293856292736}
-  txtEnergyValue: {fileID: 2829083728367850551}
-  convertInterval: 1
-  energyDecayInterval: 3
+  resourcePanels:
+  - {fileID: 3838119758917922646}
+  - {fileID: 8003691760170711880}
+  - {fileID: 8684307306453893466}
+  - {fileID: 5783641564162966367}
+  - {fileID: 2462976421587732855}
 --- !u!1 &7048861123982170786
 GameObject:
   m_ObjectHideFlags: 0
@@ -2727,50 +2727,39 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3984828632039010116, guid: 1e9439740dd9990478e147dfc9d29123, type: 3}
   m_PrefabInstance: {fileID: 3814184625418209382}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2642446595218300153 stripped
+--- !u!114 &2462976421587732855 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1172465980050396319, guid: 1e9439740dd9990478e147dfc9d29123, type: 3}
+  m_CorrespondingSourceObject: {fileID: 1639579321836847377, guid: 1e9439740dd9990478e147dfc9d29123, type: 3}
   m_PrefabInstance: {fileID: 3814184625418209382}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 6ed910aa64fc1734a902d9103deb3144, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
---- !u!114 &2829083728367850551 stripped
+  m_EditorClassIdentifier: Assembly-CSharp::PumpResourcePanel
+--- !u!114 &3838119758917922646 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1417604860886064209, guid: 1e9439740dd9990478e147dfc9d29123, type: 3}
+  m_CorrespondingSourceObject: {fileID: 120762801181091632, guid: 1e9439740dd9990478e147dfc9d29123, type: 3}
   m_PrefabInstance: {fileID: 3814184625418209382}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Script: {fileID: 11500000, guid: 6ed910aa64fc1734a902d9103deb3144, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!114 &3212299955583313103 stripped
+  m_EditorClassIdentifier: Assembly-CSharp::PumpResourcePanel
+--- !u!114 &5783641564162966367 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1763956945997589673, guid: 1e9439740dd9990478e147dfc9d29123, type: 3}
+  m_CorrespondingSourceObject: {fileID: 7254502855930891065, guid: 1e9439740dd9990478e147dfc9d29123, type: 3}
   m_PrefabInstance: {fileID: 3814184625418209382}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 6ed910aa64fc1734a902d9103deb3144, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
---- !u!114 &3994733293856292736 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 260804644806457318, guid: 1e9439740dd9990478e147dfc9d29123, type: 3}
-  m_PrefabInstance: {fileID: 3814184625418209382}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+  m_EditorClassIdentifier: Assembly-CSharp::PumpResourcePanel
 --- !u!1 &6395563892326007458 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7795502036671728324, guid: 1e9439740dd9990478e147dfc9d29123, type: 3}
@@ -2781,6 +2770,28 @@ CanvasGroup:
   m_CorrespondingSourceObject: {fileID: 6292813914994589804, guid: 1e9439740dd9990478e147dfc9d29123, type: 3}
   m_PrefabInstance: {fileID: 3814184625418209382}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8003691760170711880 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6628287055585424174, guid: 1e9439740dd9990478e147dfc9d29123, type: 3}
+  m_PrefabInstance: {fileID: 3814184625418209382}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ed910aa64fc1734a902d9103deb3144, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PumpResourcePanel
+--- !u!114 &8684307306453893466 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5506336427120298300, guid: 1e9439740dd9990478e147dfc9d29123, type: 3}
+  m_PrefabInstance: {fileID: 3814184625418209382}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ed910aa64fc1734a902d9103deb3144, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PumpResourcePanel
 --- !u!1001 &4512816707662968453
 PrefabInstance:
   m_ObjectHideFlags: 0

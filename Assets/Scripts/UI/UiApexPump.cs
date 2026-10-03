@@ -1,121 +1,203 @@
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
+using System.Collections.Generic;
 
 public class UiApexPump : UiModals
 {
-    [Header("UI Controls")]
-    [SerializeField] private Button btnDepositOne;  // ">" button (Deposit 1)[cite: 3]
-    [SerializeField] private Button btnDepositTen;  // ">>" button (Deposit 10)[cite: 3]
+    [Header("Resource Panels")]
+    [SerializeField] private List<PumpResourcePanel> resourcePanels = new List<PumpResourcePanel>();
 
-    [Header("UI Displays")]
-    [SerializeField] private TMP_Text txtStoneDeposited; // Displays currently deposited stone waiting to be eaten[cite: 3]
-    [SerializeField] private TMP_Text txtEnergyValue;    // Displays current energy level[cite: 3]
+    [Header("Water Settings when NO pumps are active")]
+    [SerializeField] private float defaultMaxWaterHeight = 87f;
 
-    [Header("Pump Settings")]
-    [SerializeField] private float convertInterval = 2f;    // Time in seconds to consume 1 Stone and convert to 1 Energy
-    [SerializeField] private float energyDecayInterval = 5f; // Time in seconds to lose 1 Energy
+    [Header("Water Target Heights per Active Pump Count")]
+    [Tooltip("Target height when 1 pump is active (Floor 1 level - 4 pumps lost)")]
+    [SerializeField] private float targetHeight1Pump = 78f;
 
-    private int depositedStone = 0;
-    private int currentEnergy = 0;
+    [Tooltip("Target height when 2 pumps are active (Floor 2 level - 3 pumps lost)")]
+    [SerializeField] private float targetHeight2Pumps = 68f;
 
-    private float convertTimer = 0f;
-    private float decayTimer = 0f;
+    [Tooltip("Target height when 3 pumps are active (Floor 3 level - 2 pumps lost)")]
+    [SerializeField] private float targetHeight3Pumps = 58f;
 
-    // Cached reference to avoid repeated hierarchy lookups
+    [Tooltip("Target height when 4 pumps are active (Floor 4 level - 1 pump lost)")]
+    [SerializeField] private float targetHeight4Pumps = 48f;
+
+    [Tooltip("Target height when all 5 pumps are active (Floor 5 level - All Clear)")]
+    [SerializeField] private float targetHeight5Pumps = 38f;
+
+    [Header("Individual Pump Threshold Values")]
+    [SerializeField] private float woodPumpThreshold = 50f;
+    [SerializeField] private float stonePumpThreshold = 75f;
+    [SerializeField] private float copperPumpThreshold = 100f;
+    [SerializeField] private float ironPumpThreshold = 150f;
+    [SerializeField] private float goldPumpThreshold = 200f;
+
     private PlayerResources playerResources;
 
     protected override void Start()
     {
-        if (GameManager.Instance != null && GameManager.Instance.playerController != null) 
+        if (GameManager.Instance != null && GameManager.Instance.playerController != null)
+        {
             playerResources = GameManager.Instance.playerController.PlayerResources;
-        
+        }
+
         if (playerResources == null)
         {
             Debug.LogError("UiApexPump: PlayerResources could not be found!");
             return;
         }
 
-        // Bind deposit button listeners[cite: 3]
-        btnDepositOne.onClick.AddListener(() => DepositStone(1));
-        btnDepositTen.onClick.AddListener(() => DepositStone(10));
-
-        UpdateUI();
-    }
-
-    private void Update()
-    {
-        HandleStoneToEnergyConversion();
-        HandleEnergyDecay();
-    }
-
-    private void DepositStone(int amount)
-    {
-        if (playerResources == null) return;
-
-        // Verify player has enough Stone available to deposit
-        if (playerResources.GetResource(ResourceType.Stone) >= amount)
+        foreach (var panel in resourcePanels)
         {
-            if (playerResources.SpendResource(ResourceType.Stone, amount))
+            if (panel != null)
             {
-                depositedStone += amount;
-                UpdateUI();
+                panel.Initialize(playerResources);
+
+                panel.OnActiveStateChanged -= HandlePanelActiveStateChanged;
+                panel.OnActiveStateChanged += HandlePanelActiveStateChanged;
             }
+        }
+
+        // Evaluate initial water state on game load
+        RecalculateActivePumpsAndWaterLevel();
+        LogAllPumpStates();
+    }
+
+    private void HandlePanelActiveStateChanged(PumpResourcePanel panel, bool isActive)
+    {
+        string state = isActive ? "ACTIVE" : "INACTIVE";
+        Debug.Log($"[UiApexPump Notification] {panel.ResourceType} pump switched to {state}. Total Active Pumps: {GetActivePumpCount()}/{resourcePanels.Count}");
+
+        RecalculateActivePumpsAndWaterLevel();
+        LogAllPumpStates();
+    }
+
+    /// <summary>
+    /// Recalculates water target height based purely on how many total pumps are active.
+    /// Regardless of WHICH pump turns off, losing 1 pump moves target from 38m to 48m.
+    /// </summary>
+    private void RecalculateActivePumpsAndWaterLevel()
+    {
+        WaterLevel waterLevel = GameManager.Instance != null ? GameManager.Instance.waterLevel : null;
+
+        if (waterLevel == null)
+        {
+            Debug.LogWarning("UiApexPump: GameManager.Instance.waterLevel reference is missing!");
+            return;
+        }
+
+        int activeCount = 0;
+        float totalThreshold = 0f;
+
+        foreach (var panel in resourcePanels)
+        {
+            if (panel == null || !panel.IsActive) continue;
+
+            activeCount++;
+
+            switch (panel.ResourceType)
+            {
+                case ResourceType.Wood:
+                    totalThreshold += woodPumpThreshold;
+                    break;
+                case ResourceType.Stone:
+                    totalThreshold += stonePumpThreshold;
+                    break;
+                case ResourceType.Copper:
+                    totalThreshold += copperPumpThreshold;
+                    break;
+                case ResourceType.Iron:
+                    totalThreshold += ironPumpThreshold;
+                    break;
+                case ResourceType.Gold:
+                    totalThreshold += goldPumpThreshold;
+                    break;
+            }
+        }
+
+        float targetHeight = GetTargetHeightForActiveCount(activeCount);
+
+        if (activeCount > 0)
+        {
+            Debug.Log($"[UiApexPump] Active Pumps: {activeCount}/5. Water Level target set to: {targetHeight}m (Combined Threshold: {totalThreshold})");
+            waterLevel.DrainToTargetHeight(targetHeight, totalThreshold);
         }
         else
         {
-            Debug.LogWarning("Not enough Stone to deposit.");
+            Debug.Log($"[UiApexPump] 0 Pumps Active! Water rising back up to default height: {defaultMaxWaterHeight}m");
+            waterLevel.OnAllPumpsDeactivated(defaultMaxWaterHeight);
         }
     }
 
-    private void HandleStoneToEnergyConversion()
+    /// <summary>
+    /// Maps the total count of running pumps to allowable water depth.
+    /// </summary>
+    private float GetTargetHeightForActiveCount(int activeCount)
     {
-        // Immediately start eating stone over time if any is deposited
-        if (depositedStone > 0)
+        switch (activeCount)
         {
-            convertTimer += Time.deltaTime;
-            if (convertTimer >= convertInterval)
+            case 5: return targetHeight5Pumps; // 38m (All 5 active - lowest floor)
+            case 4: return targetHeight4Pumps; // 48m (1 pump disabled - lose bottom floor)
+            case 3: return targetHeight3Pumps; // 58m (2 pumps disabled)
+            case 2: return targetHeight2Pumps; // 68m (3 pumps disabled)
+            case 1: return targetHeight1Pump;  // 78m (4 pumps disabled - top floor only)
+            default: return defaultMaxWaterHeight; // 87m (0 active pumps - max flood)
+        }
+    }
+
+    public int GetActivePumpCount()
+    {
+        int activeCount = 0;
+        foreach (var panel in resourcePanels)
+        {
+            if (panel != null && panel.IsActive)
             {
-                convertTimer = 0f;
-                depositedStone--;
-                currentEnergy++;
-                UpdateUI();
+                activeCount++;
             }
         }
-        else
-        {
-            convertTimer = 0f;
-        }
+        return activeCount;
     }
 
-    private void HandleEnergyDecay()
+    public void LogAllPumpStates()
     {
-        // Gradually lose energy over time
-        if (currentEnergy > 0)
+        List<string> activePumps = new List<string>();
+        List<string> inactivePumps = new List<string>();
+
+        foreach (var panel in resourcePanels)
         {
-            decayTimer += Time.deltaTime;
-            if (decayTimer >= energyDecayInterval)
+            if (panel == null) continue;
+
+            if (panel.IsActive)
             {
-                decayTimer = 0f;
-                currentEnergy--;
-                UpdateUI();
+                activePumps.Add($"{panel.ResourceType} ({panel.CurrentEnergy})");
+            }
+            else
+            {
+                inactivePumps.Add($"{panel.ResourceType} ({panel.CurrentEnergy})");
             }
         }
-        else
-        {
-            decayTimer = 0f;
-        }
+
+        Debug.Log($"[UiApexPump Summary] Active ({activePumps.Count}): {string.Join(", ", activePumps)} | Inactive ({inactivePumps.Count}): {string.Join(", ", inactivePumps)}");
     }
 
-    private void UpdateUI()
+    public int GetTotalEnergy()
     {
-        if (txtStoneDeposited != null) txtStoneDeposited.text = depositedStone.ToString();
-        if (txtEnergyValue != null) txtEnergyValue.text = currentEnergy.ToString();
+        int total = 0;
+        foreach (var panel in resourcePanels)
+        {
+            if (panel != null) total += panel.CurrentEnergy;
+        }
+        return total;
     }
 
     private void OnDestroy()
     {
-        btnDepositOne.onClick.RemoveAllListeners();
-        btnDepositTen.onClick.RemoveAllListeners();
+        foreach (var panel in resourcePanels)
+        {
+            if (panel != null)
+            {
+                panel.OnActiveStateChanged -= HandlePanelActiveStateChanged;
+            }
+        }
     }
 }
