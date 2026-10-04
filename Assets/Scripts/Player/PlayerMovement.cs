@@ -9,7 +9,6 @@ public class PlayerMovement : MonoBehaviour
     public float gravity = -9.81f;
     public float maxFallSpeed = -9.81f;
     public float runSpeed = 8f;
-    public bool isClimbing;
 
     [Header("Movement-Water")]
     public float underwaterMoveSpeed;
@@ -49,28 +48,21 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         MovePlayer();
-
-        // Pause gravity and swimming forces while on a ladder
-        if (isClimbing)
-        {
-            velocity.y = 0f;
-        }
-        else if (isSwimming)
+        if (isSwimming)
         {
             ApplySwimming();
             stamina.DrainSwimming();
             oxygen.DrainSwimSprint();
         }
         else
-        {
             ApplyGravity();
-        }
     }
 
     private void MovePlayer()
     {
         if (controller == null || controller.MoveAction == null) return;
 
+        // Ignore movement input if gameplay controls are inactive (e.g. UI modal open)
         Vector2 input = controller.IsInputActive ? controller.MoveAction.ReadValue<Vector2>() : Vector2.zero;
 
         Vector3 move =
@@ -92,10 +84,9 @@ public class PlayerMovement : MonoBehaviour
                 currentSpeed = moveSpeed;
         }
 
-        // Exclude vertical velocity.y while climbing
         Vector3 finalMove =
             move * currentSpeed +
-            (isClimbing ? Vector3.zero : Vector3.up * velocity.y);
+            Vector3.up * velocity.y;
 
         characterController.Move(finalMove * Time.deltaTime);
     }
@@ -170,9 +161,7 @@ public class PlayerMovement : MonoBehaviour
         if (controller != null && !controller.IsInputActive)
             return;
 
-        if (isClimbing)
-            return; // Ignore jump inputs on ladders
-
+        // Normal ground jump
         if (characterController.isGrounded)
         {
             if (stamina.UseJump())
@@ -184,10 +173,12 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
+        // Jump out of water when near the surface
         if (isSwimming && IsAtWaterSurface())
         {
             velocity.y = Mathf.Sqrt(surfaceJumpHeight * -2f * gravity);
 
+            // Stop swimming so gravity takes over
             isSwimming = false;
             wasSwimSprinting = false;
 
