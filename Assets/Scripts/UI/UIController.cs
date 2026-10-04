@@ -15,7 +15,8 @@ public class UIController : MonoBehaviour
         Structure,
         AutoMiner, 
         ApexPump,
-        Trade
+        Trade,
+        Upgrade
     }
 
     [System.Serializable]
