@@ -20,6 +20,7 @@ public class PlayerMovement : MonoBehaviour
     public float surfaceCheckDistance = 0.5f;
     public float surfaceJumpHeight = 2f;
 
+    private bool surfaceJumping;
     private float currentSpeed;
     private Transform waterSurface;
     private PlayerController controller;
@@ -50,7 +51,6 @@ public class PlayerMovement : MonoBehaviour
     {
         MovePlayer();
 
-        // Pause gravity and swimming forces while on a ladder
         if (isClimbing)
         {
             velocity.y = 0f;
@@ -103,7 +103,10 @@ public class PlayerMovement : MonoBehaviour
     private void ApplyGravity()
     {
         if (characterController.isGrounded)
+        {
             velocity.y = -2f;
+           // surfaceJumping = false;
+        }
         else
         {
             velocity.y += gravity * Time.deltaTime;
@@ -151,18 +154,20 @@ public class PlayerMovement : MonoBehaviour
         characterController.Move(velocity * Time.deltaTime);
     }
 
+    public void SetWaterSurface(Transform surface) => waterSurface = surface;
+
     private bool IsAtWaterSurface()
     {
         if (waterSurface == null)
             return false;
 
-        float surfaceY = waterSurface.position.y;
+        float waterY = waterSurface.position.y;
         float playerY = transform.position.y;
 
-        return playerY >= surfaceY - surfaceCheckDistance;
-    }
+        Debug.Log($"Player Y: {playerY} | Water Y: {waterY}");
 
-    public void SetWaterSurface(Transform surface) => waterSurface = surface;
+        return playerY >= waterY - surfaceCheckDistance;
+    }
     #endregion
 
     private void Jump(InputAction.CallbackContext ctx)
@@ -171,8 +176,15 @@ public class PlayerMovement : MonoBehaviour
             return;
 
         if (isClimbing)
-            return; // Ignore jump inputs on ladders
+            return;
 
+        if (isSwimming && characterController.isGrounded)     // Don't allow jumping when underwater and touching the floor
+         {
+             return;
+         }
+
+
+        // Normal ground jump
         if (characterController.isGrounded)
         {
             if (stamina.UseJump())
@@ -184,14 +196,18 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        if (isSwimming && IsAtWaterSurface())
+
+        /*if (isSwimming && IsAtWaterSurface()) // Jump out of water
         {
-            velocity.y = Mathf.Sqrt(surfaceJumpHeight * -2f * gravity);
+            if (stamina.UseJump())
+            {
+                velocity.y = Mathf.Sqrt(surfaceJumpHeight * -2f * gravity);
 
-            isSwimming = false;
-            wasSwimSprinting = false;
+                isSwimming = false;
+                wasSwimSprinting = false;
 
-            Debug.Log("Surface Jump");
-        }
+                Debug.Log("Surface Jump!");
+            }
+        }*/
     }
 }
