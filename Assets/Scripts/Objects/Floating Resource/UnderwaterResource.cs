@@ -74,9 +74,9 @@ public class UnderwaterResource : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("DebrisCleanup"))
+        /*if (other.CompareTag("DebrisCleanup"))
         {
             Pool.Destroy(gameObject);
-        }
+        }*/
     }
 }
