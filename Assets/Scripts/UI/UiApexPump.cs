@@ -11,19 +11,19 @@ public class UiApexPump : UiModals
 
     [Header("Water Target Heights per Active Pump Count")]
     [Tooltip("Target height when 1 pump is active (Floor 1 level - 4 pumps lost)")]
-    [SerializeField] private float targetHeight1Pump = 78f;
+    [SerializeField] private float targetHeight1Pump = 80f;
 
     [Tooltip("Target height when 2 pumps are active (Floor 2 level - 3 pumps lost)")]
-    [SerializeField] private float targetHeight2Pumps = 68f;
+    [SerializeField] private float targetHeight2Pumps = 70f;
 
     [Tooltip("Target height when 3 pumps are active (Floor 3 level - 2 pumps lost)")]
-    [SerializeField] private float targetHeight3Pumps = 58f;
+    [SerializeField] private float targetHeight3Pumps = 60f;
 
     [Tooltip("Target height when 4 pumps are active (Floor 4 level - 1 pump lost)")]
-    [SerializeField] private float targetHeight4Pumps = 48f;
+    [SerializeField] private float targetHeight4Pumps = 50f;
 
     [Tooltip("Target height when all 5 pumps are active (Floor 5 level - All Clear)")]
-    [SerializeField] private float targetHeight5Pumps = 38f;
+    [SerializeField] private float targetHeight5Pumps = 39f;
 
     [Header("Individual Pump Threshold Values")]
     [SerializeField] private float woodPumpThreshold = 50f;
