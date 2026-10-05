@@ -19,6 +19,12 @@ public class PlayerMovement : MonoBehaviour
     public float surfaceCheckDistance = 0.5f;
     public float surfaceJumpHeight = 2f;
 
+    [Header("Jetpack")]
+    public bool jetpackEnabled = false;
+    public float jetpackForce = 8f;
+    public float jetpackMaxSpeed = 8f;
+
+    private bool isJetpacking;
     private float currentSpeed;
     private Transform waterSurface;
     private PlayerController controller;
@@ -55,7 +61,10 @@ public class PlayerMovement : MonoBehaviour
             oxygen.DrainSwimSprint();
         }
         else
+        {
             ApplyGravity();
+            ApplyJetpack();
+        }
     }
 
     private void MovePlayer()
@@ -99,6 +108,32 @@ public class PlayerMovement : MonoBehaviour
         {
             velocity.y += gravity * Time.deltaTime;
             velocity.y = Mathf.Max(velocity.y, maxFallSpeed);
+        }
+    }
+
+    private void ApplyJetpack()
+    {
+        if (!jetpackEnabled || isSwimming)
+        {
+            isJetpacking = false;
+            return;
+        }
+
+        bool jumpHeld =
+            controller.IsInputActive &&
+            controller.JumpAction != null &&
+            controller.JumpAction.IsPressed();
+
+        if (jumpHeld && !characterController.isGrounded)
+        {
+            isJetpacking = true;
+
+            velocity.y += jetpackForce * Time.deltaTime;
+            velocity.y = Mathf.Min(velocity.y, jetpackMaxSpeed);
+        }
+        else
+        {
+            isJetpacking = false;
         }
     }
 
@@ -164,7 +199,7 @@ public class PlayerMovement : MonoBehaviour
         // Normal ground jump
         if (characterController.isGrounded)
         {
-            if (stamina.UseJump())
+            if (jetpackEnabled || stamina.UseJump())
             {
                 velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
                 Debug.Log("Ground Jump");
