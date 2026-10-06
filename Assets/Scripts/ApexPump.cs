@@ -8,33 +8,28 @@ public class ApexPump : MonoBehaviour
     [SerializeField] private float defaultMaxWaterHeight = 87f;
 
     [Header("Water Target Heights per Active Pump Count")]
-    [Tooltip("Target height when 1 pump is active")]
     [SerializeField] private float targetHeight1Pump = 80f;
-
-    [Tooltip("Target height when 2 pumps are active")]
     [SerializeField] private float targetHeight2Pumps = 70f;
-
-    [Tooltip("Target height when 3 pumps are active")]
     [SerializeField] private float targetHeight3Pumps = 60f;
-
-    [Tooltip("Target height when 4 pumps are active")]
     [SerializeField] private float targetHeight4Pumps = 50f;
-
-    [Tooltip("Target height when all 5 pumps are active")]
     [SerializeField] private float targetHeight5Pumps = 39f;
 
-    [Header("Individual Pump Threshold Values")]
+    [Header("Individual Base Pump Threshold Values")]
     [SerializeField] private float woodPumpThreshold = 50f;
     [SerializeField] private float stonePumpThreshold = 75f;
     [SerializeField] private float copperPumpThreshold = 100f;
     [SerializeField] private float ironPumpThreshold = 150f;
     [SerializeField] private float goldPumpThreshold = 200f;
 
-    // Events for UI or other systems to subscribe to
+    private Dictionary<ResourceType, int> pumpThresholdUpgradeLevels = new Dictionary<ResourceType, int>();
+    [Header("Threshold Upgrade Scaling")]
+    [SerializeField] private float thresholdIncreasePerLevel = 25f;
+
     public event Action<PumpResourcePanel, bool> OnPanelActiveStateChanged;
     public event Action OnPumpStatesRecalculated;
 
     private PlayerResources playerResources;
+    private List<PumpResourcePanel> registeredPanels = new List<PumpResourcePanel>();
 
     private void Start()
     {
@@ -49,11 +44,10 @@ public class ApexPump : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Called by the UI layer when panels are initialized and ready to report state changes.
-    /// </summary>
     public void RegisterPanelListeners(List<PumpResourcePanel> panels)
     {
+        registeredPanels = panels;
+
         foreach (var panel in panels)
         {
             if (panel != null)
@@ -68,14 +62,40 @@ public class ApexPump : MonoBehaviour
             }
         }
 
-        // Evaluate initial water state once panels are hooked up
-        RecalculateWaterLevelBasedOnPanels(panels);
+        RecalculateWaterLevelBasedOnPanels(registeredPanels);
     }
 
     private void HandlePanelActiveStateChanged(PumpResourcePanel panel, bool isActive)
     {
-        // Forward event to UI listeners
         OnPanelActiveStateChanged?.Invoke(panel, isActive);
+    }
+
+    public void SyncThresholdLevelFromPlayerStats(ResourceType type, int newLevel)
+    {
+        pumpThresholdUpgradeLevels[type] = newLevel;
+        Debug.Log($"[ApexPump] Synced {type} Pump threshold level from PlayerStats to: {newLevel}");
+        RecalculateWaterLevelBasedOnPanels(registeredPanels);
+    }
+
+    public float GetThresholdForPump(ResourceType type)
+    {
+        float baseThreshold = type switch
+        {
+            ResourceType.Wood => woodPumpThreshold,
+            ResourceType.Stone => stonePumpThreshold,
+            ResourceType.Copper => copperPumpThreshold,
+            ResourceType.Iron => ironPumpThreshold,
+            ResourceType.Gold => goldPumpThreshold,
+            _ => 50f
+        };
+
+        int level = pumpThresholdUpgradeLevels.TryGetValue(type, out var lvl) ? lvl : 0;
+        return baseThreshold + (level * thresholdIncreasePerLevel);
+    }
+
+    public int GetThresholdUpgradeLevel(ResourceType type)
+    {
+        return pumpThresholdUpgradeLevels.TryGetValue(type, out var lvl) ? lvl : 0;
     }
 
     public void RecalculateWaterLevelBasedOnPanels(List<PumpResourcePanel> panels)
@@ -91,29 +111,14 @@ public class ApexPump : MonoBehaviour
         int activeCount = 0;
         float totalThreshold = 0f;
 
-        foreach (var panel in panels)
+        if (panels != null)
         {
-            if (panel == null || !panel.IsActive) continue;
-
-            activeCount++;
-
-            switch (panel.ResourceType)
+            foreach (var panel in panels)
             {
-                case ResourceType.Wood:
-                    totalThreshold += woodPumpThreshold;
-                    break;
-                case ResourceType.Stone:
-                    totalThreshold += stonePumpThreshold;
-                    break;
-                case ResourceType.Copper:
-                    totalThreshold += copperPumpThreshold;
-                    break;
-                case ResourceType.Iron:
-                    totalThreshold += ironPumpThreshold;
-                    break;
-                case ResourceType.Gold:
-                    totalThreshold += goldPumpThreshold;
-                    break;
+                if (panel == null || !panel.IsActive) continue;
+
+                activeCount++;
+                totalThreshold += GetThresholdForPump(panel.ResourceType);
             }
         }
 
@@ -135,14 +140,14 @@ public class ApexPump : MonoBehaviour
 
     private float GetTargetHeightForActiveCount(int activeCount)
     {
-        switch (activeCount)
+        return activeCount switch
         {
-            case 5: return targetHeight5Pumps;
-            case 4: return targetHeight4Pumps;
-            case 3: return targetHeight3Pumps;
-            case 2: return targetHeight2Pumps;
-            case 1: return targetHeight1Pump;
-            default: return defaultMaxWaterHeight;
-        }
+            5 => targetHeight5Pumps,
+            4 => targetHeight4Pumps,
+            3 => targetHeight3Pumps,
+            2 => targetHeight2Pumps,
+            1 => targetHeight1Pump,
+            _ => defaultMaxWaterHeight
+        };
     }
 }

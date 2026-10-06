@@ -67,7 +67,7 @@ public class UiUpgrade : UiModals
 
     public void RefreshUI()
     {
-        if (upgradeConfig == null || rowPrefab == null || rowContainer == null) return;
+        if (upgradeConfig == null || rowPrefab == null || rowContainer == null) return; 
 
         TryBindPlayerResources();
 
@@ -78,6 +78,10 @@ public class UiUpgrade : UiModals
 
         foreach (var data in upgradeConfig.Upgrades)
         {
+            if (!upgradeLevels.ContainsKey(data.type))
+            {
+                upgradeLevels[data.type] = 1;
+            }
             int currentLvl = upgradeLevels[data.type];
             int cost = upgradeConfig.GetCostForLevel(data.type, currentLvl);
 
@@ -96,6 +100,7 @@ public class UiUpgrade : UiModals
                 () => TryPurchaseUpgrade(data.type)
             );
         }
+        
     }
 
     private void TryPurchaseUpgrade(UpgradeType type)
