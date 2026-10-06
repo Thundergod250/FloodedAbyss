@@ -15,8 +15,21 @@ public class WorkableStructure : Item
     [SerializeField] private int baseOutputAmount = 5;
     [SerializeField] private float productionIntervalSeconds = 1f;
 
-    private Coroutine productionCoroutine;
+    [Header("Building State")]
+    [SerializeField] private bool isBroken = false;
 
+    [Header("Repair Settings")]
+    [SerializeField] private ResourceType repairCostType = ResourceType.Wood;
+    [SerializeField] private int repairCost = 20;
+
+    protected WaterLevel waterLevel;
+
+    public bool IsBroken => isBroken;
+
+    protected bool IsSubmerged => waterLevel != null && waterLevel.CurrentWaterHeight >= this.transform.position.y;
+
+
+    private Coroutine productionCoroutine;
     public int MaxWorkers => maxWorkers;
     public int AssignedWorkers => assignedWorkers;
     public ResourceType OutputResourceType => outputResourceType;
@@ -28,22 +41,61 @@ public class WorkableStructure : Item
 
     protected virtual void Start()
     {
+        if (GameManager.Instance != null)
+        {
+            waterLevel = GameManager.Instance.waterLevel;
+        }
+
         productionCoroutine = StartCoroutine(ProductionCycleRoutine());
+
+        Debug.Log(
+            $"[{buildingName}] WaterLevel: {waterLevel} | " +
+            $"Water Height: {waterLevel?.CurrentWaterHeight} | " +
+            $"Building Y: {transform.position.y} | " +
+            $"Submerged: {IsSubmerged}"
+        );
     }
 
     public override void Activate()
     {
-        StructurePanel panel = FindAnyObjectByType<StructurePanel>(FindObjectsInactive.Include);
+        if (IsSubmerged)
+        {
+            Debug.Log($"[{buildingName}] Cannot interact. Building is submerged.");
+            return;
+        }
+
+        if (IsBroken)
+        {
+            ShowRepairPrompt();
+            return;
+        }
+
+        StructurePanel panel = FindAnyObjectByType<StructurePanel>(
+            FindObjectsInactive.Include
+        );
+
         if (panel != null)
         {
             panel.OpenStructurePanel(this);
         }
-        else if (GameManager.Instance != null && GameManager.Instance.uiController != null)
+        else if (GameManager.Instance != null &&
+                 GameManager.Instance.uiController != null)
         {
-            GameManager.Instance.uiController.OpenModal(UIController.UIState.Building);
+            GameManager.Instance.uiController.OpenModal(
+                UIController.UIState.Building
+            );
         }
     }
+    private PlayerResources GetPlayerResources()
+    {
+        if (GameManager.Instance != null && GameManager.Instance.playerController != null)
+        {
+            return GameManager.Instance.playerController.GetComponent<PlayerResources>();
+        }
+        return FindAnyObjectByType<PlayerResources>();
+    }
 
+    #region Worker-Related
     public bool TryAddWorker()
     {
         if (assignedWorkers >= maxWorkers)
@@ -64,6 +116,15 @@ public class WorkableStructure : Item
 
     public bool TryRemoveWorker()
     {
+        if (IsBroken || IsSubmerged)
+        {
+            Debug.LogWarning(
+                $"[{buildingName}] Cannot assign worker. " +
+                $"Building is {(IsBroken ? "broken" : "submerged")}."
+            );
+            return false;
+        }
+
         if (assignedWorkers <= 0) return false;
 
         assignedWorkers--;
@@ -82,11 +143,15 @@ public class WorkableStructure : Item
         {
             yield return new WaitForSeconds(productionIntervalSeconds);
 
+            if (IsBroken || IsSubmerged)
+                continue;
+
             int yieldAmount = CalculatedYield;
 
             if (yieldAmount > 0)
             {
                 PlayerResources playerResources = GetPlayerResources();
+
                 if (playerResources != null)
                 {
                     playerResources.AddResource(outputResourceType, yieldAmount);
@@ -95,13 +160,111 @@ public class WorkableStructure : Item
             }
         }
     }
+    #endregion
 
-    private PlayerResources GetPlayerResources()
+    #region BrokenState
+    public void SetBroken(bool broken)
     {
-        if (GameManager.Instance != null && GameManager.Instance.playerController != null)
-        {
-            return GameManager.Instance.playerController.GetComponent<PlayerResources>();
-        }
-        return FindAnyObjectByType<PlayerResources>();
+        if (isBroken == broken)
+            return;
+
+        isBroken = broken;
+
+        Debug.Log($"[{buildingName}] Broken state: {isBroken}");
     }
+
+    public void BreakBuilding()
+    {
+        SetBroken(true);
+    }
+
+    public void FixBuilding()
+    {
+        SetBroken(false);
+    }
+
+    public virtual void ShowRepairPrompt()
+    {
+        if (GameManager.Instance == null ||
+         GameManager.Instance.uiController == null)
+        {
+            Debug.LogWarning(
+                $"[{buildingName}] Cannot show repair prompt: UIController missing."
+            );
+            return;
+        }
+
+        UIRepair repairUI =
+            GameManager.Instance.uiController.GetComponentInChildren<UIRepair>();
+
+        if (repairUI == null)
+        {
+            Debug.LogWarning(
+                $"[{buildingName}] Cannot show repair prompt: UIRepair not found."
+            );
+            return;
+        }
+
+        GameManager.Instance.uiController.OpenModal(
+            UIController.UIState.Repair
+        );
+
+        repairUI.ApplyValues(
+            repairCostType.ToString(),
+            repairCost.ToString()
+        );
+
+        repairUI.ApplyValueToButton(OnRepairButtonClicked);
+    }
+
+    private void OnRepairButtonClicked()
+    {
+        bool repaired = RepairBuilding();
+    }
+
+    public bool RepairBuilding()
+    {
+        if (!IsBroken)
+            return false;
+
+        if (IsSubmerged)
+        {
+            Debug.Log($"[{buildingName}] Cannot repair while submerged.");
+            return false;
+        }
+
+        if (GameManager.Instance == null ||
+            GameManager.Instance.playerController == null)
+            return false;
+
+        PlayerResources playerResources =
+            GameManager.Instance.playerController.GetComponent<PlayerResources>();
+
+        if (playerResources == null)
+            return false;
+
+        bool hasResources = playerResources.SpendResource(
+            repairCostType,
+            repairCost
+        );
+
+        if (!hasResources)
+        {
+            Debug.Log(
+                $"[{buildingName}] Not enough {repairCostType} to repair."
+            );
+
+            return false;
+        }
+
+        FixBuilding();
+
+        Debug.Log(
+            $"[{buildingName}] Repaired for " +
+            $"{repairCost} {repairCostType}."
+        );
+
+        return true;
+    }
+    #endregion
 }

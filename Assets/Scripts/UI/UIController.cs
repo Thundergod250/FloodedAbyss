@@ -17,7 +17,8 @@ public class UIController : MonoBehaviour
         ApexPump,
         Trade,
         Upgrade,
-        Event
+        Event,
+        Repair
     }
 
     [System.Serializable]
