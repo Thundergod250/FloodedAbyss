@@ -13,12 +13,11 @@ public class UIController : MonoBehaviour
         Building,
         SkillTree,
         Structure,
-        AutoMiner,
+        AutoMiner, 
         ApexPump,
         Trade,
         Upgrade,
-        Event,
-        AutoFarm
+        Event
     }
 
     [System.Serializable]

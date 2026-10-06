@@ -279,9 +279,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7142931876741804930}
-  - component: {fileID: 2786297563154300141}
-  - component: {fileID: 5960031724248261999}
-  - component: {fileID: 9002020687037103930}
   m_Layer: 0
   m_Name: Farm
   m_TagString: Untagged
@@ -307,63 +304,3 @@ Transform:
   - {fileID: 6276655021473652738}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2786297563154300141
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7395811347857988247}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e301385cf6abc1e488348a4efe9d85c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AutoFarm
-  buildingName: Auto Farm
-  maxWorkers: 4
-  assignedWorkers: 0
-  outputResourceType: 3
-  baseOutputAmount: 5
-  productionIntervalSeconds: 1
-  farmLevel: 2
-  targetResources: 01000000i
-  baseYieldPerResource: 5
-  harvestIntervalSeconds: 10
-  maxStoragePerResource: 100
---- !u!114 &5960031724248261999
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7395811347857988247}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 586d09e3430c3fa4bb4b7161e1b7ee7b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Interactables
-  interactionMessage: '[E]'
-  onInteract:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!65 &9002020687037103930
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7395811347857988247}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 15, y: 4, z: 15}
-  m_Center: {x: 0, y: 1.5, z: 0}
