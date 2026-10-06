@@ -7,8 +7,8 @@ public class UiUpgrade : UiModals
     [SerializeField] private UpgradeConfigSO upgradeConfig;
 
     [Header("UI Prefabs & Containers")]
-    [SerializeField] private Transform rowContainer; 
-    [SerializeField] private UiUpgradeRow rowPrefab;     
+    [SerializeField] private Transform rowContainer;
+    [SerializeField] private UiUpgradeRow rowPrefab;
 
     private Dictionary<UpgradeType, int> upgradeLevels = new();
     private PlayerResources playerResources;
@@ -67,7 +67,7 @@ public class UiUpgrade : UiModals
 
     public void RefreshUI()
     {
-        if (upgradeConfig == null || rowPrefab == null || rowContainer == null) return; 
+        if (upgradeConfig == null || rowPrefab == null || rowContainer == null) return;
 
         TryBindPlayerResources();
 
@@ -90,17 +90,17 @@ public class UiUpgrade : UiModals
 
             UiUpgradeRow newRow = Instantiate(rowPrefab, rowContainer);
             newRow.SetupRow(
-                data.icon, 
-                data.title, 
+                data.icon,
+                data.title,
                 currentLvl,
                 data.maxLevel,
-                cost, 
+                cost,
                 data.costResource.ToString(),
-                canAfford, 
+                canAfford,
                 () => TryPurchaseUpgrade(data.type)
             );
         }
-        
+
     }
 
     private void TryPurchaseUpgrade(UpgradeType type)
@@ -114,10 +114,34 @@ public class UiUpgrade : UiModals
 
         if (currentLvl >= data.maxLevel) return;
 
-        // Spends resource and auto-triggers EvtOnResourceChanged inside PlayerResources
+        // Spends resource first
         if (playerResources.SpendResource(data.costResource, cost))
         {
             upgradeLevels[type]++;
+
+            // ---> ADD THIS BLOCK: Apply the upgrade to PlayerStats based on the type <---
+            if (GameManager.Instance != null && GameManager.Instance.playerController != null)
+            {
+                PlayerStats stats = GameManager.Instance.playerController.GetComponent<PlayerStats>();
+                if (stats != null)
+                {
+                    switch (type)
+                    {
+                        case UpgradeType.Health:
+                            stats.UpgradeMaxHealth();
+                            break;
+                        case UpgradeType.Stamina:
+                            stats.UpgradeMaxStamina();
+                            break;
+                        case UpgradeType.Oxygen:
+                            stats.UpgradeMaxOxygen();
+                            break;
+                            // Note: If you add ApexPump thresholds here later, you can route them too!
+                    }
+                }
+            }
+            // -----------------------------------------------------------------------------
+
             RefreshUI();
         }
     }
