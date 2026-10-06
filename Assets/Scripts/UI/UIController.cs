@@ -16,7 +16,8 @@ public class UIController : MonoBehaviour
         AutoMiner, 
         ApexPump,
         Trade,
-        Upgrade
+        Upgrade,
+        Event
     }
 
     [System.Serializable]

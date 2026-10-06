@@ -24,7 +24,6 @@ public class PlayerMovement : MonoBehaviour
     public float jetpackForce = 8f;
     public float jetpackMaxSpeed = 8f;
 
-    private bool isJetpacking;
     private float currentSpeed;
     private Transform waterSurface;
     private PlayerController controller;
@@ -115,7 +114,6 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!jetpackEnabled || isSwimming)
         {
-            isJetpacking = false;
             return;
         }
 
@@ -126,14 +124,9 @@ public class PlayerMovement : MonoBehaviour
 
         if (jumpHeld && !characterController.isGrounded)
         {
-            isJetpacking = true;
 
             velocity.y += jetpackForce * Time.deltaTime;
             velocity.y = Mathf.Min(velocity.y, jetpackMaxSpeed);
-        }
-        else
-        {
-            isJetpacking = false;
         }
     }
 

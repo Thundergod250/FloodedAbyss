@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class EventManager : MonoBehaviour
+public class UIEventManager : UiModals
 {
-    [Header("Player Resources")]
-    [SerializeField] private PlayerResources playerResources;
-
     [Header("Resource Events")]
     [SerializeField] private List<ResourceEventsUI> stoneEvents = new();
     [SerializeField] private List<ResourceEventsUI> woodEvents = new();
@@ -21,7 +18,7 @@ public class EventManager : MonoBehaviour
 
     [Header("Event Timer")]
     [SerializeField] private float minTimerDuration = 60f;
-    [SerializeField] private float maxTimerDuration = 240f; 
+    [SerializeField] private float maxTimerDuration = 240f;
 
     [Header("Event Cooldown")]
     [SerializeField] private float eventCooldown = 30f;
@@ -32,7 +29,7 @@ public class EventManager : MonoBehaviour
     [SerializeField] private GameObject eventPanel;
     [SerializeField] private TextMeshProUGUI eventText;
 
-    private ResourceEventsUI resourceEvent;
+    private PlayerResources playerResources;
 
     private Dictionary<ResourceType, float> resourceTimers = new();
     private Dictionary<ResourceType, float> resourceTimerDurations = new();
@@ -64,23 +61,19 @@ public class EventManager : MonoBehaviour
         }
     }
 
-    private void Start()
+    protected override void Initialize()
     {
-        eventPanel = GameManager.Instance.uiController.GetComponentInChildren<EventsUI>().panel;
-        eventText = GameManager.Instance.uiController.GetComponentInChildren<EventsUI>().eventText;
-
-
-        eventPanel.SetActive(false);
-
-        playerResources = GameManager.Instance.playerController.GetComponent<PlayerResources>();
+        playerResources =GameManager.Instance.playerController.GetComponent<PlayerResources>();
 
         foreach (ResourceType type in Enum.GetValues(typeof(ResourceType)))
         {
             resourceTimers[type] = 0f;
-            resourceTimerDurations[type] = UnityEngine.Random.Range(
-                minTimerDuration,
-                maxTimerDuration
-            );
+
+            resourceTimerDurations[type] =
+                UnityEngine.Random.Range(
+                    minTimerDuration,
+                    maxTimerDuration
+                );
         }
     }
 
@@ -115,12 +108,14 @@ public class EventManager : MonoBehaviour
                 if (resourceTimers[type] >= resourceTimerDurations[type])
                 {
                     ShowResourceUI(type);
+
                     resourceTimers[type] = 0f;
 
-                    resourceTimerDurations[type] = UnityEngine.Random.Range(
-                        minTimerDuration,
-                        maxTimerDuration
-                    );
+                    resourceTimerDurations[type] =
+                        UnityEngine.Random.Range(
+                            minTimerDuration,
+                            maxTimerDuration
+                        );
                 }
             }
             else
@@ -151,23 +146,12 @@ public class EventManager : MonoBehaviour
             selectedEvent.ResourceAmount
         );
 
-        eventPanel.SetActive(true);
         eventText.text = selectedEvent.EventMessage;
 
-        Time.timeScale = 0f;
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        // Use UiModals system
+        GameManager.Instance.uiController.OpenModal(UIController.UIState.Event);
 
         eventOnCooldown = true;
         eventCooldownTimer = eventCooldown;
-    }
-
-    public void CloseEvent()
-    {
-        eventPanel.SetActive(false);
-
-        Time.timeScale = 1f;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 }
