@@ -1,4 +1,5 @@
 using UnityEngine;
+using static Unity.VisualScripting.Dependencies.Sqlite.SQLite3;
 
 public class HousingStructure : Item
 {
@@ -46,12 +47,23 @@ public class HousingStructure : Item
     [SerializeField] private ResourceType hiringCostType = ResourceType.Gold;
     [SerializeField] private int hiringCost = 10;
 
+    [Header("Building State")]
+    [SerializeField] private bool isBroken = false;
+
+    [Header("Repair Settings")]
+    [SerializeField] private ResourceType repairCostType = ResourceType.Wood;
+    [SerializeField] private int repairCost = 20;
+
+    public bool IsSubmerged =>  waterLevel != null &&  waterLevel.CurrentWaterHeight >= this.transform.position.y;
+    public bool IsBroken => isBroken;
+
+    private WaterLevel waterLevel;
     private bool isRegistered = false;
     private int registeredCapacity = 0;
 
     public int CurrentLevel => currentLevel;
 
-    public int HousingCapacity => GetCapacityForLevel(currentLevel);
+    public int HousingCapacity => isBroken ? 0 : GetCapacityForLevel(currentLevel);
 
     private void Awake()
     {
@@ -78,6 +90,8 @@ public class HousingStructure : Item
 
     private void Start()
     {
+        waterLevel = GameManager.Instance.waterLevel;
+
         RegisterHousing();
     }
     private void OnDisable()
@@ -240,9 +254,129 @@ public class HousingStructure : Item
 
     public override void Activate()
     {
+        if (IsSubmerged)
+        {
+            Debug.Log($"[{gameObject.name}] Cannot interact because it is submerged.");
+            return;
+        }
+
+        if (IsBroken)
+        {
+            ShowRepairPrompt();
+            return;
+        }
+
+        // Normal housing interaction
         if (PopulationManager.Instance != null)
         {
-            PopulationManager.Instance.TryHireEmployee(hiringCostType, hiringCost);
+            PopulationManager.Instance.TryHireEmployee(
+                hiringCostType,
+                hiringCost
+            );
         }
+    }
+
+    public void SetBroken(bool broken)
+    {
+        if (isBroken == broken)
+            return;
+
+        isBroken = broken;
+
+        // Update PopulationManager immediately
+        SyncCapacityWithManager();
+
+        Debug.Log(
+            $"[{gameObject.name}] Broken state: {isBroken}. " +
+            $"Housing capacity: {HousingCapacity}"
+        );
+    }
+
+    public void BreakBuilding()
+    {
+        SetBroken(true);
+    }
+
+    public void FixBuilding()
+    {
+        SetBroken(false);
+    }
+
+    private void ShowRepairPrompt()
+    {
+        UIRepair repairUI = GameManager.Instance.uiController.GetComponentInChildren<UIRepair>();
+
+        GameManager.Instance.uiController.OpenModal(UIController.UIState.Repair);
+
+        repairUI.ApplyValues(repairCostType.ToString(), repairCost.ToString());
+
+        repairUI.ApplyValueToButton(OnRepairButtonClicked);
+    }
+
+    private void OnRepairButtonClicked()
+    {
+        bool repaired = RepairBuilding();
+
+        if (repaired)
+        {
+            GameManager.Instance.uiController.CloseAllModals();
+        }
+    }
+
+    public bool RepairBuilding()
+    {
+        if (!IsBroken)
+        {
+            Debug.Log($"[{gameObject.name}] Building is already repaired.");
+            return false;
+        }
+
+        // Cannot repair a submerged building
+        if (IsSubmerged)
+        {
+            Debug.Log($"[{gameObject.name}] Cannot repair while submerged.");
+            return false;
+        }
+
+        if (GameManager.Instance == null ||
+            GameManager.Instance.playerController == null)
+        {
+            Debug.LogWarning($"[{gameObject.name}] Cannot repair: PlayerController not found.");
+            return false;
+        }
+
+        PlayerResources playerResources =
+            GameManager.Instance.playerController.GetComponent<PlayerResources>();
+
+        if (playerResources == null)
+        {
+            Debug.LogWarning($"[{gameObject.name}] Cannot repair: PlayerResources not found.");
+            return false;
+        }
+
+        // Try to spend the required resources
+        bool hasResources = playerResources.SpendResource(
+            repairCostType,
+            repairCost
+        );
+
+        if (!hasResources)
+        {
+            Debug.Log(
+                $"[{gameObject.name}] Not enough {repairCostType} to repair."
+            );
+
+            return false;
+        }
+
+        // Successfully repaired
+        FixBuilding();
+
+        Debug.Log(
+            $"[{gameObject.name}] Repaired for " +
+            $"{repairCost} {repairCostType}."
+        );
+
+        return true;
     }
 }
