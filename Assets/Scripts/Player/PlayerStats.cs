@@ -22,6 +22,13 @@ public class PlayerStats : MonoBehaviour
     public int pickAxeDamageLevel = 1;
     public int pickAxeAttackSpeedLevel = 1;
 
+    [Header("Pump Threshold Levels")]
+    public int woodPumpThresholdLevel = 0;
+    public int stonePumpThresholdLevel = 0;
+    public int copperPumpThresholdLevel = 0;
+    public int ironPumpThresholdLevel = 0;
+    public int goldPumpThresholdLevel = 0;
+
     private Health playerHealth;
     private PlayerStamina playerStamina;
     private PlayerOxygen playerOxygen;
@@ -54,6 +61,23 @@ public class PlayerStats : MonoBehaviour
     public void UpgradePickAxeDamage() => TryIncrementLevel(ref pickAxeDamageLevel, upgradeData?.pickAxeDamageLevels, ApplyPickAxeDamageLevel);
     public void UpgradePickAxeAttackSpeed() => TryIncrementLevel(ref pickAxeAttackSpeedLevel, upgradeData?.pickAxeAttackSpeedLevels, ApplyPickAxeAttackSpeedLevel);
 
+    // Pump Threshold Upgrades triggered from the Upgrade Hub
+    public void UpgradeWoodPumpThreshold() => TryIncrementPumpLevel(ResourceType.Wood, ref woodPumpThresholdLevel);
+    public void UpgradeStonePumpThreshold() => TryIncrementPumpLevel(ResourceType.Stone, ref stonePumpThresholdLevel);
+    public void UpgradeCopperPumpThreshold() => TryIncrementPumpLevel(ResourceType.Copper, ref copperPumpThresholdLevel);
+    public void UpgradeIronPumpThreshold() => TryIncrementPumpLevel(ResourceType.Iron, ref ironPumpThresholdLevel);
+    public void UpgradeGoldPumpThreshold() => TryIncrementPumpLevel(ResourceType.Gold, ref goldPumpThresholdLevel);
+
+    private void TryIncrementPumpLevel(ResourceType type, ref int levelVar)
+    {
+        levelVar++;
+        if (GameManager.Instance != null && GameManager.Instance.ApexPump != null)
+        {
+            GameManager.Instance.ApexPump.SyncThresholdLevelFromPlayerStats(type, levelVar);
+        }
+        EvtOnStatChanged?.Invoke();
+    }
+
     public void UpgradeAllStats()
     {
         UpgradeMaxHealth();
@@ -63,7 +87,7 @@ public class PlayerStats : MonoBehaviour
         UpgradePickAxeAttackSpeed();
     }
 
-    // --- Getter Methods for UI Debug Panel ---
+    // --- Getter Methods for UI Debug / Upgrade Panel ---
 
     public int GetStatLevel(string statKey) => statKey switch
     {
@@ -72,6 +96,11 @@ public class PlayerStats : MonoBehaviour
         "Oxygen" => oxygenLevel,
         "AxeDamage" => pickAxeDamageLevel,
         "AxeSpeed" => pickAxeAttackSpeedLevel,
+        "WoodPumpThreshold" => woodPumpThresholdLevel,
+        "StonePumpThreshold" => stonePumpThresholdLevel,
+        "CopperPumpThreshold" => copperPumpThresholdLevel,
+        "IronPumpThreshold" => ironPumpThresholdLevel,
+        "GoldPumpThreshold" => goldPumpThresholdLevel,
         _ => 1
     };
 
@@ -82,6 +111,11 @@ public class PlayerStats : MonoBehaviour
         "Oxygen" => FormatStatValue(upgradeData?.oxygenLevels, oxygenLevel, "0.#"),
         "AxeDamage" => FormatStatValue(upgradeData?.pickAxeDamageLevels, pickAxeDamageLevel),
         "AxeSpeed" => FormatStatValue(upgradeData?.pickAxeAttackSpeedLevels, pickAxeAttackSpeedLevel, "0.#"),
+        "WoodPumpThreshold" => woodPumpThresholdLevel.ToString(),
+        "StonePumpThreshold" => stonePumpThresholdLevel.ToString(),
+        "CopperPumpThreshold" => copperPumpThresholdLevel.ToString(),
+        "IronPumpThreshold" => ironPumpThresholdLevel.ToString(),
+        "GoldPumpThreshold" => goldPumpThresholdLevel.ToString(),
         _ => "0"
     };
 
@@ -118,20 +152,18 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
-    // --- Simplified Apply Methods ---
-
-    private void ApplyHealthLevel() => 
+    private void ApplyHealthLevel() =>
         ApplyStat(upgradeData?.healthLevels, healthLevel, playerHealth, playerHealth.SetMaxHealth);
 
-    private void ApplyStaminaLevel() => 
+    private void ApplyStaminaLevel() =>
         ApplyStat(upgradeData?.staminaLevels, staminaLevel, playerStamina, playerStamina.SetMaxStamina);
 
-    private void ApplyOxygenLevel() => 
+    private void ApplyOxygenLevel() =>
         ApplyStat(upgradeData?.oxygenLevels, oxygenLevel, playerOxygen, playerOxygen.SetMaxOxygen);
 
-    private void ApplyPickAxeDamageLevel() => 
+    private void ApplyPickAxeDamageLevel() =>
         ApplyStat(upgradeData?.pickAxeDamageLevels, pickAxeDamageLevel, basePickAxe, basePickAxe.SetDamage);
 
-    private void ApplyPickAxeAttackSpeedLevel() => 
+    private void ApplyPickAxeAttackSpeedLevel() =>
         ApplyStat(upgradeData?.pickAxeAttackSpeedLevels, pickAxeAttackSpeedLevel, basePickAxe, basePickAxe.SetAttackSpeed);
 }

@@ -42,7 +42,7 @@ public class UnderwaterResource : MonoBehaviour
         // 2. Fallback to scene search if GameManager reference is missing
         else if (waterLevel == null)
         {
-            waterLevel = FindFirstObjectByType<WaterLevel>();
+            waterLevel = FindAnyObjectByType<WaterLevel>();
         }
     }
 
