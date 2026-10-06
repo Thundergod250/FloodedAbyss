@@ -31,7 +31,6 @@ public class PumpResourcePanel : MonoBehaviour
     [SerializeField] private int maxUpgradeLevel = 3;
 
     private int upgradeLevel = 0;
-
     private int depositedResource = 0;
     private int currentEnergy = 0;
 
@@ -92,8 +91,6 @@ public class PumpResourcePanel : MonoBehaviour
                 depositedResource--;
 
                 bool wasActiveBefore = IsActive;
-
-                // Increment energy before evaluating active state change
                 currentEnergy++;
 
                 if (!wasActiveBefore && IsActive)
@@ -121,7 +118,6 @@ public class PumpResourcePanel : MonoBehaviour
                 decayTimer = 0f;
                 bool wasActiveBefore = IsActive;
 
-                // Decrement energy before evaluating state change
                 currentEnergy--;
 
                 if (wasActiveBefore && !IsActive)
@@ -144,21 +140,24 @@ public class PumpResourcePanel : MonoBehaviour
         if (txtResourceDeposited != null) txtResourceDeposited.text = depositedResource.ToString();
         if (txtEnergyValue != null) txtEnergyValue.text = currentEnergy.ToString();
         if (txtUpgradeResourcesRequired != null) txtUpgradeResourcesRequired.text = resourcesRequired.ToString() + " " + resourceType.ToString();
-        if (txtUpgradeResourcesRequired != null) txtPumpLevel.text = "Pump Level: " + upgradeLevel.ToString();
+        if (txtPumpLevel != null) txtPumpLevel.text = "Pump Level: " + upgradeLevel.ToString();
     }
 
     private void HandleUpgrade()
     {
-        if (playerResources == null)
-            return;
+        if (playerResources == null) return;
 
         if (upgradeLevel >= maxUpgradeLevel)
         {
-            upgradeButton.GetComponent<Image>().color = Color.gray;
-            upgradeButton.onClick.RemoveListener(HandleUpgrade);
-            upgradeButton.GetComponent<Button>().enabled = false;
+            if (upgradeButton != null)
+            {
+                var img = upgradeButton.GetComponent<Image>();
+                if (img != null) img.color = Color.gray;
+                upgradeButton.onClick.RemoveListener(HandleUpgrade);
+                upgradeButton.enabled = false;
+            }
             resourcesRequired = 0;
-            UpdateUI(); 
+            UpdateUI();
             return;
         }
 
@@ -168,32 +167,23 @@ public class PumpResourcePanel : MonoBehaviour
             return;
         }
 
-        if (!playerResources.SpendResource(resourceType, resourcesRequired))
-            return;
+        if (!playerResources.SpendResource(resourceType, resourcesRequired)) return;
 
         upgradeLevel++;
 
-        // Faster resource -> energy conversion
-        convertInterval = Mathf.Max(
-            0.1f,
-            convertInterval - convertIntervalReduction
-        );
-
-        // Energy lasts longer
+        convertInterval = Mathf.Max(0.1f, convertInterval - convertIntervalReduction);
         energyDecayInterval += energyDecayIntervalIncrease;
-
-        // Increase cost for the next upgrade
         resourcesRequired += upgradeCostIncrease;
 
         UpdateUI();
 
-        Debug.Log($"[{resourceType} Pump] upgraded to level {upgradeLevel}. " + $"Conversion: {convertInterval}s, " + $"Decay: {energyDecayInterval}s");
+        Debug.Log($"[{resourceType} Pump] upgraded to level {upgradeLevel}. Conversion: {convertInterval}s, Decay: {energyDecayInterval}s");
     }
 
     private void OnDestroy()
     {
         if (btnDepositOne != null) btnDepositOne.onClick.RemoveAllListeners();
-        if (btnDepositTen != null) btnDepositTen.onClick.RemoveAllListeners(); 
+        if (btnDepositTen != null) btnDepositTen.onClick.RemoveAllListeners();
         if (upgradeButton != null) upgradeButton.onClick.RemoveAllListeners();
     }
 }
