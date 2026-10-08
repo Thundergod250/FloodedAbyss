@@ -8,5 +8,13 @@ public class StructurePump : Item
 
         // 2. Reference UiBuilding modal instance
         UiApexPump apexPumpModal = GameManager.Instance.uiController.GetModal<UiApexPump>(UIController.UIState.ApexPump);
+
+        // 3. Check if WaterForecast is available, if not run it
+        WaterForecast waterForecast = GameManager.Instance.uiController.GetComponentInChildren<WaterForecast>();
+
+        if (waterForecast != null)
+        {
+            waterForecast.EnableTimeline();
+        }
     }
 }
