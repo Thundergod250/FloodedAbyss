@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class UiApexPump : UiModals
 {
@@ -18,7 +19,7 @@ public class UiApexPump : UiModals
             GameManager.Instance.ApexPump.OnPumpStatesRecalculated += HandlePumpStatesRecalculated;
 
             // Hand over the panels to the core logic script to set up data listeners & initial water level
-            GameManager.Instance.ApexPump.RegisterPanelListeners(resourcePanels);
+            StartCoroutine(RegisterDelay());
         }
         else
         {
@@ -99,5 +100,12 @@ public class UiApexPump : UiModals
             GameManager.Instance.ApexPump.OnPanelActiveStateChanged -= HandlePanelActiveStateChanged;
             GameManager.Instance.ApexPump.OnPumpStatesRecalculated -= HandlePumpStatesRecalculated;
         }
+    }
+
+    private IEnumerator RegisterDelay()
+    {
+        yield return new WaitForSeconds(0.25f);
+
+        GameManager.Instance.ApexPump.RegisterPanelListeners(resourcePanels);
     }
 }
