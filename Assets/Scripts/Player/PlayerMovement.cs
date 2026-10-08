@@ -10,6 +10,11 @@ public class PlayerMovement : MonoBehaviour
     public float maxFallSpeed = -9.81f;
     public float runSpeed = 8f;
 
+    [Header("Movement-Climbing (Minecraft Style)")]
+    public float climbSpeed = 3.5f;
+    public bool isClimbing;
+    private int ladderTriggerCount = 0;
+
     [Header("Movement-Water")]
     public float underwaterMoveSpeed;
     public float swimUpSpeed = 5f;
@@ -48,22 +53,39 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         MovePlayer();
-        if (isSwimming)
+
+        if (isClimbing)
+        {
+
+        }
+        else if (isSwimming)
         {
             ApplySwimming();
             stamina.DrainSwimming();
             oxygen.DrainSwimSprint();
         }
         else
+        {
             ApplyGravity();
+        }
     }
 
     private void MovePlayer()
     {
         if (controller == null || controller.MoveAction == null) return;
 
-        // Ignore movement input if gameplay controls are inactive (e.g. UI modal open)
         Vector2 input = controller.IsInputActive ? controller.MoveAction.ReadValue<Vector2>() : Vector2.zero;
+
+        if (isClimbing)
+        {
+            velocity.y = input.y * climbSpeed;
+
+            Vector3 horizontalMove = transform.right * (input.x * moveSpeed);
+
+            Vector3 climbMove = horizontalMove + Vector3.up * velocity.y;
+            characterController.Move(climbMove * Time.deltaTime);
+            return;
+        }
 
         Vector3 move =
             transform.right * input.x +
@@ -101,6 +123,23 @@ public class PlayerMovement : MonoBehaviour
             velocity.y = Mathf.Max(velocity.y, maxFallSpeed);
         }
     }
+
+    #region Ladder-Related
+    public void RegisterLadder()
+    {
+        ladderTriggerCount++;
+        isClimbing = true;
+    }
+
+    public void UnregisterLadder()
+    {
+        ladderTriggerCount = Mathf.Max(0, ladderTriggerCount - 1);
+        if (ladderTriggerCount == 0)
+        {
+            isClimbing = false;
+        }
+    }
+    #endregion
 
     #region Swimming-Related
     private void ApplySwimming()
@@ -161,7 +200,13 @@ public class PlayerMovement : MonoBehaviour
         if (controller != null && !controller.IsInputActive)
             return;
 
-        // Normal ground jump
+        if (isClimbing)
+        {
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            characterController.Move(Vector3.up * velocity.y * Time.deltaTime);
+            return;
+        }
+
         if (characterController.isGrounded)
         {
             if (stamina.UseJump())
@@ -173,12 +218,10 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        // Jump out of water when near the surface
         if (isSwimming && IsAtWaterSurface())
         {
             velocity.y = Mathf.Sqrt(surfaceJumpHeight * -2f * gravity);
 
-            // Stop swimming so gravity takes over
             isSwimming = false;
             wasSwimSprinting = false;
 

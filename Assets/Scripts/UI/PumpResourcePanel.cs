@@ -12,6 +12,7 @@ public class PumpResourcePanel : MonoBehaviour
     [SerializeField] private Button btnDepositOne;
     [SerializeField] private Button btnDepositTen;
     [SerializeField] private Button upgradeButton;
+    [SerializeField] private Button thresholdUpgradeButton;
 
     [Header("UI Displays")]
     [SerializeField] private TMP_Text txtResourceDeposited;
@@ -31,7 +32,6 @@ public class PumpResourcePanel : MonoBehaviour
     [SerializeField] private int maxUpgradeLevel = 3;
 
     private int upgradeLevel = 0;
-
     private int depositedResource = 0;
     private int currentEnergy = 0;
 
@@ -39,6 +39,7 @@ public class PumpResourcePanel : MonoBehaviour
     private float decayTimer = 0f;
 
     private PlayerResources playerResources;
+    private UiApexPump parentUiApexPump;
 
     public event Action<PumpResourcePanel, bool> OnActiveStateChanged;
 
@@ -49,10 +50,12 @@ public class PumpResourcePanel : MonoBehaviour
     public void Initialize(PlayerResources resources)
     {
         playerResources = resources;
+        parentUiApexPump = GetComponentInParent<UiApexPump>();
 
         if (btnDepositOne != null) btnDepositOne.onClick.AddListener(() => DepositResource(1));
         if (btnDepositTen != null) btnDepositTen.onClick.AddListener(() => DepositResource(10));
         if (upgradeButton != null) upgradeButton.onClick.AddListener(HandleUpgrade);
+        if (thresholdUpgradeButton != null) thresholdUpgradeButton.onClick.AddListener(HandleThresholdUpgrade);
 
         UpdateUI();
     }
@@ -92,13 +95,10 @@ public class PumpResourcePanel : MonoBehaviour
                 depositedResource--;
 
                 bool wasActiveBefore = IsActive;
-
-                // Increment energy before evaluating active state change
                 currentEnergy++;
 
                 if (!wasActiveBefore && IsActive)
                 {
-                    Debug.Log($"[{resourceType} Pump] is now ACTIVE!");
                     OnActiveStateChanged?.Invoke(this, true);
                 }
 
@@ -121,12 +121,10 @@ public class PumpResourcePanel : MonoBehaviour
                 decayTimer = 0f;
                 bool wasActiveBefore = IsActive;
 
-                // Decrement energy before evaluating state change
                 currentEnergy--;
 
                 if (wasActiveBefore && !IsActive)
                 {
-                    Debug.Log($"[{resourceType} Pump] is now INACTIVE!");
                     OnActiveStateChanged?.Invoke(this, false);
                 }
 
@@ -144,21 +142,24 @@ public class PumpResourcePanel : MonoBehaviour
         if (txtResourceDeposited != null) txtResourceDeposited.text = depositedResource.ToString();
         if (txtEnergyValue != null) txtEnergyValue.text = currentEnergy.ToString();
         if (txtUpgradeResourcesRequired != null) txtUpgradeResourcesRequired.text = resourcesRequired.ToString() + " " + resourceType.ToString();
-        if (txtUpgradeResourcesRequired != null) txtPumpLevel.text = "Pump Level: " + upgradeLevel.ToString();
+        if (txtPumpLevel != null) txtPumpLevel.text = "Pump Level: " + upgradeLevel.ToString();
     }
 
     private void HandleUpgrade()
     {
-        if (playerResources == null)
-            return;
+        if (playerResources == null) return;
 
         if (upgradeLevel >= maxUpgradeLevel)
         {
-            upgradeButton.GetComponent<Image>().color = Color.gray;
-            upgradeButton.onClick.RemoveListener(HandleUpgrade);
-            upgradeButton.GetComponent<Button>().enabled = false;
+            if (upgradeButton != null)
+            {
+                var img = upgradeButton.GetComponent<Image>();
+                if (img != null) img.color = Color.gray;
+                upgradeButton.onClick.RemoveListener(HandleUpgrade);
+                upgradeButton.enabled = false;
+            }
             resourcesRequired = 0;
-            UpdateUI(); 
+            UpdateUI();
             return;
         }
 
@@ -168,32 +169,46 @@ public class PumpResourcePanel : MonoBehaviour
             return;
         }
 
-        if (!playerResources.SpendResource(resourceType, resourcesRequired))
-            return;
+        if (!playerResources.SpendResource(resourceType, resourcesRequired)) return;
 
         upgradeLevel++;
 
-        // Faster resource -> energy conversion
-        convertInterval = Mathf.Max(
-            0.1f,
-            convertInterval - convertIntervalReduction
-        );
-
-        // Energy lasts longer
+        convertInterval = Mathf.Max(0.1f, convertInterval - convertIntervalReduction);
         energyDecayInterval += energyDecayIntervalIncrease;
-
-        // Increase cost for the next upgrade
         resourcesRequired += upgradeCostIncrease;
 
         UpdateUI();
+    }
 
-        Debug.Log($"[{resourceType} Pump] upgraded to level {upgradeLevel}. " + $"Conversion: {convertInterval}s, " + $"Decay: {energyDecayInterval}s");
+    public void HandleThresholdUpgrade()
+    {
+        if (GameManager.Instance == null || GameManager.Instance.playerController == null) return;
+
+        PlayerStats stats = GameManager.Instance.playerController.GetComponent<PlayerStats>();
+        if (stats == null) return;
+
+        // Route the threshold upgrade directly through PlayerStats so it integrates into your central hub
+        switch (resourceType)
+        {
+            case ResourceType.Wood: stats.UpgradeWoodPumpThreshold(); break;
+            case ResourceType.Stone: stats.UpgradeStonePumpThreshold(); break;
+            case ResourceType.Copper: stats.UpgradeCopperPumpThreshold(); break;
+            case ResourceType.Iron: stats.UpgradeIronPumpThreshold(); break;
+            case ResourceType.Gold: stats.UpgradeGoldPumpThreshold(); break;
+        }
+
+        // Recalculate water levels using the active panel list
+        if (GameManager.Instance.ApexPump != null && parentUiApexPump != null)
+        {
+            GameManager.Instance.ApexPump.RecalculateWaterLevelBasedOnPanels(parentUiApexPump.ResourcePanels);
+        }
     }
 
     private void OnDestroy()
     {
         if (btnDepositOne != null) btnDepositOne.onClick.RemoveAllListeners();
-        if (btnDepositTen != null) btnDepositTen.onClick.RemoveAllListeners(); 
+        if (btnDepositTen != null) btnDepositTen.onClick.RemoveAllListeners();
         if (upgradeButton != null) upgradeButton.onClick.RemoveAllListeners();
+        if (thresholdUpgradeButton != null) thresholdUpgradeButton.onClick.RemoveAllListeners();
     }
 }
