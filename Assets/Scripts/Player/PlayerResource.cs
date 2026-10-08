@@ -8,11 +8,9 @@ public enum ResourceType
     Stone,
     Wood,
     Gold,
-    Food,
-    Tin,
     Copper,
     Iron
-}
+} // Removed Tin, Food, 
 
 public class PlayerResources : MonoBehaviour
 {

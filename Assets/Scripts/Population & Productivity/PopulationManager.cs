@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -9,6 +10,7 @@ public class PopulationManager : MonoBehaviour
     [SerializeField] private int totalHousingCapacity = 0;
     [SerializeField] private int totalPopulation = 0;
     [SerializeField] private int assignedPopulation = 0;
+    [SerializeField] private TextMeshProUGUI totalHousingCapacityText;
 
     [Header("Global Happiness (0.0 to 1.0)")]
     [Range(0f, 1f)]
@@ -38,6 +40,11 @@ public class PopulationManager : MonoBehaviour
     private void Start()
     {
         RecalculateAllHousingCapacity();
+    }
+
+    private void Update()
+    {
+        totalHousingCapacityText.text = "Total housing capacity: " + totalHousingCapacity;
     }
 
     private void OnDestroy()

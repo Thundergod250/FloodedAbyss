@@ -47,11 +47,11 @@ public class UIEventManager : UiModals
             case ResourceType.Gold:
                 return goldEvents;
 
-            case ResourceType.Food:
+            /*case ResourceType.Food:
                 return foodEvents;
 
             case ResourceType.Tin:
-                return tinEvents;
+                return tinEvents;*/
 
             case ResourceType.Copper:
                 return copperEvents;

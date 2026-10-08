@@ -43,7 +43,7 @@ public class UIDebug : MonoBehaviour
         BindPlayerReferences();
 
         InitializeUI();
-        InitializeStatsUI();
+      //  InitializeStatsUI();
         RefreshStatsUI(); // Ensure fresh state on startup
 
         fpsTimeLeft = fpsUpdateInterval;
