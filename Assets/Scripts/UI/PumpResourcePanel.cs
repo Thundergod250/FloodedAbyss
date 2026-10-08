@@ -78,21 +78,29 @@ public class PumpResourcePanel : MonoBehaviour
         {
             int amountToReturn = Mathf.Min(-amount, depositedResource);
 
-    if (amountToReturn > 0)
-    {
-        depositedResource -= amountToReturn;
-        playerResources.AddResource(resourceType, amountToReturn);
-    }
+            if (amountToReturn > 0)
+            {
+                depositedResource -= amountToReturn;
+                playerResources.AddResource(resourceType, amountToReturn);
+            }
 
-    UpdateUI();
-    return;
+            UpdateUI();
+            return;
         }
 
         if (playerResources.GetResource(resourceType) >= amount)
         {
             if (playerResources.SpendResource(resourceType, amount))
             {
+                bool wasEmpty = depositedResource <= 0;
+
                 depositedResource += amount;
+
+                if (wasEmpty)
+                {
+                    StartWaterForecast();
+                }
+
                 UpdateUI();
             }
         }
@@ -228,5 +236,21 @@ public class PumpResourcePanel : MonoBehaviour
         if (btnDepositTen != null) btnDepositTen.onClick.RemoveAllListeners();
         if (upgradeButton != null) upgradeButton.onClick.RemoveAllListeners();
         if (thresholdUpgradeButton != null) thresholdUpgradeButton.onClick.RemoveAllListeners();
+    }
+
+    private void StartWaterForecast()
+    {
+        if (GameManager.Instance == null)
+            return;
+
+        WaterForecast waterForecast = GameManager.Instance.uiController.GetComponentInChildren<WaterForecast>();
+
+        if (waterForecast == null)
+        {
+            Debug.LogWarning("WaterForecast is not available.");
+            return;
+        }
+
+        waterForecast.EnableTimeline();
     }
 }
