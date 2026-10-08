@@ -54,7 +54,11 @@ public class HousingStructure : Item
     [SerializeField] private ResourceType repairCostType = ResourceType.Wood;
     [SerializeField] private int repairCost = 20;
 
-    public bool IsSubmerged =>  waterLevel != null &&  waterLevel.CurrentWaterHeight >= this.transform.position.y;
+    [Header("Water Models")]
+    [SerializeField] private GameObject normalModel;
+    [SerializeField] private GameObject underwaterModel;
+
+    public bool IsSubmerged => waterLevel != null && waterLevel.CurrentWaterHeight >= this.transform.position.y;
     public bool IsBroken => isBroken;
 
     private WaterLevel waterLevel;
@@ -94,6 +98,12 @@ public class HousingStructure : Item
 
         RegisterHousing();
     }
+    private void Update()
+    {
+        UpdateWaterState();
+        UpdateWaterModel(); 
+    }
+
     private void OnDisable()
     {
         UnregisterHousing();
@@ -283,7 +293,7 @@ public class HousingStructure : Item
 
         isBroken = broken;
 
-        // Update PopulationManager immediately
+        // Keep PopulationManager synchronized.
         SyncCapacityWithManager();
 
         Debug.Log(
@@ -299,7 +309,18 @@ public class HousingStructure : Item
 
     public void FixBuilding()
     {
+        if (IsSubmerged)
+        {
+            Debug.Log($"[{gameObject.name}] Cannot fix building while submerged.");
+            return;
+        }
+
         SetBroken(false);
+
+        normalModel.SetActive(true);
+        underwaterModel.SetActive(false);
+
+        Debug.Log($"[{gameObject.name}] Building fixed.");
     }
 
     private void ShowRepairPrompt()
@@ -378,5 +399,31 @@ public class HousingStructure : Item
         );
 
         return true;
+    }
+
+    private void UpdateWaterModel()
+    {
+        if (normalModel == null || underwaterModel == null)
+            return;
+
+        // Only broken buildings use the underwater model
+        if (isBroken)
+        {
+            normalModel.SetActive(false);
+            underwaterModel.SetActive(true);
+        }
+        else
+        {
+            normalModel.SetActive(true);
+            underwaterModel.SetActive(false);
+        }
+    }
+
+    private void UpdateWaterState()
+    {
+        if (IsSubmerged && !isBroken)
+        {
+            SetBroken(true);
+        }
     }
 }
