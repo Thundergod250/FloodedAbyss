@@ -106,9 +106,12 @@ public class PlayerMovement : MonoBehaviour
                 currentSpeed = moveSpeed;
         }
 
-        Vector3 finalMove =
-            move * currentSpeed +
-            Vector3.up * velocity.y;
+        Vector3 finalMove = move * currentSpeed;
+
+        if (!isSwimming)
+        {
+            finalMove += Vector3.up * velocity.y;
+        }
 
         characterController.Move(finalMove * Time.deltaTime);
     }
@@ -144,7 +147,8 @@ public class PlayerMovement : MonoBehaviour
     #region Swimming-Related
     private void ApplySwimming()
     {
-        if (waterSurface == null) return;
+        if (waterSurface == null)
+            return;
 
         bool jumpHeld =
             controller.IsInputActive &&
@@ -178,18 +182,18 @@ public class PlayerMovement : MonoBehaviour
 
         wasSwimSprinting = swimSprinting;
 
-        characterController.Move(velocity * Time.deltaTime);
+        characterController.Move(Vector3.up * velocity.y * Time.deltaTime);
     }
 
     private bool IsAtWaterSurface()
     {
-        if (waterSurface == null)
+        if (waterSurface == null || characterController == null)
             return false;
 
         float surfaceY = waterSurface.position.y;
-        float playerY = transform.position.y;
+        float playerTop = characterController.bounds.max.y;
 
-        return playerY >= surfaceY - surfaceCheckDistance;
+        return playerTop >= surfaceY - surfaceCheckDistance;
     }
 
     public void SetWaterSurface(Transform surface) => waterSurface = surface;
@@ -200,6 +204,23 @@ public class PlayerMovement : MonoBehaviour
         if (controller != null && !controller.IsInputActive)
             return;
 
+        // Swimming
+        if (isSwimming)
+        {
+            if (IsAtWaterSurface())
+            {
+                isSwimming = false;
+                wasSwimSprinting = false;
+
+                velocity.y = Mathf.Sqrt(surfaceJumpHeight * -2f * gravity);
+
+                Debug.Log("Surface Jump");
+            }
+
+            return;
+        }
+
+        // Climbing
         if (isClimbing)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
@@ -207,25 +228,12 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
+        // Ground jump - NO STAMINA COST
         if (characterController.isGrounded)
         {
-            if (stamina.UseJump())
-            {
-                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-                Debug.Log("Ground Jump");
-            }
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
 
-            return;
-        }
-
-        if (isSwimming && IsAtWaterSurface())
-        {
-            velocity.y = Mathf.Sqrt(surfaceJumpHeight * -2f * gravity);
-
-            isSwimming = false;
-            wasSwimSprinting = false;
-
-            Debug.Log("Surface Jump");
+            Debug.Log("Ground Jump");
         }
     }
 }
