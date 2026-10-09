@@ -10,7 +10,9 @@ public class PumpResourcePanel : MonoBehaviour
 
     [Header("UI Controls")]
     [SerializeField] private Button btnDepositOne;
+    [SerializeField] private Button btnDepositMinusOne;
     [SerializeField] private Button btnDepositTen;
+    [SerializeField] private Button btnDepositMinusTen;
     [SerializeField] private Button upgradeButton;
     [SerializeField] private Button thresholdUpgradeButton;
 
@@ -53,7 +55,9 @@ public class PumpResourcePanel : MonoBehaviour
         parentUiApexPump = GetComponentInParent<UiApexPump>();
 
         if (btnDepositOne != null) btnDepositOne.onClick.AddListener(() => DepositResource(1));
+        if (btnDepositMinusOne != null) btnDepositMinusOne.onClick.AddListener(() => DepositResource(-1));
         if (btnDepositTen != null) btnDepositTen.onClick.AddListener(() => DepositResource(10));
+        if (btnDepositMinusTen != null) btnDepositMinusTen.onClick.AddListener(() => DepositResource(-10));
         if (upgradeButton != null) upgradeButton.onClick.AddListener(HandleUpgrade);
         if (thresholdUpgradeButton != null) thresholdUpgradeButton.onClick.AddListener(HandleThresholdUpgrade);
 
@@ -70,11 +74,33 @@ public class PumpResourcePanel : MonoBehaviour
     {
         if (playerResources == null) return;
 
+        if (amount < 0)
+        {
+            int amountToReturn = Mathf.Min(-amount, depositedResource);
+
+            if (amountToReturn > 0)
+            {
+                depositedResource -= amountToReturn;
+                playerResources.AddResource(resourceType, amountToReturn);
+            }
+
+            UpdateUI();
+            return;
+        }
+
         if (playerResources.GetResource(resourceType) >= amount)
         {
             if (playerResources.SpendResource(resourceType, amount))
             {
+                bool wasEmpty = depositedResource <= 0;
+
                 depositedResource += amount;
+
+                if (wasEmpty)
+                {
+                    StartWaterForecast();
+                }
+
                 UpdateUI();
             }
         }
@@ -142,7 +168,7 @@ public class PumpResourcePanel : MonoBehaviour
         if (txtResourceDeposited != null) txtResourceDeposited.text = depositedResource.ToString();
         if (txtEnergyValue != null) txtEnergyValue.text = currentEnergy.ToString();
         if (txtUpgradeResourcesRequired != null) txtUpgradeResourcesRequired.text = resourcesRequired.ToString() + " " + resourceType.ToString();
-        if (txtPumpLevel != null) txtPumpLevel.text = "Pump Level: " + upgradeLevel.ToString();
+        if (txtPumpLevel != null) txtPumpLevel.text = "Level: " + upgradeLevel.ToString();
     }
 
     private void HandleUpgrade()
@@ -210,5 +236,21 @@ public class PumpResourcePanel : MonoBehaviour
         if (btnDepositTen != null) btnDepositTen.onClick.RemoveAllListeners();
         if (upgradeButton != null) upgradeButton.onClick.RemoveAllListeners();
         if (thresholdUpgradeButton != null) thresholdUpgradeButton.onClick.RemoveAllListeners();
+    }
+
+    private void StartWaterForecast()
+    {
+        if (GameManager.Instance == null)
+            return;
+
+        WaterForecast waterForecast = GameManager.Instance.uiController.GetComponentInChildren<WaterForecast>();
+
+        if (waterForecast == null)
+        {
+            Debug.LogWarning("WaterForecast is not available.");
+            return;
+        }
+
+        waterForecast.EnableTimeline();
     }
 }

@@ -24,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
     public float surfaceCheckDistance = 0.5f;
     public float surfaceJumpHeight = 2f;
 
+    private bool surfaceJumping;
     private float currentSpeed;
     private Transform waterSurface;
     private PlayerController controller;
@@ -56,7 +57,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (isClimbing)
         {
-
+            velocity.y = 0f;
         }
         else if (isSwimming)
         {
@@ -106,9 +107,12 @@ public class PlayerMovement : MonoBehaviour
                 currentSpeed = moveSpeed;
         }
 
-        Vector3 finalMove =
-            move * currentSpeed +
-            Vector3.up * velocity.y;
+        Vector3 finalMove = move * currentSpeed;
+
+        if (!isSwimming)
+        {
+            finalMove += Vector3.up * velocity.y;
+        }
 
         characterController.Move(finalMove * Time.deltaTime);
     }
@@ -116,7 +120,11 @@ public class PlayerMovement : MonoBehaviour
     private void ApplyGravity()
     {
         if (characterController.isGrounded)
+        {
             velocity.y = -2f;
+            surfaceJumping = false;
+        }
+
         else
         {
             velocity.y += gravity * Time.deltaTime;
@@ -144,7 +152,8 @@ public class PlayerMovement : MonoBehaviour
     #region Swimming-Related
     private void ApplySwimming()
     {
-        if (waterSurface == null) return;
+        if (waterSurface == null)
+            return;
 
         bool jumpHeld =
             controller.IsInputActive &&
@@ -178,21 +187,23 @@ public class PlayerMovement : MonoBehaviour
 
         wasSwimSprinting = swimSprinting;
 
-        characterController.Move(velocity * Time.deltaTime);
+        characterController.Move(Vector3.up * velocity.y * Time.deltaTime);
     }
+    public void SetWaterSurface(Transform surface) => waterSurface = surface;
 
     private bool IsAtWaterSurface()
     {
         if (waterSurface == null)
             return false;
 
-        float surfaceY = waterSurface.position.y;
+        float waterY = waterSurface.position.y;
         float playerY = transform.position.y;
 
-        return playerY >= surfaceY - surfaceCheckDistance;
+        Debug.Log($"Player Y: {playerY} | Water Y: {waterY}");
+
+        return playerY >= waterY - surfaceCheckDistance;
     }
 
-    public void SetWaterSurface(Transform surface) => waterSurface = surface;
     #endregion
 
     private void Jump(InputAction.CallbackContext ctx)
@@ -202,30 +213,46 @@ public class PlayerMovement : MonoBehaviour
 
         if (isClimbing)
         {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            characterController.Move(Vector3.up * velocity.y * Time.deltaTime);
+            velocity.y = Mathf.Sqrt(
+                jumpHeight * -2f * gravity
+            );
+
+            characterController.Move(
+                Vector3.up * velocity.y * Time.deltaTime
+            );
+
             return;
         }
 
+        if (isSwimming && characterController.isGrounded)     // Don't allow jumping when underwater and touching the floor
+        {
+            return;
+        }
+
+        // Ground jump
         if (characterController.isGrounded)
         {
             if (stamina.UseJump())
             {
-                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+                velocity.y = Mathf.Sqrt(
+                    jumpHeight * -2f * gravity
+                );
+
                 Debug.Log("Ground Jump");
             }
-
-            return;
         }
 
-        if (isSwimming && IsAtWaterSurface())
+       if (isSwimming && IsAtWaterSurface()) // Jump out of water
         {
-            velocity.y = Mathf.Sqrt(surfaceJumpHeight * -2f * gravity);
+            if (stamina.UseJump())
+            {
+                velocity.y = Mathf.Sqrt(surfaceJumpHeight * -2f * gravity);
 
-            isSwimming = false;
-            wasSwimSprinting = false;
+                isSwimming = false;
+                wasSwimSprinting = false;
 
-            Debug.Log("Surface Jump");
+                Debug.Log("Surface Jump!");
+            }
         }
     }
 }

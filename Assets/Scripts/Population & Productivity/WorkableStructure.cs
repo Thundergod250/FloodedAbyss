@@ -11,7 +11,7 @@ public class WorkableStructure : Item
     [SerializeField] private int assignedWorkers = 0;
 
     [Header("Production Settings")]
-    [SerializeField] private ResourceType outputResourceType = ResourceType.Food;
+    [SerializeField] private ResourceType outputResourceType = ResourceType.Wood;
     [SerializeField] private int baseOutputAmount = 5;
     [SerializeField] private float productionIntervalSeconds = 1f;
 

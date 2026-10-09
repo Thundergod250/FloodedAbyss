@@ -86,14 +86,14 @@ public class AutoMiner : WorkableStructure
         {
             maxWorkers = 2;
             targetResources.Add(ResourceType.Stone);
-            targetResources.Add(ResourceType.Tin);
+           // targetResources.Add(ResourceType.Tin);
             targetResources.Add(ResourceType.Copper);
         }
         else if (level == 2)
         {
             maxWorkers = 4;
             targetResources.Add(ResourceType.Stone);
-            targetResources.Add(ResourceType.Tin);
+           // targetResources.Add(ResourceType.Tin);
             targetResources.Add(ResourceType.Copper);
             targetResources.Add(ResourceType.Iron);
             targetResources.Add(ResourceType.Gold);
