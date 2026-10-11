@@ -7,12 +7,13 @@ public class UiModals : MonoBehaviour
     
     private CanvasGroup canvasGroup;
 
+    // Explicit boolean tracker for whether this modal is open
+    public bool IsOpen { get; private set; } = false;
+
     protected virtual void Awake()
     {
-        // Target the assigned ModalPrefab, or fallback to this GameObject
         GameObject targetGO = ModalPrefab != null ? ModalPrefab : gameObject;
 
-        // Auto-fetch CanvasGroup from target
         if (targetGO != null)
         {
             canvasGroup = targetGO.GetComponent<CanvasGroup>();
@@ -21,7 +22,20 @@ public class UiModals : MonoBehaviour
         }
     }
 
-    protected virtual void Start() => Initialize();
+    protected virtual void Start() 
+    {
+        // Force all modals except UIHUD to start closed
+        if (this is not UIHUD)
+        {
+            SetModalActive(false);
+        }
+        else
+        {
+            SetModalActive(true); // HUD stays open by default
+        }
+
+        Initialize();
+    }
 
     protected virtual void OnEnable() { }
     protected virtual void OnDisable() { }
@@ -29,10 +43,14 @@ public class UiModals : MonoBehaviour
 
     public virtual void SetModalActive(bool isActive)
     {
+        IsOpen = isActive; // Update our explicit tracker
+
         GameObject targetGO = ModalPrefab != null ? ModalPrefab : gameObject;
 
-        if (targetGO != null && !targetGO.activeSelf) 
+        if (isActive && targetGO != null && !targetGO.activeSelf) 
+        {
             targetGO.SetActive(true);
+        }
 
         if (canvasGroup != null)
         {

@@ -32,34 +32,65 @@ public class UIController : MonoBehaviour
     private void InitializeModals()
     {
         modalDictionary.Clear();
-        UiModals[] foundModals = GetComponents<UiModals>();
-
-        foreach (var modal in foundModals)
-        {
-            Type modalType = modal.GetType();
-            if (!modalDictionary.ContainsKey(modalType)) 
-                modalDictionary.Add(modalType, modal);
-        }
+        UiModals[] allComponents = GetComponents<UiModals>();
 
         PropertyInfo[] properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        
         foreach (var prop in properties)
         {
-            if (!prop.CanWrite) continue;
+            if (!prop.CanWrite || !typeof(UiModals).IsAssignableFrom(prop.PropertyType)) continue;
 
-            foreach (var modal in foundModals)
+            UiModals matchingModal = null;
+
+            foreach (var comp in allComponents)
             {
-                if (prop.PropertyType.IsAssignableFrom(modal.GetType()))
+                if (comp != null && prop.PropertyType.IsAssignableFrom(comp.GetType()))
                 {
-                    prop.SetValue(this, modal);
+                    matchingModal = comp;
                     break;
                 }
             }
+
+            if (matchingModal != null)
+            {
+                prop.SetValue(this, matchingModal);
+
+                Type modalType = matchingModal.GetType();
+                if (!modalDictionary.ContainsKey(modalType))
+                {
+                    modalDictionary.Add(modalType, matchingModal);
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[UIController] Public property '{prop.Name}' was declared, but no matching UiModals component was found on the GameObject!");
+            }
         }
+    }
+
+    // Helper using the explicit IsOpen boolean tracker
+    public UiModals GetCurrentlyOpenModal()
+    {
+        foreach (var kvp in modalDictionary)
+        {
+            if (kvp.Key != typeof(UIHUD) && kvp.Value != null && kvp.Value.IsOpen)
+            {
+                return kvp.Value;
+            }
+        }
+        return null;
     }
     
     public void OpenModal<T>() where T : UiModals
     {
         Type targetType = typeof(T);
+
+        UiModals openModal = GetCurrentlyOpenModal();
+        if (targetType != typeof(UIHUD) && openModal != null)
+        {
+            Debug.LogWarning($"[UIController] Cannot open {targetType.Name}. '{openModal.GetType().Name}' is already active and blocking input!");
+            return;
+        }
 
         CloseAllModals();
 
@@ -68,13 +99,16 @@ public class UIController : MonoBehaviour
             if (targetModal != null) 
             {
                 targetModal.SetModalActive(true);
-                if (targetType != typeof(UIHUD)) 
+
+                if (targetType != typeof(UIHUD))
+                {
                     SetMovementEnabled(false);
+                }
             }
         }
         else
         {
-            Debug.LogWarning($"[UIController] Tried to open modal of type {targetType.Name}, but it wasn't found on the UIController GameObject.");
+            Debug.LogWarning($"[UIController] Tried to open modal of type {targetType.Name}, but it wasn't found or declared on the UIController.");
         }
     }
 
@@ -91,7 +125,9 @@ public class UIController : MonoBehaviour
 
     private void SetMovementEnabled(bool isEnabled)
     {
-        if (GameManager.Instance != null && GameManager.Instance.InputManager != null) 
+        if (GameManager.Instance != null && GameManager.Instance.InputManager != null)
+        {
             GameManager.Instance.InputManager.SetMovementActive(isEnabled);
+        }
     }
 }
