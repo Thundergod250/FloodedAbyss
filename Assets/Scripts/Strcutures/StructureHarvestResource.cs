@@ -5,9 +5,12 @@ public class StructureHarvestResource : Structures
 {
     [Header("Structure Info")]
     [SerializeField] private string structureTitle = "Wood Source";
-    [SerializeField] private int laborCost = 5;
-    [SerializeField] private string productionDescription = "Producing 1 Wood";
-    [SerializeField] private float productionDuration = 3f; // Better name for Working Time
+    [SerializeField] private int laborCost = 1;
+    [SerializeField] private float productionDuration = 3f;
+
+    [Header("Production Reward")]
+    [SerializeField] private ResourceData resourceToProduce; // Drag your Timber asset here in Inspector
+    [SerializeField] private int productionAmount = 1;
 
     private bool isWorking = false;
 
@@ -15,17 +18,11 @@ public class StructureHarvestResource : Structures
     {
         if (isWorking) return;
 
-        // Open UI and pass structure data
         var harvestUI = GameManager.Instance.uiController.UiResourceHarvest;
         if (harvestUI != null)
         {
             harvestUI.Setup(this);
             GameManager.Instance.uiController.OpenModal<UiResourceHarvest>();
-            Debug.LogWarning($"[StructureHarvestResource] Harvesting {structureTitle}");
-        }
-        else
-        {
-            Debug.LogWarning("MISSING HARVEST RESOURCE");
         }
     }
 
@@ -38,7 +35,6 @@ public class StructureHarvestResource : Structures
 
         if (workerMgr == null) return;
 
-        // Check if player has enough workers
         if (workerMgr.CurrentWorker < laborCost)
         {
             if (harvestUI != null)
@@ -49,7 +45,6 @@ public class StructureHarvestResource : Structures
         // Consume workers
         workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker - laborCost);
         
-        // Begin production loop
         StartCoroutine(HarvestRoutine());
     }
 
@@ -70,8 +65,11 @@ public class StructureHarvestResource : Structures
             yield return null;
         }
 
-        // Give Product (Placeholder logic: trigger reward or inventory add here)
-        Debug.Log($"[StructureHarvestResource] Produced: {productionDescription}");
+        // Give the resource via ResourceManager!
+        if (resourceToProduce != null && GameManager.Instance.ResourceManager != null)
+        {
+            GameManager.Instance.ResourceManager.AddResource(resourceToProduce, productionAmount);
+        }
 
         // Return workers
         var workerMgr = GameManager.Instance.WorkerManager;
@@ -86,11 +84,11 @@ public class StructureHarvestResource : Structures
             GameManager.Instance.uiController.CloseAllModals();
         }
 
-        // Despawn structure (Starter requirement)
+        // Despawn structure
         Destroy(gameObject);
     }
 
     public string StructureTitle => structureTitle;
     public int LaborCost => laborCost;
-    public string ProductionDescription => productionDescription;
+    public string ProductionDescription => $"Producing {productionAmount} {(resourceToProduce != null ? resourceToProduce.ResourceName : "Resource")}";
 }
