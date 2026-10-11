@@ -47,7 +47,7 @@ public class ResourceSpawner : MonoBehaviour
 
             GameObject spawnedResource = Pool.Instantiate(objectsToSpawn[randomIndex], randomPoint, Quaternion.identity, GameManager.Instance.objectPooling.ParentObject);
 
-            spawnedResource.GetComponent<FloatingObject>().targetSurface = targetSurface;
+            //spawnedResource.GetComponent<FloatingObject>().targetSurface = targetSurface;
         }
     }
 

@@ -113,19 +113,8 @@ public class UIController : MonoBehaviour
         }
 
         bool isGameplay = (newState == UIState.HUD);
-        SetCursorState(!isGameplay);
-
         if (playerController != null)
             playerController.SetInputActive(isGameplay);
-    }
-
-    private void SetCursorState(bool showCursor)
-    {
-        // Passes the boolean directly into CursorManager
-        if (GameManager.Instance != null && GameManager.Instance.CursorManager != null)
-        {
-            GameManager.Instance.CursorManager.SetCursorVisibility(showCursor);
-        }
     }
 
     public void CloseAllModals() => OpenModal(UIState.HUD);

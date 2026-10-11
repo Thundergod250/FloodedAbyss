@@ -20,8 +20,8 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (playerController != null)
         {
-            playerController.UseAction.started += UseItem;
-            playerController.InteractAction.started += Interact;
+            /*playerController.UseAction.started += UseItem;
+            playerController.InteractAction.started += Interact;*/
         }
     }
 
@@ -29,8 +29,8 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (playerController != null)
         {
-            playerController.UseAction.started -= UseItem;
-            playerController.InteractAction.started -= Interact; // Fixed unsubscribing the correct action
+            /*playerController.UseAction.started -= UseItem;
+            playerController.InteractAction.started -= Interact; // Fixed unsubscribing the correct action*/
         }
     }
 

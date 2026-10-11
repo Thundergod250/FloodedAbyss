@@ -1,49 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1986775053380764560
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6756701286763598072}
-  - component: {fileID: 1939215959640303786}
-  m_Layer: 0
-  m_Name: CursorManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6756701286763598072
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1986775053380764560}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3096870024065945765}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1939215959640303786
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1986775053380764560}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ba2c6960347dcf48b89814f037c3295, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CursorManager
 --- !u!1 &8026546904625221826
 GameObject:
   m_ObjectHideFlags: 0
@@ -79,6 +35,7 @@ Transform:
   - {fileID: 2143062266235653644}
   - {fileID: 46251871818415693}
   - {fileID: 6756701286763598072}
+  - {fileID: 6687409369842058616}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5441983127171556320
@@ -101,6 +58,7 @@ MonoBehaviour:
   SkillTreeController: {fileID: 4340592379193419187}
   InputManager: {fileID: 5687157944899032609}
   CursorManager: {fileID: 1939215959640303786}
+  ClickInteractor: {fileID: 3620686870736366550}
 --- !u!114 &4102502547340865364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -218,6 +176,79 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 533eb82b39f0616409a4417ea754ba8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InputManager
+--- !u!1001 &2736767527735753669
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3096870024065945765}
+    m_Modifications:
+    - target: {fileID: 4496988210179422293, guid: 8d913ec511be8ba4e8d9f2ce3ee4b7c5, type: 3}
+      propertyPath: m_Name
+      value: CursorManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 8664454630668462909, guid: 8d913ec511be8ba4e8d9f2ce3ee4b7c5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8664454630668462909, guid: 8d913ec511be8ba4e8d9f2ce3ee4b7c5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8664454630668462909, guid: 8d913ec511be8ba4e8d9f2ce3ee4b7c5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8664454630668462909, guid: 8d913ec511be8ba4e8d9f2ce3ee4b7c5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8664454630668462909, guid: 8d913ec511be8ba4e8d9f2ce3ee4b7c5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8664454630668462909, guid: 8d913ec511be8ba4e8d9f2ce3ee4b7c5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8664454630668462909, guid: 8d913ec511be8ba4e8d9f2ce3ee4b7c5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8664454630668462909, guid: 8d913ec511be8ba4e8d9f2ce3ee4b7c5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8664454630668462909, guid: 8d913ec511be8ba4e8d9f2ce3ee4b7c5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8664454630668462909, guid: 8d913ec511be8ba4e8d9f2ce3ee4b7c5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8d913ec511be8ba4e8d9f2ce3ee4b7c5, type: 3}
+--- !u!114 &1939215959640303786 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4545127309985944431, guid: 8d913ec511be8ba4e8d9f2ce3ee4b7c5, type: 3}
+  m_PrefabInstance: {fileID: 2736767527735753669}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ba2c6960347dcf48b89814f037c3295, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CursorManager
+--- !u!4 &6756701286763598072 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8664454630668462909, guid: 8d913ec511be8ba4e8d9f2ce3ee4b7c5, type: 3}
+  m_PrefabInstance: {fileID: 2736767527735753669}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6332090520443365838
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -311,3 +342,76 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94b7914c2fb331c4ea37314f584a5fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SkillTreeController
+--- !u!1001 &7123864120500686433
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3096870024065945765}
+    m_Modifications:
+    - target: {fileID: 3696313776117249054, guid: bf51ca3d4a638164b912de15b21621e2, type: 3}
+      propertyPath: m_Name
+      value: ClickInteractor
+      objectReference: {fileID: 0}
+    - target: {fileID: 4473059384352967449, guid: bf51ca3d4a638164b912de15b21621e2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4473059384352967449, guid: bf51ca3d4a638164b912de15b21621e2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4473059384352967449, guid: bf51ca3d4a638164b912de15b21621e2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4473059384352967449, guid: bf51ca3d4a638164b912de15b21621e2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4473059384352967449, guid: bf51ca3d4a638164b912de15b21621e2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4473059384352967449, guid: bf51ca3d4a638164b912de15b21621e2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4473059384352967449, guid: bf51ca3d4a638164b912de15b21621e2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4473059384352967449, guid: bf51ca3d4a638164b912de15b21621e2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4473059384352967449, guid: bf51ca3d4a638164b912de15b21621e2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4473059384352967449, guid: bf51ca3d4a638164b912de15b21621e2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bf51ca3d4a638164b912de15b21621e2, type: 3}
+--- !u!114 &3620686870736366550 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5828307913599444407, guid: bf51ca3d4a638164b912de15b21621e2, type: 3}
+  m_PrefabInstance: {fileID: 7123864120500686433}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2488ac7c7dd5f3c4fac6cb365b8c0e6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ClickInteractor
+--- !u!4 &6687409369842058616 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4473059384352967449, guid: bf51ca3d4a638164b912de15b21621e2, type: 3}
+  m_PrefabInstance: {fileID: 7123864120500686433}
+  m_PrefabAsset: {fileID: 0}

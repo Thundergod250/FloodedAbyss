@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     public SkillTreeController SkillTreeController;
     public InputManager InputManager;
     public CursorManager CursorManager; 
+    public ClickInteractor ClickInteractor;
 
     private void Awake()
     {
