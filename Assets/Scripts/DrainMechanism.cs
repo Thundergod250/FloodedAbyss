@@ -47,9 +47,9 @@ public class DrainMechanism : Item
 
     private WaterLevel GetWaterLevel()
     {
-        if (GameManager.Instance != null && GameManager.Instance.waterLevel != null)
+        if (GameManager.Instance != null && GameManager.Instance.WaterLevel != null)
         {
-            return GameManager.Instance.waterLevel;
+            return GameManager.Instance.WaterLevel;
         }
         return FindAnyObjectByType<WaterLevel>();
     }

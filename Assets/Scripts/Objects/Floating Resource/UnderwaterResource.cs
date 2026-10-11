@@ -35,9 +35,9 @@ public class UnderwaterResource : MonoBehaviour
     private void FindWaterLevelReference()
     {
         // 1. Check GameManager reference
-        if (GameManager.Instance != null && GameManager.Instance.waterLevel != null)
+        if (GameManager.Instance != null && GameManager.Instance.WaterLevel != null)
         {
-            waterLevel = GameManager.Instance.waterLevel;
+            waterLevel = GameManager.Instance.WaterLevel;
         }
         // 2. Fallback to scene search if GameManager reference is missing
         else if (waterLevel == null)

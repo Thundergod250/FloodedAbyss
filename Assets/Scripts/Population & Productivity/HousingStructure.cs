@@ -93,7 +93,7 @@ public class HousingStructure : Item
 
     private void Start()
     {
-        waterLevel = GameManager.Instance.waterLevel;
+        waterLevel = GameManager.Instance.WaterLevel;
 
         RegisterHousing();
     }

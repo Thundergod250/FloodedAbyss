@@ -100,7 +100,7 @@ public class ApexPump : MonoBehaviour
 
     public void RecalculateWaterLevelBasedOnPanels(List<PumpResourcePanel> panels)
     {
-        WaterLevel waterLevel = GameManager.Instance != null ? GameManager.Instance.waterLevel : null;
+        WaterLevel waterLevel = GameManager.Instance != null ? GameManager.Instance.WaterLevel : null;
 
         if (waterLevel == null)
         {

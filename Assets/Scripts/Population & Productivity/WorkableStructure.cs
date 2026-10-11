@@ -43,7 +43,7 @@ public class WorkableStructure : Item
     {
         if (GameManager.Instance != null)
         {
-            waterLevel = GameManager.Instance.waterLevel;
+            waterLevel = GameManager.Instance.WaterLevel;
         }
 
         productionCoroutine = StartCoroutine(ProductionCycleRoutine());

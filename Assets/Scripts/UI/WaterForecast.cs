@@ -33,7 +33,7 @@ public class WaterForecast : MonoBehaviour
 
     private void Start()
     {
-        level = GameManager.Instance.waterLevel;
+        level = GameManager.Instance.WaterLevel;
 
         if (level != null)
         {

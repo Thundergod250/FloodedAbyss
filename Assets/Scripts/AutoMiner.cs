@@ -43,7 +43,7 @@ public class AutoMiner : WorkableStructure
     {
         // Intentionally left blank to override base.Start()
         
-        waterLevel = GameManager.Instance.waterLevel;
+        waterLevel = GameManager.Instance.WaterLevel;
     }
 
     private void OnEnable()
