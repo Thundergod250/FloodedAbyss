@@ -40,22 +40,14 @@ public class UIEventManager : UiModals
         {
             case ResourceType.Stone:
                 return stoneEvents;
-
             case ResourceType.Wood:
                 return woodEvents;
-
             case ResourceType.Gold:
                 return goldEvents;
-
-            /*case ResourceType.Food:
+            case ResourceType.Food:
                 return foodEvents;
-
-            case ResourceType.Tin:
-                return tinEvents;*/
-
             case ResourceType.Copper:
                 return copperEvents;
-
             default:
                 return null;
         }
@@ -63,17 +55,12 @@ public class UIEventManager : UiModals
 
     protected override void Initialize()
     {
-        playerResources =GameManager.Instance.playerController.GetComponent<PlayerResources>();
+        playerResources = GameManager.Instance.playerController.GetComponent<PlayerResources>();
 
         foreach (ResourceType type in Enum.GetValues(typeof(ResourceType)))
         {
             resourceTimers[type] = 0f;
-
-            resourceTimerDurations[type] =
-                UnityEngine.Random.Range(
-                    minTimerDuration,
-                    maxTimerDuration
-                );
+            resourceTimerDurations[type] = UnityEngine.Random.Range(minTimerDuration, maxTimerDuration);
         }
     }
 
@@ -82,13 +69,11 @@ public class UIEventManager : UiModals
         if (eventOnCooldown)
         {
             eventCooldownTimer -= Time.deltaTime;
-
             if (eventCooldownTimer <= 0f)
             {
                 eventCooldownTimer = 0f;
                 eventOnCooldown = false;
             }
-
             return;
         }
 
@@ -108,14 +93,8 @@ public class UIEventManager : UiModals
                 if (resourceTimers[type] >= resourceTimerDurations[type])
                 {
                     ShowResourceUI(type);
-
                     resourceTimers[type] = 0f;
-
-                    resourceTimerDurations[type] =
-                        UnityEngine.Random.Range(
-                            minTimerDuration,
-                            maxTimerDuration
-                        );
+                    resourceTimerDurations[type] = UnityEngine.Random.Range(minTimerDuration, maxTimerDuration);
                 }
             }
             else
@@ -127,28 +106,16 @@ public class UIEventManager : UiModals
 
     private void ShowResourceUI(ResourceType type)
     {
-        if (eventOnCooldown)
-            return;
+        if (eventOnCooldown) return;
 
         List<ResourceEventsUI> events = GetEvents(type);
+        if (events == null || events.Count == 0) return;
 
-        if (events == null || events.Count == 0)
-        {
-            Debug.LogWarning($"No events assigned for {type}.");
-            return;
-        }
+        ResourceEventsUI selectedEvent = events[UnityEngine.Random.Range(0, events.Count)];
 
-        ResourceEventsUI selectedEvent =
-            events[UnityEngine.Random.Range(0, events.Count)];
-
-        playerResources.SpendResource(
-            selectedEvent.ResourceType,
-            selectedEvent.ResourceAmount
-        );
+        playerResources.SpendResource(selectedEvent.ResourceType, selectedEvent.ResourceAmount);
 
         eventText.text = selectedEvent.EventMessage;
-
-        // Use UiModals system
         GameManager.Instance.uiController.OpenModal(UIController.UIState.Event);
 
         eventOnCooldown = true;
