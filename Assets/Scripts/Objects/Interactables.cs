@@ -10,15 +10,25 @@ public class Interactables : MonoBehaviour
     [SerializeField] private UnityEvent onInteract;
 
     private Item item;
+    private Structures structure;
 
-    private void Awake() => item = GetComponent<Item>();
+    private void Awake() 
+    {
+        item = GetComponent<Item>();
+        structure = GetComponent<Structures>();
+    }
 
     public virtual void Interact()
     {
         onInteract?.Invoke();
         Debug.Log($"Interacted with {gameObject.name}");
 
+        // Activate Item if it exists on this GameObject
         if (item != null) 
             item.Activate();
+
+        // Activate Structure if it exists on this GameObject
+        if (structure != null) 
+            structure.Activate();
     }
 }

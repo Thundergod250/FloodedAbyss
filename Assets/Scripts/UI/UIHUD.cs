@@ -14,12 +14,12 @@ public class UIHUD : UiModals
         base.Initialize(); 
     }
 
-    private void OnEnable()
+    protected override void OnEnable()
     {
         StartCoroutine(ConnectToWorkerManagerRoutine());
     }
 
-    private void OnDisable()
+    protected override void OnDisable()
     {
         Unsubscribe();
     }

@@ -7,11 +7,12 @@ public class UIController : MonoBehaviour
     private Dictionary<Type, UiModals> modalDictionary = new();
 
     // Direct global properties for dot-notation access via GameManager.Instance.uiController.(SpecificUi)
-    public UIHUD uiHUD { get; private set; }
-    public UiUpgrade uiUpgrade { get; private set; }
-    public UIAutoFarm uiAutoFarm { get; private set; }
-    public UiApexPump uiApexPump { get; private set; }
-    public UiTrade uiTrade { get; private set; }
+    public UIHUD UiHUD { get; private set; }
+    public UiUpgrade UiUpgrade { get; private set; }
+    public UIAutoFarm UiAutoFarm { get; private set; }
+    public UiApexPump UiApexPump { get; private set; }
+    public UiTrade UiTrade { get; private set; }
+    public UiResourceHarvest UiResourceHarvest { get; private set; }
 
     private void Awake() => InitializeModals();
 
@@ -40,11 +41,12 @@ public class UIController : MonoBehaviour
                 modalDictionary.Add(modalType, modal);
 
             // Automatically cache references for direct dot-notation access
-            if (modal is UIHUD hud) uiHUD = hud;
-            else if (modal is UiUpgrade upgrade) uiUpgrade = upgrade;
-            else if (modal is UIAutoFarm autoFarm) uiAutoFarm = autoFarm;
-            else if (modal is UiApexPump apexPump) uiApexPump = apexPump;
-            else if (modal is UiTrade trade) uiTrade = trade;
+            if (modal is UIHUD hud) UiHUD = hud;
+            else if (modal is UiUpgrade upgrade) UiUpgrade = upgrade;
+            else if (modal is UIAutoFarm autoFarm) UiAutoFarm = autoFarm;
+            else if (modal is UiApexPump apexPump) UiApexPump = apexPump;
+            else if (modal is UiTrade trade) UiTrade = trade;
+            else if (modal is UiResourceHarvest harvest) UiResourceHarvest = harvest; // <-- ADD THIS LINE
         }
     }
     
