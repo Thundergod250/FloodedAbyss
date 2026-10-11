@@ -121,8 +121,11 @@ public class UIController : MonoBehaviour
 
     private void SetCursorState(bool showCursor)
     {
-        Cursor.visible = showCursor;
-        Cursor.lockState = showCursor ? CursorLockMode.None : CursorLockMode.Locked;
+        // Passes the boolean directly into CursorManager
+        if (GameManager.Instance != null && GameManager.Instance.CursorManager != null)
+        {
+            GameManager.Instance.CursorManager.SetCursorVisibility(showCursor);
+        }
     }
 
     public void CloseAllModals() => OpenModal(UIState.HUD);

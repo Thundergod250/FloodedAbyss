@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro; // Added for TextMeshPro
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -32,20 +32,15 @@ public class UIDebug : MonoBehaviour
     private Dictionary<ResourceType, UIDebugPanel> uiItemMap = new();
     private Dictionary<string, UIDebugPanel> uiStatMap = new();
 
-    // FPS Counter tracking variables
     private float frameAccumulator = 0f;
     private int frameCount = 0;
     private float fpsTimeLeft = 0f;
 
     private void Start()
     {
-        // Fetch references and setup event listeners if not already done in OnEnable
         BindPlayerReferences();
-
         InitializeUI();
-      //  InitializeStatsUI();
-        RefreshStatsUI(); // Ensure fresh state on startup
-
+        RefreshStatsUI();
         fpsTimeLeft = fpsUpdateInterval;
     }
 
@@ -96,13 +91,11 @@ public class UIDebug : MonoBehaviour
         frameAccumulator += Time.unscaledDeltaTime / Time.timeScale;
         frameCount++;
 
-        // Interval ended - update GUI text and start new interval
         if (fpsTimeLeft <= 0.0f)
         {
             float fps = frameCount / frameAccumulator;
             fpsText.text = $"FPS: {Mathf.RoundToInt(fps)}";
 
-            // Reset variables for the next sampling period
             fpsTimeLeft = fpsUpdateInterval;
             frameAccumulator = 0.0f;
             frameCount = 0;
@@ -163,32 +156,6 @@ public class UIDebug : MonoBehaviour
         }
     }
 
-    private void InitializeStatsUI()
-    {
-        if (statsGridParent == null || statItemPrefab == null || playerStats == null) return;
-
-        foreach (Transform child in statsGridParent)
-            Pool.Destroy(child.gameObject);
-
-        uiStatMap.Clear();
-
-        CreateStatRow("Health", "Player", "Max HP");
-        CreateStatRow("Stamina", "Player", "Max Stamina");
-        CreateStatRow("Oxygen", "Player", "Max Oxygen");
-        CreateStatRow("AxeDamage", "Axe", "Damage");
-        CreateStatRow("AxeSpeed", "Axe", "Attack Speed");
-    }
-
-    private void CreateStatRow(string statKey, string category, string statType)
-    {
-        UIDebugPanel itemInstance = Instantiate(statItemPrefab, statsGridParent);
-        int lvl = playerStats.GetStatLevel(statKey);
-        string val = playerStats.GetStatValueString(statKey);
-
-        itemInstance.SetupStat(category, statType, lvl, val);
-        uiStatMap[statKey] = itemInstance;
-    }
-
     public void RefreshStatsUI()
     {
         if (playerStats == null) return;
@@ -219,8 +186,11 @@ public class UIDebug : MonoBehaviour
             if (willBeActive)
                 RefreshStatsUI();
 
-            Cursor.visible = willBeActive;
-            Cursor.lockState = willBeActive ? CursorLockMode.None : CursorLockMode.Locked;
+            // Uses CursorManager with the boolean parameter
+            if (GameManager.Instance != null && GameManager.Instance.CursorManager != null)
+            {
+                GameManager.Instance.CursorManager.SetCursorVisibility(willBeActive);
+            }
         }
     }
 

@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     public WaterLevel waterLevel;
     public SkillTreeController SkillTreeController;
     public InputManager InputManager;
+    public CursorManager CursorManager; 
 
     private void Awake()
     {
