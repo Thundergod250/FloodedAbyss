@@ -8,8 +8,9 @@ public class UIController : MonoBehaviour
 
     private void Awake() => InitializeModals();
 
-    private void OnEnable()
+    private void Start()
     {
+        // Subscribe in Start to ensure GameManager and InputManager are fully initialized
         if (GameManager.Instance != null && GameManager.Instance.InputManager != null) 
             GameManager.Instance.InputManager.OnEscape.AddListener(CloseAllModals);
     }
@@ -28,10 +29,8 @@ public class UIController : MonoBehaviour
         foreach (var modal in foundModals)
         {
             Type modalType = modal.GetType();
-            if (!modalDictionary.ContainsKey(modalType))
-            {
+            if (!modalDictionary.ContainsKey(modalType)) 
                 modalDictionary.Add(modalType, modal);
-            }
         }
     }
     
@@ -39,7 +38,7 @@ public class UIController : MonoBehaviour
     {
         Type targetType = typeof(T);
 
-        // Deactivate all modals first
+        // Deactivate all pop-up modals first (leaving UIHUD alone)
         CloseAllModals();
 
         // Activate the target modal if found
@@ -56,7 +55,8 @@ public class UIController : MonoBehaviour
     {
         foreach (var modal in modalDictionary.Values)
         {
-            if (modal != null) 
+            // Skip UIHUD so it remains permanently active across all screens
+            if (modal != null && modal is not UIHUD) 
                 modal.SetModalActive(false);
         }
     }
