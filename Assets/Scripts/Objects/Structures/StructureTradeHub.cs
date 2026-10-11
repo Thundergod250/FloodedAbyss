@@ -4,6 +4,6 @@ public class StructureTradeHub : Item
 {
     public override void Activate()
     {
-        GameManager.Instance.uiController.OpenTradeHub();
+        GameManager.Instance.uiController.OpenModal<UiTrade>();
     }
 }

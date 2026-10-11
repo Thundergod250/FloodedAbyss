@@ -3,6 +3,6 @@ public class StructurePump : Item
 {
     public override void Activate()
     {
-        GameManager.Instance.uiController.OpenApexPumpHub();
+        GameManager.Instance.uiController.OpenModal<UiApexPump>();
     }
 }
