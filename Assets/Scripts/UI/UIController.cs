@@ -19,7 +19,8 @@ public class UIController : MonoBehaviour
         Upgrade,
         Event,
         Repair,
-        AutoFarm
+        AutoFarm,
+        Tutorial
     }
 
     [System.Serializable]

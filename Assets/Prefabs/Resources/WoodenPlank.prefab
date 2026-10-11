@@ -16,7 +16,9 @@ GameObject:
   - component: {fileID: -5151683338609223234}
   - component: {fileID: -4833782922228438242}
   - component: {fileID: 2171918441462248303}
-  m_Layer: 0
+  - component: {fileID: 7707769017215196925}
+  - component: {fileID: 7443098641051655942}
+  m_Layer: 6
   m_Name: WoodenPlank
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -165,7 +167,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6004840080998288541}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 653caaa430001fd4c95571fe825a1275, type: 3}
   m_Name: 
@@ -189,7 +191,53 @@ MonoBehaviour:
   interactionMessage: Press [E] to pick up
   onInteract:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7443098641051655942}
+        m_TargetAssemblyTypeName: TutorialHighlight, Assembly-CSharp
+        m_MethodName: OnPicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &7707769017215196925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6004840080998288541}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 206b2cf6d19eb054f93be8aeadc70734, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FloatingObject
+  targetSurface: {fileID: 0}
+  includeDeformers: 1
+  verticalOffset: 0
+  followWaterCurrent: 0
+  currentSpeedMultiplier: 1
+  useRigidbodyForCollision: 0
+  obstacleLayers:
+    serializedVersion: 2
+    m_Bits: 0
+--- !u!114 &7443098641051655942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6004840080998288541}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f7cd28fc590fa4499ea7f2ed312a6be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemHighlight
+  Highlight: {fileID: 6875549459714631809}
 --- !u!1001 &3063792141868616048
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -254,11 +302,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Wood
       objectReference: {fileID: 0}
+    - target: {fileID: 5694584322690731456, guid: 22f0c9581dc19884f92313eb121644ff, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 22f0c9581dc19884f92313eb121644ff, type: 3}
+--- !u!1 &6875549459714631809 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8497761940685005297, guid: 22f0c9581dc19884f92313eb121644ff, type: 3}
+  m_PrefabInstance: {fileID: 3063792141868616048}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7982679069181042186 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4921566782139733882, guid: 22f0c9581dc19884f92313eb121644ff, type: 3}

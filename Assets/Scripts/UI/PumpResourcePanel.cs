@@ -33,6 +33,7 @@ public class PumpResourcePanel : MonoBehaviour
     [SerializeField] private int upgradeCostIncrease = 5;
     [SerializeField] private int maxUpgradeLevel = 3;
 
+    private int totalWoodDeposited = 0;
     private int upgradeLevel = 0;
     private int depositedResource = 0;
     private int currentEnergy = 0;
@@ -96,6 +97,21 @@ public class PumpResourcePanel : MonoBehaviour
 
                 depositedResource += amount;
 
+                if (resourceType == ResourceType.Wood)
+                {
+                    totalWoodDeposited += amount;
+
+                    if (totalWoodDeposited >= 10)
+                    {
+                        UiTutorial tutorial = GameManager.Instance.uiController.GetComponent<UiTutorial>();
+
+                        if (tutorial != null)
+                        {
+                            tutorial.PlayerDeposited10Wood();
+                        }
+                    }
+                }
+
                 if (wasEmpty)
                 {
                     StartWaterForecast();
@@ -139,9 +155,19 @@ public class PumpResourcePanel : MonoBehaviour
 
     private void HandleEnergyDecay()
     {
+        if (GameManager.Instance != null && GameManager.Instance.uiController != null)
+        {
+            UiTutorial tutorial =
+                GameManager.Instance.uiController.GetComponent<UiTutorial>();
+
+            if (tutorial != null && tutorial.IsTutorialActive)
+                return;
+        }
+
         if (currentEnergy > 0)
         {
             decayTimer += Time.deltaTime;
+
             if (decayTimer >= energyDecayInterval)
             {
                 decayTimer = 0f;
@@ -150,9 +176,7 @@ public class PumpResourcePanel : MonoBehaviour
                 currentEnergy--;
 
                 if (wasActiveBefore && !IsActive)
-                {
                     OnActiveStateChanged?.Invoke(this, false);
-                }
 
                 UpdateUI();
             }
@@ -198,6 +222,17 @@ public class PumpResourcePanel : MonoBehaviour
         if (!playerResources.SpendResource(resourceType, resourcesRequired)) return;
 
         upgradeLevel++;
+
+        if (GameManager.Instance != null && GameManager.Instance.uiController != null)
+        {
+            UiTutorial tutorial =
+                GameManager.Instance.uiController.GetComponent<UiTutorial>();
+
+            if (tutorial != null && tutorial.IsTutorialActive)
+            {
+                tutorial.PlayerUpgradedPump();
+            }
+        }
 
         convertInterval = Mathf.Max(0.1f, convertInterval - convertIntervalReduction);
         energyDecayInterval += energyDecayIntervalIncrease;

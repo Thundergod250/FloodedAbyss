@@ -40,6 +40,11 @@ public class FloatingObject : MonoBehaviour
             rb.useGravity = false;
             rb.isKinematic = !useRigidbodyForCollision;
         }
+
+    }
+    private void Start()
+    {     
+        targetSurface = GameManager.Instance.waterLevel.waterLevelTransform.GetComponent<WaterSurface>();
     }
 
     void Update()
