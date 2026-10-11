@@ -50,7 +50,7 @@ public class UIAutoFarm : UiModals
 
         if (GameManager.Instance != null && GameManager.Instance.uiController != null)
         {
-            GameManager.Instance.uiController.OpenModal(UIController.UIState.AutoFarm);
+           // GameManager.Instance.uiController.OpenModal(UIController.UIState.AutoFarm);
         }
     }
 
@@ -74,7 +74,7 @@ public class UIAutoFarm : UiModals
             string storageInfo = "Stored Crops:\n";
             foreach (var kvp in currentTargetFarm.StoredResources)
             {
-                storageInfo += $"• {kvp.Key}: {kvp.Value} / {currentTargetFarm.MaxStoragePerResource}\n";
+                storageInfo += $"ï¿½ {kvp.Key}: {kvp.Value} / {currentTargetFarm.MaxStoragePerResource}\n";
             }
             storageText.text = storageInfo;
         }

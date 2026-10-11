@@ -32,7 +32,7 @@ public class StructurePanel : UiModals
 
         if (GameManager.Instance != null && GameManager.Instance.uiController != null)
         {
-            GameManager.Instance.uiController.OpenModal(UIController.UIState.Structure);
+            //GameManager.Instance.uiController.OpenModal(UIController.UIState.Structure);
         }
     }
 

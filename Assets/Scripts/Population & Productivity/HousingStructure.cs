@@ -326,7 +326,7 @@ public class HousingStructure : Item
     {
         UIRepair repairUI = GameManager.Instance.uiController.GetComponentInChildren<UIRepair>();
 
-        GameManager.Instance.uiController.OpenModal(UIController.UIState.Repair);
+        //GameManager.Instance.uiController.OpenModal(UIController.UIState.Repair);
 
         repairUI.ApplyValues(repairCostType.ToString(), repairCost.ToString());
 

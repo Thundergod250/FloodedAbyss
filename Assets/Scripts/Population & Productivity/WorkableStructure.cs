@@ -81,9 +81,9 @@ public class WorkableStructure : Item
         else if (GameManager.Instance != null &&
                  GameManager.Instance.uiController != null)
         {
-            GameManager.Instance.uiController.OpenModal(
+            /*GameManager.Instance.uiController.OpenModal(
                 UIController.UIState.Building
-            );
+            );*/
         }
     }
     private PlayerResources GetPlayerResources()
@@ -205,9 +205,9 @@ public class WorkableStructure : Item
             return;
         }
 
-        GameManager.Instance.uiController.OpenModal(
-            UIController.UIState.Repair
-        );
+        /*GameManager.Instance.uiController.OpenModal(
+            UIController.UIState.Repair*/
+       // );
 
         repairUI.ApplyValues(
             repairCostType.ToString(),

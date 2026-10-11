@@ -1,121 +1,46 @@
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class UIController : MonoBehaviour
 {
-    public enum UIState
+    private UiUpgrade uiUpgrade;
+
+    private void Awake()
     {
-        HUD,
-        Dialogue,
-        Shop,
-        Crafting,
-        Building,
-        SkillTree,
-        Structure,
-        AutoMiner,
-        ApexPump,
-        Trade,
-        Upgrade,
-        Event,
-        Repair,
-        AutoFarm
+        uiUpgrade = GetComponent<UiUpgrade>();
+        
+        if (uiUpgrade == null)
+            Debug.LogWarning("[UIController] UiUpgrade reference is missing!");
     }
-
-    [System.Serializable]
-    public struct ModalReference
-    {
-        public UIState state;
-        public UiModals modalScript;
-    }
-
-    [Header("Dependencies")]
-    [SerializeField] private PlayerController playerController;
-
-    [Header("Input Settings")]
-    [SerializeField] private InputActionReference escapeAction;
-
-    [Header("UI Modals Mapping")]
-    [SerializeField] private List<ModalReference> modalList;
-
-    [Header("Persistent UI References")]
-    public UIInteraction uiInteraction;
-    public UINotification uiNotification;
-    public UIHUD UIHUD;
-
-    private Dictionary<UIState, UiModals> modalDictionary;
-    private UIState currentState = UIState.HUD;
-
-    public UIState CurrentState => currentState;
-
-    private void Awake() => InitializeDictionary();
 
     private void OnEnable()
     {
-        if (escapeAction != null)
+        if (GameManager.Instance != null && GameManager.Instance.InputManager != null)
         {
-            escapeAction.action.Enable();
-            escapeAction.action.performed += OnEscapePerformed;
+            GameManager.Instance.InputManager.OnEscape.AddListener(CloseAllModals);
         }
     }
 
     private void OnDisable()
     {
-        if (escapeAction != null)
+        if (GameManager.Instance != null && GameManager.Instance.InputManager != null)
         {
-            escapeAction.action.performed -= OnEscapePerformed;
-            escapeAction.action.Disable();
+            GameManager.Instance.InputManager.OnEscape.RemoveListener(CloseAllModals);
         }
     }
 
-    private void Start() => OpenModal(UIState.HUD);
-
-    private void OnEscapePerformed(InputAction.CallbackContext context)
+    public void OpenUpgradeHub()
     {
-        if (currentState != UIState.HUD)
-            CloseAllModals();
-    }
-
-    private void InitializeDictionary()
-    {
-        modalDictionary = new Dictionary<UIState, UiModals>();
-
-        foreach (var item in modalList)
+        if (uiUpgrade != null)
         {
-            if (item.modalScript != null && !modalDictionary.ContainsKey(item.state))
-                modalDictionary.Add(item.state, item.modalScript);
+            uiUpgrade.SetModalActive(true);
         }
     }
 
-    public T GetModal<T>(UIState state) where T : UiModals
+    public void CloseAllModals()
     {
-        if (modalDictionary != null && modalDictionary.TryGetValue(state, out UiModals modal))
-            return modal as T;
-
-        Debug.LogWarning($"[UIController] Modal for state {state} not found or invalid type.");
-        return null;
-    }
-
-    public void OpenModal(UIState newState)
-    {
-        currentState = newState;
-
-        foreach (var modal in modalDictionary.Values)
+        if (uiUpgrade != null)
         {
-            if (modal != null)
-                modal.SetModalActive(false);
+            uiUpgrade.SetModalActive(false);
         }
-
-        if (modalDictionary.TryGetValue(newState, out UiModals targetModal))
-        {
-            if (targetModal != null)
-                targetModal.SetModalActive(true);
-        }
-
-        bool isGameplay = (newState == UIState.HUD);
-        if (playerController != null)
-            playerController.SetInputActive(isGameplay);
     }
-
-    public void CloseAllModals() => OpenModal(UIState.HUD);
 }

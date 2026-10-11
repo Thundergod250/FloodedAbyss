@@ -32,18 +32,18 @@ public class ItemBuildable : Item
         UpdatePlayerSavePoint();
 
         // 1. Open Building Modal via UIController
-        GameManager.Instance.uiController.OpenModal(UIController.UIState.Building);
+       // GameManager.Instance.uiController.OpenModal(UIController.UIState.Building);
 
         // 2. Reference UiBuilding modal instance
-        UiBuilding buildingModal = GameManager.Instance.uiController.GetModal<UiBuilding>(UIController.UIState.Building);
+       // UiBuilding buildingModal = GameManager.Instance.uiController.GetModal<UiBuilding>(UIController.UIState.Building);
 
-        if (buildingModal != null)
+        /*if (buildingModal != null)
         {
             // 3. Pass ScriptableObject list and build action callback
             buildingModal.PopulateMenu(availableStructures, OnBuildStructureSelected);
-        }
-        else
-            Debug.LogError($"[ItemBuildable] UiBuilding modal instance not found on UIState.Building!");
+        }*/
+        //else
+        //    Debug.LogError($"[ItemBuildable] UiBuilding modal instance not found on UIState.Building!");
     }
 
     private void UpdatePlayerSavePoint()

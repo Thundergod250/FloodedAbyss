@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System;
+using UnityEngine.Events;
 
 public class InputManager : MonoBehaviour
 {
@@ -10,18 +10,33 @@ public class InputManager : MonoBehaviour
     // Cached Input Actions
     private InputAction moveAction;
     private InputAction interactAction;
+    private InputAction pauseTimeAction;
+    private InputAction time1Action;
+    private InputAction time2Action;
+    private InputAction time3Action;
+    private InputAction lookAction;
+    private InputAction buildAction;
+    private InputAction debugAction;
+    private InputAction escapeAction;
     private InputAction scrollAction;
     private InputAction panCameraAction;
 
-    // Public properties for GameManager or other systems to read easily
+    // Public properties for continuous axes/states
     public Vector2 MoveInput { get; private set; }
+    public Vector2 LookInput { get; private set; }
     public Vector2 ScrollInput { get; private set; }
     public bool IsPanPressed { get; private set; }
 
-    // Events for single-frame triggers
-    public event Action OnInteractPerformed;
-    public event Action OnPauseTimePressed;
-    public event Action OnBuildPressed;
+    // UnityEvents for single-frame button triggers
+    [Header("Input Events")]
+    public UnityEvent OnInteract = new();
+    public UnityEvent OnPauseTime = new();
+    public UnityEvent OnTime1 = new();
+    public UnityEvent OnTime2 = new();
+    public UnityEvent OnTime3 = new();
+    public UnityEvent OnBuild = new();
+    public UnityEvent OnDebug = new();
+    public UnityEvent OnEscape = new();
 
     private void Awake()
     {
@@ -32,39 +47,61 @@ public class InputManager : MonoBehaviour
     {
         if (inputActionsAsset == null)
         {
-            Debug.LogError("Input Actions Asset is missing on InputManager!");
+            Debug.LogError("[InputManager] Input Actions Asset is missing!");
             return;
         }
 
         var playerMap = inputActionsAsset.FindActionMap("Player");
         if (playerMap == null)
         {
-            Debug.LogError("Player Action Map not found!");
+            Debug.LogError("[InputManager] Player Action Map not found!");
             return;
         }
 
         // Cache individual actions
         moveAction = playerMap.FindAction("Move");
         interactAction = playerMap.FindAction("Interact");
+        pauseTimeAction = playerMap.FindAction("PauseTime");
+        time1Action = playerMap.FindAction("Time1");
+        time2Action = playerMap.FindAction("Time2");
+        time3Action = playerMap.FindAction("Time3");
+        lookAction = playerMap.FindAction("Look");
+        buildAction = playerMap.FindAction("Build");
+        debugAction = playerMap.FindAction("Debug");
+        escapeAction = playerMap.FindAction("Escape");
         scrollAction = playerMap.FindAction("Scroll");
         panCameraAction = playerMap.FindAction("PanCamera");
 
-        // Hook up event callbacks
+        // Hook up UnityEvent callbacks for button presses
         if (interactAction != null)
-            interactAction.performed += ctx => OnInteractPerformed?.Invoke();
+            interactAction.performed += _ => OnInteract?.Invoke();
 
-        var pauseAction = playerMap.FindAction("PauseTime");
-        if (pauseAction != null)
-            pauseAction.performed += ctx => OnPauseTimePressed?.Invoke();
+        if (pauseTimeAction != null)
+            pauseTimeAction.performed += _ => OnPauseTime?.Invoke();
 
-        var buildAction = playerMap.FindAction("Build");
+        if (time1Action != null)
+            time1Action.performed += _ => OnTime1?.Invoke();
+
+        if (time2Action != null)
+            time2Action.performed += _ => OnTime2?.Invoke();
+
+        if (time3Action != null)
+            time3Action.performed += _ => OnTime3?.Invoke();
+
         if (buildAction != null)
-            buildAction.performed += ctx => OnBuildPressed?.Invoke();
+            buildAction.performed += _ => OnBuild?.Invoke();
 
+        if (debugAction != null)
+            debugAction.performed += _ => OnDebug?.Invoke();
+
+        if (escapeAction != null)
+            escapeAction.performed += _ => OnEscape?.Invoke();
+
+        // Handle hold states for camera panning
         if (panCameraAction != null)
         {
-            panCameraAction.started += ctx => IsPanPressed = true;
-            panCameraAction.canceled += ctx => IsPanPressed = false;
+            panCameraAction.started += _ => IsPanPressed = true;
+            panCameraAction.canceled += _ => IsPanPressed = false;
         }
     }
 
@@ -85,6 +122,9 @@ public class InputManager : MonoBehaviour
         // Continuously poll value-based inputs
         if (moveAction != null)
             MoveInput = moveAction.ReadValue<Vector2>();
+
+        if (lookAction != null)
+            LookInput = lookAction.ReadValue<Vector2>();
 
         if (scrollAction != null)
             ScrollInput = scrollAction.ReadValue<Vector2>();

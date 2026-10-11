@@ -56,8 +56,8 @@ public class PlayerInteraction : MonoBehaviour
                 if (currentInteractable != interactable)
                 {
                     currentInteractable = interactable;
-                    GameManager.Instance.uiController?.UIHUD.UIInteraction.SetPrompt(true); 
-                    GameManager.Instance.uiController?.uiInteraction.SetText(currentInteractable.interactionMessage); 
+                   // GameManager.Instance.uiController?.UIHUD.UIInteraction.SetPrompt(true); 
+                    //GameManager.Instance.uiController?.uiInteraction.SetText(currentInteractable.interactionMessage); 
                 }
                 return;
             }
@@ -66,7 +66,7 @@ public class PlayerInteraction : MonoBehaviour
         if (currentInteractable != null)
         {
             currentInteractable = null;
-            GameManager.Instance.uiController?.UIHUD.UIInteraction.SetPrompt(false); 
+            //GameManager.Instance.uiController?.UIHUD.UIInteraction.SetPrompt(false); 
         }
     }
 

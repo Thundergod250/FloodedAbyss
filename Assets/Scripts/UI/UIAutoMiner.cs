@@ -50,7 +50,7 @@ public class UIAutoMiner : UiModals
 
         if (GameManager.Instance != null && GameManager.Instance.uiController != null)
         {
-            GameManager.Instance.uiController.OpenModal(UIController.UIState.AutoMiner);
+            //GameManager.Instance.uiController.OpenModal(UIController.UIState.AutoMiner);
         }
     }
 
@@ -74,7 +74,7 @@ public class UIAutoMiner : UiModals
             string storageInfo = "Stored Resources:\n";
             foreach (var kvp in currentTargetMiner.StoredResources)
             {
-                storageInfo += $"• {kvp.Key}: {kvp.Value} / {currentTargetMiner.MaxStoragePerResource}\n";
+                storageInfo += $"ï¿½ {kvp.Key}: {kvp.Value} / {currentTargetMiner.MaxStoragePerResource}\n";
             }
             storageText.text = storageInfo;
         }

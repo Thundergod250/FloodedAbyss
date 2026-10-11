@@ -7,9 +7,9 @@ public static class Notification
         if (GameManager.Instance == null || GameManager.Instance.uiController == null)
             return;
 
-        var uiNotification = GameManager.Instance.uiController.uiNotification;
+        /*var uiNotification = GameManager.Instance.uiController.uiNotification;
         if (uiNotification != null) 
-            uiNotification.ShowNotification(message, color);
+            uiNotification.ShowNotification(message, color);*/
     }
     
     public static void ShowWarning(string message) => Display(message, Color.yellow);

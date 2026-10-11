@@ -149,7 +149,7 @@ public class UIEventManager : UiModals
         eventText.text = selectedEvent.EventMessage;
 
         // Use UiModals system
-        GameManager.Instance.uiController.OpenModal(UIController.UIState.Event);
+        //GameManager.Instance.uiController.OpenModal(UIController.UIState.Event);
 
         eventOnCooldown = true;
         eventCooldownTimer = eventCooldown;

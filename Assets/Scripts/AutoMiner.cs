@@ -143,7 +143,7 @@ public class AutoMiner : WorkableStructure
         }
         else if (GameManager.Instance != null && GameManager.Instance.uiController != null)
         {
-            GameManager.Instance.uiController.OpenModal(UIController.UIState.AutoMiner);
+           // GameManager.Instance.uiController.OpenModal(UIController.UIState.AutoMiner);
         }
     }
 

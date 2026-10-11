@@ -14,7 +14,7 @@ public class UIDialoguePanel : UiModals
 
         if (GameManager.Instance != null && GameManager.Instance.uiController != null)
         {
-            GameManager.Instance.uiController.OpenModal(UIController.UIState.Dialogue);
+            //GameManager.Instance.uiController.OpenModal(UIController.UIState.Dialogue);
         }
     }
 }

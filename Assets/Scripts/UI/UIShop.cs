@@ -49,7 +49,7 @@ public class UIShop : UiModals
 
         if (GameManager.Instance != null && GameManager.Instance.uiController != null)
         {
-            GameManager.Instance.uiController.OpenModal(UIController.UIState.Shop);
+           // GameManager.Instance.uiController.OpenModal(UIController.UIState.Shop);
         }
 
         RefreshTradeUI();

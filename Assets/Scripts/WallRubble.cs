@@ -18,8 +18,8 @@ public class WallRubble : MonoBehaviour
 
     private void Start()
     {
-        if (waterForecast == null) 
-            waterForecast = GameManager.Instance.uiController.UIHUD.GetHUDElement<WaterForecast>(UIHUD.HuDPanels.WaterForecast);
+        /*if (waterForecast == null) 
+            waterForecast = GameManager.Instance.uiController.UIHUD.GetHUDElement<WaterForecast>(UIHUD.HuDPanels.WaterForecast);*/
     }
 
     private void OnEnable()
