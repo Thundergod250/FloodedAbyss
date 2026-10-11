@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class UiApexPump : UiModals
 {
@@ -10,18 +11,23 @@ public class UiApexPump : UiModals
 
     [Header("Display References")]
     [SerializeField] private TextMeshProUGUI currentFuelValueText;
+    [SerializeField] private TextMeshProUGUI notEnoughResourceText; // Assigned to your "Not Enough Resource Txt"
 
     [Header("Interactive Buttons")]
-    [SerializeField] private Button[] resourceButtons; // 5 buttons for Fiber, Charcoal, Biofuel, Crude Oil, Refined Fuel
-    [SerializeField] private Button[] amountButtonInstances; // 10, 25, 50, 100 buttons
-    [SerializeField] private Button[] switchButtons; // 5 Switch buttons
+    [SerializeField] private Button[] resourceButtons; 
+    [SerializeField] private Button[] amountButtonInstances; 
+    [SerializeField] private Button[] switchButtons; 
 
     private StructureApexPump currentPump;
     private int selectedResourceIndex = -1;
+    private Coroutine warningRoutine;
 
     protected override void Initialize()
     {
         base.Initialize();
+
+        if (notEnoughResourceText != null)
+            notEnoughResourceText.gameObject.SetActive(false);
 
         // Setup Resource Buttons
         for (int i = 0; i < resourceButtons.Length; i++)
@@ -53,11 +59,9 @@ public class UiApexPump : UiModals
     {
         if (IsOpen && currentPump != null)
         {
-            // Update Fuel Text display
             if (currentFuelValueText != null)
                 currentFuelValueText.text = currentPump.CurrentFuel.ToString();
 
-            // Refresh Switch Colors across ALL states (Normal, Highlighted, Pressed, Selected) to prevent white flashing
             for (int i = 0; i < switchButtons.Length; i++)
             {
                 if (switchButtons[i] != null)
@@ -82,26 +86,50 @@ public class UiApexPump : UiModals
         currentPump = pump;
         selectedResourceIndex = -1;
 
-        // Show Resource selection, hide Amount selection initially
         if (amountButtonContainer != null)
             amountButtonContainer.SetActive(false);
+
+        if (notEnoughResourceText != null)
+            notEnoughResourceText.gameObject.SetActive(false);
     }
 
     private void OnResourceSelected(int resourceIndex)
     {
         selectedResourceIndex = resourceIndex;
 
-        // Reveal the Amount container once resource is chosen
         if (amountButtonContainer != null)
             amountButtonContainer.SetActive(true);
+
+        if (notEnoughResourceText != null)
+            notEnoughResourceText.gameObject.SetActive(false);
     }
 
     private void OnAmountSelected(int amount)
     {
         if (currentPump != null && selectedResourceIndex != -1)
         {
-            currentPump.ConvertResourceToFuel(selectedResourceIndex, amount);
+            bool success = currentPump.ConvertResourceToFuel(selectedResourceIndex, amount);
+            if (!success)
+            {
+                ShowNotEnoughResourceWarning();
+            }
         }
+    }
+
+    private void ShowNotEnoughResourceWarning()
+    {
+        if (notEnoughResourceText != null)
+        {
+            if (warningRoutine != null) StopCoroutine(warningRoutine);
+            warningRoutine = StartCoroutine(FlashWarningRoutine());
+        }
+    }
+
+    private IEnumerator FlashWarningRoutine()
+    {
+        notEnoughResourceText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(3f); // Lasts for 3 seconds
+        notEnoughResourceText.gameObject.SetActive(false);
     }
 
     private void OnSwitchClicked(int switchIndex)
