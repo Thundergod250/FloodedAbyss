@@ -10,7 +10,7 @@ public class UiBuilding : UiModals
     
     public void PopulateMenu(List<StructureDataSO> structures, Action<StructureDataSO> onStructureChosen)
     {
-        // 1. Clear previous card instances
+        /*// 1. Clear previous card instances
         foreach (Transform child in cardContainer)
         {
             Destroy(child.gameObject);
@@ -36,9 +36,9 @@ public class UiBuilding : UiModals
             }
 
             // Check if structure is unlocked via SkillTreeController
-            bool isUnlocked = GameManager.Instance != null &&
+            /*bool isUnlocked = GameManager.Instance != null &&
                               GameManager.Instance.SkillTreeController != null &&
-                              GameManager.Instance.SkillTreeController.IsUnlocked(structure);
+                              GameManager.Instance.SkillTreeController.IsUnlocked(structure);#1#
 
             // Local capture for the click callback
             StructureDataSO currentStructure = structure;
@@ -52,6 +52,6 @@ public class UiBuilding : UiModals
                 isUnlocked,
                 () => onStructureChosen?.Invoke(currentStructure)
             );
-        }
+        }*/
     }
 }

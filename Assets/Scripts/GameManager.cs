@@ -10,7 +10,6 @@ public class GameManager : MonoBehaviour
     public PlayerController playerController;
     public ObjectPooling objectPooling;
     public WaterLevel waterLevel;
-    public SkillTreeController SkillTreeController;
     public InputManager InputManager;
     public CursorManager CursorManager; 
     public ClickInteractor ClickInteractor;
