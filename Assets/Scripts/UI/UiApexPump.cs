@@ -27,7 +27,8 @@ public class UiApexPump : UiModals
         for (int i = 0; i < resourceButtons.Length; i++)
         {
             int index = i;
-            resourceButtons[i].onClick.AddListener(() => OnResourceSelected(index));
+            if (resourceButtons[i] != null)
+                resourceButtons[i].onClick.AddListener(() => OnResourceSelected(index));
         }
 
         // Setup Amount Buttons
@@ -35,14 +36,16 @@ public class UiApexPump : UiModals
         for (int i = 0; i < amountButtonInstances.Length; i++)
         {
             int amount = amounts[i];
-            amountButtonInstances[i].onClick.AddListener(() => OnAmountSelected(amount));
+            if (amountButtonInstances[i] != null)
+                amountButtonInstances[i].onClick.AddListener(() => OnAmountSelected(amount));
         }
 
         // Setup Switch Buttons
         for (int i = 0; i < switchButtons.Length; i++)
         {
             int index = i;
-            switchButtons[i].onClick.AddListener(() => OnSwitchClicked(index));
+            if (switchButtons[i] != null)
+                switchButtons[i].onClick.AddListener(() => OnSwitchClicked(index));
         }
     }
 
@@ -50,17 +53,26 @@ public class UiApexPump : UiModals
     {
         if (IsOpen && currentPump != null)
         {
-            // Update Fuel Text
+            // Update Fuel Text display
             if (currentFuelValueText != null)
                 currentFuelValueText.text = currentPump.CurrentFuel.ToString();
 
-            // Refresh Switch Colors (Red if inactive, Green if active)
+            // Refresh Switch Colors across ALL states (Normal, Highlighted, Pressed, Selected) to prevent white flashing
             for (int i = 0; i < switchButtons.Length; i++)
             {
-                var colors = switchButtons[i].colors;
-                colors.normalColor = currentPump.IsSwitchActive(i) ? Color.green : Color.red;
-                colors.highlightedColor = colors.normalColor;
-                switchButtons[i].colors = colors;
+                if (switchButtons[i] != null)
+                {
+                    ColorBlock colors = switchButtons[i].colors;
+                    Color targetColor = currentPump.IsSwitchActive(i) ? Color.green : Color.red;
+                    
+                    colors.normalColor = targetColor;
+                    colors.highlightedColor = targetColor;
+                    colors.pressedColor = targetColor;
+                    colors.selectedColor = targetColor;
+                    colors.disabledColor = targetColor;
+                    
+                    switchButtons[i].colors = colors;
+                }
             }
         }
     }
