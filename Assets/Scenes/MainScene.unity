@@ -863,6 +863,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 539321057098060940, guid: 2e6772388242fdc4c91e70b4939ee835, type: 3}
   m_PrefabInstance: {fileID: 4958866925233400416}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &1064708557 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9030414092572748550, guid: ba8e2b97f8e8838498c4d1b12734d262, type: 3}
+  m_PrefabInstance: {fileID: 3133404017693254291}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1074463259
 GameObject:
   m_ObjectHideFlags: 0
@@ -1948,6 +1953,8 @@ MonoBehaviour:
   acceptedResources: []
   resourceFuelValues: 01000000050000000a0000001900000032000000i
   switchFuelCosts: 01000000050000000a0000001400000032000000i
+  consumptionInterval: 1
+  drainagePowerPerSwitch: 2
   currentFuel: 0
   switchStates: 0000000000y
 --- !u!4 &106623128958649097
@@ -2233,6 +2240,10 @@ PrefabInstance:
     - target: {fileID: 4024891960789142904, guid: dec1de12f957267458d2d533efc2ffff, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8455132184089642626, guid: dec1de12f957267458d2d533efc2ffff, type: 3}
+      propertyPath: drainagePowerPerSwitch
+      value: 50
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3204,6 +3215,14 @@ PrefabInstance:
     - target: {fileID: 3096870024065945765, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3741676149286568756, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
+      propertyPath: oceanTransform
+      value: 
+      objectReference: {fileID: 1064708557}
+    - target: {fileID: 3741676149286568756, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
+      propertyPath: currentWaterHeight
+      value: 87
       objectReference: {fileID: 0}
     - target: {fileID: 5441983127171556320, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
       propertyPath: ApexPump
