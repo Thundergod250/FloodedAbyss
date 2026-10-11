@@ -14,7 +14,6 @@ public class UIController : MonoBehaviour
     public UiApexPump UiApexPump { get; private set; }
     public UiTrade UiTrade { get; private set; }
     public UiResourceHarvest UiResourceHarvest { get; private set; }
-    // Add any future UIs here effortlessly without touching InitializeModals()!
 
     private void Awake() => InitializeModals();
 
@@ -35,7 +34,6 @@ public class UIController : MonoBehaviour
         modalDictionary.Clear();
         UiModals[] foundModals = GetComponents<UiModals>();
 
-        // 1. Populate the dictionary
         foreach (var modal in foundModals)
         {
             Type modalType = modal.GetType();
@@ -43,7 +41,6 @@ public class UIController : MonoBehaviour
                 modalDictionary.Add(modalType, modal);
         }
 
-        // 2. Automatically bind matching public properties via Reflection
         PropertyInfo[] properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
         foreach (var prop in properties)
         {
@@ -51,7 +48,6 @@ public class UIController : MonoBehaviour
 
             foreach (var modal in foundModals)
             {
-                // If the property type matches or inherits from the modal's type, assign it automatically
                 if (prop.PropertyType.IsAssignableFrom(modal.GetType()))
                 {
                     prop.SetValue(this, modal);
@@ -65,26 +61,37 @@ public class UIController : MonoBehaviour
     {
         Type targetType = typeof(T);
 
-        // Deactivate all pop-up modals first (leaving UIHUD alone)
         CloseAllModals();
 
-        // Activate the target modal if found
         if (modalDictionary.TryGetValue(targetType, out UiModals targetModal))
         {
             if (targetModal != null) 
+            {
                 targetModal.SetModalActive(true);
+                if (targetType != typeof(UIHUD)) 
+                    SetMovementEnabled(false);
+            }
         }
         else
+        {
             Debug.LogWarning($"[UIController] Tried to open modal of type {targetType.Name}, but it wasn't found on the UIController GameObject.");
+        }
     }
 
     public void CloseAllModals()
     {
         foreach (var modal in modalDictionary.Values)
         {
-            // Skip UIHUD so it remains permanently active across all screens
             if (modal != null && modal is not UIHUD) 
                 modal.SetModalActive(false);
         }
+
+        SetMovementEnabled(true);
+    }
+
+    private void SetMovementEnabled(bool isEnabled)
+    {
+        if (GameManager.Instance != null && GameManager.Instance.InputManager != null) 
+            GameManager.Instance.InputManager.SetMovementActive(isEnabled);
     }
 }

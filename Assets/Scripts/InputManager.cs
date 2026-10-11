@@ -119,14 +119,35 @@ public class InputManager : MonoBehaviour
 
     private void Update()
     {
-        // Continuously poll value-based inputs
-        if (moveAction != null)
+        // Continuously poll value-based inputs if enabled
+        if (moveAction != null && moveAction.enabled)
             MoveInput = moveAction.ReadValue<Vector2>();
 
-        if (lookAction != null)
+        if (lookAction != null && lookAction.enabled)
             LookInput = lookAction.ReadValue<Vector2>();
 
-        if (scrollAction != null)
+        if (scrollAction != null && scrollAction.enabled)
             ScrollInput = scrollAction.ReadValue<Vector2>();
+    }
+
+    public void SetMovementActive(bool isActive)
+    {
+        if (moveAction != null)
+        {
+            if (isActive) moveAction.Enable(); 
+            else { moveAction.Disable(); MoveInput = Vector2.zero; }
+        }
+
+        if (scrollAction != null)
+        {
+            if (isActive) scrollAction.Enable(); 
+            else { scrollAction.Disable(); ScrollInput = Vector2.zero; }
+        }
+
+        if (panCameraAction != null)
+        {
+            if (isActive) panCameraAction.Enable(); 
+            else { panCameraAction.Disable(); IsPanPressed = false; }
+        }
     }
 }
