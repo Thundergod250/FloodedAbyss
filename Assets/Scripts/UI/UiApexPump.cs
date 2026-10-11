@@ -11,12 +11,12 @@ public class UiApexPump : UiModals
 
     [Header("Display References")]
     [SerializeField] private TextMeshProUGUI currentFuelValueText;
-    [SerializeField] private TextMeshProUGUI notEnoughResourceText; // Assigned to your "Not Enough Resource Txt"
+    [SerializeField] private TextMeshProUGUI notEnoughResourceText;
 
     [Header("Interactive Buttons")]
-    [SerializeField] private Button[] resourceButtons; 
-    [SerializeField] private Button[] amountButtonInstances; 
-    [SerializeField] private Button[] switchButtons; 
+    [SerializeField] private Button[] resourceButtons; // 5 buttons for Fiber, Charcoal, Biofuel, Crude Oil, Refined Fuel
+    [SerializeField] private Button[] amountButtonInstances; // 10, 25, 50, 100 buttons
+    [SerializeField] private Button[] switchButtons; // 5 Switch buttons
 
     private StructureApexPump currentPump;
     private int selectedResourceIndex = -1;
@@ -62,6 +62,7 @@ public class UiApexPump : UiModals
             if (currentFuelValueText != null)
                 currentFuelValueText.text = currentPump.CurrentFuel.ToString();
 
+            // Refresh Switch Colors
             for (int i = 0; i < switchButtons.Length; i++)
             {
                 if (switchButtons[i] != null)
@@ -91,6 +92,8 @@ public class UiApexPump : UiModals
 
         if (notEnoughResourceText != null)
             notEnoughResourceText.gameObject.SetActive(false);
+
+        RefreshResourceButtonVisuals();
     }
 
     private void OnResourceSelected(int resourceIndex)
@@ -102,6 +105,46 @@ public class UiApexPump : UiModals
 
         if (notEnoughResourceText != null)
             notEnoughResourceText.gameObject.SetActive(false);
+
+        RefreshResourceButtonVisuals();
+    }
+
+    private void RefreshResourceButtonVisuals()
+    {
+        for (int i = 0; i < resourceButtons.Length; i++)
+        {
+            if (resourceButtons[i] == null) continue;
+
+            ColorBlock colors = resourceButtons[i].colors;
+
+            if (selectedResourceIndex == -1)
+            {
+                // Default state before any resource is chosen
+                colors.normalColor = Color.white;
+                colors.highlightedColor = new Color(0.9f, 0.9f, 0.9f);
+                colors.pressedColor = new Color(0.7f, 0.7f, 0.7f);
+                colors.selectedColor = Color.white;
+            }
+            else if (i == selectedResourceIndex)
+            {
+                // Selected resource turns solid Yellow
+                colors.normalColor = Color.yellow;
+                colors.highlightedColor = Color.yellow;
+                colors.pressedColor = Color.yellow;
+                colors.selectedColor = Color.yellow;
+            }
+            else
+            {
+                // Unselected resources fade out slightly (reduced alpha), but remain fully clickable
+                Color fadedColor = new Color(1f, 1f, 1f, 0.4f);
+                colors.normalColor = fadedColor;
+                colors.highlightedColor = new Color(1f, 1f, 1f, 0.6f);
+                colors.pressedColor = new Color(1f, 1f, 1f, 0.3f);
+                colors.selectedColor = fadedColor;
+            }
+
+            resourceButtons[i].colors = colors;
+        }
     }
 
     private void OnAmountSelected(int amount)
@@ -128,7 +171,7 @@ public class UiApexPump : UiModals
     private IEnumerator FlashWarningRoutine()
     {
         notEnoughResourceText.gameObject.SetActive(true);
-        yield return new WaitForSeconds(3f); // Lasts for 3 seconds
+        yield return new WaitForSeconds(3f);
         notEnoughResourceText.gameObject.SetActive(false);
     }
 
