@@ -664,7 +664,7 @@ MonoBehaviour:
     AngularDampingMode: 0
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
-  FollowOffset: {x: 0, y: 400, z: -400}
+  FollowOffset: {x: 0, y: 300, z: -200}
 --- !u!114 &202101835
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -692,7 +692,7 @@ MonoBehaviour:
     FieldOfView: 60.000004
     OrthographicSize: 5
     NearClipPlane: 0.3
-    FarClipPlane: 1500
+    FarClipPlane: 1000
     Dutch: 0
     ModeOverride: 0
     PhysicalProperties:
@@ -716,8 +716,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 202101832}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.38268343, y: 0.000000034074525, z: -0.00000001411413, w: 0.92387956}
-  m_LocalPosition: {x: 0, y: 400, z: -400}
+  m_LocalRotation: {x: 0.4718579, y: -0.00000007839008, z: 0.00000004195308, w: 0.88167465}
+  m_LocalPosition: {x: 0, y: 300, z: -200}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2316,6 +2316,22 @@ PrefabInstance:
     - target: {fileID: 1667930532703056344, guid: 6181bdf5028171f41857a327682b8818, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2494202031178828414, guid: 6181bdf5028171f41857a327682b8818, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2494202031178828414, guid: 6181bdf5028171f41857a327682b8818, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2494202031178828414, guid: 6181bdf5028171f41857a327682b8818, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2494202031178828414, guid: 6181bdf5028171f41857a327682b8818, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2966599840824982951, guid: 6181bdf5028171f41857a327682b8818, type: 3}
       propertyPath: m_Name
@@ -5722,7 +5738,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1500
+  far clip plane: 1000
   field of view: 60.000004
   orthographic: 0
   orthographic size: 5
@@ -6562,8 +6578,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3578574932785480550}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.38268346, y: 0.000000034074525, z: -0.000000014114131, w: 0.92387956}
-  m_LocalPosition: {x: 0, y: 400, z: -400}
+  m_LocalRotation: {x: 0.47185796, y: -0.00000007839011, z: 0.000000041953115, w: 0.8816746}
+  m_LocalPosition: {x: 0, y: 300, z: -200}
   m_LocalScale: {x: 0.54744995, y: 0.54745, z: 0.54744995}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6918,26 +6934,6 @@ PrefabInstance:
       propertyPath: waterLevelTransform
       value: 
       objectReference: {fileID: 1064708557}
-    - target: {fileID: 4340592379193419187, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
-      propertyPath: skillTreeEntries.Array.size
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 4340592379193419187, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
-      propertyPath: skillTreeEntries.Array.data[4].isUnlocked
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4340592379193419187, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
-      propertyPath: skillTreeEntries.Array.data[5].isUnlocked
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4340592379193419187, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
-      propertyPath: skillTreeEntries.Array.data[4].structureData
-      value: 
-      objectReference: {fileID: 11400000, guid: 1fc208e890ff66b4bb2d1c91925285c7, type: 2}
-    - target: {fileID: 4340592379193419187, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
-      propertyPath: skillTreeEntries.Array.data[5].structureData
-      value: 
-      objectReference: {fileID: 11400000, guid: 355bbd41ace09bb44be135891e8b0ea2, type: 2}
     - target: {fileID: 5441983127171556320, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
       propertyPath: ApexPump
       value: 
@@ -6954,41 +6950,9 @@ PrefabInstance:
       propertyPath: ParentObject
       value: 
       objectReference: {fileID: 169266797}
-    - target: {fileID: 6523679944123705603, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
-      propertyPath: cathedral
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6523679944123705603, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
-      propertyPath: 'rocksToDestroy.Array.data[0]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6523679944123705603, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
-      propertyPath: 'rocksToDestroy.Array.data[1]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6523679944123705603, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
-      propertyPath: 'rocksToDestroy.Array.data[2]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6523679944123705603, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
-      propertyPath: 'rocksToDestroy.Array.data[3]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6523679944123705603, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
-      propertyPath: 'rocksToDestroy.Array.data[4]'
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 8026546904625221826, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
       propertyPath: m_Name
       value: GameManager
-      objectReference: {fileID: 0}
-    - target: {fileID: 8026546904625221826, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8026546904625221826, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
