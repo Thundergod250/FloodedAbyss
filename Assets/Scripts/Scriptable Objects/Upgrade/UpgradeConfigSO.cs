@@ -18,7 +18,7 @@ public class UpgradeConfigSO : ScriptableObject
         public UpgradeType type;
         public string title;
         public Sprite icon;
-        public ResourceType costResource = ResourceType.Stone;
+        public ResourceType costResource = ResourceType.Food;
         public int baseCost = 10;
         public float costMultiplierPerLevel = 1.5f;
         public float baseValue = 100f;
@@ -40,5 +40,20 @@ public class UpgradeConfigSO : ScriptableObject
         var data = GetUpgradeData(type);
         if (data == null) return 0;
         return Mathf.RoundToInt(data.baseCost * Mathf.Pow(data.costMultiplierPerLevel, currentLevel));
+    }
+
+    private void OnValidate()
+    {
+        foreach (var upgrade in upgrades)
+        {
+            if (upgrade.type == UpgradeType.Health || upgrade.type == UpgradeType.Stamina)
+            {
+                upgrade.costResource = ResourceType.Food;
+            }
+            else if (upgrade.type == UpgradeType.Oxygen)
+            {
+                upgrade.costResource = ResourceType.Iron;
+            }
+        }
     }
 }

@@ -9,8 +9,9 @@ public enum ResourceType
     Wood,
     Gold,
     Copper,
-    Iron
-} // Removed Tin, Food, 
+    Iron,
+    Food
+}
 
 public class PlayerResources : MonoBehaviour
 {
@@ -20,14 +21,14 @@ public class PlayerResources : MonoBehaviour
     [Header("Notification Settings")]
     [SerializeField] private Color gainColor = Color.green;
     [SerializeField] private Color spendColor = Color.red;
-    
+
     private Dictionary<ResourceType, int> resources = new();
 
     private void Start() => InitializeResources();
 
     private void InitializeResources()
     {
-        foreach (ResourceType type in Enum.GetValues(typeof(ResourceType))) 
+        foreach (ResourceType type in Enum.GetValues(typeof(ResourceType)))
             resources[type] = 0;
     }
 
@@ -61,10 +62,10 @@ public class PlayerResources : MonoBehaviour
 
     public void AddTenToAllResources()
     {
-        foreach (ResourceType type in Enum.GetValues(typeof(ResourceType))) 
+        foreach (ResourceType type in Enum.GetValues(typeof(ResourceType)))
             AddResource(type, 10);
     }
-    
+
     public bool CanAfford(IReadOnlyList<StructureDataSO.ResourceRequirement> requirements)
     {
         if (requirements == null) return true;
@@ -75,7 +76,7 @@ public class PlayerResources : MonoBehaviour
         }
         return true;
     }
-    
+
     public bool TrySpendResources(IReadOnlyList<StructureDataSO.ResourceRequirement> requirements)
     {
         if (!CanAfford(requirements))
@@ -87,13 +88,13 @@ public class PlayerResources : MonoBehaviour
 
         if (requirements != null)
         {
-            foreach (var req in requirements) 
+            foreach (var req in requirements)
                 SpendResource(req.resourceType, req.amount);
         }
 
         return true;
     }
-    
+
     public void ApplyResourceDeathPenalty(float penaltyRatio = 0.5f)
     {
         penaltyRatio = Mathf.Clamp01(penaltyRatio);
@@ -102,7 +103,7 @@ public class PlayerResources : MonoBehaviour
         foreach (ResourceType type in Enum.GetValues(typeof(ResourceType)))
         {
             int currentAmount = GetResource(type);
-            if (currentAmount <= 0) 
+            if (currentAmount <= 0)
                 continue;
             int amountToLose = Mathf.FloorToInt(currentAmount * penaltyRatio);
             if (amountToLose > 0)
@@ -113,7 +114,7 @@ public class PlayerResources : MonoBehaviour
             }
         }
 
-        if (lostAny) 
+        if (lostAny)
             Notification.Display($"Lost {penaltyRatio * 100}% of resources on death!", spendColor);
     }
 }

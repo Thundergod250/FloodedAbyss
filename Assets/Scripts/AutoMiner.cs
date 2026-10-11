@@ -12,13 +12,17 @@ public class AutoMiner : WorkableStructure
     [Header("Resource Production")]
     [SerializeField] private List<ResourceType> targetResources = new List<ResourceType>();
     [SerializeField] private int baseYieldPerResource = 5;
-    [SerializeField] private float harvestIntervalSeconds = 10f;
+
+    [Header("Tiered Harvest Speeds (Seconds per Harvest Cycle)")]
+    [SerializeField] private float stoneHarvestInterval = 4f;
+    [SerializeField] private float copperHarvestInterval = 8f;
+    [SerializeField] private float ironHarvestInterval = 16f;
+    [SerializeField] private float goldHarvestInterval = 32f;
 
     [Header("Storage Settings")]
     [SerializeField] private int maxStoragePerResource = 100;
     private Dictionary<ResourceType, int> storedResources = new Dictionary<ResourceType, int>();
-
-    private Coroutine autoMinerCoroutine;
+    private Dictionary<ResourceType, float> resourceProgressTimers = new Dictionary<ResourceType, float>();
 
     public int MinerLevel => minerLevel;
     public int MaxStoragePerResource => maxStoragePerResource;
@@ -35,37 +39,46 @@ public class AutoMiner : WorkableStructure
         InitializeStorage();
     }
 
-    /// <summary>
-    /// Overriding Start prevents WorkableStructure's base ProductionCycleRoutine 
-    /// from running and giving Gold directly to the player inventory.
-    /// </summary>
     protected override void Start()
     {
-        // Intentionally left blank to override base.Start()
-        
         waterLevel = GameManager.Instance.waterLevel;
     }
 
-    private void OnEnable()
+    private void Update()
     {
-        if (autoMinerCoroutine != null)
+        if (IsBroken || IsSubmerged) return;
+
+        float productivity = TotalProductivity;
+        if (productivity <= 0f) return;
+
+        foreach (ResourceType resourceType in targetResources)
         {
-            StopCoroutine(autoMinerCoroutine);
+            if (!resourceProgressTimers.ContainsKey(resourceType))
+                resourceProgressTimers[resourceType] = 0f;
+
+            float interval = GetHarvestInterval(resourceType);
+            resourceProgressTimers[resourceType] += Time.deltaTime * productivity;
+
+            if (resourceProgressTimers[resourceType] >= interval)
+            {
+                resourceProgressTimers[resourceType] = 0f;
+                HarvestSingleResource(resourceType);
+            }
         }
-        autoMinerCoroutine = StartCoroutine(AutoMinerProductionRoutine());
     }
 
-    private void OnDisable()
+    private float GetHarvestInterval(ResourceType type)
     {
-        if (autoMinerCoroutine != null)
+        return type switch
         {
-            StopCoroutine(autoMinerCoroutine);
-        }
+            ResourceType.Stone => stoneHarvestInterval,
+            ResourceType.Copper => copperHarvestInterval,
+            ResourceType.Iron => ironHarvestInterval,
+            ResourceType.Gold => goldHarvestInterval,
+            _ => 10f
+        };
     }
 
-    /// <summary>
-    /// Manually or programmatically set the miner level (1 or 2).
-    /// </summary>
     public void SetLevel(int level)
     {
         minerLevel = Mathf.Clamp(level, 1, 2);
@@ -86,14 +99,12 @@ public class AutoMiner : WorkableStructure
         {
             maxWorkers = 2;
             targetResources.Add(ResourceType.Stone);
-           // targetResources.Add(ResourceType.Tin);
             targetResources.Add(ResourceType.Copper);
         }
         else if (level == 2)
         {
             maxWorkers = 4;
             targetResources.Add(ResourceType.Stone);
-           // targetResources.Add(ResourceType.Tin);
             targetResources.Add(ResourceType.Copper);
             targetResources.Add(ResourceType.Iron);
             targetResources.Add(ResourceType.Gold);
@@ -111,28 +122,17 @@ public class AutoMiner : WorkableStructure
         {
             if (!storedResources.ContainsKey(resourceType))
                 storedResources[resourceType] = 0;
+
+            if (!resourceProgressTimers.ContainsKey(resourceType))
+                resourceProgressTimers[resourceType] = 0f;
         }
     }
 
     public override void Activate()
     {
-        Debug.Log(
-        $"[{gameObject.name}] WaterLevel: {waterLevel} | " +
-        $"Water Height: {waterLevel?.CurrentWaterHeight} | " +
-        $"Building Y: {transform.position.y} | " +
-        $"Submerged: {IsSubmerged}"
-    );
-
-
-        if (IsSubmerged)
+        if (IsSubmerged || IsBroken)
         {
-            Debug.Log("SUBMEGED");
-            return;
-        }
-
-        if (IsBroken)
-        {
-            ShowRepairPrompt();
+            if (IsBroken) ShowRepairPrompt();
             return;
         }
 
@@ -147,33 +147,19 @@ public class AutoMiner : WorkableStructure
         }
     }
 
-    private IEnumerator AutoMinerProductionRoutine()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(harvestIntervalSeconds);
-            HarvestToStorage();
-        }
-    }
-
-    private void HarvestToStorage()
+    private void HarvestSingleResource(ResourceType resourceType)
     {
         int yieldAmount = Mathf.FloorToInt(baseYieldPerResource * TotalProductivity);
-
         if (yieldAmount <= 0) return;
 
-        foreach (ResourceType resourceType in targetResources)
-        {
-            if (!storedResources.ContainsKey(resourceType))
-                storedResources[resourceType] = 0;
+        if (!storedResources.ContainsKey(resourceType))
+            storedResources[resourceType] = 0;
 
-            if (storedResources[resourceType] < maxStoragePerResource)
-            {
-                storedResources[resourceType] = Mathf.Min(storedResources[resourceType] + yieldAmount, maxStoragePerResource);
-            }
+        if (storedResources[resourceType] < maxStoragePerResource)
+        {
+            storedResources[resourceType] = Mathf.Min(storedResources[resourceType] + yieldAmount, maxStoragePerResource);
         }
 
-        // Live update the AutoMiner UI panel if currently open
         UIAutoMiner uiMiner = FindAnyObjectByType<UIAutoMiner>(FindObjectsInactive.Include);
         if (uiMiner != null && uiMiner.gameObject.activeInHierarchy)
         {
