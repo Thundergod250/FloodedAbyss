@@ -13,7 +13,7 @@ public class FloatingWood : MonoBehaviour
 
     private void Start()
     {
-        if (GameManager.Instance != null)
+        /*if (GameManager.Instance != null)
         {
             WaterLevel waterLevel = GameManager.Instance.GetComponent<WaterLevel>();
             if (waterLevel != null && waterLevel.waterLevelTransform != null)
@@ -25,7 +25,7 @@ public class FloatingWood : MonoBehaviour
         if (targetSurface == null)
         {
             targetSurface = FindAnyObjectByType<WaterSurface>();
-        }
+        }*/
     }
 
     private void Update()

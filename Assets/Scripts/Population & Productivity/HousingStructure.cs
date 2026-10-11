@@ -57,7 +57,7 @@ public class HousingStructure : Item
     [SerializeField] private GameObject normalModel;
     [SerializeField] private GameObject underwaterModel;
 
-    public bool IsSubmerged => waterLevel != null && waterLevel.CurrentWaterHeight >= this.transform.position.y;
+    //public bool IsSubmerged => waterLevel != null && waterLevel.CurrentWaterHeight >= this.transform.position.y;
     public bool IsBroken => isBroken;
 
     private WaterLevel waterLevel;
@@ -93,7 +93,7 @@ public class HousingStructure : Item
 
     private void Start()
     {
-        waterLevel = GameManager.Instance.waterLevel;
+        waterLevel = GameManager.Instance.WaterLevel;
 
         RegisterHousing();
     }
@@ -263,11 +263,11 @@ public class HousingStructure : Item
 
     public override void Activate()
     {
-        if (IsSubmerged)
+        /*if (IsSubmerged)
         {
             Debug.Log($"[{gameObject.name}] Cannot interact because it is submerged.");
             return;
-        }
+        }*/
 
         if (IsBroken)
         {
@@ -308,11 +308,13 @@ public class HousingStructure : Item
 
     public void FixBuilding()
     {
+        /*
         if (IsSubmerged)
         {
             Debug.Log($"[{gameObject.name}] Cannot fix building while submerged.");
             return;
         }
+        */
 
         SetBroken(false);
 
@@ -352,11 +354,13 @@ public class HousingStructure : Item
         }
 
         // Cannot repair a submerged building
+        /*
         if (IsSubmerged)
         {
             Debug.Log($"[{gameObject.name}] Cannot repair while submerged.");
             return false;
         }
+        */
 
         if (GameManager.Instance == null ||
             GameManager.Instance.playerController == null)
@@ -420,9 +424,9 @@ public class HousingStructure : Item
 
     private void UpdateWaterState()
     {
-        if (IsSubmerged && !isBroken)
+        /*if (IsSubmerged && !isBroken)
         {
             SetBroken(true);
-        }
+        }*/
     }
 }

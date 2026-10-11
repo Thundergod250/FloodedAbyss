@@ -253,9 +253,9 @@ public class MineManager : MonoBehaviour
 
     private void SpawnMine()
     {
-        Vector3 spawnPosition = new Vector3(mineLoc.transform.position.x, GameManager.Instance.waterLevel.waterLevelTransform.transform.position.y + 36, mineLoc.transform.position.z);
+        //Vector3 spawnPosition = new Vector3(mineLoc.transform.position.x, GameManager.Instance.WaterLevel.waterLevelTransform.transform.position.y + 36, mineLoc.transform.position.z);
 
-        if(spawnedMine == null)
+        /*if(spawnedMine == null)
         {
             spawnedMine = Instantiate(minePrefab, spawnPosition, mineLoc.rotation);
             spawnedMine.transform.SetParent(GameManager.Instance.objectPooling.ParentObject, true);
@@ -263,7 +263,7 @@ public class MineManager : MonoBehaviour
         else
         {
             GameManager.Instance.objectPooling.GetComponent<ObjectPooling>().Spawn(spawnedMine);
-        }
+        }*/
 
         Debug.Log("mineLoc position: " + mineLoc.position);
         Debug.Log("Spawned mine position: " + spawnedMine.transform.position);

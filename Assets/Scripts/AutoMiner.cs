@@ -43,7 +43,7 @@ public class AutoMiner : WorkableStructure
     {
         // Intentionally left blank to override base.Start()
         
-        waterLevel = GameManager.Instance.waterLevel;
+        waterLevel = GameManager.Instance.WaterLevel;
     }
 
     private void OnEnable()
@@ -116,19 +116,15 @@ public class AutoMiner : WorkableStructure
 
     public override void Activate()
     {
-        Debug.Log(
-        $"[{gameObject.name}] WaterLevel: {waterLevel} | " +
-        $"Water Height: {waterLevel?.CurrentWaterHeight} | " +
-        $"Building Y: {transform.position.y} | " +
-        $"Submerged: {IsSubmerged}"
-    );
+        //Debug.Log($"[{gameObject.name}] WaterLevel: {waterLevel} | " +$"Water Height: {waterLevel?.CurrentWaterHeight} | " +$"Building Y: {transform.position.y} | " +$"Submerged: {IsSubmerged}");
 
 
+        /*
         if (IsSubmerged)
         {
             Debug.Log("SUBMEGED");
             return;
-        }
+        }*/
 
         if (IsBroken)
         {

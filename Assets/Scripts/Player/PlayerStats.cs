@@ -73,7 +73,7 @@ public class PlayerStats : MonoBehaviour
         levelVar++;
         if (GameManager.Instance != null && GameManager.Instance.ApexPump != null)
         {
-            GameManager.Instance.ApexPump.SyncThresholdLevelFromPlayerStats(type, levelVar);
+            //GameManager.Instance.ApexPump.SyncThresholdLevelFromPlayerStats(type, levelVar);
         }
         EvtOnStatChanged?.Invoke();
     }

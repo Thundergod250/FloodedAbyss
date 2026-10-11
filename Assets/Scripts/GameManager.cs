@@ -1,17 +1,15 @@
 using UnityEngine;
-using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
     [Header("Global References")]
-    public ApexPump ApexPump;
+    public StructureApexPump ApexPump;
     public UIController uiController;
     public PlayerController playerController;
     public ObjectPooling objectPooling;
-    public WaterLevel waterLevel;
-    public SkillTreeController SkillTreeController;
+    public WaterLevel WaterLevel;
     public InputManager InputManager;
     public CursorManager CursorManager; 
     public ClickInteractor ClickInteractor;
