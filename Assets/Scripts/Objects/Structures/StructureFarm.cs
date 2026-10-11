@@ -1,16 +1,9 @@
 using UnityEngine;
 
-public class StructureFarm : MonoBehaviour
+public class StructureFarm : Item
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public override void Activate()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        GameManager.Instance.uiController.OpenAutoFarmHub();
     }
 }
