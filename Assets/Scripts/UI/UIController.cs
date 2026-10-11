@@ -9,10 +9,7 @@ public class UIController : MonoBehaviour
 
     // Developers ONLY need to declare their new UI modal property here:
     public UIHUD UiHUD { get; private set; }
-    public UiUpgrade UiUpgrade { get; private set; }
-    public UIAutoFarm UiAutoFarm { get; private set; }
     public UiApexPump UiApexPump { get; private set; }
-    public UiTrade UiTrade { get; private set; }
     public UiResourceHarvest UiResourceHarvest { get; private set; }
 
     private void Awake() => InitializeModals();
