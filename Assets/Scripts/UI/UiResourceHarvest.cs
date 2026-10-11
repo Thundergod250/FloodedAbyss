@@ -10,6 +10,7 @@ public class UiResourceHarvest : UiModals
     [SerializeField] private TextMeshProUGUI laborCostText;
     [SerializeField] private TextMeshProUGUI notEnoughWorkersText;
     [SerializeField] private Button activateButton;
+    [SerializeField] private TextMeshProUGUI activateButtonText; 
     
     [Header("Progress Bar References")]
     [SerializeField] private GameObject productionBarContainer;
@@ -22,6 +23,12 @@ public class UiResourceHarvest : UiModals
     protected override void Initialize()
     {
         base.Initialize();
+
+        if (activateButtonText == null && activateButton != null)
+        {
+            activateButtonText = activateButton.GetComponentInChildren<TextMeshProUGUI>();
+        }
+
         if (activateButton != null)
         {
             activateButton.onClick.RemoveAllListeners();
@@ -37,22 +44,21 @@ public class UiResourceHarvest : UiModals
 
     private void Update()
     {
-        // Continuously read the progress percentage directly from the bound structure via Update
         if (IsOpen && currentStructure != null)
         {
-            if (currentStructure.IsWorking)
+            if (productionBarContainer != null)
             {
-                if (productionBarContainer != null && !productionBarContainer.activeSelf)
-                    productionBarContainer.SetActive(true);
-
-                if (activateButton != null && activateButton.interactable)
-                    activateButton.interactable = false;
-
-                if (fillImage != null)
-                {
-                    fillImage.fillAmount = currentStructure.ProgressPercentage;
-                }
+                bool shouldShow = currentStructure.IsWorking;
+                if (productionBarContainer.activeSelf != shouldShow)
+                    productionBarContainer.SetActive(shouldShow);
             }
+
+            if (currentStructure.IsWorking && fillImage != null)
+            {
+                fillImage.fillAmount = currentStructure.ProgressPercentage;
+            }
+
+            UpdateActivateButtonVisuals();
         }
     }
 
@@ -66,18 +72,43 @@ public class UiResourceHarvest : UiModals
 
         if (notEnoughWorkersText != null) notEnoughWorkersText.gameObject.SetActive(false);
 
-        // If the structure is already working when opening the UI, sync immediately
         if (structure.IsWorking)
         {
             if (productionBarContainer != null) productionBarContainer.SetActive(true);
-            if (activateButton != null) activateButton.interactable = false;
             if (fillImage != null) fillImage.fillAmount = structure.ProgressPercentage;
         }
         else
         {
             if (productionBarContainer != null) productionBarContainer.SetActive(false);
-            if (activateButton != null) activateButton.interactable = true;
             if (fillImage != null) fillImage.fillAmount = 0f;
+        }
+
+        UpdateActivateButtonVisuals();
+    }
+
+    private void UpdateActivateButtonVisuals()
+    {
+        if (activateButton != null)
+        {
+            bool isWorking = currentStructure != null && currentStructure.IsWorking;
+
+            // Set text label
+            if (activateButtonText != null)
+            {
+                activateButtonText.text = isWorking ? "Deactivate" : "Activate";
+            }
+
+            // Override color states to Orange when active, White when default/inactive
+            ColorBlock colors = activateButton.colors;
+            Color targetColor = isWorking ? new Color(1f, 0.6f, 0f) : Color.white; // Vibrant Orange when active
+
+            colors.normalColor = targetColor;
+            colors.highlightedColor = targetColor;
+            colors.pressedColor = targetColor;
+            colors.selectedColor = targetColor;
+            colors.disabledColor = targetColor;
+
+            activateButton.colors = colors;
         }
     }
 
@@ -85,7 +116,8 @@ public class UiResourceHarvest : UiModals
     {
         if (currentStructure != null)
         {
-            currentStructure.TryStartHarvest();
+            currentStructure.ToggleHarvesting();
+            UpdateActivateButtonVisuals();
         }
     }
 
@@ -105,23 +137,9 @@ public class UiResourceHarvest : UiModals
         notEnoughWorkersText.gameObject.SetActive(false);
     }
 
-    public void BeginProgress(float duration)
-    {
-        if (activateButton != null) activateButton.interactable = false;
-        if (productionBarContainer != null) productionBarContainer.SetActive(true);
-        if (fillImage != null) fillImage.fillAmount = 0f;
-    }
-
-    public void UpdateProgress(float progress01)
-    {
-        if (fillImage != null)
-        {
-            fillImage.fillAmount = progress01;
-        }
-    }
-
     public void CompleteProgress()
     {
         if (productionBarContainer != null) productionBarContainer.SetActive(false);
+        UpdateActivateButtonVisuals();
     }
 }
