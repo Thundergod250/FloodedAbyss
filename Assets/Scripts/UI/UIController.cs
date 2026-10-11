@@ -1,24 +1,25 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 public class UIController : MonoBehaviour
 {
     private Dictionary<Type, UiModals> modalDictionary = new();
 
-    // Direct global properties for dot-notation access via GameManager.Instance.uiController.(SpecificUi)
+    // Developers ONLY need to declare their new UI modal property here:
     public UIHUD UiHUD { get; private set; }
     public UiUpgrade UiUpgrade { get; private set; }
     public UIAutoFarm UiAutoFarm { get; private set; }
     public UiApexPump UiApexPump { get; private set; }
     public UiTrade UiTrade { get; private set; }
     public UiResourceHarvest UiResourceHarvest { get; private set; }
+    // Add any future UIs here effortlessly without touching InitializeModals()!
 
     private void Awake() => InitializeModals();
 
     private void Start()
     {
-        // Subscribe in Start to ensure GameManager and InputManager are fully initialized
         if (GameManager.Instance != null && GameManager.Instance.InputManager != null) 
             GameManager.Instance.InputManager.OnEscape.AddListener(CloseAllModals);
     }
@@ -34,19 +35,29 @@ public class UIController : MonoBehaviour
         modalDictionary.Clear();
         UiModals[] foundModals = GetComponents<UiModals>();
 
+        // 1. Populate the dictionary
         foreach (var modal in foundModals)
         {
             Type modalType = modal.GetType();
             if (!modalDictionary.ContainsKey(modalType)) 
                 modalDictionary.Add(modalType, modal);
+        }
 
-            // Automatically cache references for direct dot-notation access
-            if (modal is UIHUD hud) UiHUD = hud;
-            else if (modal is UiUpgrade upgrade) UiUpgrade = upgrade;
-            else if (modal is UIAutoFarm autoFarm) UiAutoFarm = autoFarm;
-            else if (modal is UiApexPump apexPump) UiApexPump = apexPump;
-            else if (modal is UiTrade trade) UiTrade = trade;
-            else if (modal is UiResourceHarvest harvest) UiResourceHarvest = harvest; // <-- ADD THIS LINE
+        // 2. Automatically bind matching public properties via Reflection
+        PropertyInfo[] properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        foreach (var prop in properties)
+        {
+            if (!prop.CanWrite) continue;
+
+            foreach (var modal in foundModals)
+            {
+                // If the property type matches or inherits from the modal's type, assign it automatically
+                if (prop.PropertyType.IsAssignableFrom(modal.GetType()))
+                {
+                    prop.SetValue(this, modal);
+                    break;
+                }
+            }
         }
     }
     
