@@ -226,7 +226,7 @@ public class PumpResourcePanel : MonoBehaviour
         // Recalculate water levels using the active panel list
         if (GameManager.Instance.ApexPump != null && parentUiApexPump != null)
         {
-            GameManager.Instance.ApexPump.RecalculateWaterLevelBasedOnPanels(parentUiApexPump.ResourcePanels);
+            //GameManager.Instance.ApexPump.RecalculateWaterLevelBasedOnPanels(parentUiApexPump.ResourcePanels);
         }
     }
 

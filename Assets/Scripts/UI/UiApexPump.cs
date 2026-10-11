@@ -1,111 +1,102 @@
 using UnityEngine;
-using System.Collections.Generic;
-using System.Collections;
+using UnityEngine.UI;
+using TMPro;
 
 public class UiApexPump : UiModals
 {
-    [Header("Resource Panels UI")]
-    [SerializeField] private List<PumpResourcePanel> resourcePanels = new List<PumpResourcePanel>();
+    [Header("UI Containers")]
+    [SerializeField] private GameObject resourceButtonContainer;
+    [SerializeField] private GameObject amountButtonContainer;
 
-    public List<PumpResourcePanel> ResourcePanels => resourcePanels;
+    [Header("Display References")]
+    [SerializeField] private TextMeshProUGUI currentFuelValueText;
 
-    protected override void Start()
+    [Header("Interactive Buttons")]
+    [SerializeField] private Button[] resourceButtons; // 5 buttons for Fiber, Charcoal, Biofuel, Crude Oil, Refined Fuel
+    [SerializeField] private Button[] amountButtonInstances; // 10, 25, 50, 100 buttons
+    [SerializeField] private Button[] switchButtons; // 5 Switch buttons
+
+    private StructureApexPump currentPump;
+    private int selectedResourceIndex = -1;
+
+    protected override void Initialize()
     {
-        base.Start();
+        base.Initialize();
 
-        if (GameManager.Instance != null && GameManager.Instance.ApexPump != null)
+        // Setup Resource Buttons
+        for (int i = 0; i < resourceButtons.Length; i++)
         {
-            GameManager.Instance.ApexPump.OnPanelActiveStateChanged += HandlePanelActiveStateChanged;
-            GameManager.Instance.ApexPump.OnPumpStatesRecalculated += HandlePumpStatesRecalculated;
-
-            // Hand over the panels to the core logic script to set up data listeners & initial water level
-            StartCoroutine(RegisterDelay());
-        }
-        else
-        {
-            Debug.LogError("UiApexPump: GameManager or ApexPump reference is missing!");
-        }
-
-        LogAllPumpStates();
-    }
-
-    private void HandlePanelActiveStateChanged(PumpResourcePanel panel, bool isActive)
-    {
-        string state = isActive ? "ACTIVE" : "INACTIVE";
-        Debug.Log($"[UiApexPump Notification] {panel.ResourceType} pump switched to {state}. Total Active Pumps: {GetActivePumpCount()}/{resourcePanels.Count}");
-
-        // Tell core logic to update the water level based on the UI panels' current states
-        if (GameManager.Instance != null && GameManager.Instance.ApexPump != null)
-        {
-            GameManager.Instance.ApexPump.RecalculateWaterLevelBasedOnPanels(resourcePanels);
+            int index = i;
+            resourceButtons[i].onClick.AddListener(() => OnResourceSelected(index));
         }
 
-        LogAllPumpStates();
-    }
-
-    private void HandlePumpStatesRecalculated()
-    {
-        // Add any UI refresh logic here if your panels need to redraw based on updated states
-    }
-
-    public int GetActivePumpCount()
-    {
-        int activeCount = 0;
-        foreach (var panel in resourcePanels)
+        // Setup Amount Buttons
+        int[] amounts = { 10, 25, 50, 100 };
+        for (int i = 0; i < amountButtonInstances.Length; i++)
         {
-            if (panel != null && panel.IsActive)
+            int amount = amounts[i];
+            amountButtonInstances[i].onClick.AddListener(() => OnAmountSelected(amount));
+        }
+
+        // Setup Switch Buttons
+        for (int i = 0; i < switchButtons.Length; i++)
+        {
+            int index = i;
+            switchButtons[i].onClick.AddListener(() => OnSwitchClicked(index));
+        }
+    }
+
+    private void Update()
+    {
+        if (IsOpen && currentPump != null)
+        {
+            // Update Fuel Text
+            if (currentFuelValueText != null)
+                currentFuelValueText.text = currentPump.CurrentFuel.ToString();
+
+            // Refresh Switch Colors (Red if inactive, Green if active)
+            for (int i = 0; i < switchButtons.Length; i++)
             {
-                activeCount++;
+                var colors = switchButtons[i].colors;
+                colors.normalColor = currentPump.IsSwitchActive(i) ? Color.green : Color.red;
+                colors.highlightedColor = colors.normalColor;
+                switchButtons[i].colors = colors;
             }
         }
-        return activeCount;
     }
 
-    public void LogAllPumpStates()
+    public void Setup(StructureApexPump pump)
     {
-        List<string> activePumps = new List<string>();
-        List<string> inactivePumps = new List<string>();
+        currentPump = pump;
+        selectedResourceIndex = -1;
 
-        foreach (var panel in resourcePanels)
-        {
-            if (panel == null) continue;
-
-            if (panel.IsActive)
-            {
-                activePumps.Add($"{panel.ResourceType} ({panel.CurrentEnergy})");
-            }
-            else
-            {
-                inactivePumps.Add($"{panel.ResourceType} ({panel.CurrentEnergy})");
-            }
-        }
-
-        Debug.Log($"[UiApexPump Summary] Active ({activePumps.Count}): {string.Join(", ", activePumps)} | Inactive ({inactivePumps.Count}): {string.Join(", ", inactivePumps)}");
+        // Show Resource selection, hide Amount selection initially
+        if (amountButtonContainer != null)
+            amountButtonContainer.SetActive(false);
     }
 
-    public int GetTotalEnergy()
+    private void OnResourceSelected(int resourceIndex)
     {
-        int total = 0;
-        foreach (var panel in resourcePanels)
-        {
-            if (panel != null) total += panel.CurrentEnergy;
-        }
-        return total;
+        selectedResourceIndex = resourceIndex;
+
+        // Reveal the Amount container once resource is chosen
+        if (amountButtonContainer != null)
+            amountButtonContainer.SetActive(true);
     }
 
-    private void OnDestroy()
+    private void OnAmountSelected(int amount)
     {
-        if (GameManager.Instance != null && GameManager.Instance.ApexPump != null)
+        if (currentPump != null && selectedResourceIndex != -1)
         {
-            GameManager.Instance.ApexPump.OnPanelActiveStateChanged -= HandlePanelActiveStateChanged;
-            GameManager.Instance.ApexPump.OnPumpStatesRecalculated -= HandlePumpStatesRecalculated;
+            currentPump.ConvertResourceToFuel(selectedResourceIndex, amount);
         }
     }
 
-    private IEnumerator RegisterDelay()
+    private void OnSwitchClicked(int switchIndex)
     {
-        yield return new WaitForSeconds(0.25f);
-
-        GameManager.Instance.ApexPump.RegisterPanelListeners(resourcePanels);
+        if (currentPump != null)
+        {
+            currentPump.ToggleSwitch(switchIndex);
+        }
     }
 }
