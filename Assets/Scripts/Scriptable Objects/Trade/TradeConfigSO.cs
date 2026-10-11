@@ -9,7 +9,7 @@ public class TradeConfigSO : ScriptableObject
     public struct ResourceRate
     {
         public ResourceType resourceType;
-        [Tooltip("Base value/tier weight of this resource.")]
+        [Tooltip("Base value/tier weight of this resource. (e.g. Wood = 1, Stone = 2, Gold = 5)")]
         public int baseValue;
     }
 
@@ -21,8 +21,7 @@ public class TradeConfigSO : ScriptableObject
         ResourceType.Stone,
         ResourceType.Copper,
         ResourceType.Iron,
-        ResourceType.Gold,
-        ResourceType.Food
+        ResourceType.Gold
     };
 
     [Header("Resource Base Values")]
@@ -33,12 +32,14 @@ public class TradeConfigSO : ScriptableObject
         new ResourceRate { resourceType = ResourceType.Stone, baseValue = 2 },
         new ResourceRate { resourceType = ResourceType.Copper, baseValue = 3 },
         new ResourceRate { resourceType = ResourceType.Iron, baseValue = 4 },
-        new ResourceRate { resourceType = ResourceType.Gold, baseValue = 5 },
-        new ResourceRate { resourceType = ResourceType.Food, baseValue = 2 }
+        new ResourceRate { resourceType = ResourceType.Gold, baseValue = 5 }
     };
 
     public IReadOnlyList<ResourceType> AvailableTradeResources => availableTradeResources;
 
+    /// <summary>
+    /// Gets the base value for a specific resource type.
+    /// </summary>
     public int GetResourceValue(ResourceType type)
     {
         foreach (var rate in resourceRates)
@@ -46,9 +47,13 @@ public class TradeConfigSO : ScriptableObject
             if (rate.resourceType == type)
                 return Mathf.Max(1, rate.baseValue);
         }
-        return 1;
+        return 1; // Default fallback
     }
 
+    /// <summary>
+    /// Calculates the output resource quantity given the input quantity and types.
+    /// Formula: (Deposit Amount * Deposit Resource Value) / Receive Resource Value
+    /// </summary>
     public int CalculateReceiveAmount(ResourceType depositType, ResourceType receiveType, int depositAmount)
     {
         if (depositType == receiveType || depositAmount <= 0)
