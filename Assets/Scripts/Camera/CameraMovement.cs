@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
+using Unity.Cinemachine; // Cinemachine 3.x namespace
 
 public class CameraMovement : MonoBehaviour
 {
@@ -7,20 +7,39 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private float wasdSpeed = 25f;
     [SerializeField] private float dragSpeed = 0.5f;
 
+    [Header("Zoom Settings")]
+    [SerializeField] private CinemachineFollow cinemachineFollow; // Reference to Cinemachine 3.x Follow component
+    [SerializeField] private float zoomSpeed = 5f;
+    [SerializeField] private float minZoomY = 10f;
+    [SerializeField] private float maxZoomY = 50f;
+    [SerializeField] private float zoomDamping = 10f;
+
     private Transform cameraTransform;
+    private float targetZoomY;
 
     private void Start()
     {
         if (Camera.main != null)
+        {
             cameraTransform = Camera.main.transform;
+        }
         else
+        {
             cameraTransform = transform;
+        }
+
+        // Initialize target zoom from current Cinemachine Follow offset
+        if (cinemachineFollow != null)
+        {
+            targetZoomY = cinemachineFollow.FollowOffset.y;
+        }
     }
 
     private void Update()
     {
         HandleWASDMovement();
         HandleMouseDragMovement();
+        HandleZoom();
     }
 
     private void HandleWASDMovement()
@@ -46,18 +65,14 @@ public class CameraMovement : MonoBehaviour
     {
         if (GameManager.Instance == null || GameManager.Instance.InputManager == null) return;
 
-        // Check if our PanCamera action is currently held down
         if (GameManager.Instance.InputManager.IsPanPressed)
         {
-            // Get mouse movement delta from the new Input System
-            Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+            Vector2 mouseDelta = UnityEngine.InputSystem.Mouse.current.delta.ReadValue();
 
             if (mouseDelta != Vector2.zero)
             {
-                // Invert the delta so the map drags with the cursor instead of pushing away
                 Vector3 moveDir = new Vector3(-mouseDelta.x, 0f, -mouseDelta.y);
 
-                // Convert relative to camera rotation if desired, or keep it screen-space relative
                 Vector3 right = cameraTransform.right;
                 Vector3 forward = cameraTransform.forward;
                 right.y = 0f;
@@ -69,5 +84,27 @@ public class CameraMovement : MonoBehaviour
                 transform.position += worldMove;
             }
         }
+    }
+
+    private void HandleZoom()
+    {
+        if (GameManager.Instance == null || GameManager.Instance.InputManager == null || cinemachineFollow == null) return;
+
+        Vector2 scrollInput = GameManager.Instance.InputManager.ScrollInput;
+
+        if (scrollInput.y != 0)
+        {
+            // Calculate new target Y offset based on scroll wheel direction
+            // Scrolling UP (positive Y) zooms IN (reduces Y offset height)
+            targetZoomY -= Mathf.Sign(scrollInput.y) * zoomSpeed;
+            targetZoomY = Mathf.Clamp(targetZoomY, minZoomY, maxZoomY);
+        }
+
+        // Smoothly interpolate current Follow Offset Y to target zoom height
+        Vector3 currentOffset = cinemachineFollow.FollowOffset;
+        currentOffset.y = Mathf.Lerp(currentOffset.y, targetZoomY, Time.deltaTime * zoomDamping);
+        
+        // Preserve Z offset proportionally if needed, or maintain fixed perspective
+        cinemachineFollow.FollowOffset = currentOffset;
     }
 }

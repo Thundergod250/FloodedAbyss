@@ -598,6 +598,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &202101834 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4756873647334232888, guid: f8bb3ce1a7dc36c41958adbc757fa904, type: 3}
+  m_PrefabInstance: {fileID: 6235901039830439554}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b617507da6d07e749b7efdb34e1173e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineFollow
 --- !u!1 &280264586
 GameObject:
   m_ObjectHideFlags: 0
@@ -6165,6 +6176,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8110068829299157278, guid: 2e6772388242fdc4c91e70b4939ee835, type: 3}
+      propertyPath: maxZoomY
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 8110068829299157278, guid: 2e6772388242fdc4c91e70b4939ee835, type: 3}
+      propertyPath: minZoomY
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8110068829299157278, guid: 2e6772388242fdc4c91e70b4939ee835, type: 3}
+      propertyPath: zoomSpeed
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 8110068829299157278, guid: 2e6772388242fdc4c91e70b4939ee835, type: 3}
+      propertyPath: cinemachineFollow
+      value: 
+      objectReference: {fileID: 202101834}
     - target: {fileID: 9129820665014219239, guid: 2e6772388242fdc4c91e70b4939ee835, type: 3}
       propertyPath: m_Name
       value: CameraRig
