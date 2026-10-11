@@ -28,13 +28,13 @@ public class PlayerController : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
 
         // Bind actions once
-        MoveAction = playerInput.actions["Move"];
+        /*MoveAction = playerInput.actions["Move"];
         JumpAction = playerInput.actions["Jump"];
         UseAction = playerInput.actions["Use"];
         InteractAction = playerInput.actions["Interact"];
         AttackAction = playerInput.actions["Use"];
         LookAction = playerInput.actions["Look"];
-        RunAction = playerInput.actions["Run"];
+        RunAction = playerInput.actions["Run"];*/
     }
 
     public void SetInputActive(bool active) => IsInputActive = active;

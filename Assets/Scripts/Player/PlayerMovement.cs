@@ -35,25 +35,25 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
-        characterController = GetComponent<CharacterController>();
+        /*characterController = GetComponent<CharacterController>();
         controller = GetComponent<PlayerController>();
         stamina = GetComponent<PlayerStamina>();
         oxygen = GetComponent<PlayerOxygen>();
 
         velocity.y = -2f;
         if (controller != null && controller.JumpAction != null)
-            controller.JumpAction.started += Jump;
+            controller.JumpAction.started += Jump;*/
     }
 
     private void OnDestroy()
     {
-        if (controller != null && controller.JumpAction != null)
-            controller.JumpAction.started -= Jump;
+        /*if (controller != null && controller.JumpAction != null)
+            controller.JumpAction.started -= Jump;*/
     }
 
     private void Update()
     {
-        MovePlayer();
+        /*MovePlayer();
 
         if (isClimbing)
         {
@@ -68,12 +68,12 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             ApplyGravity();
-        }
+        }*/
     }
 
     private void MovePlayer()
     {
-        if (controller == null || controller.MoveAction == null) return;
+        /*if (controller == null || controller.MoveAction == null) return;
 
         Vector2 input = controller.IsInputActive ? controller.MoveAction.ReadValue<Vector2>() : Vector2.zero;
 
@@ -114,12 +114,12 @@ public class PlayerMovement : MonoBehaviour
             finalMove += Vector3.up * velocity.y;
         }
 
-        characterController.Move(finalMove * Time.deltaTime);
+        characterController.Move(finalMove * Time.deltaTime);*/
     }
 
     private void ApplyGravity()
     {
-        if (characterController.isGrounded)
+        /*if (characterController.isGrounded)
         {
             velocity.y = -2f;
             surfaceJumping = false;
@@ -129,30 +129,30 @@ public class PlayerMovement : MonoBehaviour
         {
             velocity.y += gravity * Time.deltaTime;
             velocity.y = Mathf.Max(velocity.y, maxFallSpeed);
-        }
+        }*/
     }
 
-    #region Ladder-Related
+    
     public void RegisterLadder()
     {
-        ladderTriggerCount++;
-        isClimbing = true;
+        /*ladderTriggerCount++;
+        isClimbing = true;*/
     }
 
     public void UnregisterLadder()
     {
-        ladderTriggerCount = Mathf.Max(0, ladderTriggerCount - 1);
+        /*ladderTriggerCount = Mathf.Max(0, ladderTriggerCount - 1);
         if (ladderTriggerCount == 0)
         {
             isClimbing = false;
-        }
+        }*/
     }
-    #endregion
+    
 
-    #region Swimming-Related
+    
     private void ApplySwimming()
     {
-        if (waterSurface == null)
+        /*if (waterSurface == null)
             return;
 
         bool jumpHeld =
@@ -187,13 +187,13 @@ public class PlayerMovement : MonoBehaviour
 
         wasSwimSprinting = swimSprinting;
 
-        characterController.Move(Vector3.up * velocity.y * Time.deltaTime);
+        characterController.Move(Vector3.up * velocity.y * Time.deltaTime);*/
     }
     public void SetWaterSurface(Transform surface) => waterSurface = surface;
 
     private bool IsAtWaterSurface()
     {
-        if (waterSurface == null)
+        /*if (waterSurface == null)
             return false;
 
         float waterY = waterSurface.position.y;
@@ -201,14 +201,13 @@ public class PlayerMovement : MonoBehaviour
 
         Debug.Log($"Player Y: {playerY} | Water Y: {waterY}");
 
-        return playerY >= waterY - surfaceCheckDistance;
+        return playerY >= waterY - surfaceCheckDistance;*/
+        return true; 
     }
-
-    #endregion
 
     private void Jump(InputAction.CallbackContext ctx)
     {
-        if (controller != null && !controller.IsInputActive)
+        /*if (controller != null && !controller.IsInputActive)
             return;
 
         if (isClimbing)
@@ -253,6 +252,6 @@ public class PlayerMovement : MonoBehaviour
 
                 Debug.Log("Surface Jump!");
             }
-        }
+        }*/
     }
 }
