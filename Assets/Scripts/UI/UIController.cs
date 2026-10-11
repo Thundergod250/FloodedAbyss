@@ -6,6 +6,13 @@ public class UIController : MonoBehaviour
 {
     private Dictionary<Type, UiModals> modalDictionary = new();
 
+    // Direct global properties for dot-notation access via GameManager.Instance.uiController.(SpecificUi)
+    public UIHUD uiHUD { get; private set; }
+    public UiUpgrade uiUpgrade { get; private set; }
+    public UIAutoFarm uiAutoFarm { get; private set; }
+    public UiApexPump uiApexPump { get; private set; }
+    public UiTrade uiTrade { get; private set; }
+
     private void Awake() => InitializeModals();
 
     private void Start()
@@ -31,6 +38,13 @@ public class UIController : MonoBehaviour
             Type modalType = modal.GetType();
             if (!modalDictionary.ContainsKey(modalType)) 
                 modalDictionary.Add(modalType, modal);
+
+            // Automatically cache references for direct dot-notation access
+            if (modal is UIHUD hud) uiHUD = hud;
+            else if (modal is UiUpgrade upgrade) uiUpgrade = upgrade;
+            else if (modal is UIAutoFarm autoFarm) uiAutoFarm = autoFarm;
+            else if (modal is UiApexPump apexPump) uiApexPump = apexPump;
+            else if (modal is UiTrade trade) uiTrade = trade;
         }
     }
     
