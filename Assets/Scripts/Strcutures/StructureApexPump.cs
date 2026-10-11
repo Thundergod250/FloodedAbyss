@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class StructureApexPump : Structures
 {
@@ -8,10 +9,27 @@ public class StructureApexPump : Structures
     
     [Header("Switch Consumption Settings (Editable)")]
     [SerializeField] private int[] switchFuelCosts = { 1, 5, 10, 20, 50 }; // Costs per switch level
+    [SerializeField] private float consumptionInterval = 1f; // How often (in seconds) fuel is consumed
 
     [Header("Debug Status")]
     [SerializeField] private int currentFuel = 0;
     [SerializeField] private bool[] switchStates = new bool[5]; // 5 switches
+
+    private Coroutine consumptionRoutine;
+
+    private void Start()
+    {
+        // Start the continuous fuel consumption loop in the background
+        consumptionRoutine = StartCoroutine(ConsumeFuelRoutine());
+    }
+
+    private void OnDisable()
+    {
+        if (consumptionRoutine != null)
+        {
+            StopCoroutine(consumptionRoutine);
+        }
+    }
 
     public override void Activate()
     {
@@ -31,7 +49,6 @@ public class StructureApexPump : Structures
         ResourceData targetResource = acceptedResources[resourceIndex];
         if (targetResource == null) return;
 
-        // Check and consume resource using your ResourceManager's ConsumeResource method
         bool success = GameManager.Instance.ResourceManager.ConsumeResource(targetResource, amount);
         if (!success)
         {
@@ -39,7 +56,6 @@ public class StructureApexPump : Structures
             return;
         }
 
-        // Add to fuel
         int fuelGained = amount * resourceFuelValues[resourceIndex];
         currentFuel += fuelGained;
 
@@ -52,6 +68,46 @@ public class StructureApexPump : Structures
 
         switchStates[switchIndex] = !switchStates[switchIndex];
         Debug.Log($"[StructureApexPump] Switch {switchIndex + 1} is now {(switchStates[switchIndex] ? "ON (Green)" : "OFF (Red)")}");
+    }
+
+    private IEnumerator ConsumeFuelRoutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(consumptionInterval);
+
+            // Calculate total cost based on active switches
+            int totalFuelCost = 0;
+            for (int i = 0; i < switchStates.Length; i++)
+            {
+                if (switchStates[i])
+                {
+                    totalFuelCost += GetSwitchCost(i);
+                }
+            }
+
+            // If switches are active, consume fuel
+            if (totalFuelCost > 0)
+            {
+                if (currentFuel >= totalFuelCost)
+                {
+                    currentFuel -= totalFuelCost;
+                    Debug.Log($"[StructureApexPump] Consumed {totalFuelCost} fuel. Remaining Fuel: {currentFuel}");
+                }
+                else
+                {
+                    // Not enough fuel left! Turn off switches or halt pump
+                    Debug.LogWarning("[StructureApexPump] Out of fuel! Shutting down active switches.");
+                    currentFuel = 0;
+                    
+                    // Optional: Automatically turn off all switches when out of fuel
+                    for (int i = 0; i < switchStates.Length; i++)
+                    {
+                        switchStates[i] = false;
+                    }
+                }
+            }
+        }
     }
 
     public bool IsSwitchActive(int index) => index >= 0 && index < switchStates.Length && switchStates[index];
