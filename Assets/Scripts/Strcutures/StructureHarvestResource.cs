@@ -12,12 +12,12 @@ public class StructureHarvestResource : Structures
     [SerializeField] private ResourceData resourceToProduce; // Drag your Timber asset here in Inspector
     [SerializeField] private int productionAmount = 1;
 
-    private bool isWorking = false;
+    [Header("Debug Status")]
+    [SerializeField] private bool isWorking = false;
+    [SerializeField, Range(0f, 1f)] private float progressPercentage = 0f; // Visible in Inspector!
 
     public override void Activate()
     {
-        if (isWorking) return;
-
         var harvestUI = GameManager.Instance.uiController.UiResourceHarvest;
         if (harvestUI != null)
         {
@@ -42,7 +42,7 @@ public class StructureHarvestResource : Structures
             return;
         }
 
-        // Consume workers
+        // Consume workers (fixed subtraction syntax)
         workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker - laborCost);
         
         StartCoroutine(HarvestRoutine());
@@ -51,19 +51,17 @@ public class StructureHarvestResource : Structures
     private IEnumerator HarvestRoutine()
     {
         isWorking = true;
-        var harvestUI = GameManager.Instance.uiController.UiResourceHarvest;
-
-        if (harvestUI != null)
-            harvestUI.BeginProgress(productionDuration);
+        progressPercentage = 0f;
 
         float elapsed = 0f;
         while (elapsed < productionDuration)
         {
             elapsed += Time.deltaTime;
-            if (harvestUI != null)
-                harvestUI.UpdateProgress(elapsed / productionDuration);
+            progressPercentage = Mathf.Clamp01(elapsed / productionDuration);
             yield return null;
         }
+
+        progressPercentage = 1f;
 
         // Give the resource via ResourceManager!
         if (resourceToProduce != null && GameManager.Instance.ResourceManager != null)
@@ -78,7 +76,8 @@ public class StructureHarvestResource : Structures
             workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker + laborCost);
         }
 
-        if (harvestUI != null)
+        var harvestUI = GameManager.Instance.uiController.UiResourceHarvest;
+        if (harvestUI != null && harvestUI.IsOpen)
         {
             harvestUI.CompleteProgress();
             GameManager.Instance.uiController.CloseAllModals();
@@ -88,6 +87,9 @@ public class StructureHarvestResource : Structures
         Destroy(gameObject);
     }
 
+    // Public getters for the UI to read independently
+    public bool IsWorking => isWorking;
+    public float ProgressPercentage => progressPercentage;
     public string StructureTitle => structureTitle;
     public int LaborCost => laborCost;
     public string ProductionDescription => $"Producing {productionAmount} {(resourceToProduce != null ? resourceToProduce.ResourceName : "Resource")}";

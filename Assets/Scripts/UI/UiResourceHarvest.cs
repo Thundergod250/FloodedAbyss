@@ -24,6 +24,7 @@ public class UiResourceHarvest : UiModals
         base.Initialize();
         if (activateButton != null)
         {
+            activateButton.onClick.RemoveAllListeners();
             activateButton.onClick.AddListener(OnActivateClicked);
         }
 
@@ -32,6 +33,27 @@ public class UiResourceHarvest : UiModals
 
         if (productionBarContainer != null)
             productionBarContainer.SetActive(false);
+    }
+
+    private void Update()
+    {
+        // Continuously read the progress percentage directly from the bound structure via Update
+        if (IsOpen && currentStructure != null)
+        {
+            if (currentStructure.IsWorking)
+            {
+                if (productionBarContainer != null && !productionBarContainer.activeSelf)
+                    productionBarContainer.SetActive(true);
+
+                if (activateButton != null && activateButton.interactable)
+                    activateButton.interactable = false;
+
+                if (fillImage != null)
+                {
+                    fillImage.fillAmount = currentStructure.ProgressPercentage;
+                }
+            }
+        }
     }
 
     public void Setup(StructureHarvestResource structure)
@@ -43,8 +65,20 @@ public class UiResourceHarvest : UiModals
         if (progressDescriptionText != null) progressDescriptionText.text = structure.ProductionDescription;
 
         if (notEnoughWorkersText != null) notEnoughWorkersText.gameObject.SetActive(false);
-        if (productionBarContainer != null) productionBarContainer.SetActive(false);
-        if (activateButton != null) activateButton.interactable = true;
+
+        // If the structure is already working when opening the UI, sync immediately
+        if (structure.IsWorking)
+        {
+            if (productionBarContainer != null) productionBarContainer.SetActive(true);
+            if (activateButton != null) activateButton.interactable = false;
+            if (fillImage != null) fillImage.fillAmount = structure.ProgressPercentage;
+        }
+        else
+        {
+            if (productionBarContainer != null) productionBarContainer.SetActive(false);
+            if (activateButton != null) activateButton.interactable = true;
+            if (fillImage != null) fillImage.fillAmount = 0f;
+        }
     }
 
     private void OnActivateClicked()
