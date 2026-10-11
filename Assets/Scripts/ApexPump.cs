@@ -124,7 +124,7 @@ public class ApexPump : MonoBehaviour
 
         float targetHeight = GetTargetHeightForActiveCount(activeCount);
 
-        if (activeCount > 0)
+        /*if (activeCount > 0)
         {
             Debug.Log($"[ApexPump] Active Pumps: {activeCount}/5. Water Level target set to: {targetHeight}m (Combined Threshold: {totalThreshold})");
             waterLevel.DrainToTargetHeight(targetHeight, totalThreshold);
@@ -133,7 +133,7 @@ public class ApexPump : MonoBehaviour
         {
             Debug.Log($"[ApexPump] 0 Pumps Active! Water rising back up to default height: {defaultMaxWaterHeight}m");
             waterLevel.OnAllPumpsDeactivated(defaultMaxWaterHeight);
-        }
+        }*/
 
         OnPumpStatesRecalculated?.Invoke();
     }

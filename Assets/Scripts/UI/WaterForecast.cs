@@ -37,7 +37,7 @@ public class WaterForecast : MonoBehaviour
 
         if (level != null)
         {
-            maximumWaterLevel = level.CurrentWaterHeight;
+            //maximumWaterLevel = level.CurrentWaterHeight;
             currentMaximumWaterCapacity = maximumWaterLevel;
             targetMaximumWaterCapacity = maximumWaterLevel;
         }
@@ -49,7 +49,7 @@ public class WaterForecast : MonoBehaviour
     {
         if (level == null) return;
 
-        // Display tracked water height directly from WaterLevel
+        /*// Display tracked water height directly from WaterLevel
         waterLevelText.text = level.CurrentWaterHeight.ToString("F1") + "m";
 
         if (!pumpActivated) return;
@@ -68,7 +68,7 @@ public class WaterForecast : MonoBehaviour
             {
                 level.IncreaseWaterLevel(amountToRise);
             }
-        }
+        }*/
     }
 
     public void IncreaseWaterRise(float amount)
@@ -146,18 +146,18 @@ public class WaterForecast : MonoBehaviour
     /// </summary>
     public void IncDecWaterLevel(float height)
     {
-        if (level != null)
+        /*if (level != null)
         {
             level.SetWaterLevel(height);
-        }
+        }*/
     }
 
     /// <summary>
     /// Smoothly lowers the water height to targetHeight over duration using WaterLevel calls.
     /// </summary>
-    public IEnumerator LowerWaterLevel(float targetHeight, float duration)
+    /*public IEnumerator LowerWaterLevel(float targetHeight, float duration)
     {
-        if (level == null) yield break;
+        /*if (level == null) yield break;
 
         float startingHeight = level.CurrentWaterHeight;
         float elapsed = 0f;
@@ -173,7 +173,7 @@ public class WaterForecast : MonoBehaviour
             yield return null;
         }
 
-        level.SetWaterLevel(targetHeight);
+        level.SetWaterLevel(targetHeight);#1#
     }
 
     /// <summary>
@@ -181,7 +181,7 @@ public class WaterForecast : MonoBehaviour
     /// </summary>
     public IEnumerator AdjustWaterLevelOverTime(float adjustment)
     {
-        if (level == null) yield break;
+        /*if (level == null) yield break;
 
         float startingHeight = level.CurrentWaterHeight;
         float targetHeight = startingHeight + adjustment;
@@ -200,13 +200,13 @@ public class WaterForecast : MonoBehaviour
             yield return null;
         }
 
-        level.SetWaterLevel(targetHeight);
-    }
+        level.SetWaterLevel(targetHeight);#1#
+    }*/
 
-    public float GetCurrentWaterHeight()
+    /*public float GetCurrentWaterHeight()
     {
         return level != null ? level.CurrentWaterHeight : 0f;
-    }
+    }*/
 
     public void EnableTimeline()
     {

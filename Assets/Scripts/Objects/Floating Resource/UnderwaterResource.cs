@@ -48,7 +48,7 @@ public class UnderwaterResource : MonoBehaviour
 
     private void Update()
     {
-        if (waterLevel == null)
+        /*if (waterLevel == null)
         {
             FindWaterLevelReference();
             return;
@@ -69,7 +69,7 @@ public class UnderwaterResource : MonoBehaviour
         currentPos.y = waterSurfaceY + surfaceOffset + waveBobbing;
 
         // Apply updated position
-        transform.position = currentPos;
+        transform.position = currentPos;*/
     }
 
     private void OnTriggerEnter(Collider other)

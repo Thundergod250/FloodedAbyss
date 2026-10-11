@@ -116,19 +116,15 @@ public class AutoMiner : WorkableStructure
 
     public override void Activate()
     {
-        Debug.Log(
-        $"[{gameObject.name}] WaterLevel: {waterLevel} | " +
-        $"Water Height: {waterLevel?.CurrentWaterHeight} | " +
-        $"Building Y: {transform.position.y} | " +
-        $"Submerged: {IsSubmerged}"
-    );
+        //Debug.Log($"[{gameObject.name}] WaterLevel: {waterLevel} | " +$"Water Height: {waterLevel?.CurrentWaterHeight} | " +$"Building Y: {transform.position.y} | " +$"Submerged: {IsSubmerged}");
 
 
+        /*
         if (IsSubmerged)
         {
             Debug.Log("SUBMEGED");
             return;
-        }
+        }*/
 
         if (IsBroken)
         {

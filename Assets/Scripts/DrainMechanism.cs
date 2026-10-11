@@ -22,7 +22,7 @@ public class DrainMechanism : Item
             WaterLevel targetWaterLevel = GetWaterLevel();
             if (targetWaterLevel != null)
             {
-                targetWaterLevel.LowerWaterOrRaiseBuildings();
+                //targetWaterLevel.LowerWaterOrRaiseBuildings();
                 Debug.Log("Water level lowered / buildings raised!");
             }
             else

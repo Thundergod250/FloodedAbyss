@@ -26,7 +26,7 @@ public class WorkableStructure : Item
 
     public bool IsBroken => isBroken;
 
-    protected bool IsSubmerged => waterLevel != null && waterLevel.CurrentWaterHeight >= this.transform.position.y;
+    //protected bool IsSubmerged => waterLevel != null && waterLevel.CurrentWaterHeight >= this.transform.position.y;
 
 
     private Coroutine productionCoroutine;
@@ -48,21 +48,21 @@ public class WorkableStructure : Item
 
         productionCoroutine = StartCoroutine(ProductionCycleRoutine());
 
-        Debug.Log(
+        /*Debug.Log(
             $"[{buildingName}] WaterLevel: {waterLevel} | " +
             $"Water Height: {waterLevel?.CurrentWaterHeight} | " +
             $"Building Y: {transform.position.y} | " +
             $"Submerged: {IsSubmerged}"
-        );
+        );*/
     }
 
     public override void Activate()
     {
-        if (IsSubmerged)
+        /*if (IsSubmerged)
         {
             Debug.Log($"[{buildingName}] Cannot interact. Building is submerged.");
             return;
-        }
+        }*/
 
         if (IsBroken)
         {
@@ -116,6 +116,7 @@ public class WorkableStructure : Item
 
     public bool TryRemoveWorker()
     {
+        /*
         if (IsBroken || IsSubmerged)
         {
             Debug.LogWarning(
@@ -124,6 +125,7 @@ public class WorkableStructure : Item
             );
             return false;
         }
+        */
 
         if (assignedWorkers <= 0) return false;
 
@@ -143,8 +145,8 @@ public class WorkableStructure : Item
         {
             yield return new WaitForSeconds(productionIntervalSeconds);
 
-            if (IsBroken || IsSubmerged)
-                continue;
+            /*if (IsBroken || IsSubmerged)
+                continue;*/
 
             int yieldAmount = CalculatedYield;
 
@@ -227,11 +229,11 @@ public class WorkableStructure : Item
         if (!IsBroken)
             return false;
 
-        if (IsSubmerged)
+        /*if (IsSubmerged)
         {
             Debug.Log($"[{buildingName}] Cannot repair while submerged.");
             return false;
-        }
+        }*/
 
         if (GameManager.Instance == null ||
             GameManager.Instance.playerController == null)

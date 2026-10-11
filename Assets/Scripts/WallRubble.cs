@@ -22,7 +22,7 @@ public class WallRubble : MonoBehaviour
             waterForecast = GameManager.Instance.uiController.UIHUD.GetHUDElement<WaterForecast>(UIHUD.HuDPanels.WaterForecast);*/
     }
 
-    private void OnEnable()
+    /*private void OnEnable()
     {
         if (health != null)
             health.EvtOnDied.AddListener(HandleDestroyed);
@@ -32,9 +32,9 @@ public class WallRubble : MonoBehaviour
     {
         if (health != null)
             health.EvtOnDied.RemoveListener(HandleDestroyed);
-    }
+    }*/
 
-    private void HandleDestroyed()
+    /*private void HandleDestroyed()
     {
         if (waterForecast != null)
         {
@@ -45,5 +45,5 @@ public class WallRubble : MonoBehaviour
                 )
             );
         }
-    }
+    }*/
 }
