@@ -5,6 +5,9 @@ public class StructureBuildable : Structures
     [Header("Buildable Configuration")]
     [SerializeField] private StructureDataSO[] availableStructuresToBuild;
 
+    [Header("Spawn Settings")]
+    [SerializeField] private Vector3 spawnOffset = new Vector3(0f, 0f, 0f); // Adjust X, Y, Z in Inspector to prevent clipping
+
     public override void Activate()
     {
         var buildingUI = GameManager.Instance.uiController.UiBuilding;
@@ -55,11 +58,11 @@ public class StructureBuildable : Structures
             }
         }
 
-        // 3. Instantiate the structure in the world
+        // 3. Instantiate the structure in the world using local transform offset
         if (structureData.StructurePrefab != null)
         {
-            Vector3 spawnPosition = transform.position + transform.forward * 3f + Vector3.up * 0.5f;
-            Instantiate(structureData.StructurePrefab, spawnPosition, Quaternion.identity);
+            Vector3 spawnPosition = transform.TransformPoint(spawnOffset);
+            Instantiate(structureData.StructurePrefab, spawnPosition, transform.rotation);
             Debug.Log($"[StructureBuildable] Successfully built {structureData.StructureTitle}!");
         }
         else
