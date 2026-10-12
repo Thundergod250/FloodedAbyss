@@ -7,6 +7,12 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private float wasdSpeed = 25f;
     [SerializeField] private float dragSpeed = 0.5f;
 
+    [Header("Map Boundaries (Relative to 0,0,0)")]
+    [SerializeField] private float minX = -50f;
+    [SerializeField] private float maxX = 50f;
+    [SerializeField] private float minZ = -50f;
+    [SerializeField] private float maxZ = 50f;
+
     [Header("Zoom Settings")]
     [SerializeField] private CinemachineFollow cinemachineFollow; // Reference to Cinemachine 3.x Follow component
     [SerializeField] private float zoomSpeed = 5f;
@@ -40,6 +46,7 @@ public class CameraMovement : MonoBehaviour
         HandleWASDMovement();
         HandleMouseDragMovement();
         HandleZoom();
+        ClampPosition();
     }
 
     private void HandleWASDMovement()
@@ -58,7 +65,7 @@ public class CameraMovement : MonoBehaviour
         right.Normalize();
 
         Vector3 moveDir = (forward * inputVal.y + right * inputVal.x).normalized;
-        transform.position += moveDir * (wasdSpeed * Time.deltaTime);
+        transform.position += moveDir * (wasdSpeed * Time.unscaledDeltaTime);
     }
 
     private void HandleMouseDragMovement()
@@ -80,7 +87,7 @@ public class CameraMovement : MonoBehaviour
                 right.Normalize();
                 forward.Normalize();
 
-                Vector3 worldMove = (right * moveDir.x + forward * moveDir.z) * (dragSpeed * Time.deltaTime);
+                Vector3 worldMove = (right * moveDir.x + forward * moveDir.z) * (dragSpeed * Time.unscaledDeltaTime);
                 transform.position += worldMove;
             }
         }
@@ -95,16 +102,22 @@ public class CameraMovement : MonoBehaviour
         if (scrollInput.y != 0)
         {
             // Calculate new target Y offset based on scroll wheel direction
-            // Scrolling UP (positive Y) zooms IN (reduces Y offset height)
             targetZoomY -= Mathf.Sign(scrollInput.y) * zoomSpeed;
             targetZoomY = Mathf.Clamp(targetZoomY, minZoomY, maxZoomY);
         }
 
-        // Smoothly interpolate current Follow Offset Y to target zoom height
+        // Smoothly interpolate current Follow Offset Y using unscaledDeltaTime
         Vector3 currentOffset = cinemachineFollow.FollowOffset;
-        currentOffset.y = Mathf.Lerp(currentOffset.y, targetZoomY, Time.deltaTime * zoomDamping);
+        currentOffset.y = Mathf.Lerp(currentOffset.y, targetZoomY, Time.unscaledDeltaTime * zoomDamping);
         
-        // Preserve Z offset proportionally if needed, or maintain fixed perspective
         cinemachineFollow.FollowOffset = currentOffset;
+    }
+
+    private void ClampPosition()
+    {
+        Vector3 pos = transform.position;
+        pos.x = Mathf.Clamp(pos.x, minX, maxX);
+        pos.z = Mathf.Clamp(pos.z, minZ, maxZ);
+        transform.position = pos;
     }
 }
