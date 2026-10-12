@@ -12,6 +12,10 @@ public class UiResourceHarvest : UiModals
     [SerializeField] private Button activateButton;
     [SerializeField] private TextMeshProUGUI activateButtonText; 
     
+    [Header("Destroy Button References")]
+    [SerializeField] private Button destroyButton;
+    [SerializeField] private TextMeshProUGUI destroyButtonText;
+
     [Header("Progress Bar References")]
     [SerializeField] private GameObject productionBarContainer;
     [SerializeField] private Image fillImage;
@@ -25,14 +29,21 @@ public class UiResourceHarvest : UiModals
         base.Initialize();
 
         if (activateButtonText == null && activateButton != null)
-        {
             activateButtonText = activateButton.GetComponentInChildren<TextMeshProUGUI>();
-        }
+
+        if (destroyButtonText == null && destroyButton != null)
+            destroyButtonText = destroyButton.GetComponentInChildren<TextMeshProUGUI>();
 
         if (activateButton != null)
         {
             activateButton.onClick.RemoveAllListeners();
             activateButton.onClick.AddListener(OnActivateClicked);
+        }
+
+        if (destroyButton != null)
+        {
+            destroyButton.onClick.RemoveAllListeners();
+            destroyButton.onClick.AddListener(OnDestroyClicked);
         }
 
         if (notEnoughWorkersText != null)
@@ -46,19 +57,24 @@ public class UiResourceHarvest : UiModals
     {
         if (IsOpen && currentStructure != null)
         {
-            if (productionBarContainer != null)
+            bool showBar = currentStructure.IsWorking || currentStructure.IsDestroying;
+            if (productionBarContainer != null && productionBarContainer.activeSelf != showBar)
             {
-                bool shouldShow = currentStructure.IsWorking;
-                if (productionBarContainer.activeSelf != shouldShow)
-                    productionBarContainer.SetActive(shouldShow);
+                productionBarContainer.SetActive(showBar);
             }
 
-            if (currentStructure.IsWorking && fillImage != null)
+            if (showBar && fillImage != null)
             {
                 fillImage.fillAmount = currentStructure.ProgressPercentage;
             }
 
+            if (progressDescriptionText != null)
+            {
+                progressDescriptionText.text = currentStructure.ProductionDescription;
+            }
+
             UpdateActivateButtonVisuals();
+            UpdateDestroyButtonVisuals();
         }
     }
 
@@ -68,47 +84,55 @@ public class UiResourceHarvest : UiModals
 
         if (titleText != null) titleText.text = structure.StructureTitle;
         if (laborCostText != null) laborCostText.text = $"Labor Cost: {structure.LaborCost}";
-        if (progressDescriptionText != null) progressDescriptionText.text = structure.ProductionDescription;
-
         if (notEnoughWorkersText != null) notEnoughWorkersText.gameObject.SetActive(false);
 
-        if (structure.IsWorking)
-        {
-            if (productionBarContainer != null) productionBarContainer.SetActive(true);
-            if (fillImage != null) fillImage.fillAmount = structure.ProgressPercentage;
-        }
-        else
-        {
-            if (productionBarContainer != null) productionBarContainer.SetActive(false);
-            if (fillImage != null) fillImage.fillAmount = 0f;
-        }
-
         UpdateActivateButtonVisuals();
+        UpdateDestroyButtonVisuals();
     }
 
     private void UpdateActivateButtonVisuals()
     {
-        if (activateButton != null)
+        if (activateButton != null && currentStructure != null)
         {
-            bool isWorking = currentStructure != null && currentStructure.IsWorking;
-
-            // Set text label
+            bool isWorking = currentStructure.IsWorking;
             if (activateButtonText != null)
             {
                 activateButtonText.text = isWorking ? "Deactivate" : "Activate";
             }
 
-            // Override color states to Orange when active, White when default/inactive
             ColorBlock colors = activateButton.colors;
-            Color targetColor = isWorking ? new Color(1f, 0.6f, 0f) : Color.white; // Vibrant Orange when active
+            Color targetColor = isWorking ? new Color(1f, 0.6f, 0f) : Color.white;
+            colors.normalColor = targetColor;
+            colors.highlightedColor = targetColor;
+            colors.pressedColor = targetColor;
+            colors.selectedColor = targetColor;
+            activateButton.colors = colors;
+
+            // Disable activate button if structure is currently being destroyed
+            activateButton.interactable = !currentStructure.IsDestroying;
+        }
+    }
+
+    private void UpdateDestroyButtonVisuals()
+    {
+        if (destroyButton != null && currentStructure != null)
+        {
+            bool isDestroying = currentStructure.IsDestroying;
+
+            if (destroyButtonText != null)
+            {
+                destroyButtonText.text = isDestroying ? "Cancel" : "Destroy Structure";
+            }
+
+            ColorBlock colors = destroyButton.colors;
+            // Yellow by default, Red when actively destroying
+            Color targetColor = isDestroying ? Color.red : new Color(1f, 0.85f, 0f); 
 
             colors.normalColor = targetColor;
             colors.highlightedColor = targetColor;
             colors.pressedColor = targetColor;
             colors.selectedColor = targetColor;
-            colors.disabledColor = targetColor;
-
-            activateButton.colors = colors;
+            destroyButton.colors = colors;
         }
     }
 
@@ -117,7 +141,14 @@ public class UiResourceHarvest : UiModals
         if (currentStructure != null)
         {
             currentStructure.ToggleHarvesting();
-            UpdateActivateButtonVisuals();
+        }
+    }
+
+    private void OnDestroyClicked()
+    {
+        if (currentStructure != null)
+        {
+            currentStructure.ToggleDestroying();
         }
     }
 
@@ -140,6 +171,5 @@ public class UiResourceHarvest : UiModals
     public void CompleteProgress()
     {
         if (productionBarContainer != null) productionBarContainer.SetActive(false);
-        UpdateActivateButtonVisuals();
     }
 }

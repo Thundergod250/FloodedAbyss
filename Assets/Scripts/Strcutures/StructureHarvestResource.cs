@@ -3,9 +3,9 @@ using UnityEngine;
 
 public enum HarvestMode
 {
-    Consumable,  // 1) Destroyed after 1 harvest
-    Depletable,  // 2) Repeats for a set total count, then destroyed
-    Infinite     // 3) Never destroyed, runs forever until turned off
+    Consumable,  
+    Depletable,  
+    Infinite     
 }
 
 public class StructureHarvestResource : Structures
@@ -14,10 +14,11 @@ public class StructureHarvestResource : Structures
     [SerializeField] private string structureTitle = "Wood Source";
     [SerializeField] private int laborCost = 1;
     [SerializeField] private float productionDuration = 3f;
+    [SerializeField] private float destructionDuration = 3f; // 3 seconds to destroy building
 
     [Header("Harvest Behavior Mode")]
     [SerializeField] private HarvestMode harvestMode = HarvestMode.Consumable;
-    [SerializeField] private int maxHarvestCycles = 5; // Used only for Depletable mode
+    [SerializeField] private int maxHarvestCycles = 5; 
     private int completedHarvests = 0;
 
     [Header("Production Reward")]
@@ -26,9 +27,17 @@ public class StructureHarvestResource : Structures
 
     [Header("Debug Status")]
     [SerializeField] private bool isWorking = false;
+    [SerializeField] private bool isDestroying = false;
     [SerializeField, Range(0f, 1f)] private float progressPercentage = 0f; 
 
     private Coroutine harvestRoutine;
+    private Coroutine destroyRoutine;
+    private GameObject terminalPrefab;
+
+    public void SetTerminalPrefab(GameObject prefab)
+    {
+        terminalPrefab = prefab;
+    }
 
     public override void Activate()
     {
@@ -40,14 +49,13 @@ public class StructureHarvestResource : Structures
         }
     }
 
-    /// <summary>
-    /// Called by the UI button. Acts as a toggle: starts work if idle, or stops/cancels work if active.
-    /// </summary>
     public void ToggleHarvesting()
     {
+        if (isDestroying) return; // Cannot harvest while destroying
+
         if (isWorking)
         {
-            StopHarvesting(true); // Player manually stopped it, return workers
+            StopHarvesting(true); 
         }
         else
         {
@@ -57,7 +65,7 @@ public class StructureHarvestResource : Structures
 
     public void TryStartHarvest()
     {
-        if (isWorking) return;
+        if (isWorking || isDestroying) return;
 
         var workerMgr = GameManager.Instance.WorkerManager;
         var harvestUI = GameManager.Instance.uiController.UiResourceHarvest;
@@ -71,9 +79,7 @@ public class StructureHarvestResource : Structures
             return;
         }
 
-        // Consume workers
         workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker - laborCost);
-        
         harvestRoutine = StartCoroutine(HarvestLoopRoutine());
     }
 
@@ -98,7 +104,80 @@ public class StructureHarvestResource : Structures
 
         isWorking = false;
         progressPercentage = 0f;
-        Debug.Log($"[StructureHarvestResource] Harvesting stopped for {structureTitle}.");
+    }
+
+    // --- DESTRUCTION MECHANICS ---
+    public void ToggleDestroying()
+    {
+        if (isDestroying)
+        {
+            CancelDestroying();
+        }
+        else
+        {
+            StartDestroying();
+        }
+    }
+
+    private void StartDestroying()
+    {
+        if (isDestroying) return;
+
+        // Stop harvesting work if it was running and return workers first
+        if (isWorking)
+        {
+            StopHarvesting(true);
+        }
+
+        isDestroying = true;
+        progressPercentage = 0f;
+        destroyRoutine = StartCoroutine(DestroyRoutine());
+    }
+
+    public void CancelDestroying()
+    {
+        if (!isDestroying) return;
+
+        if (destroyRoutine != null)
+        {
+            StopCoroutine(destroyRoutine);
+            destroyRoutine = null;
+        }
+
+        isDestroying = false;
+        progressPercentage = 0f;
+        Debug.Log("[StructureHarvestResource] Destruction cancelled.");
+    }
+
+    private IEnumerator DestroyRoutine()
+    {
+        float elapsed = 0f;
+        while (elapsed < destructionDuration)
+        {
+            elapsed += Time.deltaTime;
+            progressPercentage = Mathf.Clamp01(elapsed / destructionDuration);
+            yield return null;
+        }
+
+        progressPercentage = 1f;
+        ExecuteFinalDestruction();
+    }
+
+    private void ExecuteFinalDestruction()
+    {
+        // Respawn the buildable terminal in our exact position/rotation
+        if (terminalPrefab != null)
+        {
+            Instantiate(terminalPrefab, transform.position, transform.rotation);
+        }
+
+        var harvestUI = GameManager.Instance.uiController.UiResourceHarvest;
+        if (harvestUI != null && harvestUI.IsOpen)
+        {
+            GameManager.Instance.uiController.CloseAllModals();
+        }
+
+        Destroy(gameObject);
     }
 
     private IEnumerator HarvestLoopRoutine()
@@ -110,9 +189,9 @@ public class StructureHarvestResource : Structures
             progressPercentage = 0f;
             float elapsed = 0f;
 
-            // Progress bar fill loop
             while (elapsed < productionDuration)
             {
+                if (isDestroying) yield break; // Abort if destruction started
                 elapsed += Time.deltaTime;
                 progressPercentage = Mathf.Clamp01(elapsed / productionDuration);
                 yield return null;
@@ -120,16 +199,14 @@ public class StructureHarvestResource : Structures
 
             progressPercentage = 1f;
 
-            // Give the resource
             if (resourceToProduce != null && GameManager.Instance.ResourceManager != null)
             {
                 GameManager.Instance.ResourceManager.AddResource(resourceToProduce, productionAmount);
             }
 
-            // Handle behavior modes after 1 successful cycle
             if (harvestMode == HarvestMode.Consumable)
             {
-                FinishAndDestroy();
+                FinishAndDestroyAutomatically();
                 yield break;
             }
             else if (harvestMode == HarvestMode.Depletable)
@@ -137,27 +214,26 @@ public class StructureHarvestResource : Structures
                 completedHarvests++;
                 if (completedHarvests >= maxHarvestCycles)
                 {
-                    FinishAndDestroy();
+                    FinishAndDestroyAutomatically();
                     yield break;
                 }
             }
-            else if (harvestMode == HarvestMode.Infinite)
-            {
-                // Loops indefinitely; resets progress for the next cycle
-            }
 
-            // Small breather before resetting bar for next loop if repeating
             yield return new WaitForSeconds(0.2f);
         }
     }
 
-    private void FinishAndDestroy()
+    private void FinishAndDestroyAutomatically()
     {
-        // Return workers permanently upon final destruction
         var workerMgr = GameManager.Instance.WorkerManager;
         if (workerMgr != null)
         {
             workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker + laborCost);
+        }
+
+        if (terminalPrefab != null)
+        {
+            Instantiate(terminalPrefab, transform.position, transform.rotation);
         }
 
         var harvestUI = GameManager.Instance.uiController.UiResourceHarvest;
@@ -170,11 +246,12 @@ public class StructureHarvestResource : Structures
         Destroy(gameObject);
     }
 
-    // Getters for UI Integration
+    // Getters
     public bool IsWorking => isWorking;
+    public bool IsDestroying => isDestroying;
     public float ProgressPercentage => progressPercentage;
     public string StructureTitle => structureTitle;
     public int LaborCost => laborCost;
     public HarvestMode HarvestMode => harvestMode;
-    public string ProductionDescription => $"Producing {productionAmount} {(resourceToProduce != null ? resourceToProduce.ResourceName : "Resource")}";
+    public string ProductionDescription => isDestroying ? "Destroying Building..." : $"Producing {productionAmount} {(resourceToProduce != null ? resourceToProduce.ResourceName : "Resource")}";
 }

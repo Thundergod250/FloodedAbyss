@@ -761,11 +761,13 @@ MonoBehaviour:
   structureTitle: Wood Source
   laborCost: 1
   productionDuration: 5
+  destructionDuration: 3
   harvestMode: 0
   maxHarvestCycles: 5
   resourceToProduce: {fileID: 11400000, guid: 117f5fa912aefc5448b12f16aef95518, type: 2}
   productionAmount: 1
   isWorking: 0
+  isDestroying: 0
   progressPercentage: 0
 --- !u!114 &812155148
 MonoBehaviour:
@@ -1198,11 +1200,13 @@ MonoBehaviour:
   structureTitle: Wood Source
   laborCost: 1
   productionDuration: 5
+  destructionDuration: 3
   harvestMode: 0
   maxHarvestCycles: 5
   resourceToProduce: {fileID: 11400000, guid: 117f5fa912aefc5448b12f16aef95518, type: 2}
   productionAmount: 1
   isWorking: 0
+  isDestroying: 0
   progressPercentage: 0
 --- !u!114 &1172930217
 MonoBehaviour:
@@ -1458,11 +1462,13 @@ MonoBehaviour:
   structureTitle: Wood Source
   laborCost: 1
   productionDuration: 5
+  destructionDuration: 3
   harvestMode: 0
   maxHarvestCycles: 5
   resourceToProduce: {fileID: 11400000, guid: 09a1015edb6edc547877d148f6a43cb6, type: 2}
   productionAmount: 1
   isWorking: 0
+  isDestroying: 0
   progressPercentage: 0
 --- !u!1 &1341909653
 GameObject:
@@ -1896,11 +1902,13 @@ MonoBehaviour:
   structureTitle: Wood Source
   laborCost: 1
   productionDuration: 5
+  destructionDuration: 3
   harvestMode: 0
   maxHarvestCycles: 5
   resourceToProduce: {fileID: 11400000, guid: 117f5fa912aefc5448b12f16aef95518, type: 2}
   productionAmount: 20
   isWorking: 0
+  isDestroying: 0
   progressPercentage: 0
 --- !u!114 &1565185249
 MonoBehaviour:
@@ -2011,6 +2019,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1581178471 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6485449953455789808, guid: 93962ff5bde69f746af840d31223a209, type: 3}
+  m_PrefabInstance: {fileID: 8397806791057057018}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1 &1672865494
 GameObject:
   m_ObjectHideFlags: 0
@@ -2160,6 +2179,17 @@ MonoBehaviour:
   drainagePowerPerSwitch: 2
   currentFuel: 0
   switchStates: 0000000000y
+--- !u!114 &1721323504 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5251707178916555360, guid: 93962ff5bde69f746af840d31223a209, type: 3}
+  m_PrefabInstance: {fileID: 8397806791057057018}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1001 &2074074452
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2171,10 +2201,6 @@ PrefabInstance:
     - target: {fileID: 2104639937772099258, guid: 85cc9829280f72a49a2e6f2948abba66, type: 3}
       propertyPath: m_Name
       value: TEST PREFAB - Buildable Sample
-      objectReference: {fileID: 0}
-    - target: {fileID: 4668029822247058794, guid: 85cc9829280f72a49a2e6f2948abba66, type: 3}
-      propertyPath: spawnOffset.z
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4919271847514438780, guid: 85cc9829280f72a49a2e6f2948abba66, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3538,6 +3564,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3741676149286568756, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
+      propertyPath: riseRate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3741676149286568756, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
       propertyPath: oceanTransform
       value: 
       objectReference: {fileID: 1064708557}
@@ -3741,6 +3771,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2142965941019258242, guid: 93962ff5bde69f746af840d31223a209, type: 3}
+      propertyPath: destroyButton
+      value: 
+      objectReference: {fileID: 1721323504}
+    - target: {fileID: 2142965941019258242, guid: 93962ff5bde69f746af840d31223a209, type: 3}
+      propertyPath: destroyButtonText
+      value: 
+      objectReference: {fileID: 1581178471}
     - target: {fileID: 4299346581139774740, guid: 93962ff5bde69f746af840d31223a209, type: 3}
       propertyPath: m_Pivot.x
       value: 0

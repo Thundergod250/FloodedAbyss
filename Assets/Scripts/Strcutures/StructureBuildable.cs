@@ -4,9 +4,10 @@ public class StructureBuildable : Structures
 {
     [Header("Buildable Configuration")]
     [SerializeField] private StructureDataSO[] availableStructuresToBuild;
+    [SerializeField] private GameObject buildableTerminalPrefab; // Reference to this building terminal's prefab so it can respawn later
 
     [Header("Spawn Settings")]
-    [SerializeField] private Vector3 spawnOffset = new Vector3(0f, 0f, 0f); // Adjust X, Y, Z in Inspector to prevent clipping
+    [SerializeField] private Vector3 spawnOffset = Vector3.zero;
 
     public override void Activate()
     {
@@ -34,7 +35,7 @@ public class StructureBuildable : Structures
             return false;
         }
 
-        // 1. Check if player has enough resources for all costs
+        // 1. Check resources
         foreach (var cost in structureData.Costs)
         {
             if (cost.resourceDataSo == null) continue;
@@ -50,20 +51,32 @@ public class StructureBuildable : Structures
         foreach (var cost in structureData.Costs)
         {
             if (cost.resourceDataSo == null) continue;
-            bool success = resourceManager.ConsumeResource(cost.resourceDataSo, cost.amount);
-            if (!success)
-            {
-                errorMessage = $"Failed to consume {cost.resourceDataSo.ResourceName}.";
-                return false;
-            }
+            resourceManager.ConsumeResource(cost.resourceDataSo, cost.amount);
         }
 
-        // 3. Instantiate the structure in the world using local transform offset
+        // 3. Instantiate the target structure and pass the terminal prefab reference for future respawning
         if (structureData.StructurePrefab != null)
         {
             Vector3 spawnPosition = transform.TransformPoint(spawnOffset);
-            Instantiate(structureData.StructurePrefab, spawnPosition, transform.rotation);
-            Debug.Log($"[StructureBuildable] Successfully built {structureData.StructureTitle}!");
+            GameObject spawnedGO = Instantiate(structureData.StructurePrefab, spawnPosition, transform.rotation);
+
+            StructureHarvestResource harvestStruct = spawnedGO.GetComponent<StructureHarvestResource>();
+            if (harvestStruct != null)
+            {
+                if (buildableTerminalPrefab != null)
+                {
+                    harvestStruct.SetTerminalPrefab(buildableTerminalPrefab);
+                }
+                else
+                {
+                    Debug.LogWarning("[StructureBuildable] Buildable Terminal Prefab is not assigned in the Inspector! It won't be able to respawn.");
+                }
+            }
+
+            Debug.Log($"[StructureBuildable] Successfully built {structureData.StructureTitle}. Replacing terminal.");
+            
+            GameManager.Instance.uiController.CloseAllModals();
+            Destroy(gameObject);
         }
         else
         {
