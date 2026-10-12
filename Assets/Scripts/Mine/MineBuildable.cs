@@ -12,7 +12,7 @@ public class MineBuildable : ItemBuildable
             return;
         }
 
-        if (playerResources.TrySpendResources(selectedStructure.CostRequirements))
+        /*if (playerResources.TrySpendResources(selectedStructure.CostRequirements))
         {
             Debug.Log($"Successfully built {selectedStructure.StructureName}!");
 
@@ -31,6 +31,6 @@ public class MineBuildable : ItemBuildable
             Debug.LogWarning(
                 $"Cannot build {selectedStructure.StructureName}: Insufficient resources!"
             );
-        }
+        }*/
     }
 }

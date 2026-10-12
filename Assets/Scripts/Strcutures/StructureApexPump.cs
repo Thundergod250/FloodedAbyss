@@ -4,7 +4,7 @@ using System.Collections;
 public class StructureApexPump : Structures
 {
     [Header("Pump Fuel & Resource Settings")]
-    [SerializeField] private ResourceData[] acceptedResources; 
+    [SerializeField] private ResourceDataSO[] acceptedResources; 
     [SerializeField] private int[] resourceFuelValues = { 1, 5, 10, 25, 50 }; 
     
     [Header("Switch Consumption Settings (Editable)")]
@@ -50,7 +50,7 @@ public class StructureApexPump : Structures
         if (GameManager.Instance == null || GameManager.Instance.ResourceManager == null) return false;
         if (acceptedResources == null || resourceIndex < 0 || resourceIndex >= acceptedResources.Length) return false;
 
-        ResourceData targetResource = acceptedResources[resourceIndex];
+        ResourceDataSO targetResource = acceptedResources[resourceIndex];
         if (targetResource == null) return false;
 
         int availableAmount = GameManager.Instance.ResourceManager.GetResourceAmount(targetResource);
@@ -165,5 +165,5 @@ public class StructureApexPump : Structures
     public bool IsSwitchActive(int index) => index >= 0 && index < switchStates.Length && switchStates[index];
     public int CurrentFuel => currentFuel;
     public int GetSwitchCost(int index) => (index >= 0 && index < switchFuelCosts.Length) ? switchFuelCosts[index] : 0;
-    public ResourceData[] AcceptedResources => acceptedResources;
+    public ResourceDataSO[] AcceptedResources => acceptedResources;
 }

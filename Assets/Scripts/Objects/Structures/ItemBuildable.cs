@@ -72,7 +72,7 @@ public class ItemBuildable : Item
         }
 
         // Delegate affordability check + resource deduction to PlayerResources
-        if (playerResources.TrySpendResources(selectedStructure.CostRequirements))
+        /*if (playerResources.TrySpendResources(selectedStructure.CostRequirements))
         {
             BuildStructure(selectedStructure.StructurePrefab);
 
@@ -82,7 +82,7 @@ public class ItemBuildable : Item
             gameObject.SetActive(false);
         }
         else
-            Debug.LogWarning($"Cannot build {selectedStructure.StructureName}: Insufficient resources!");
+            Debug.LogWarning($"Cannot build {selectedStructure.StructureName}: Insufficient resources!");*/
     }
 
     private void BuildStructure(GameObject prefabToSpawn)

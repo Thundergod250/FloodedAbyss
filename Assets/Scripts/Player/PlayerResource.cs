@@ -65,7 +65,7 @@ public class PlayerResources : MonoBehaviour
             AddResource(type, 10);
     }
     
-    public bool CanAfford(IReadOnlyList<StructureDataSO.ResourceRequirement> requirements)
+    /*public bool CanAfford(IReadOnlyList<StructureDataSO.ResourceRequirement> requirements)
     {
         if (requirements == null) return true;
         foreach (var req in requirements)
@@ -92,7 +92,7 @@ public class PlayerResources : MonoBehaviour
         }
 
         return true;
-    }
+    }*/
     
     public void ApplyResourceDeathPenalty(float penaltyRatio = 0.5f)
     {
