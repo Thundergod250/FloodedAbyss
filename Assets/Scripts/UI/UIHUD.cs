@@ -1,22 +1,30 @@
 using UnityEngine;
-using TMPro;
 using System.Collections;
+using System.Collections.Generic;
+using TMPro;
 
 public class UIHUD : UiModals
 {
     [Header("UI References")]
-    [SerializeField] private TextMeshProUGUI workerNumberText; // Drag your "Worker Number" UI element here
+    [SerializeField] private TextMeshProUGUI workerNumberText; // Worker count text
+
+    [Header("Resource HUD Settings")]
+    [SerializeField] private Transform resourceContainer;       // Parent layout group container
+    [SerializeField] private GameObject resourcePairPrefab;     // Prefab with ResourcePairPanel attached
 
     private bool isSubscribed = false;
+    private Dictionary<ResourceData, PanelResourcePair> resourcePanelMap = new();
 
     protected override void Initialize()
     {
         base.Initialize(); 
+        if (resourcePairPrefab != null)
+            resourcePairPrefab.SetActive(false); // Keep template hidden
     }
 
     protected override void OnEnable()
     {
-        StartCoroutine(ConnectToWorkerManagerRoutine());
+        StartCoroutine(ConnectAndBuildHUDRoutine());
     }
 
     protected override void OnDisable()
@@ -24,40 +32,87 @@ public class UIHUD : UiModals
         Unsubscribe();
     }
 
-    private IEnumerator ConnectToWorkerManagerRoutine()
+    private IEnumerator ConnectAndBuildHUDRoutine()
     {
-        // Wait until GameManager and WorkerManager exist in the scene
-        while (GameManager.Instance == null || GameManager.Instance.WorkerManager == null)
+        while (GameManager.Instance == null || GameManager.Instance.WorkerManager == null || GameManager.Instance.ResourceManager == null)
         {
-            yield return null; // Wait for the next frame
+            yield return null;
         }
 
-        Unsubscribe(); // Prevent duplicate listeners
+        Unsubscribe();
 
         GameManager.Instance.WorkerManager.EvtOnWorkersChanged.AddListener(HandleWorkersChanged);
+        GameManager.Instance.ResourceManager.OnResourceUpdated += HandleResourceUpdated;
         isSubscribed = true;
 
-        // Force an immediate sync with current values
         HandleWorkersChanged(
             GameManager.Instance.WorkerManager.CurrentWorker, 
             GameManager.Instance.WorkerManager.MaximumWorker
         );
+
+        BuildResourceHUD();
+    }
+
+    private void BuildResourceHUD()
+    {
+        if (resourceContainer == null || resourcePairPrefab == null) return;
+
+        foreach (Transform child in resourceContainer)
+        {
+            if (child.gameObject != resourcePairPrefab)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+
+        resourcePanelMap.Clear();
+        var resourceManager = GameManager.Instance.ResourceManager;
+
+        foreach (var resourceData in resourceManager.AvailableResources)
+        {
+            if (resourceData == null) continue;
+
+            GameObject itemGO = Instantiate(resourcePairPrefab, resourceContainer);
+            itemGO.SetActive(true);
+
+            PanelResourcePair panel = itemGO.GetComponent<PanelResourcePair>();
+            if (panel != null)
+            {
+                int currentAmount = resourceManager.GetResourceAmount(resourceData);
+                panel.Setup(resourceData, currentAmount);
+                resourcePanelMap[resourceData] = panel;
+            }
+        }
     }
 
     private void Unsubscribe()
     {
-        if (isSubscribed && GameManager.Instance != null && GameManager.Instance.WorkerManager != null)
+        if (isSubscribed && GameManager.Instance != null)
         {
-            GameManager.Instance.WorkerManager.EvtOnWorkersChanged.RemoveListener(HandleWorkersChanged);
+            if (GameManager.Instance.WorkerManager != null)
+            {
+                GameManager.Instance.WorkerManager.EvtOnWorkersChanged.RemoveListener(HandleWorkersChanged);
+            }
+            if (GameManager.Instance.ResourceManager != null)
+            {
+                GameManager.Instance.ResourceManager.OnResourceUpdated -= HandleResourceUpdated;
+            }
             isSubscribed = false;
         }
     }
 
     private void HandleWorkersChanged(int current, int maximum)
     {
-        if (workerNumberText != null)
-        {
+        if (workerNumberText != null) 
             workerNumberText.text = $"{current} / {maximum}";
+    }
+
+    private void HandleResourceUpdated(ResourceData data, int newAmount)
+    {
+        if (resourcePanelMap.TryGetValue(data, out PanelResourcePair panel))
+        {
+            if (panel != null) 
+                panel.UpdateAmount(newAmount);
         }
     }
 }
