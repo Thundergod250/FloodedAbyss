@@ -9,6 +9,7 @@ public class UiWorkersHouse : UiModals
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private Button actionButton;
     [SerializeField] private TextMeshProUGUI actionButtonText;
+    [SerializeField] private GameObject resourceRequirementContainer; // Drag your orange resource container here!
 
     [Header("Destroy Button References")]
     [SerializeField] private Button destroyButton;
@@ -86,6 +87,12 @@ public class UiWorkersHouse : UiModals
         {
             var workerMgr = GameManager.Instance.WorkerManager;
             bool hasHomeless = workerMgr != null && workerMgr.HomelessWorker > 0;
+
+            // Hide resource requirements when housing a worker; show them only when recruiting
+            if (resourceRequirementContainer != null)
+            {
+                resourceRequirementContainer.SetActive(!hasHomeless && !currentHouse.IsOccupied);
+            }
 
             if (currentHouse.IsOccupied)
             {
