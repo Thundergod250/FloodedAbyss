@@ -7,10 +7,11 @@ public class UIHUD : UiModals
 {
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI workerNumberText; // Worker count text
+    [SerializeField] private TextMeshProUGUI homelessWorkerText; // Homeless worker count text
 
     [Header("Resource HUD Settings")]
-    [SerializeField] private Transform resourceContainer;       // Parent layout group container
-    [SerializeField] private GameObject resourcePairPrefab;     // Prefab with ResourcePairPanel attached
+    [SerializeField] private Transform resourceContainer;       
+    [SerializeField] private GameObject resourcePairPrefab;     
 
     private bool isSubscribed = false;
     private Dictionary<ResourceDataSO, PanelResourcePair> resourcePanelMap = new();
@@ -19,7 +20,7 @@ public class UIHUD : UiModals
     {
         base.Initialize(); 
         if (resourcePairPrefab != null)
-            resourcePairPrefab.SetActive(false); // Keep template hidden
+            resourcePairPrefab.SetActive(false); 
     }
 
     protected override void OnEnable()
@@ -42,13 +43,12 @@ public class UIHUD : UiModals
         Unsubscribe();
 
         GameManager.Instance.WorkerManager.EvtOnWorkersChanged.AddListener(HandleWorkersChanged);
+        GameManager.Instance.WorkerManager.EvtOnHomelessChanged.AddListener(HandleHomelessChanged);
         GameManager.Instance.ResourceManager.OnResourceUpdated += HandleResourceUpdated;
         isSubscribed = true;
 
-        HandleWorkersChanged(
-            GameManager.Instance.WorkerManager.CurrentWorker, 
-            GameManager.Instance.WorkerManager.MaximumWorker
-        );
+        HandleWorkersChanged(GameManager.Instance.WorkerManager.CurrentWorker);
+        HandleHomelessChanged(GameManager.Instance.WorkerManager.HomelessWorker);
 
         BuildResourceHUD();
     }
@@ -92,6 +92,7 @@ public class UIHUD : UiModals
             if (GameManager.Instance.WorkerManager != null)
             {
                 GameManager.Instance.WorkerManager.EvtOnWorkersChanged.RemoveListener(HandleWorkersChanged);
+                GameManager.Instance.WorkerManager.EvtOnHomelessChanged.RemoveListener(HandleHomelessChanged);
             }
             if (GameManager.Instance.ResourceManager != null)
             {
@@ -101,10 +102,18 @@ public class UIHUD : UiModals
         }
     }
 
-    private void HandleWorkersChanged(int current, int maximum)
+    private void HandleWorkersChanged(int current)
     {
         if (workerNumberText != null) 
-            workerNumberText.text = $"{current} / {maximum}";
+            workerNumberText.text = $"Workers {current}";
+    }
+
+    private void HandleHomelessChanged(int homelessCount)
+    {
+        if (homelessWorkerText != null)
+        {
+            homelessWorkerText.text = homelessCount > 0 ? $"Homeless Workers {homelessCount}" : string.Empty;
+        }
     }
 
     private void HandleResourceUpdated(ResourceDataSO dataSo, int newAmount)

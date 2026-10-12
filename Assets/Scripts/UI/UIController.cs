@@ -12,6 +12,7 @@ public class UIController : MonoBehaviour
     public UiApexPump UiApexPump { get; private set; }
     public UiResourceHarvest UiResourceHarvest { get; private set; }
     public UiBuilding UiBuilding { get; private set; }
+    public UiWorkersHouse UiWorkersHouse { get; private set; }
 
     private void Awake() => InitializeModals();
 
