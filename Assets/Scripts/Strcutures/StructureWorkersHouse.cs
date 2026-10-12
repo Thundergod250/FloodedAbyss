@@ -16,6 +16,7 @@ public class StructureWorkersHouse : Structures
     [SerializeField] private bool isOccupied = false;
     [SerializeField] private bool isWorking = false;
     [SerializeField] private bool isDestroying = false;
+    [SerializeField] private bool isReservedForHousing = false; // Tracks if this house successfully grabbed a homeless worker
     [SerializeField, Range(0f, 1f)] private float progressPercentage = 0f;
 
     private Coroutine actionRoutine;
@@ -58,22 +59,44 @@ public class StructureWorkersHouse : Structures
         var workerMgr = GameManager.Instance.WorkerManager;
         if (workerMgr == null) return;
 
-        // If no homeless workers, we are recruiting and need to validate resource costs
-        if (workerMgr.HomelessWorker <= 0 && recruitmentCostResource != null)
+        // Check if we are housing or recruiting
+        bool housingMode = workerMgr.HomelessWorker > 0;
+
+        if (housingMode)
         {
-            var resourceMgr = GameManager.Instance.ResourceManager;
-            if (resourceMgr != null)
+            // Instantly attempt to reserve/house the worker to prevent multi-house exploits
+            if (!workerMgr.TryHouseWorker())
             {
-                if (resourceMgr.GetResourceAmount(recruitmentCostResource) < recruitmentCostAmount)
-                {
-                    Debug.Log("[StructureWorkersHouse] Not enough resources to recruit worker!");
-                    return;
-                }
-                resourceMgr.ConsumeResource(recruitmentCostResource, recruitmentCostAmount);
+                Debug.Log("[StructureWorkersHouse] No homeless workers available to house!");
+                return;
+            }
+            isReservedForHousing = true;
+        }
+        else
+        {
+            // Recruiting mode: validate resource costs
+            if (recruitmentCostResource != null)
+            {
+                if (resourceMgrHasNotEnough(workerMgr, recruitmentCostResource, recruitmentCostAmount)) return;
             }
         }
 
-        actionRoutine = StartCoroutine(ActionRoutine());
+        actionRoutine = StartCoroutine(ActionRoutine(housingMode));
+    }
+
+    private bool resourceMgrHasNotEnough(WorkerManager workerMgr, ResourceDataSO res, int amount)
+    {
+        var resourceMgr = GameManager.Instance.ResourceManager;
+        if (resourceMgr != null)
+        {
+            if (resourceMgr.GetResourceAmount(res) < amount)
+            {
+                Debug.Log("[StructureWorkersHouse] Not enough resources to recruit worker!");
+                return true;
+            }
+            resourceMgr.ConsumeResource(res, amount);
+        }
+        return false;
     }
 
     private void StopAction()
@@ -86,18 +109,27 @@ public class StructureWorkersHouse : Structures
             actionRoutine = null;
         }
 
-        // Refund recruitment cost if stopped mid-recruitment
         var workerMgr = GameManager.Instance.WorkerManager;
-        if (workerMgr != null && workerMgr.HomelessWorker <= 0 && recruitmentCostResource != null)
+        if (workerMgr != null)
         {
-            GameManager.Instance.ResourceManager.AddResource(recruitmentCostResource, recruitmentCostAmount);
+            if (isReservedForHousing)
+            {
+                // Refund the homeless worker back if cancelled mid-progress
+                workerMgr.CancelHouseReservation(); 
+                isReservedForHousing = false;
+            }
+            else if (recruitmentCostResource != null)
+            {
+                // Refund recruitment cost if stopped mid-recruitment
+                GameManager.Instance.ResourceManager.AddResource(recruitmentCostResource, recruitmentCostAmount);
+            }
         }
 
         isWorking = false;
         progressPercentage = 0f;
     }
 
-    private IEnumerator ActionRoutine()
+    private IEnumerator ActionRoutine(bool housingMode)
     {
         isWorking = true;
         progressPercentage = 0f;
@@ -112,26 +144,24 @@ public class StructureWorkersHouse : Structures
         }
 
         progressPercentage = 1f;
-        ExecuteCompletion();
+        ExecuteCompletion(housingMode);
     }
 
-    private void ExecuteCompletion()
+    private void ExecuteCompletion(bool housingMode)
     {
         var workerMgr = GameManager.Instance.WorkerManager;
         if (workerMgr != null)
         {
-            if (workerMgr.HomelessWorker > 0)
-            {
-                workerMgr.TryHouseWorker();
-            }
-            else
+            if (!housingMode)
             {
                 workerMgr.RecruitNewWorker();
             }
+            // If housingMode, the worker was already safely reserved and counted as housed by TryHouseWorker()!
         }
 
         isOccupied = true;
         isWorking = false;
+        isReservedForHousing = false;
 
         var houseUI = GameManager.Instance.uiController.UiWorkersHouse;
         if (houseUI != null && houseUI.IsShowingHouse(this))
@@ -191,11 +221,11 @@ public class StructureWorkersHouse : Structures
 
     private void ExecuteFinalDestruction()
     {
-        // If this house was occupied, free the house and turn the worker homeless again!
-        if (isOccupied)
+        // If this house was occupied OR mid-reservation when destroyed, free the house/worker safely
+        var workerMgr = GameManager.Instance.WorkerManager;
+        if (workerMgr != null)
         {
-            var workerMgr = GameManager.Instance.WorkerManager;
-            if (workerMgr != null)
+            if (isOccupied || isReservedForHousing)
             {
                 workerMgr.FreeHouse();
             }
@@ -222,5 +252,5 @@ public class StructureWorkersHouse : Structures
     public bool IsDestroying => isDestroying;
     public float ProgressPercentage => progressPercentage;
     public string StructureTitle => structureTitle;
-    public string ProgressDescription => isDestroying ? "Destroying House..." : (GameManager.Instance.WorkerManager.HomelessWorker > 0 ? "Housing Worker..." : "Recruiting Worker...");
+    public string ProgressDescription => isDestroying ? "Destroying House..." : (isReservedForHousing ? "Housing Worker..." : "Recruiting Worker...");
 }

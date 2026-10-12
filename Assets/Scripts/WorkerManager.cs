@@ -57,4 +57,14 @@ public class WorkerManager : MonoBehaviour
         CurrentWorker++;
         EvtOnWorkersChanged?.Invoke(CurrentWorker);
     }
+    
+    public void CancelHouseReservation()
+    {
+        if (OccupiedHousesCount > 0)
+        {
+            OccupiedHousesCount--;
+        }
+        HomelessWorker++;
+        EvtOnHomelessChanged?.Invoke(HomelessWorker);
+    }
 }
