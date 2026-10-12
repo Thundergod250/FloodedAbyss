@@ -8,10 +8,10 @@ public class PanelResourcePair : MonoBehaviour
     [SerializeField] private Image iconImage;
     [SerializeField] private TextMeshProUGUI amountText;
 
-    public void Setup(ResourceData resourceData, int initialAmount)
+    public void Setup(ResourceDataSO resourceDataSo, int initialAmount)
     {
-        if (iconImage != null && resourceData.Icon != null) 
-            iconImage.sprite = resourceData.Icon;
+        if (iconImage != null && resourceDataSo.Icon != null) 
+            iconImage.sprite = resourceDataSo.Icon;
         UpdateAmount(initialAmount);
     }
 

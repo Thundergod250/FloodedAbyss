@@ -5,14 +5,14 @@ using UnityEngine;
 public class ResourceManager : MonoBehaviour
 {
     [Header("Register All Game Resources Here")]
-    [SerializeField] private List<ResourceData> availableResources = new();
+    [SerializeField] private List<ResourceDataSO> availableResources = new();
 
-    private Dictionary<ResourceData, int> resourceInventory = new();
+    private Dictionary<ResourceDataSO, int> resourceInventory = new();
 
     // Event fired whenever any resource amount changes (ResourceData, newAmount)
-    public event Action<ResourceData, int> OnResourceUpdated;
+    public event Action<ResourceDataSO, int> OnResourceUpdated;
 
-    public List<ResourceData> AvailableResources => availableResources;
+    public List<ResourceDataSO> AvailableResources => availableResources;
 
     private void Awake()
     {
@@ -31,36 +31,36 @@ public class ResourceManager : MonoBehaviour
         }
     }
 
-    public int GetResourceAmount(ResourceData data)
+    public int GetResourceAmount(ResourceDataSO dataSo)
     {
-        if (resourceInventory.TryGetValue(data, out int amount)) return amount;
+        if (resourceInventory.TryGetValue(dataSo, out int amount)) return amount;
         return 0;
     }
 
-    public void AddResource(ResourceData data, int amount)
+    public void AddResource(ResourceDataSO dataSo, int amount)
     {
-        if (resourceInventory.ContainsKey(data))
+        if (resourceInventory.ContainsKey(dataSo))
         {
-            resourceInventory[data] += amount;
+            resourceInventory[dataSo] += amount;
         }
         else
         {
-            resourceInventory.Add(data, amount);
+            resourceInventory.Add(dataSo, amount);
         }
-        Debug.Log($"[ResourceManager] Added {amount} of {data.ResourceName}. Total: {resourceInventory[data]}");
+        Debug.Log($"[ResourceManager] Added {amount} of {dataSo.ResourceName}. Total: {resourceInventory[dataSo]}");
         
         // Notify HUD and any listeners
-        OnResourceUpdated?.Invoke(data, resourceInventory[data]);
+        OnResourceUpdated?.Invoke(dataSo, resourceInventory[dataSo]);
     }
 
-    public bool ConsumeResource(ResourceData data, int amount)
+    public bool ConsumeResource(ResourceDataSO dataSo, int amount)
     {
-        if (resourceInventory.ContainsKey(data) && resourceInventory[data] >= amount)
+        if (resourceInventory.ContainsKey(dataSo) && resourceInventory[dataSo] >= amount)
         {
-            resourceInventory[data] -= amount;
+            resourceInventory[dataSo] -= amount;
             
             // Notify HUD and any listeners
-            OnResourceUpdated?.Invoke(data, resourceInventory[data]);
+            OnResourceUpdated?.Invoke(dataSo, resourceInventory[dataSo]);
             return true;
         }
         return false;

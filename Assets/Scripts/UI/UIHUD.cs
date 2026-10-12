@@ -13,7 +13,7 @@ public class UIHUD : UiModals
     [SerializeField] private GameObject resourcePairPrefab;     // Prefab with ResourcePairPanel attached
 
     private bool isSubscribed = false;
-    private Dictionary<ResourceData, PanelResourcePair> resourcePanelMap = new();
+    private Dictionary<ResourceDataSO, PanelResourcePair> resourcePanelMap = new();
 
     protected override void Initialize()
     {
@@ -107,9 +107,9 @@ public class UIHUD : UiModals
             workerNumberText.text = $"{current} / {maximum}";
     }
 
-    private void HandleResourceUpdated(ResourceData data, int newAmount)
+    private void HandleResourceUpdated(ResourceDataSO dataSo, int newAmount)
     {
-        if (resourcePanelMap.TryGetValue(data, out PanelResourcePair panel))
+        if (resourcePanelMap.TryGetValue(dataSo, out PanelResourcePair panel))
         {
             if (panel != null) 
                 panel.UpdateAmount(newAmount);
