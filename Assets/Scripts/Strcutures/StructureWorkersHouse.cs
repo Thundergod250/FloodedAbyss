@@ -155,7 +155,7 @@ public class StructureWorkersHouse : Structures
         if (houseUI != null && houseUI.IsShowingHouse(this))
         {
             houseUI.CompleteProgress();
-            GameManager.Instance.uiController.CloseAllModals();
+            // Modal remains open so player can see the Occupied state and click Exit/Destroy manually!
         }
     }
 
@@ -227,7 +227,7 @@ public class StructureWorkersHouse : Structures
         if (houseUI != null && houseUI.IsShowingHouse(this))
         {
             houseUI.CompleteProgress();
-            GameManager.Instance.uiController.CloseAllModals();
+            GameManager.Instance.uiController.CloseAllModals(); // Closes when structure is successfully destroyed
         }
 
         Destroy(gameObject);
