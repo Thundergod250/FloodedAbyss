@@ -14,7 +14,10 @@ public class StructureHarvestResource : Structures
     [SerializeField] private string structureTitle = "Wood Source";
     [SerializeField] private int laborCost = 1;
     [SerializeField] private float productionDuration = 3f;
-    [SerializeField] private float destructionDuration = 3f; // 3 seconds to destroy building
+    [SerializeField] private float destructionDuration = 3f;
+
+    [Header("Destruction Settings")]
+    [SerializeField] private bool canBeDestroyed = true; // Set to false for natural overworld resource piles that cannot be destroyed
 
     [Header("Harvest Behavior Mode")]
     [SerializeField] private HarvestMode harvestMode = HarvestMode.Consumable;
@@ -51,7 +54,7 @@ public class StructureHarvestResource : Structures
 
     public void ToggleHarvesting()
     {
-        if (isDestroying) return; // Cannot harvest while destroying
+        if (isDestroying) return;
 
         if (isWorking)
         {
@@ -106,9 +109,10 @@ public class StructureHarvestResource : Structures
         progressPercentage = 0f;
     }
 
-    // --- DESTRUCTION MECHANICS ---
     public void ToggleDestroying()
     {
+        if (!canBeDestroyed) return; // Prevent destroying if disallowed
+
         if (isDestroying)
         {
             CancelDestroying();
@@ -121,9 +125,8 @@ public class StructureHarvestResource : Structures
 
     private void StartDestroying()
     {
-        if (isDestroying) return;
+        if (!canBeDestroyed || isDestroying) return;
 
-        // Stop harvesting work if it was running and return workers first
         if (isWorking)
         {
             StopHarvesting(true);
@@ -146,7 +149,6 @@ public class StructureHarvestResource : Structures
 
         isDestroying = false;
         progressPercentage = 0f;
-        Debug.Log("[StructureHarvestResource] Destruction cancelled.");
     }
 
     private IEnumerator DestroyRoutine()
@@ -165,7 +167,6 @@ public class StructureHarvestResource : Structures
 
     private void ExecuteFinalDestruction()
     {
-        // Respawn the buildable terminal in our exact position/rotation
         if (terminalPrefab != null)
         {
             Instantiate(terminalPrefab, transform.position, transform.rotation);
@@ -191,7 +192,7 @@ public class StructureHarvestResource : Structures
 
             while (elapsed < productionDuration)
             {
-                if (isDestroying) yield break; // Abort if destruction started
+                if (isDestroying) yield break;
                 elapsed += Time.deltaTime;
                 progressPercentage = Mathf.Clamp01(elapsed / productionDuration);
                 yield return null;
@@ -249,6 +250,7 @@ public class StructureHarvestResource : Structures
     // Getters
     public bool IsWorking => isWorking;
     public bool IsDestroying => isDestroying;
+    public bool CanBeDestroyed => canBeDestroyed;
     public float ProgressPercentage => progressPercentage;
     public string StructureTitle => structureTitle;
     public int LaborCost => laborCost;

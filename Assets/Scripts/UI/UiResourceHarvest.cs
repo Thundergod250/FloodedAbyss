@@ -86,6 +86,12 @@ public class UiResourceHarvest : UiModals
         if (laborCostText != null) laborCostText.text = $"Labor Cost: {structure.LaborCost}";
         if (notEnoughWorkersText != null) notEnoughWorkersText.gameObject.SetActive(false);
 
+        // Show or hide destroy button based on structure configuration
+        if (destroyButton != null)
+        {
+            destroyButton.gameObject.SetActive(structure.CanBeDestroyed);
+        }
+
         UpdateActivateButtonVisuals();
         UpdateDestroyButtonVisuals();
     }
@@ -108,14 +114,13 @@ public class UiResourceHarvest : UiModals
             colors.selectedColor = targetColor;
             activateButton.colors = colors;
 
-            // Disable activate button if structure is currently being destroyed
             activateButton.interactable = !currentStructure.IsDestroying;
         }
     }
 
     private void UpdateDestroyButtonVisuals()
     {
-        if (destroyButton != null && currentStructure != null)
+        if (destroyButton != null && currentStructure != null && currentStructure.CanBeDestroyed)
         {
             bool isDestroying = currentStructure.IsDestroying;
 
@@ -125,7 +130,6 @@ public class UiResourceHarvest : UiModals
             }
 
             ColorBlock colors = destroyButton.colors;
-            // Yellow by default, Red when actively destroying
             Color targetColor = isDestroying ? Color.red : new Color(1f, 0.85f, 0f); 
 
             colors.normalColor = targetColor;
