@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewResource", menuName = "Resource")]
-public class ResourceData : ScriptableObject
+public class ResourceDataSO : ScriptableObject
 {
     [field: SerializeField] public string ResourceName { get; private set; }
     [field: SerializeField] public Sprite Icon { get; private set; }

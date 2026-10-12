@@ -21,7 +21,7 @@ public class StructureHarvestResource : Structures
     private int completedHarvests = 0;
 
     [Header("Production Reward")]
-    [SerializeField] private ResourceData resourceToProduce; 
+    [SerializeField] private ResourceDataSO resourceToProduce; 
     [SerializeField] private int productionAmount = 1;
 
     [Header("Debug Status")]

@@ -11,6 +11,7 @@ public class UIController : MonoBehaviour
     public UIHUD UiHUD { get; private set; }
     public UiApexPump UiApexPump { get; private set; }
     public UiResourceHarvest UiResourceHarvest { get; private set; }
+    public UiBuilding UiBuilding { get; private set; }
 
     private void Awake() => InitializeModals();
 

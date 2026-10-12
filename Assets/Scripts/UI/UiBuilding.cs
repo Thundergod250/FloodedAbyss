@@ -1,57 +1,90 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using System.Collections;
 
 public class UiBuilding : UiModals
 {
     [Header("UI References")]
-    [SerializeField] private Transform cardContainer;
-    [SerializeField] private UIStructureCard structureCardPrefab;
-    
-    public void PopulateMenu(List<StructureDataSO> structures, Action<StructureDataSO> onStructureChosen)
+    [SerializeField] private Transform contentContainer;         // Scroll View Content container for cards
+    [SerializeField] private GameObject structureCardPrefab;     // Prefab with StructureCardPanel attached
+    [SerializeField] private GameObject resourcePairPrefabTemplate; // Reference to the resource pair prefab for costs
+    [SerializeField] private TextMeshProUGUI warningText;        // Optional warning message if resources are short
+
+    private StructureBuildable currentBuildable;
+    private Coroutine warningRoutine;
+
+    protected override void Initialize()
     {
-        /*// 1. Clear previous card instances
-        foreach (Transform child in cardContainer)
+        base.Initialize();
+        if (structureCardPrefab != null) structureCardPrefab.SetActive(false);
+        if (resourcePairPrefabTemplate != null) resourcePairPrefabTemplate.SetActive(false);
+        if (warningText != null) warningText.gameObject.SetActive(false);
+    }
+
+    public void Setup(StructureBuildable buildable)
+    {
+        currentBuildable = buildable;
+        if (warningText != null) warningText.gameObject.SetActive(false);
+        PopulateCards();
+    }
+
+    private void PopulateCards()
+    {
+        if (contentContainer == null || structureCardPrefab == null || currentBuildable == null) return;
+
+        foreach (Transform child in contentContainer)
         {
-            Destroy(child.gameObject);
+            if (child.gameObject != structureCardPrefab)
+            {
+                Destroy(child.gameObject);
+            }
         }
 
-        if (structures == null || structureCardPrefab == null) return;
-
-        // 2. Instantiate a card for each StructureDataSO asset
-        foreach (var structure in structures)
+        foreach (var structureData in currentBuildable.AvailableStructuresToBuild)
         {
-            if (structure == null) continue;
+            if (structureData == null) continue;
 
-            UIStructureCard cardInstance = Instantiate(structureCardPrefab, cardContainer);
+            GameObject cardGO = Instantiate(structureCardPrefab, contentContainer);
+            cardGO.SetActive(true);
 
-            // Format cost requirements
-            List<string> formattedCosts = new List<string>();
-            if (structure.CostRequirements != null)
+            PanelStructureCard cardPanel = cardGO.GetComponent<PanelStructureCard>();
+            if (cardPanel != null)
             {
-                foreach (var req in structure.CostRequirements)
-                {
-                    formattedCosts.Add($"{req.resourceType} {req.amount}");
-                }
+                cardPanel.Setup(structureData, resourcePairPrefabTemplate, OnCardSelected);
             }
+        }
+    }
 
-            // Check if structure is unlocked via SkillTreeController
-            /*bool isUnlocked = GameManager.Instance != null &&
-                              GameManager.Instance.SkillTreeController != null &&
-                              GameManager.Instance.SkillTreeController.IsUnlocked(structure);#1#
+    private void OnCardSelected(StructureDataSO structureData)
+    {
+        if (currentBuildable != null)
+        {
+            bool success = currentBuildable.TryBuildStructure(structureData, out string errorMsg);
+            if (success)
+            {
+                GameManager.Instance.uiController.CloseAllModals();
+            }
+            else
+            {
+                ShowWarning(errorMsg);
+            }
+        }
+    }
 
-            // Local capture for the click callback
-            StructureDataSO currentStructure = structure;
+    private void ShowWarning(string message)
+    {
+        if (warningText != null)
+        {
+            warningText.text = message;
+            if (warningRoutine != null) StopCoroutine(warningRoutine);
+            warningRoutine = StartCoroutine(FlashWarningRoutine());
+        }
+    }
 
-            // Setup card UI elements, pass unlock status, and pass the build action
-            cardInstance.SetupCard(
-                currentStructure.StructureName,
-                currentStructure.Description,
-                formattedCosts,
-                currentStructure.StructureIcon,
-                isUnlocked,
-                () => onStructureChosen?.Invoke(currentStructure)
-            );
-        }*/
+    private IEnumerator FlashWarningRoutine()
+    {
+        warningText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(3f);
+        warningText.gameObject.SetActive(false);
     }
 }
