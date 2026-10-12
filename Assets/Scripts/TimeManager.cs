@@ -64,7 +64,7 @@ public class TimeManager : MonoBehaviour
         else
         {
             prePauseTimeScale = currentTimeScale > 0 ? currentTimeScale : 1f;
-            SetTimeSpeed(0f);
+            SetTimeSpeed(0.1f); // Set to 0.1 instead of 0
             isPaused = true;
         }
     }
