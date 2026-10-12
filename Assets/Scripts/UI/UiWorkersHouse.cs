@@ -86,26 +86,25 @@ public class UiWorkersHouse : UiModals
         if (actionButton != null && currentHouse != null)
         {
             var workerMgr = GameManager.Instance.WorkerManager;
-
-            // Check if this specific house is currently housing someone, OR if there are unreserved homeless workers available
             bool isHousingAction = currentHouse.IsReservedForHousing || (workerMgr != null && workerMgr.HomelessWorker > 0);
 
-            // Hide resource requirements whenever in Housing mode (idle or loading)
+            // Hide resource requirements when occupied or housing
             if (resourceRequirementContainer != null)
             {
                 resourceRequirementContainer.SetActive(!isHousingAction && !currentHouse.IsOccupied);
             }
 
-            if (currentHouse.IsOccupied)
-            {
-                actionButton.gameObject.SetActive(false); // Can't click if occupied
-            }
-            else
-            {
-                actionButton.gameObject.SetActive(true);
-                actionButton.interactable = !currentHouse.IsDestroying;
+            // Always keep the button visible, but handle its state if occupied
+            actionButton.gameObject.SetActive(true);
+            actionButton.interactable = !currentHouse.IsOccupied && !currentHouse.IsDestroying;
 
-                if (actionButtonText != null)
+            if (actionButtonText != null)
+            {
+                if (currentHouse.IsOccupied)
+                {
+                    actionButtonText.text = "Occupied";
+                }
+                else
                 {
                     actionButtonText.text = currentHouse.IsWorking 
                         ? (isHousingAction ? "Stop Housing" : "Stop Recruiting") 
