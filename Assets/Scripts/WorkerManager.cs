@@ -3,27 +3,68 @@ using UnityEngine.Events;
 
 public class WorkerManager : MonoBehaviour
 {
-    [field: SerializeField] public int MaximumWorker { get; private set; } = 10;
     [field: SerializeField] public int CurrentWorker { get; private set; } = 1;
-    
-    [System.Serializable]
-    public class WorkerEvent : UnityEvent<int, int> { }
+    [field: SerializeField] public int HomelessWorker { get; private set; } = 1; // Starts with 1 homeless worker
+    [field: SerializeField] public int OccupiedHousesCount { get; private set; } = 0;
 
     [Header("Events")]
-    public WorkerEvent EvtOnWorkersChanged = new();
+    public UnityEvent<int> EvtOnWorkersChanged = new();
+    public UnityEvent<int> EvtOnHomelessChanged = new();
     
-    private void Start() => EvtOnWorkersChanged?.Invoke(CurrentWorker, MaximumWorker);
+    private void Start() 
+    {
+        EvtOnWorkersChanged?.Invoke(CurrentWorker);
+        EvtOnHomelessChanged?.Invoke(HomelessWorker);
+    }
 
     public void SetCurrentWorkers(int amount)
     {
-        CurrentWorker = Mathf.Clamp(amount, 0, MaximumWorker);
-        EvtOnWorkersChanged?.Invoke(CurrentWorker, MaximumWorker);
+        CurrentWorker = Mathf.Max(0, amount);
+        EvtOnWorkersChanged?.Invoke(CurrentWorker);
     }
 
-    public void SetMaximumWorkers(int amount)
+    public void AddHomelessWorker(int amount)
     {
-        MaximumWorker = Mathf.Max(0, amount);
-        CurrentWorker = Mathf.Min(CurrentWorker, MaximumWorker);
-        EvtOnWorkersChanged?.Invoke(CurrentWorker, MaximumWorker);
+        HomelessWorker = Mathf.Max(0, HomelessWorker + amount);
+        EvtOnHomelessChanged?.Invoke(HomelessWorker);
+    }
+
+    public bool TryHouseWorker()
+    {
+        if (HomelessWorker > 0)
+        {
+            HomelessWorker--;
+            OccupiedHousesCount++;
+            EvtOnHomelessChanged?.Invoke(HomelessWorker);
+            return true;
+        }
+        return false;
+    }
+
+    public void FreeHouse()
+    {
+        if (OccupiedHousesCount > 0)
+        {
+            OccupiedHousesCount--;
+        }
+        // When an occupied house is destroyed, the housed worker becomes homeless again!
+        HomelessWorker++;
+        EvtOnHomelessChanged?.Invoke(HomelessWorker);
+    }
+
+    public void RecruitNewWorker()
+    {
+        CurrentWorker++;
+        EvtOnWorkersChanged?.Invoke(CurrentWorker);
+    }
+    
+    public void CancelHouseReservation()
+    {
+        if (OccupiedHousesCount > 0)
+        {
+            OccupiedHousesCount--;
+        }
+        HomelessWorker++;
+        EvtOnHomelessChanged?.Invoke(HomelessWorker);
     }
 }
