@@ -37,6 +37,7 @@ Transform:
   - {fileID: 5257827676579273029}
   - {fileID: 4630700467644172452}
   - {fileID: 3319988793068889655}
+  - {fileID: 5711674864877333133}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5441983127171556320
@@ -61,6 +62,7 @@ MonoBehaviour:
   ClickInteractor: {fileID: 3620686870736366550}
   WorkerManager: {fileID: 6081503271617742717}
   ResourceManager: {fileID: 1254524427329416201}
+  TimeManager: {fileID: 6180579101103611128}
 --- !u!114 &6157991707012487289
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -309,6 +311,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: WaterLevel
       objectReference: {fileID: 0}
+    - target: {fileID: 7457471952100792451, guid: 535d790feb503ae4c9dcc29bc19d8d2a, type: 3}
+      propertyPath: riseRate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7457471952100792451, guid: 535d790feb503ae4c9dcc29bc19d8d2a, type: 3}
+      propertyPath: currentWaterHeight
+      value: 87
+      objectReference: {fileID: 0}
     - target: {fileID: 8827514517891661184, guid: 535d790feb503ae4c9dcc29bc19d8d2a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -516,3 +526,76 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63f941d5e9ca121438799eeec11eae19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkerManager
+--- !u!1001 &8755304508536485819
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3096870024065945765}
+    m_Modifications:
+    - target: {fileID: 3914779970009516073, guid: a40a7bd8228bb494eb5c1317348f634e, type: 3}
+      propertyPath: m_Name
+      value: TimeManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 3945968111453936950, guid: a40a7bd8228bb494eb5c1317348f634e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3945968111453936950, guid: a40a7bd8228bb494eb5c1317348f634e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3945968111453936950, guid: a40a7bd8228bb494eb5c1317348f634e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3945968111453936950, guid: a40a7bd8228bb494eb5c1317348f634e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3945968111453936950, guid: a40a7bd8228bb494eb5c1317348f634e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3945968111453936950, guid: a40a7bd8228bb494eb5c1317348f634e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3945968111453936950, guid: a40a7bd8228bb494eb5c1317348f634e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3945968111453936950, guid: a40a7bd8228bb494eb5c1317348f634e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3945968111453936950, guid: a40a7bd8228bb494eb5c1317348f634e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3945968111453936950, guid: a40a7bd8228bb494eb5c1317348f634e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a40a7bd8228bb494eb5c1317348f634e, type: 3}
+--- !u!4 &5711674864877333133 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3945968111453936950, guid: a40a7bd8228bb494eb5c1317348f634e, type: 3}
+  m_PrefabInstance: {fileID: 8755304508536485819}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6180579101103611128 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3189890912516483907, guid: a40a7bd8228bb494eb5c1317348f634e, type: 3}
+  m_PrefabInstance: {fileID: 8755304508536485819}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4080382e461fbe643a8dc754b5991ec3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TimeManager

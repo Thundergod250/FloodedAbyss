@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     public ClickInteractor ClickInteractor;
     public WorkerManager WorkerManager;
     public ResourceManager ResourceManager;
+    public TimeManager TimeManager;
 
     private void Awake()
     {
