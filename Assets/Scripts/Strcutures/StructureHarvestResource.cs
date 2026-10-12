@@ -17,7 +17,7 @@ public class StructureHarvestResource : Structures
     [SerializeField] private float destructionDuration = 3f;
 
     [Header("Destruction Settings")]
-    [SerializeField] private bool canBeDestroyed = true; // Set to false for natural overworld resource piles that cannot be destroyed
+    [SerializeField] private bool canBeDestroyed = true; 
 
     [Header("Harvest Behavior Mode")]
     [SerializeField] private HarvestMode harvestMode = HarvestMode.Consumable;
@@ -111,7 +111,7 @@ public class StructureHarvestResource : Structures
 
     public void ToggleDestroying()
     {
-        if (!canBeDestroyed) return; // Prevent destroying if disallowed
+        if (!canBeDestroyed) return;
 
         if (isDestroying)
         {
@@ -173,8 +173,9 @@ public class StructureHarvestResource : Structures
         }
 
         var harvestUI = GameManager.Instance.uiController.UiResourceHarvest;
-        if (harvestUI != null && harvestUI.IsOpen)
+        if (harvestUI != null && harvestUI.IsShowingStructure(this))
         {
+            harvestUI.CompleteProgress();
             GameManager.Instance.uiController.CloseAllModals();
         }
 
@@ -238,7 +239,7 @@ public class StructureHarvestResource : Structures
         }
 
         var harvestUI = GameManager.Instance.uiController.UiResourceHarvest;
-        if (harvestUI != null && harvestUI.IsOpen)
+        if (harvestUI != null && harvestUI.IsShowingStructure(this))
         {
             harvestUI.CompleteProgress();
             GameManager.Instance.uiController.CloseAllModals();

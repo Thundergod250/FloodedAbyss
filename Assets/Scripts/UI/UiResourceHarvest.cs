@@ -96,6 +96,11 @@ public class UiResourceHarvest : UiModals
         UpdateDestroyButtonVisuals();
     }
 
+    public bool IsShowingStructure(StructureHarvestResource structure)
+    {
+        return IsOpen && currentStructure == structure;
+    }
+
     private void UpdateActivateButtonVisuals()
     {
         if (activateButton != null && currentStructure != null)
