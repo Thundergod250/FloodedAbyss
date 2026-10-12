@@ -9,7 +9,7 @@ public class UiWorkersHouse : UiModals
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private Button actionButton;
     [SerializeField] private TextMeshProUGUI actionButtonText;
-    [SerializeField] private GameObject resourceRequirementContainer; // Drag your orange resource container here!
+    [SerializeField] private GameObject resourceRequirementContainer; // Container holding the resource cost pair
 
     [Header("Destroy Button References")]
     [SerializeField] private Button destroyButton;
@@ -86,12 +86,14 @@ public class UiWorkersHouse : UiModals
         if (actionButton != null && currentHouse != null)
         {
             var workerMgr = GameManager.Instance.WorkerManager;
-            bool hasHomeless = workerMgr != null && workerMgr.HomelessWorker > 0;
 
-            // Hide resource requirements when housing a worker; show them only when recruiting
+            // Check if this specific house is currently housing someone, OR if there are unreserved homeless workers available
+            bool isHousingAction = currentHouse.IsReservedForHousing || (workerMgr != null && workerMgr.HomelessWorker > 0);
+
+            // Hide resource requirements whenever in Housing mode (idle or loading)
             if (resourceRequirementContainer != null)
             {
-                resourceRequirementContainer.SetActive(!hasHomeless && !currentHouse.IsOccupied);
+                resourceRequirementContainer.SetActive(!isHousingAction && !currentHouse.IsOccupied);
             }
 
             if (currentHouse.IsOccupied)
@@ -106,8 +108,8 @@ public class UiWorkersHouse : UiModals
                 if (actionButtonText != null)
                 {
                     actionButtonText.text = currentHouse.IsWorking 
-                        ? (hasHomeless ? "Stop Housing" : "Stop Recruiting") 
-                        : (hasHomeless ? "House Worker" : "Recruit Worker");
+                        ? (isHousingAction ? "Stop Housing" : "Stop Recruiting") 
+                        : (isHousingAction ? "House Worker" : "Recruit Worker");
                 }
             }
         }

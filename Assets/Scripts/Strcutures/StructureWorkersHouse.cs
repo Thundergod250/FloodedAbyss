@@ -16,7 +16,7 @@ public class StructureWorkersHouse : Structures
     [SerializeField] private bool isOccupied = false;
     [SerializeField] private bool isWorking = false;
     [SerializeField] private bool isDestroying = false;
-    [SerializeField] private bool isReservedForHousing = false; // Tracks if this house successfully grabbed a homeless worker
+    [SerializeField] private bool isReservedForHousing = false; // Tracks if this house grabbed a homeless worker
     [SerializeField, Range(0f, 1f)] private float progressPercentage = 0f;
 
     private Coroutine actionRoutine;
@@ -77,26 +77,20 @@ public class StructureWorkersHouse : Structures
             // Recruiting mode: validate resource costs
             if (recruitmentCostResource != null)
             {
-                if (resourceMgrHasNotEnough(workerMgr, recruitmentCostResource, recruitmentCostAmount)) return;
+                var resourceMgr = GameManager.Instance.ResourceManager;
+                if (resourceMgr != null)
+                {
+                    if (resourceMgr.GetResourceAmount(recruitmentCostResource) < recruitmentCostAmount)
+                    {
+                        Debug.Log("[StructureWorkersHouse] Not enough resources to recruit worker!");
+                        return;
+                    }
+                    resourceMgr.ConsumeResource(recruitmentCostResource, recruitmentCostAmount);
+                }
             }
         }
 
         actionRoutine = StartCoroutine(ActionRoutine(housingMode));
-    }
-
-    private bool resourceMgrHasNotEnough(WorkerManager workerMgr, ResourceDataSO res, int amount)
-    {
-        var resourceMgr = GameManager.Instance.ResourceManager;
-        if (resourceMgr != null)
-        {
-            if (resourceMgr.GetResourceAmount(res) < amount)
-            {
-                Debug.Log("[StructureWorkersHouse] Not enough resources to recruit worker!");
-                return true;
-            }
-            resourceMgr.ConsumeResource(res, amount);
-        }
-        return false;
     }
 
     private void StopAction()
@@ -156,7 +150,7 @@ public class StructureWorkersHouse : Structures
             {
                 workerMgr.RecruitNewWorker();
             }
-            // If housingMode, the worker was already safely reserved and counted as housed by TryHouseWorker()!
+            // If housingMode, worker was already safely reserved and counted as housed by TryHouseWorker()!
         }
 
         isOccupied = true;
@@ -250,6 +244,7 @@ public class StructureWorkersHouse : Structures
     public bool IsOccupied => isOccupied;
     public bool IsWorking => isWorking;
     public bool IsDestroying => isDestroying;
+    public bool IsReservedForHousing => isReservedForHousing;
     public float ProgressPercentage => progressPercentage;
     public string StructureTitle => structureTitle;
     public string ProgressDescription => isDestroying ? "Destroying House..." : (isReservedForHousing ? "Housing Worker..." : "Recruiting Worker...");
