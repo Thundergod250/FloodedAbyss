@@ -35,11 +35,11 @@ public class StructureHarvestResource : Structures
 
     private Coroutine harvestRoutine;
     private Coroutine destroyRoutine;
-    private GameObject terminalPrefab;
+    private StructureBuildable owningTerminal;
 
-    public void SetTerminalPrefab(GameObject prefab)
+    public void SetOwningTerminal(StructureBuildable terminal)
     {
-        terminalPrefab = prefab;
+        owningTerminal = terminal;
     }
 
     public override void Activate()
@@ -167,9 +167,14 @@ public class StructureHarvestResource : Structures
 
     private void ExecuteFinalDestruction()
     {
-        if (terminalPrefab != null)
+        // Re-enable the original buildable terminal instead of instantiating a new prefab
+        if (owningTerminal != null)
         {
-            Instantiate(terminalPrefab, transform.position, transform.rotation);
+            owningTerminal.gameObject.SetActive(true);
+        }
+        else
+        {
+            Debug.LogWarning($"[StructureHarvestResource] '{gameObject.name}' has no owning terminal reference to re-enable!");
         }
 
         var harvestUI = GameManager.Instance.uiController.UiResourceHarvest;
@@ -233,9 +238,14 @@ public class StructureHarvestResource : Structures
             workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker + laborCost);
         }
 
-        if (terminalPrefab != null)
+        // Re-enable the original buildable terminal
+        if (owningTerminal != null)
         {
-            Instantiate(terminalPrefab, transform.position, transform.rotation);
+            owningTerminal.gameObject.SetActive(true);
+        }
+        else
+        {
+            Debug.LogWarning($"[StructureHarvestResource] '{gameObject.name}' has no owning terminal reference to re-enable!");
         }
 
         var harvestUI = GameManager.Instance.uiController.UiResourceHarvest;

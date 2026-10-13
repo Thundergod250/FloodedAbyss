@@ -4,7 +4,6 @@ public class StructureBuildable : Structures
 {
     [Header("Buildable Configuration")]
     [SerializeField] private StructureDataSO[] availableStructuresToBuild;
-    [SerializeField] private GameObject buildableTerminalPrefab; // Reference to this building terminal's prefab so it can respawn later
 
     [Header("Spawn Settings")]
     [SerializeField] private Vector3 spawnOffset = Vector3.zero;
@@ -54,7 +53,7 @@ public class StructureBuildable : Structures
             resourceManager.ConsumeResource(cost.resourceDataSo, cost.amount);
         }
 
-        // 3. Instantiate the target structure and pass the terminal prefab reference for future respawning
+        // 3. Instantiate the target structure and link back to this Buildable terminal
         if (structureData.StructurePrefab != null)
         {
             Vector3 spawnPosition = transform.TransformPoint(spawnOffset);
@@ -63,20 +62,16 @@ public class StructureBuildable : Structures
             StructureHarvestResource harvestStruct = spawnedGO.GetComponent<StructureHarvestResource>();
             if (harvestStruct != null)
             {
-                if (buildableTerminalPrefab != null)
-                {
-                    harvestStruct.SetTerminalPrefab(buildableTerminalPrefab);
-                }
-                else
-                {
-                    Debug.LogWarning("[StructureBuildable] Buildable Terminal Prefab is not assigned in the Inspector! It won't be able to respawn.");
-                }
+                // Pass this specific buildable terminal instance so it can re-enable us later
+                harvestStruct.SetOwningTerminal(this);
             }
 
-            Debug.Log($"[StructureBuildable] Successfully built {structureData.StructureTitle}. Replacing terminal.");
+            Debug.Log($"[StructureBuildable] Successfully built {structureData.StructureTitle}. Disabling terminal.");
             
             GameManager.Instance.uiController.CloseAllModals();
-            Destroy(gameObject);
+            
+            // Instead of destroying, simply disable this terminal to save performance and retain state
+            gameObject.SetActive(false);
         }
         else
         {
