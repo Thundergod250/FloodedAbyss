@@ -7,10 +7,13 @@ public class WaterLevel : MonoBehaviour
 
     [Header("Water Height Settings")]
     [SerializeField] private float currentWaterHeight = 100f; // Starting height
-    [SerializeField] private float riseRate = 1.5f;             // Base rate at which water constantly rises per second
     [SerializeField] private float maxWaterHeight = 200f;     // Maximum cap
     [SerializeField] private float minWaterHeight = 0f;       // Minimum cap
 
+    [Header("Water Pressure Settings")]
+    [SerializeField] private float waterPressureRate = 1f;    // The constant rate at which water pressure / rising occurs (e.g. 1 m/s)
+
+    private float startingWaterLevel;
     private float netDischargePower = 0f;
 
     private void Awake()
@@ -22,10 +25,16 @@ public class WaterLevel : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        // Capture the initial water level at the very start of the game
+        startingWaterLevel = currentWaterHeight;
+    }
+
     private void Update()
     {
-        // Calculate net change: constant rising minus active pump discharge power
-        float heightDelta = (riseRate - netDischargePower) * Time.deltaTime;
+        // Water constantly rises based on the water pressure rate minus active pump discharge power
+        float heightDelta = (waterPressureRate - netDischargePower) * Time.deltaTime;
         
         currentWaterHeight = Mathf.Clamp(currentWaterHeight + heightDelta, minWaterHeight, maxWaterHeight);
 
@@ -50,4 +59,8 @@ public class WaterLevel : MonoBehaviour
     }
 
     public float CurrentWaterHeight => currentWaterHeight;
+    public float NetDischargePower => netDischargePower;
+    
+    // Returns rounded integer difference for clean UI display without decimals
+    public int WaterPressure => Mathf.RoundToInt(currentWaterHeight - startingWaterLevel);
 }

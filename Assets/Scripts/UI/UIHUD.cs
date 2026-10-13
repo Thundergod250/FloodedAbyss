@@ -6,8 +6,13 @@ using TMPro;
 public class UIHUD : UiModals
 {
     [Header("UI References")]
-    [SerializeField] private TextMeshProUGUI workerNumberText; // Worker count text
-    [SerializeField] private TextMeshProUGUI homelessWorkerText; // Homeless worker count text
+    [SerializeField] private TextMeshProUGUI workerNumberText;     // Worker count text
+    [SerializeField] private TextMeshProUGUI homelessWorkerText;  // Homeless worker count text
+
+    [Header("Water HUD References")]
+    [SerializeField] private TextMeshProUGUI waterLevelText;       // Middle Big UI (e.g., "95 m")
+    [SerializeField] private TextMeshProUGUI dischargePressureText; // Bottom Left Green Text (e.g., "1 m/s")
+    [SerializeField] private TextMeshProUGUI waterPressureText;     // Bottom Right Red Text (e.g., "1 m/s")
 
     [Header("Resource HUD Settings")]
     [SerializeField] private Transform resourceContainer;       
@@ -33,6 +38,12 @@ public class UIHUD : UiModals
         Unsubscribe();
     }
 
+    private void Update()
+    {
+        // Continuously update water statistics on the persistent HUD
+        UpdateWaterHUD();
+    }
+
     private IEnumerator ConnectAndBuildHUDRoutine()
     {
         while (GameManager.Instance == null || GameManager.Instance.WorkerManager == null || GameManager.Instance.ResourceManager == null)
@@ -51,6 +62,31 @@ public class UIHUD : UiModals
         HandleHomelessChanged(GameManager.Instance.WorkerManager.HomelessWorker);
 
         BuildResourceHUD();
+    }
+
+    private void UpdateWaterHUD()
+    {
+        if (GameManager.Instance == null || GameManager.Instance.WaterLevel == null) return;
+
+        WaterLevel waterMgr = GameManager.Instance.WaterLevel;
+
+        // Update Water Level (Middle Big Text)
+        if (waterLevelText != null)
+        {
+            waterLevelText.text = $"{Mathf.RoundToInt(waterMgr.CurrentWaterHeight)} m";
+        }
+
+        // Update Discharge Pressure / Pump strength (Bottom Left Green Text)
+        if (dischargePressureText != null)
+        {
+            dischargePressureText.text = $"{waterMgr.NetDischargePower:F0} m/s";
+        }
+
+        // Update Water Pressure (Bottom Right Red Text - now handles integer pressure rates cleanly)
+        if (waterPressureText != null)
+        {
+            waterPressureText.text = $"{waterMgr.WaterPressure} m/s";
+        }
     }
 
     private void BuildResourceHUD()
