@@ -11,6 +11,7 @@ public class ResourceSpawner : MonoBehaviour
     [SerializeField] private float timerToSpawn;
     [SerializeField] private WaterSurface targetSurface; 
     [SerializeField] private BoxCollider spawnArea;
+    [SerializeField] private int howManyObjectsToSpawn = 7;
 
     public bool isSpawning;
     private Vector3 GetRandomPointInBox()
@@ -29,7 +30,7 @@ public class ResourceSpawner : MonoBehaviour
 
     void Start()
     {
-        // targetSurface = GameManager.Instance.GetComponent<WaterLevel>().waterLevelTransform.gameObject.GetComponent<WaterSurface>(); Manually Set it as of now
+        targetSurface = GameManager.Instance.WaterLevel.GetComponent<WaterLevel>().OceanTransform.GetComponent<WaterSurface>();
 
         ChangeSpawnerState(true);
         StartCoroutine(SpawnCycle(timerToSpawn));
@@ -39,15 +40,24 @@ public class ResourceSpawner : MonoBehaviour
     {
         while (isSpawning)
         {
-            Vector3 randomPoint = GetRandomPointInBox();
+            for (int i = 0; i < howManyObjectsToSpawn; i++)
+            {
+                Vector3 randomPoint = GetRandomPointInBox();
 
-            int randomIndex = Random.Range(0, objectsToSpawn.Count);
+                int randomIndex = Random.Range(0, objectsToSpawn.Count);
 
+                GameObject spawnedResource = Pool.Instantiate(
+                    objectsToSpawn[randomIndex],
+                    randomPoint,
+                    Quaternion.identity,
+                    GameManager.Instance.objectPooling.ParentObject
+                );
+
+                spawnedResource.GetComponent<FloatingObject>().targetSurface = targetSurface;
+            }
+
+            // Wait after all 7 objects have spawned
             yield return new WaitForSeconds(timer);
-
-            GameObject spawnedResource = Pool.Instantiate(objectsToSpawn[randomIndex], randomPoint, Quaternion.identity, GameManager.Instance.objectPooling.ParentObject);
-
-            //spawnedResource.GetComponent<FloatingObject>().targetSurface = targetSurface;
         }
     }
 
