@@ -6,13 +6,11 @@ public class WaterLevel : MonoBehaviour
     [SerializeField] private Transform oceanTransform; // Assign your Ocean GameObject here (or leave null if this script is on the ocean itself)
 
     [Header("Water Height Settings")]
-    [Range(0f, 200f)]
     [SerializeField] private float currentWaterHeight = 100f; // Starting height
     [SerializeField] private float riseRate = 1.5f;             // Base rate at which water constantly rises per second
     [SerializeField] private float maxWaterHeight = 200f;     // Maximum cap
     [SerializeField] private float minWaterHeight = 0f;       // Minimum cap
 
-    [Header("Water Height ")]
     private float netDischargePower = 0f;
 
     private void Awake()
@@ -52,6 +50,4 @@ public class WaterLevel : MonoBehaviour
     }
 
     public float CurrentWaterHeight => currentWaterHeight;
-    public Transform OceanTransform => oceanTransform;
-
 }
