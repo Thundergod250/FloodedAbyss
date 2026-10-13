@@ -3,42 +3,52 @@ using UnityEngine;
 public class WaterLevel : MonoBehaviour
 {
     [Header("Ocean Visual Reference")]
-    [SerializeField] private Transform oceanTransform; // Assign your Ocean GameObject here (or leave null if this script is on the ocean itself)
+    [SerializeField] private Transform oceanTransform; // Assign your Ocean GameObject here
 
     [Header("Water Height Settings")]
-    [SerializeField] private float currentWaterHeight = 100f; // Starting height
-    [SerializeField] private float maxWaterHeight = 200f;     // Maximum cap
-    [SerializeField] private float minWaterHeight = 0f;       // Minimum cap
+    [SerializeField] private float maxWaterHeight = 300f;     
+    [SerializeField] private float minWaterHeight = 0f;       
 
-    [Header("Water Pressure Settings")]
-    [SerializeField] private float waterPressureRate = 1f;    // The constant rate at which water pressure / rising occurs (e.g. 1 m/s)
+    [Header("Water Pressure Progression")]
+    [SerializeField] private float pressureIncreaseInterval = 10f; // How many seconds before Water Pressure increments by 1
+    [SerializeField] private int baseWaterPressure = 1;            // Starting water pressure value
 
-    private float startingWaterLevel;
+    [Header("Pump Mechanics")]
+    private float baseWaterHeight = 100f;                          // Captured starting baseline height
     private float netDischargePower = 0f;
+    private float pressureTimer = 0f;
+    private int currentWaterPressure;
+    private float currentWaterHeight;
 
     private void Awake()
     {
-        // If no transform is explicitly assigned, assume this script is attached directly to the Ocean object
         if (oceanTransform == null)
         {
             oceanTransform = transform;
         }
-    }
-
-    private void Start()
-    {
-        // Capture the initial water level at the very start of the game
-        startingWaterLevel = currentWaterHeight;
+        
+        // Capture the baseline height from the ocean's initial position
+        baseWaterHeight = oceanTransform.position.y;
+        currentWaterHeight = baseWaterHeight;
+        currentWaterPressure = baseWaterPressure;
     }
 
     private void Update()
     {
-        // Water constantly rises based on the water pressure rate minus active pump discharge power
-        float heightDelta = (waterPressureRate - netDischargePower) * Time.deltaTime;
-        
-        currentWaterHeight = Mathf.Clamp(currentWaterHeight + heightDelta, minWaterHeight, maxWaterHeight);
+        // 1. Water Pressure constantly ticks up independently over time (1, 2, 3, 4, 5...)
+        pressureTimer += Time.deltaTime;
+        if (pressureTimer >= pressureIncreaseInterval)
+        {
+            pressureTimer = 0f;
+            currentWaterPressure++;
+            Debug.Log($"[WaterLevel] Water Pressure increased to: {currentWaterPressure}");
+        }
 
-        // Physically move the ocean object up or down based on current height
+        // 2. New Water Height = Base Starting Water Height + Current Water Pressure (minus discharge mitigation)
+        float targetHeight = baseWaterHeight + currentWaterPressure - netDischargePower;
+        currentWaterHeight = Mathf.Clamp(targetHeight, minWaterHeight, maxWaterHeight);
+
+        // Physically move the ocean object up or down based on the new height
         if (oceanTransform != null)
         {
             Vector3 pos = oceanTransform.position;
@@ -47,20 +57,14 @@ public class WaterLevel : MonoBehaviour
         }
     }
     
-    public void ModifyDischargePower(float amount)
-    {
-        netDischargePower += amount;
-        if (netDischargePower < 0f) netDischargePower = 0f;
-    }
-
     public void SetDischargePower(float amount)
     {
         netDischargePower = Mathf.Max(0f, amount);
     }
 
-    public float CurrentWaterHeight => currentWaterHeight;
+    public float CurrentWaterHeight => oceanTransform != null ? oceanTransform.position.y : currentWaterHeight;
     public float NetDischargePower => netDischargePower;
     
-    // Returns rounded integer difference for clean UI display without decimals
-    public int WaterPressure => Mathf.RoundToInt(currentWaterHeight - startingWaterLevel);
+    // Water Pressure is its own independent integer progression value displayed on the red HUD text
+    public int WaterPressure => currentWaterPressure;
 }

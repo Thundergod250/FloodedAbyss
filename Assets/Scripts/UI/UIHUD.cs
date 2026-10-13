@@ -70,7 +70,7 @@ public class UIHUD : UiModals
 
         WaterLevel waterMgr = GameManager.Instance.WaterLevel;
 
-        // Update Water Level (Middle Big Text)
+        // Update Water Level (Middle Big Text linked to Ocean Y Axis)
         if (waterLevelText != null)
         {
             waterLevelText.text = $"{Mathf.RoundToInt(waterMgr.CurrentWaterHeight)} m";
@@ -82,7 +82,7 @@ public class UIHUD : UiModals
             dischargePressureText.text = $"{waterMgr.NetDischargePower:F0} m/s";
         }
 
-        // Update Water Pressure (Bottom Right Red Text - now handles integer pressure rates cleanly)
+        // Update Water Pressure (Bottom Right Red Text)
         if (waterPressureText != null)
         {
             waterPressureText.text = $"{waterMgr.WaterPressure} m/s";
