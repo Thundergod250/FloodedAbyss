@@ -166,4 +166,17 @@ public class StructureApexPump : Structures
     public int CurrentFuel => currentFuel;
     public int GetSwitchCost(int index) => (index >= 0 && index < switchFuelCosts.Length) ? switchFuelCosts[index] : 0;
     public ResourceDataSO[] AcceptedResources => acceptedResources;
+    public bool IsPumpActive
+    {
+        get
+        {
+            for (int i = 0; i < switchStates.Length; i++)
+            {
+                if (switchStates[i])
+                    return true;
+            }
+
+            return false;
+        }
+    }
 }

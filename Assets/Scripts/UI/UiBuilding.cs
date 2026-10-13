@@ -12,6 +12,9 @@ public class UiBuilding : UiModals
     [SerializeField] private GameObject resourcePairPrefabTemplate; // Reference to the resource pair prefab for costs
     [SerializeField] private TextMeshProUGUI warningText;        // Optional warning message if resources are short
 
+
+    private StructureProgression progression;
+
     private StructureBuildable currentBuildable;
     private Coroutine warningRoutine;
 
@@ -26,6 +29,7 @@ public class UiBuilding : UiModals
     public void Setup(StructureBuildable buildable)
     {
         currentBuildable = buildable;
+        progression = GameManager.Instance.structureProgression.GetComponent<StructureProgression>();
         if (warningText != null) warningText.gameObject.SetActive(false);
         PopulateCards();
     }
@@ -46,6 +50,11 @@ public class UiBuilding : UiModals
         {
             if (structureData == null) continue;
 
+            if (progression != null && !progression.IsUnlocked(structureData))
+            {
+                continue;
+            }
+
             GameObject cardGO = Instantiate(structureCardPrefab, contentContainer);
             cardGO.SetActive(true);
 
@@ -63,9 +72,19 @@ public class UiBuilding : UiModals
     {
         if (currentBuildable != null)
         {
+            if (progression != null &&
+            !progression.IsUnlocked(structureData))
+            {
+                ShowWarning("This structure is locked!");
+                return;
+            }
+
             bool success = currentBuildable.TryBuildStructure(structureData, out string errorMsg);
             if (success)
             {
+                if (progression != null)
+                    progression.NotifyStructureBuilt(structureData);
+
                 GameManager.Instance.uiController.CloseAllModals();
             }
             else

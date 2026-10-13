@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     public WorkerManager WorkerManager;
     public ResourceManager ResourceManager;
     public TimeManager TimeManager;
+    public StructureProgression structureProgression;
 
     private void Awake()
     {
