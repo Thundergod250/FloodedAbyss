@@ -36,9 +36,9 @@ public class WaterLevel : MonoBehaviour
         // 1. Water Pressure accumulates smoothly over time as a float rate
         currentWaterPressureFloat += pressureIncreaseRate * Time.deltaTime;
 
-        // 2. Direct Calculation: Water Height = Base Starting Water Height + Current Pressure Float (minus discharge)
-        // This ensures it never compounds uncontrollably and strictly equals Base + Pressure!
-        float targetHeight = baseWaterHeight + currentWaterPressureFloat - netDischargePower;
+        // 2. Direct Calculation: Water Height = Base Starting Water Height + Current Pressure Float 
+        // (Discharge power is excluded from this calculation for now, so pumps only show up on the UI)
+        float targetHeight = baseWaterHeight + currentWaterPressureFloat;
         currentWaterHeight = Mathf.Clamp(targetHeight, minWaterHeight, maxWaterHeight);
 
         // Physically move the ocean object smoothly based on the calculated height
