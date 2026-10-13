@@ -231,6 +231,8 @@ MonoBehaviour:
   notEnoughWorkersText: {fileID: 4517253163302988400}
   activateButton: {fileID: 4319722561180517239}
   activateButtonText: {fileID: 8460031930552416866}
+  destroyButton: {fileID: 0}
+  destroyButtonText: {fileID: 0}
   productionBarContainer: {fileID: 4338269951559421198}
   fillImage: {fileID: 628409099815129931}
   progressDescriptionText: {fileID: 3047433900031129553}
@@ -247,7 +249,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UiBuilding
   ModalPrefab: {fileID: 3856263716437167531}
-  contentContainer: {fileID: 1799154330629453874}
+  scrollRect: {fileID: 2925629955733232060}
+  contentContainer: {fileID: 407576049952889075}
   structureCardPrefab: {fileID: 6338547547707420446, guid: 0590c0c1691dba9479903b88401b5d52, type: 3}
   resourcePairPrefabTemplate: {fileID: 7750372029716409510, guid: d74526e6cf5d42b4eba8760c134d0f19, type: 3}
   warningText: {fileID: 0}
@@ -1053,9 +1056,14 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8bbcaf6c32764cc4aa2e1f99d2e7c8e9, type: 3}
---- !u!224 &1799154330629453874 stripped
+--- !u!224 &407576049952889075 stripped
 RectTransform:
-  m_CorrespondingSourceObject: {fileID: 7034848666569318029, guid: 8bbcaf6c32764cc4aa2e1f99d2e7c8e9, type: 3}
+  m_CorrespondingSourceObject: {fileID: 9006966715856109132, guid: 8bbcaf6c32764cc4aa2e1f99d2e7c8e9, type: 3}
+  m_PrefabInstance: {fileID: 8743506421321606847}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2925629955733232060 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5894860285159685891, guid: 8bbcaf6c32764cc4aa2e1f99d2e7c8e9, type: 3}
   m_PrefabInstance: {fileID: 8743506421321606847}
   m_PrefabAsset: {fileID: 0}
 --- !u!224 &3093952814429727325 stripped
