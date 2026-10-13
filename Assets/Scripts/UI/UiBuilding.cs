@@ -1,10 +1,12 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using UnityEngine.UI;
 
 public class UiBuilding : UiModals
 {
     [Header("UI References")]
+    [SerializeField] private Transform scrollRect;               // Scroll View Content container for cards
     [SerializeField] private Transform contentContainer;         // Scroll View Content container for cards
     [SerializeField] private GameObject structureCardPrefab;     // Prefab with StructureCardPanel attached
     [SerializeField] private GameObject resourcePairPrefabTemplate; // Reference to the resource pair prefab for costs
@@ -53,6 +55,8 @@ public class UiBuilding : UiModals
                 cardPanel.Setup(structureData, resourcePairPrefabTemplate, OnCardSelected);
             }
         }
+
+        scrollRect.GetComponent<ScrollRect>().content = contentContainer.GetComponent<RectTransform>();
     }
 
     private void OnCardSelected(StructureDataSO structureData)
