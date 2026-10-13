@@ -8,6 +8,7 @@ public class WaterLevel : MonoBehaviour
     [Header("Water Height Settings")]
     [SerializeField] private float maxWaterHeight = 300f;     
     [SerializeField] private float minWaterHeight = 0f;       
+    [SerializeField] private float drainSmoothSpeed = 10f;     // How fast the water level reacts to pumps (higher = faster draining)
 
     [Header("Water Pressure Progression")]
     [SerializeField] private float pressureIncreaseRate = 0.2f;    // How fast water pressure accumulates per second smoothly
@@ -28,6 +29,7 @@ public class WaterLevel : MonoBehaviour
         
         // Capture the baseline height from the ocean's initial position
         baseWaterHeight = oceanTransform.position.y;
+        currentWaterHeight = baseWaterHeight;
         currentWaterPressureFloat = baseWaterPressure;
     }
 
@@ -36,12 +38,15 @@ public class WaterLevel : MonoBehaviour
         // 1. Water Pressure accumulates smoothly over time as a float rate
         currentWaterPressureFloat += pressureIncreaseRate * Time.deltaTime;
 
-        // 2. Direct Calculation: Water Height = Base Starting Water Height + Current Pressure Float 
-        // (Discharge power is excluded from this calculation for now, so pumps only show up on the UI)
-        float targetHeight = baseWaterHeight + currentWaterPressureFloat;
-        currentWaterHeight = Mathf.Clamp(targetHeight, minWaterHeight, maxWaterHeight);
+        // 2. Target Water Height = Base Starting Height + Water Pressure - Discharge Pressure
+        float targetHeight = baseWaterHeight + currentWaterPressureFloat - netDischargePower;
+        targetHeight = Mathf.Clamp(targetHeight, minWaterHeight, maxWaterHeight);
 
-        // Physically move the ocean object smoothly based on the calculated height
+        // 3. Smoothly interpolate (Lerp) current water height toward the target height.
+        // This makes drainage fast and responsive when pumps turn on, but eliminates instant snapping.
+        currentWaterHeight = Mathf.Lerp(currentWaterHeight, targetHeight, drainSmoothSpeed * Time.deltaTime);
+
+        // Physically move the ocean object smoothly based on the interpolated height
         if (oceanTransform != null)
         {
             Vector3 pos = oceanTransform.position;
