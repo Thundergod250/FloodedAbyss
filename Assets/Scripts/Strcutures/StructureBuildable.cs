@@ -4,7 +4,7 @@ public class StructureBuildable : Structures
 {
     [Header("Buildable Configuration")]
     [SerializeField] private StructureDataSO[] availableStructuresToBuild;
-    [SerializeField] private int laborCost = 1; // Default labor cost to build/operate this structure
+    [SerializeField] private int laborCost = 1; // Minimum available worker threshold required to build
 
     [Header("Spawn Settings")]
     [SerializeField] private Vector3 spawnOffset = Vector3.zero;
@@ -63,10 +63,10 @@ public class StructureBuildable : Structures
             return false;
         }
 
-        // 1. Check available workers
+        // 1. Check if we meet the minimum available worker threshold (does not consume/hold them)
         if (workerMgr.CurrentWorker < laborCost)
         {
-            errorMessage = $"Not enough workers! Need {laborCost}, have {workerMgr.CurrentWorker}.";
+            errorMessage = $"Not enough available workers! Need at least {laborCost}, have {workerMgr.CurrentWorker}.";
             return false;
         }
 
@@ -82,17 +82,14 @@ public class StructureBuildable : Structures
             }
         }
 
-        // 3. Consume workers (fixed syntax here)
-        workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker - laborCost);
-
-        // 4. Consume resources
+        // 3. Consume resources only (Workers are left completely untouched)
         foreach (var cost in structureData.Costs)
         {
             if (cost.resourceDataSo == null) continue;
             resourceManager.ConsumeResource(cost.resourceDataSo, cost.amount);
         }
 
-        // 5. Instantiate the target structure and pass both the terminal and labor cost
+        // 4. Instantiate the target structure and pass the terminal reference
         if (structureData.StructurePrefab != null)
         {
             Vector3 spawnPosition = transform.TransformPoint(spawnOffset);
@@ -114,8 +111,6 @@ public class StructureBuildable : Structures
         else
         {
             errorMessage = "Structure prefab is missing!";
-            // Refund workers if instantiation fails
-            workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker + laborCost);
             return false;
         }
 
