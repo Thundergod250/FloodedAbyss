@@ -22,6 +22,19 @@ public class UiBuilding : UiModals
         if (warningText != null) warningText.gameObject.SetActive(false);
     }
 
+    private void Update()
+    {
+        // Anti-cheese submersion check: force close UI if the buildable terminal becomes submerged
+        if (IsOpen && currentBuildable != null)
+        {
+            if (currentBuildable.IsSubmerged)
+            {
+                Debug.Log("[UiBuilding] Buildable terminal is submerged! Force closing UI.");
+                GameManager.Instance.uiController.CloseAllModals();
+            }
+        }
+    }
+
     public void Setup(StructureBuildable buildable)
     {
         currentBuildable = buildable;

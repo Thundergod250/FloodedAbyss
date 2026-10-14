@@ -11,6 +11,9 @@ public class StructureBuildable : Structures
 
     public override void Activate()
     {
+        // Prevent opening if already submerged
+        if (isSubmerged) return;
+
         var buildingUI = GameManager.Instance.uiController.UiBuilding;
         if (buildingUI != null)
         {
@@ -19,9 +22,27 @@ public class StructureBuildable : Structures
         }
     }
 
+    protected override void HandleSubmergedShutdown()
+    {
+        base.HandleSubmergedShutdown();
+
+        // Force close UI if it's currently showing this buildable terminal
+        var buildingUI = GameManager.Instance.uiController.UiBuilding;
+        if (buildingUI != null)
+        {
+            GameManager.Instance.uiController.CloseAllModals();
+        }
+    }
+
     public bool TryBuildStructure(StructureDataSO structureData, out string errorMessage)
     {
         errorMessage = string.Empty;
+        if (isSubmerged)
+        {
+            errorMessage = "Cannot build; terminal is submerged!";
+            return false;
+        }
+
         if (structureData == null)
         {
             errorMessage = "Invalid structure data.";
@@ -61,7 +82,7 @@ public class StructureBuildable : Structures
             }
         }
 
-        // 3. Consume workers
+        // 3. Consume workers (fixed syntax here)
         workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker - laborCost);
 
         // 4. Consume resources
@@ -81,7 +102,6 @@ public class StructureBuildable : Structures
             if (harvestStruct != null)
             {
                 harvestStruct.SetOwningTerminal(this);
-                // If your resource structure uses a labor cost, you can pass it here or keep its default Inspector value
             }
 
             Debug.Log($"[StructureBuildable] Successfully built {structureData.StructureTitle}. Disabling terminal.");

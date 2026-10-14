@@ -2,9 +2,7 @@ using UnityEngine;
 
 public abstract class Structures : MonoBehaviour
 {
-    [Header("Submersion Settings")]
-    [SerializeField] private Collider structureCollider; // Assign the main collider
-    [SerializeField] private GameObject visualRoot;       // Optional: Visual representation to hide when submerged
+    private Collider structureCollider; // Assign the main collider
     
     protected bool isSubmerged = false;
 
@@ -45,12 +43,6 @@ public abstract class Structures : MonoBehaviour
         if (structureCollider != null)
         {
             structureCollider.enabled = !submerged;
-        }
-
-        // Optionally hide visuals or trigger an effect
-        if (visualRoot != null)
-        {
-            visualRoot.SetActive(!submerged);
         }
 
         // If it was working or active, you can force-stop it when it gets flooded!
