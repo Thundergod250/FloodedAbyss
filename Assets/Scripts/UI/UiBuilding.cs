@@ -1,15 +1,20 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using UnityEngine.UI;
 
 public class UiBuilding : UiModals
 {
     [Header("UI References")]
+    [SerializeField] private Transform scrollRect;               // Scroll View Content container for cards
     [SerializeField] private Transform contentContainer;         // Scroll View Content container for cards
     [SerializeField] private GameObject structureCardPrefab;     // Prefab with StructureCardPanel attached
     [SerializeField] private GameObject resourcePairPrefabTemplate; // Reference to the resource pair prefab for costs
     [SerializeField] private TextMeshProUGUI warningText;        // Optional warning message if resources are short
     [SerializeField] private TextMeshProUGUI laborCostText;      // Text field for displaying the labor cost
+
+
+    private StructureProgression progression;
 
     private StructureBuildable currentBuildable;
     private Coroutine warningRoutine;
@@ -38,6 +43,7 @@ public class UiBuilding : UiModals
     public void Setup(StructureBuildable buildable)
     {
         currentBuildable = buildable;
+        progression = GameManager.Instance.structureProgression.GetComponent<StructureProgression>();
         if (warningText != null) warningText.gameObject.SetActive(false);
 
         // Update Labor Cost UI text if assigned
@@ -65,7 +71,14 @@ public class UiBuilding : UiModals
         {
             if (structureData == null) continue;
 
+            /*if (progression != null && !progression.IsUnlocked(structureData))
+            {
+                continue;
+            }*/
+
             GameObject cardGO = Instantiate(structureCardPrefab, contentContainer);
+
+
             cardGO.SetActive(true);
 
             PanelStructureCard cardPanel = cardGO.GetComponent<PanelStructureCard>();
@@ -74,15 +87,27 @@ public class UiBuilding : UiModals
                 cardPanel.Setup(structureData, resourcePairPrefabTemplate, OnCardSelected);
             }
         }
+
+        scrollRect.GetComponent<ScrollRect>().content = contentContainer.GetComponent<RectTransform>();
     }
 
     private void OnCardSelected(StructureDataSO structureData)
     {
         if (currentBuildable != null)
         {
+            /*if (progression != null &&
+            !progression.IsUnlocked(structureData))
+            {
+                ShowWarning("This structure is locked!");
+                return;
+            }*/
+
             bool success = currentBuildable.TryBuildStructure(structureData, out string errorMsg);
             if (success)
             {
+                /*if (progression != null)
+                    progression.NotifyStructureBuilt(structureData);*/
+
                 GameManager.Instance.uiController.CloseAllModals();
             }
             else

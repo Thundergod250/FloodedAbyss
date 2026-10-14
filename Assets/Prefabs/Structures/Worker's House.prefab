@@ -99,6 +99,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1844570531246322384}
+  - component: {fileID: 5086038554931367676}
+  - component: {fileID: 3679932427356079104}
+  - component: {fileID: 2375594459070398344}
   m_Layer: 0
   m_Name: Worker's House
   m_TagString: Untagged
@@ -123,6 +126,65 @@ Transform:
   - {fileID: 3983298823859491031}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5086038554931367676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4861912147596065115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 586d09e3430c3fa4bb4b7161e1b7ee7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Interactables
+  interactionMessage: 
+  onInteract:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &3679932427356079104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4861912147596065115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11447bd386944244ab9c2ed6eccf7015, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StructureWorkersHouse
+  structureTitle: Worker's House
+  actionDuration: 3
+  destructionDuration: 3
+  recruitmentCostResource: {fileID: 11400000, guid: 01dc29f87c71c4646b9184c0d72979aa, type: 2}
+  recruitmentCostAmount: 5
+  isOccupied: 0
+  isWorking: 0
+  isDestroying: 0
+  isReservedForHousing: 0
+  progressPercentage: 0
+--- !u!65 &2375594459070398344
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4861912147596065115}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 11.187885, y: 7.505851, z: 11.243254}
+  m_Center: {x: 0.7751653, y: 1.9240708, z: -0.027685165}
 --- !u!1 &6327280055680895702
 GameObject:
   m_ObjectHideFlags: 0
