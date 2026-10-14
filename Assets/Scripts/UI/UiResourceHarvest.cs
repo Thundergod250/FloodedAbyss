@@ -57,6 +57,14 @@ public class UiResourceHarvest : UiModals
     {
         if (IsOpen && currentStructure != null)
         {
+            // Auto-close modal if structure becomes submerged while UI is open
+            if (currentStructure.IsSubmerged)
+            {
+                Debug.Log($"[UiResourceHarvest] '{currentStructure.StructureTitle}' is submerged! Force closing UI.");
+                GameManager.Instance.uiController.CloseAllModals();
+                return;
+            }
+
             bool showBar = currentStructure.IsWorking || currentStructure.IsDestroying;
             if (productionBarContainer != null && productionBarContainer.activeSelf != showBar)
             {

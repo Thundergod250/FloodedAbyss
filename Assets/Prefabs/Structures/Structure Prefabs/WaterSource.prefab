@@ -142,12 +142,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 419958e9bb152c2429036da0e422d5f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureHarvestResource
-  structureTitle: Water Source
+  structureTitle: Water Distiller
   laborCost: 1
   productionDuration: 5
+  destructionDuration: 3
+  canBeDestroyed: 1
   harvestMode: 0
   maxHarvestCycles: 5
   resourceToProduce: {fileID: 11400000, guid: 1327efaf4fe0fef40a19cd724621be2b, type: 2}
   productionAmount: 1
   isWorking: 0
+  isDestroying: 0
   progressPercentage: 0

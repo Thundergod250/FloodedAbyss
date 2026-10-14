@@ -4,13 +4,16 @@ public class StructureBuildable : Structures
 {
     [Header("Buildable Configuration")]
     [SerializeField] private StructureDataSO[] availableStructuresToBuild;
-    [SerializeField] private GameObject buildableTerminalPrefab; // Reference to this building terminal's prefab so it can respawn later
+    [SerializeField] private int laborCost = 1; // Default labor cost to build/operate this structure
 
     [Header("Spawn Settings")]
     [SerializeField] private Vector3 spawnOffset = Vector3.zero;
 
     public override void Activate()
     {
+        // Prevent opening if already submerged
+        if (isSubmerged) return;
+
         var buildingUI = GameManager.Instance.uiController.UiBuilding;
         if (buildingUI != null)
         {
@@ -19,9 +22,27 @@ public class StructureBuildable : Structures
         }
     }
 
+    protected override void HandleSubmergedShutdown()
+    {
+        base.HandleSubmergedShutdown();
+
+        // Force close UI if it's currently showing this buildable terminal
+        var buildingUI = GameManager.Instance.uiController.UiBuilding;
+        if (buildingUI != null)
+        {
+            GameManager.Instance.uiController.CloseAllModals();
+        }
+    }
+
     public bool TryBuildStructure(StructureDataSO structureData, out string errorMessage)
     {
         errorMessage = string.Empty;
+        if (isSubmerged)
+        {
+            errorMessage = "Cannot build; terminal is submerged!";
+            return false;
+        }
+
         if (structureData == null)
         {
             errorMessage = "Invalid structure data.";
@@ -35,7 +56,21 @@ public class StructureBuildable : Structures
             return false;
         }
 
-        // 1. Check resources
+        var workerMgr = GameManager.Instance.WorkerManager;
+        if (workerMgr == null)
+        {
+            errorMessage = "Worker manager not found.";
+            return false;
+        }
+
+        // 1. Check available workers
+        if (workerMgr.CurrentWorker < laborCost)
+        {
+            errorMessage = $"Not enough workers! Need {laborCost}, have {workerMgr.CurrentWorker}.";
+            return false;
+        }
+
+        // 2. Check resources
         foreach (var cost in structureData.Costs)
         {
             if (cost.resourceDataSo == null) continue;
@@ -47,14 +82,17 @@ public class StructureBuildable : Structures
             }
         }
 
-        // 2. Consume resources
+        // 3. Consume workers (fixed syntax here)
+        workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker - laborCost);
+
+        // 4. Consume resources
         foreach (var cost in structureData.Costs)
         {
             if (cost.resourceDataSo == null) continue;
             resourceManager.ConsumeResource(cost.resourceDataSo, cost.amount);
         }
 
-        // 3. Instantiate the target structure and pass the terminal prefab reference for future respawning
+        // 5. Instantiate the target structure and pass both the terminal and labor cost
         if (structureData.StructurePrefab != null)
         {
             Vector3 spawnPosition = transform.TransformPoint(spawnOffset);
@@ -63,24 +101,21 @@ public class StructureBuildable : Structures
             StructureHarvestResource harvestStruct = spawnedGO.GetComponent<StructureHarvestResource>();
             if (harvestStruct != null)
             {
-                if (buildableTerminalPrefab != null)
-                {
-                    harvestStruct.SetTerminalPrefab(buildableTerminalPrefab);
-                }
-                else
-                {
-                    Debug.LogWarning("[StructureBuildable] Buildable Terminal Prefab is not assigned in the Inspector! It won't be able to respawn.");
-                }
+                harvestStruct.SetOwningTerminal(this);
             }
 
-            Debug.Log($"[StructureBuildable] Successfully built {structureData.StructureTitle}. Replacing terminal.");
+            Debug.Log($"[StructureBuildable] Successfully built {structureData.StructureTitle}. Disabling terminal.");
             
             GameManager.Instance.uiController.CloseAllModals();
-            Destroy(gameObject);
+            
+            // Disable this terminal to save performance and retain state
+            gameObject.SetActive(false);
         }
         else
         {
             errorMessage = "Structure prefab is missing!";
+            // Refund workers if instantiation fails
+            workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker + laborCost);
             return false;
         }
 
@@ -88,4 +123,5 @@ public class StructureBuildable : Structures
     }
 
     public StructureDataSO[] AvailableStructuresToBuild => availableStructuresToBuild;
+    public int LaborCost => laborCost;
 }

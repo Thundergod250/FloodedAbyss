@@ -200,8 +200,11 @@ MonoBehaviour:
   ModalPrefab: {fileID: 3038516268664161971}
   resourceButtonContainer: {fileID: 7711820908790646959}
   amountButtonContainer: {fileID: 6478523585688092566}
+  resourceRequirementContainer: {fileID: 3919506836743821241}
+  resourcePairPrefabTemplate: {fileID: 7750372029716409510, guid: d74526e6cf5d42b4eba8760c134d0f19, type: 3}
   currentFuelValueText: {fileID: 5800712962453185961}
   notEnoughResourceText: {fileID: 6152394617213058395}
+  upgradeButton: {fileID: 215752269798665935}
   resourceButtons:
   - {fileID: 5936477598843489243}
   - {fileID: 8255146630287381600}
@@ -259,7 +262,8 @@ MonoBehaviour:
   contentContainer: {fileID: 407576049952889075}
   structureCardPrefab: {fileID: 6338547547707420446, guid: 0590c0c1691dba9479903b88401b5d52, type: 3}
   resourcePairPrefabTemplate: {fileID: 7750372029716409510, guid: d74526e6cf5d42b4eba8760c134d0f19, type: 3}
-  warningText: {fileID: 0}
+  warningText: {fileID: 3297126260600637054}
+  laborCostText: {fileID: 9079533765951297876}
 --- !u!114 &6318518289768443291
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -595,6 +599,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!114 &215752269798665935 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 617876291522731536, guid: ffe8e050cce974f4fbb026c3991c3997, type: 3}
+  m_PrefabInstance: {fileID: 751435647613169887}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!114 &604950858311535997 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 146530973091528098, guid: ffe8e050cce974f4fbb026c3991c3997, type: 3}
@@ -666,6 +681,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!224 &3919506836743821241 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 4326059349787600742, guid: ffe8e050cce974f4fbb026c3991c3997, type: 3}
+  m_PrefabInstance: {fileID: 751435647613169887}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &4287713207113526250 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3597433600406772533, guid: ffe8e050cce974f4fbb026c3991c3997, type: 3}
@@ -1483,8 +1503,30 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6032784400156970210, guid: 8bbcaf6c32764cc4aa2e1f99d2e7c8e9, type: 3}
   m_PrefabInstance: {fileID: 8743506421321606847}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3297126260600637054 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6095219806067105985, guid: 8bbcaf6c32764cc4aa2e1f99d2e7c8e9, type: 3}
+  m_PrefabInstance: {fileID: 8743506421321606847}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1 &3856263716437167531 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5535803177348082452, guid: 8bbcaf6c32764cc4aa2e1f99d2e7c8e9, type: 3}
   m_PrefabInstance: {fileID: 8743506421321606847}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &9079533765951297876 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 529127983941271531, guid: 8bbcaf6c32764cc4aa2e1f99d2e7c8e9, type: 3}
+  m_PrefabInstance: {fileID: 8743506421321606847}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI

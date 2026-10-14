@@ -51,6 +51,13 @@ public class UiWorkersHouse : UiModals
     {
         if (IsOpen && currentHouse != null)
         {
+            if (currentHouse.IsSubmerged)
+            {
+                Debug.Log("[UiWorkersHouse] Worker's House is submerged! Force closing UI.");
+                GameManager.Instance.uiController.CloseAllModals();
+                return;
+            }
+
             bool showBar = currentHouse.IsWorking || currentHouse.IsDestroying;
             if (productionBarContainer != null && productionBarContainer.activeSelf != showBar)
             {
@@ -87,7 +94,6 @@ public class UiWorkersHouse : UiModals
     {
         if (resourceCostParent == null || resourcePairPrefab == null || currentHouse == null) return;
 
-        // Clear existing generated cost pairs
         foreach (Transform child in resourceCostParent)
         {
             if (child.gameObject != resourcePairPrefab)
@@ -96,7 +102,6 @@ public class UiWorkersHouse : UiModals
             }
         }
 
-        // Instantiate the required recruitment cost pair if valid
         if (currentHouse.RecruitmentCostResource != null)
         {
             GameObject costGO = Instantiate(resourcePairPrefab, resourceCostParent);

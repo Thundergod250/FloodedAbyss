@@ -11,6 +11,7 @@ public class UiBuilding : UiModals
     [SerializeField] private GameObject structureCardPrefab;     // Prefab with StructureCardPanel attached
     [SerializeField] private GameObject resourcePairPrefabTemplate; // Reference to the resource pair prefab for costs
     [SerializeField] private TextMeshProUGUI warningText;        // Optional warning message if resources are short
+    [SerializeField] private TextMeshProUGUI laborCostText;      // Text field for displaying the labor cost
 
 
     private StructureProgression progression;
@@ -26,11 +27,31 @@ public class UiBuilding : UiModals
         if (warningText != null) warningText.gameObject.SetActive(false);
     }
 
+    private void Update()
+    {
+        // Anti-cheese submersion check: force close UI if the buildable terminal becomes submerged
+        if (IsOpen && currentBuildable != null)
+        {
+            if (currentBuildable.IsSubmerged)
+            {
+                Debug.Log("[UiBuilding] Buildable terminal is submerged! Force closing UI.");
+                GameManager.Instance.uiController.CloseAllModals();
+            }
+        }
+    }
+
     public void Setup(StructureBuildable buildable)
     {
         currentBuildable = buildable;
         progression = GameManager.Instance.structureProgression.GetComponent<StructureProgression>();
         if (warningText != null) warningText.gameObject.SetActive(false);
+
+        // Update Labor Cost UI text if assigned
+        if (laborCostText != null)
+        {
+            laborCostText.text = $"Labor Cost: {buildable.LaborCost}";
+        }
+
         PopulateCards();
     }
 
