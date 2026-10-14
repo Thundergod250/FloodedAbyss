@@ -44,7 +44,6 @@ public class StructureHarvestResource : Structures
 
     public override void Activate()
     {
-        // If it's a normal structure and submerged, block interaction. If it's a floating item, allow it!
         if (isSubmerged && !ignoreSubmersion) return;
 
         var harvestUI = GameManager.Instance.uiController.UiResourceHarvest;
@@ -59,10 +58,8 @@ public class StructureHarvestResource : Structures
     {
         base.HandleSubmergedShutdown();
 
-        // Floating items ignore submersion shutdown completely
         if (ignoreSubmersion) return;
 
-        // Normal structures auto-destroy and convert back to terminal when submerged
         ExecuteFinalDestruction();
     }
 
@@ -181,7 +178,26 @@ public class StructureHarvestResource : Structures
 
     private void ExecuteFinalDestruction()
     {
-        // If it was spawned from a terminal, re-enable it. Floating items won't have an owning terminal.
+        ForceCleanupAndDestroy();
+    }
+
+    public void ForceCleanupAndDestroy()
+    {
+        // ONLY refund workers if the harvesting job was actively in progress and holding a worker
+        if (isWorking)
+        {
+            StopHarvesting(true); // This safely returns the laborCost workers
+        }
+        else
+        {
+            // If it was idle/unworked, do NOT add workers, just ensure routine/UI clean up
+            if (harvestRoutine != null)
+            {
+                StopCoroutine(harvestRoutine);
+                harvestRoutine = null;
+            }
+        }
+
         if (owningTerminal != null)
         {
             owningTerminal.gameObject.SetActive(true);
@@ -242,25 +258,7 @@ public class StructureHarvestResource : Structures
 
     private void FinishAndDestroyAutomatically()
     {
-        var workerMgr = GameManager.Instance.WorkerManager;
-        if (workerMgr != null)
-        {
-            workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker + laborCost);
-        }
-
-        if (owningTerminal != null)
-        {
-            owningTerminal.gameObject.SetActive(true);
-        }
-
-        var harvestUI = GameManager.Instance.uiController.UiResourceHarvest;
-        if (harvestUI != null && harvestUI.IsShowingStructure(this))
-        {
-            harvestUI.CompleteProgress();
-            GameManager.Instance.uiController.CloseAllModals();
-        }
-
-        Destroy(gameObject);
+        ForceCleanupAndDestroy();
     }
 
     // Getters

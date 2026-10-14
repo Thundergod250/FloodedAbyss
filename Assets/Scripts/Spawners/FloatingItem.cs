@@ -7,6 +7,13 @@ public class FloatingItem : MonoBehaviour
     private float lifetimeTimer;
     private bool isInitialized = false;
 
+    private StructureHarvestResource harvestResource;
+
+    private void Awake()
+    {
+        harvestResource = GetComponent<StructureHarvestResource>();
+    }
+
     public void Initialize(Vector3 direction, float speed, float lifetime)
     {
         moveDirection = direction.normalized;
@@ -19,12 +26,25 @@ public class FloatingItem : MonoBehaviour
     {
         if (!isInitialized) return;
 
-        // Move across the water surface safely with proper operator syntax
+        // Move across the water surface safely
         transform.position += moveDirection * (moveSpeed * Time.deltaTime);
 
         // Handle auto-despawn timer if left uncollected
         lifetimeTimer -= Time.deltaTime;
         if (lifetimeTimer <= 0f)
+        {
+            DespawnItem();
+        }
+    }
+
+    private void DespawnItem()
+    {
+        if (harvestResource != null)
+        {
+            // Safely release workers and clean up UI if it was locked in
+            harvestResource.ForceCleanupAndDestroy();
+        }
+        else
         {
             Destroy(gameObject);
         }
