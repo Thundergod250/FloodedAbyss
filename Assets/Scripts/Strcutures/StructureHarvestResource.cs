@@ -44,12 +44,26 @@ public class StructureHarvestResource : Structures
 
     public override void Activate()
     {
+        // If it's a normal structure and submerged, block interaction. If it's a floating item, allow it!
+        if (isSubmerged && !ignoreSubmersion) return;
+
         var harvestUI = GameManager.Instance.uiController.UiResourceHarvest;
         if (harvestUI != null)
         {
             harvestUI.Setup(this);
             GameManager.Instance.uiController.OpenModal<UiResourceHarvest>();
         }
+    }
+
+    protected override void HandleSubmergedShutdown()
+    {
+        base.HandleSubmergedShutdown();
+
+        // Floating items ignore submersion shutdown completely
+        if (ignoreSubmersion) return;
+
+        // Normal structures auto-destroy and convert back to terminal when submerged
+        ExecuteFinalDestruction();
     }
 
     public void ToggleHarvesting()
@@ -167,14 +181,10 @@ public class StructureHarvestResource : Structures
 
     private void ExecuteFinalDestruction()
     {
-        // Re-enable the original buildable terminal instead of instantiating a new prefab
+        // If it was spawned from a terminal, re-enable it. Floating items won't have an owning terminal.
         if (owningTerminal != null)
         {
             owningTerminal.gameObject.SetActive(true);
-        }
-        else
-        {
-            Debug.LogWarning($"[StructureHarvestResource] '{gameObject.name}' has no owning terminal reference to re-enable!");
         }
 
         var harvestUI = GameManager.Instance.uiController.UiResourceHarvest;
@@ -238,14 +248,9 @@ public class StructureHarvestResource : Structures
             workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker + laborCost);
         }
 
-        // Re-enable the original buildable terminal
         if (owningTerminal != null)
         {
             owningTerminal.gameObject.SetActive(true);
-        }
-        else
-        {
-            Debug.LogWarning($"[StructureHarvestResource] '{gameObject.name}' has no owning terminal reference to re-enable!");
         }
 
         var harvestUI = GameManager.Instance.uiController.UiResourceHarvest;

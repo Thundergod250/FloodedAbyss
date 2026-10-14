@@ -19,7 +19,7 @@ public class FloatingItem : MonoBehaviour
     {
         if (!isInitialized) return;
 
-        // Move across the water surface (respects Time.deltaTime, so it freezes when paused!)
+        // Move across the water surface safely with proper operator syntax
         transform.position += moveDirection * (moveSpeed * Time.deltaTime);
 
         // Handle auto-despawn timer if left uncollected
