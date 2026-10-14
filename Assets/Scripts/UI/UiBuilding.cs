@@ -9,6 +9,7 @@ public class UiBuilding : UiModals
     [SerializeField] private GameObject structureCardPrefab;     // Prefab with StructureCardPanel attached
     [SerializeField] private GameObject resourcePairPrefabTemplate; // Reference to the resource pair prefab for costs
     [SerializeField] private TextMeshProUGUI warningText;        // Optional warning message if resources are short
+    [SerializeField] private TextMeshProUGUI laborCostText;      // Text field for displaying the labor cost
 
     private StructureBuildable currentBuildable;
     private Coroutine warningRoutine;
@@ -25,6 +26,13 @@ public class UiBuilding : UiModals
     {
         currentBuildable = buildable;
         if (warningText != null) warningText.gameObject.SetActive(false);
+
+        // Update Labor Cost UI text if assigned
+        if (laborCostText != null)
+        {
+            laborCostText.text = $"Labor Cost: {buildable.LaborCost}";
+        }
+
         PopulateCards();
     }
 

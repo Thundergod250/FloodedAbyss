@@ -4,6 +4,7 @@ public class StructureBuildable : Structures
 {
     [Header("Buildable Configuration")]
     [SerializeField] private StructureDataSO[] availableStructuresToBuild;
+    [SerializeField] private int laborCost = 1; // Default labor cost to build/operate this structure
 
     [Header("Spawn Settings")]
     [SerializeField] private Vector3 spawnOffset = Vector3.zero;
@@ -34,7 +35,21 @@ public class StructureBuildable : Structures
             return false;
         }
 
-        // 1. Check resources
+        var workerMgr = GameManager.Instance.WorkerManager;
+        if (workerMgr == null)
+        {
+            errorMessage = "Worker manager not found.";
+            return false;
+        }
+
+        // 1. Check available workers
+        if (workerMgr.CurrentWorker < laborCost)
+        {
+            errorMessage = $"Not enough workers! Need {laborCost}, have {workerMgr.CurrentWorker}.";
+            return false;
+        }
+
+        // 2. Check resources
         foreach (var cost in structureData.Costs)
         {
             if (cost.resourceDataSo == null) continue;
@@ -46,14 +61,17 @@ public class StructureBuildable : Structures
             }
         }
 
-        // 2. Consume resources
+        // 3. Consume workers
+        workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker - laborCost);
+
+        // 4. Consume resources
         foreach (var cost in structureData.Costs)
         {
             if (cost.resourceDataSo == null) continue;
             resourceManager.ConsumeResource(cost.resourceDataSo, cost.amount);
         }
 
-        // 3. Instantiate the target structure and link back to this Buildable terminal
+        // 5. Instantiate the target structure and pass both the terminal and labor cost
         if (structureData.StructurePrefab != null)
         {
             Vector3 spawnPosition = transform.TransformPoint(spawnOffset);
@@ -62,20 +80,22 @@ public class StructureBuildable : Structures
             StructureHarvestResource harvestStruct = spawnedGO.GetComponent<StructureHarvestResource>();
             if (harvestStruct != null)
             {
-                // Pass this specific buildable terminal instance so it can re-enable us later
                 harvestStruct.SetOwningTerminal(this);
+                // If your resource structure uses a labor cost, you can pass it here or keep its default Inspector value
             }
 
             Debug.Log($"[StructureBuildable] Successfully built {structureData.StructureTitle}. Disabling terminal.");
             
             GameManager.Instance.uiController.CloseAllModals();
             
-            // Instead of destroying, simply disable this terminal to save performance and retain state
+            // Disable this terminal to save performance and retain state
             gameObject.SetActive(false);
         }
         else
         {
             errorMessage = "Structure prefab is missing!";
+            // Refund workers if instantiation fails
+            workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker + laborCost);
             return false;
         }
 
@@ -83,4 +103,5 @@ public class StructureBuildable : Structures
     }
 
     public StructureDataSO[] AvailableStructuresToBuild => availableStructuresToBuild;
+    public int LaborCost => laborCost;
 }
