@@ -73,6 +73,14 @@ public class UiApexPump : UiModals
     {
         if (IsOpen && currentPump != null)
         {
+            // Auto-close modal if Apex Pump gets submerged while UI is open
+            if (currentPump.IsSubmerged)
+            {
+                Debug.Log("[UiApexPump] Apex Pump is submerged! Force closing UI.");
+                GameManager.Instance.uiController.CloseAllModals();
+                return;
+            }
+
             if (currentFuelValueText != null)
                 currentFuelValueText.text = currentPump.CurrentFuel.ToString();
 

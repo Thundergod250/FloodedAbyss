@@ -21,11 +21,11 @@ public class StructureWorkersHouse : Structures
 
     private Coroutine actionRoutine;
     private Coroutine destroyRoutine;
-    private GameObject terminalPrefab;
+    private StructureBuildable owningTerminal;
 
-    public void SetTerminalPrefab(GameObject prefab)
+    public void SetOwningTerminal(StructureBuildable terminal)
     {
-        terminalPrefab = prefab;
+        owningTerminal = terminal;
     }
 
     public override void Activate()
@@ -38,9 +38,25 @@ public class StructureWorkersHouse : Structures
         }
     }
 
+    protected override void HandleSubmergedShutdown()
+    {
+        base.HandleSubmergedShutdown();
+
+        if (isWorking)
+        {
+            StopAction();
+        }
+
+        var houseUI = GameManager.Instance.uiController.UiWorkersHouse;
+        if (houseUI != null && houseUI.IsShowingHouse(this))
+        {
+            GameManager.Instance.uiController.CloseAllModals();
+        }
+    }
+
     public void ToggleHouseAction()
     {
-        if (isOccupied || isDestroying) return;
+        if (isOccupied || isDestroying || isSubmerged) return;
 
         if (isWorking)
         {
@@ -54,7 +70,7 @@ public class StructureWorkersHouse : Structures
 
     private void TryStartAction()
     {
-        if (isWorking || isOccupied) return;
+        if (isWorking || isOccupied || isSubmerged) return;
 
         var workerMgr = GameManager.Instance.WorkerManager;
         if (workerMgr == null) return;
@@ -126,7 +142,7 @@ public class StructureWorkersHouse : Structures
 
         while (elapsed < actionDuration)
         {
-            if (isDestroying) yield break;
+            if (isDestroying || isSubmerged) yield break;
             elapsed += Time.deltaTime;
             progressPercentage = Mathf.Clamp01(elapsed / actionDuration);
             yield return null;
@@ -155,13 +171,12 @@ public class StructureWorkersHouse : Structures
         if (houseUI != null && houseUI.IsShowingHouse(this))
         {
             houseUI.CompleteProgress();
-            // Modal remains open so player can see the Occupied state and click Exit/Destroy manually!
         }
     }
 
     public void ToggleDestroying()
     {
-        if (isDestroying)
+        if (isDestroying || isSubmerged)
         {
             CancelDestroying();
         }
@@ -173,7 +188,7 @@ public class StructureWorkersHouse : Structures
 
     private void StartDestroying()
     {
-        if (isDestroying) return;
+        if (isDestroying || isSubmerged) return;
         if (isWorking) StopAction();
 
         isDestroying = true;
@@ -198,6 +213,7 @@ public class StructureWorkersHouse : Structures
         float elapsed = 0f;
         while (elapsed < destructionDuration)
         {
+            if (isSubmerged) yield break;
             elapsed += Time.deltaTime;
             progressPercentage = Mathf.Clamp01(elapsed / destructionDuration);
             yield return null;
@@ -218,16 +234,20 @@ public class StructureWorkersHouse : Structures
             }
         }
 
-        if (terminalPrefab != null)
+        if (owningTerminal != null)
         {
-            Instantiate(terminalPrefab, transform.position, transform.rotation);
+            owningTerminal.gameObject.SetActive(true);
+        }
+        else
+        {
+            Debug.LogWarning($"[StructureWorkersHouse] '{gameObject.name}' has no owning terminal reference to re-enable!");
         }
 
         var houseUI = GameManager.Instance.uiController.UiWorkersHouse;
         if (houseUI != null && houseUI.IsShowingHouse(this))
         {
             houseUI.CompleteProgress();
-            GameManager.Instance.uiController.CloseAllModals(); // Closes when structure is successfully destroyed
+            GameManager.Instance.uiController.CloseAllModals();
         }
 
         Destroy(gameObject);
