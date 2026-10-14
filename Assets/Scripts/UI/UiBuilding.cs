@@ -71,12 +71,14 @@ public class UiBuilding : UiModals
         {
             if (structureData == null) continue;
 
-            if (progression != null && !progression.IsUnlocked(structureData))
+            /*if (progression != null && !progression.IsUnlocked(structureData))
             {
                 continue;
-            }
+            }*/
 
             GameObject cardGO = Instantiate(structureCardPrefab, contentContainer);
+
+
             cardGO.SetActive(true);
 
             PanelStructureCard cardPanel = cardGO.GetComponent<PanelStructureCard>();
@@ -93,18 +95,18 @@ public class UiBuilding : UiModals
     {
         if (currentBuildable != null)
         {
-            if (progression != null &&
+            /*if (progression != null &&
             !progression.IsUnlocked(structureData))
             {
                 ShowWarning("This structure is locked!");
                 return;
-            }
+            }*/
 
             bool success = currentBuildable.TryBuildStructure(structureData, out string errorMsg);
             if (success)
             {
-                if (progression != null)
-                    progression.NotifyStructureBuilt(structureData);
+                /*if (progression != null)
+                    progression.NotifyStructureBuilt(structureData);*/
 
                 GameManager.Instance.uiController.CloseAllModals();
             }

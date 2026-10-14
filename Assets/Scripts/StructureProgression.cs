@@ -13,8 +13,8 @@ public class StructureProgression : MonoBehaviour
         public StructureDataSO requiredStructure;
 
         [Header("Water Level Requirement")]
-        public bool requireWaterLevel = true;
-        public float maxWaterHeightToUnlock = 100f;
+        //public bool requireWaterLevel = true;
+        //public float maxWaterHeightToUnlock = 100f;
 
         [Header("Pump Requirement")]
         public bool requireActivePump = false;
@@ -40,9 +40,6 @@ public class StructureProgression : MonoBehaviour
     private void Awake()
     {
         builtSet = new HashSet<StructureDataSO>(builtStructures);
-
-        waterLevel = GameManager.Instance.WaterLevel.GetComponent<WaterLevel>();
-        apexPump = GameManager.Instance.ApexPump.GetComponent<StructureApexPump>();
     }
 
     public bool IsUnlocked(StructureDataSO structure)
@@ -68,7 +65,7 @@ public class StructureProgression : MonoBehaviour
         }
 
         // Check water height.
-        if (requirement.requireWaterLevel)
+        /*if (requirement.requireWaterLevel)
         {
             if (waterLevel == null)
                 return false;
@@ -78,7 +75,7 @@ public class StructureProgression : MonoBehaviour
             {
                 return false;
             }
-        }
+        }*/
 
         // NEW: Check that the Apex Pump is active.
         if (requirement.requireActivePump)
