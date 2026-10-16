@@ -19,6 +19,11 @@ public class StructureBuildable : Structures
         {
             buildingUI.Setup(this);
             GameManager.Instance.uiController.OpenModal<UiBuilding>();
+
+            if (ObjectiveManager.Instance != null)
+            {
+                ObjectiveManager.Instance.NotifyUIOpened("BuildingUI");
+            }
         }
     }
 

@@ -51,6 +51,12 @@ public class ResourceManager : MonoBehaviour
         
         // Notify HUD and any listeners
         OnResourceUpdated?.Invoke(dataSo, resourceInventory[dataSo]);
+
+        // NEW: Notify the objective system of resources gathered.
+        if (ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance.NotifyResourceGathered(dataSo, amount);
+        }
     }
 
     public bool ConsumeResource(ResourceDataSO dataSo, int amount)

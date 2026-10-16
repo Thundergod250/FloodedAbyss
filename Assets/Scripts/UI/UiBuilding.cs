@@ -108,6 +108,11 @@ public class UiBuilding : UiModals
                 /*if (progression != null)
                     progression.NotifyStructureBuilt(structureData);*/
 
+                if (ObjectiveManager.Instance != null)
+                {
+                    ObjectiveManager.Instance.NotifyStructureBuilt(structureData);
+                }
+
                 GameManager.Instance.uiController.CloseAllModals();
             }
             else
