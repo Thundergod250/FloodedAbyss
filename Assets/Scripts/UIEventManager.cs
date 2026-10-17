@@ -1,24 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Resources;
 using TMPro;
 using UnityEngine;
+using static ResourceEventsUI;
+using Random = UnityEngine.Random;
 
 public class UIEventManager : UiModals
 {
     [Header("Resource Events")]
-    [SerializeField] private List<ResourceEventsUI> stoneEvents = new();
-    [SerializeField] private List<ResourceEventsUI> woodEvents = new();
-    [SerializeField] private List<ResourceEventsUI> goldEvents = new();
-    [SerializeField] private List<ResourceEventsUI> foodEvents = new();
-    [SerializeField] private List<ResourceEventsUI> tinEvents = new();
-    [SerializeField] private List<ResourceEventsUI> copperEvents = new();
-
-    [Header("Threshold")]
-    [SerializeField] private int resourceThreshold = 100;
-
-    [Header("Event Timer")]
-    [SerializeField] private float minTimerDuration = 60f;
-    [SerializeField] private float maxTimerDuration = 240f;
+    [SerializeField] private List<ResourceEventsUI> resourceEvents = new();
 
     [Header("Event Cooldown")]
     [SerializeField] private float eventCooldown = 30f;
@@ -29,52 +20,46 @@ public class UIEventManager : UiModals
     [SerializeField] private GameObject eventPanel;
     [SerializeField] private TextMeshProUGUI eventText;
 
-    private PlayerResources playerResources;
 
-    private Dictionary<ResourceType, float> resourceTimers = new();
-    private Dictionary<ResourceType, float> resourceTimerDurations = new();
-
-    private List<ResourceEventsUI> GetEvents(ResourceType type)
-    {
-        switch (type)
-        {
-            case ResourceType.Stone:
-                return stoneEvents;
-
-            case ResourceType.Wood:
-                return woodEvents;
-
-            case ResourceType.Gold:
-                return goldEvents;
-
-            /*case ResourceType.Food:
-                return foodEvents;
-
-            case ResourceType.Tin:
-                return tinEvents;*/
-
-            case ResourceType.Copper:
-                return copperEvents;
-
-            default:
-                return null;
-        }
-    }
+    private WorkerManager workerManager; 
+    private ResourceManager resourceManager;
+    private readonly Dictionary<ResourceEventsUI, float> eventTimers = new();
+    private readonly Dictionary<ResourceEventsUI, float> eventTimerDurations = new();
 
     protected override void Initialize()
     {
-        playerResources =GameManager.Instance.playerController.GetComponent<PlayerResources>();
+        workerManager = GameManager.Instance.WorkerManager;
+        resourceManager = GameManager.Instance.ResourceManager;
 
-        foreach (ResourceType type in Enum.GetValues(typeof(ResourceType)))
+        if (resourceManager == null)
         {
-            resourceTimers[type] = 0f;
-
-            resourceTimerDurations[type] =
-                UnityEngine.Random.Range(
-                    minTimerDuration,
-                    maxTimerDuration
-                );
+            Debug.LogError("[UIEventManager] ResourceManager is not assigned.", this);
+            enabled = false;
+            return;
         }
+
+        if (eventText == null)
+        {
+            Debug.LogError("[UIEventManager] Event Text is not assigned.", this);
+            enabled = false;
+            return;
+        }
+
+        foreach (ResourceEventsUI eventData in resourceEvents)
+        {
+            if (eventData == null || eventData.TriggerResource == null)
+                continue;
+
+            if (eventTimers.ContainsKey(eventData))
+                continue;
+
+            eventTimers[eventData] = 0f;
+            eventTimerDurations[eventData] = GetRandomTimerDuration(
+                eventData.MinTimerDuration,
+                eventData.MaxTimerDuration
+            );
+        }
+
     }
 
     private void Update()
@@ -97,61 +82,142 @@ public class UIEventManager : UiModals
 
     private void CheckResources()
     {
-        foreach (ResourceType type in Enum.GetValues(typeof(ResourceType)))
+        foreach (ResourceEventsUI eventData in resourceEvents)
         {
-            int amount = playerResources.GetResource(type);
+            if (eventData == null || eventData.TriggerResource == null)
+                continue;
 
-            if (amount >= resourceThreshold)
+            if (!eventTimers.ContainsKey(eventData))
+                continue;
+
+            int amount = resourceManager.GetResourceAmount(
+                eventData.TriggerResource
+            );
+
+            bool conditionMet = eventData.Condition switch
             {
-                resourceTimers[type] += Time.deltaTime;
+                ResourceCondition.Below =>
+                    amount < eventData.TriggerThreshold,
 
-                if (resourceTimers[type] >= resourceTimerDurations[type])
-                {
-                    ShowResourceUI(type);
+                ResourceCondition.BelowOrEqual =>
+                    amount <= eventData.TriggerThreshold,
 
-                    resourceTimers[type] = 0f;
+                ResourceCondition.Above =>
+                    amount > eventData.TriggerThreshold,
 
-                    resourceTimerDurations[type] =
-                        UnityEngine.Random.Range(
-                            minTimerDuration,
-                            maxTimerDuration
-                        );
-                }
+                ResourceCondition.AboveOrEqual =>
+                    amount >= eventData.TriggerThreshold,
+
+                _ => false
+            };
+
+            if (!conditionMet)
+            {
+                eventTimers[eventData] = 0f;
+                continue;
             }
-            else
+
+            eventTimers[eventData] += Time.deltaTime;
+
+            if (eventTimers[eventData] >= eventTimerDurations[eventData])
             {
-                resourceTimers[type] = 0f;
+                if (!eventOnCooldown)
+                {
+                    ShowResourceUI(eventData);
+
+                    if (eventOnCooldown)
+                    {
+                        eventTimers[eventData] = 0f;
+                        eventTimerDurations[eventData] =
+                            GetRandomTimerDuration(
+                                eventData.MinTimerDuration,
+                                eventData.MaxTimerDuration
+                            );
+                    }
+                }
             }
         }
     }
 
-    private void ShowResourceUI(ResourceType type)
+    private void ShowResourceUI(ResourceEventsUI selectedEvent)
     {
         if (eventOnCooldown)
             return;
 
-        List<ResourceEventsUI> events = GetEvents(type);
-
-        if (events == null || events.Count == 0)
-        {
-            Debug.LogWarning($"No events assigned for {type}.");
+        if (selectedEvent == null)
             return;
+
+        switch (selectedEvent.EffectType)
+        {
+            case ResourceEventEffect.ReduceResource:
+                if (!TrySpendEventResource(selectedEvent))
+                    return;
+                break;
+
+            case ResourceEventEffect.ReduceWorker:
+                if (workerManager == null)
+                {
+                    Debug.LogWarning(
+                        "[UIEventManager] WorkerManager is not assigned.",
+                        this
+                    );
+                    return;
+                }
+
+                workerManager.ReduceWorker(selectedEvent.ReduceWorkerAmount);
+                break;
+
+            case ResourceEventEffect.ReduceBoth:
+                if (workerManager == null)
+                {
+                    Debug.LogWarning(
+                        "[UIEventManager] WorkerManager is not assigned.",
+                        this
+                    );
+                    return;
+                }
+
+                if (!TrySpendEventResource(selectedEvent))
+                    return;
+
+                workerManager.ReduceWorker(selectedEvent.ReduceWorkerAmount);
+                break;
         }
-
-        ResourceEventsUI selectedEvent =
-            events[UnityEngine.Random.Range(0, events.Count)];
-
-        playerResources.SpendResource(
-            selectedEvent.ResourceType,
-            selectedEvent.ResourceAmount
-        );
 
         eventText.text = selectedEvent.EventMessage;
 
-        // Use UiModals system
-        //GameManager.Instance.uiController.OpenModal(UIController.UIState.Event);
+        GameManager.Instance.uiController.OpenModal<UIEventManager>();
 
         eventOnCooldown = true;
         eventCooldownTimer = eventCooldown;
     }
+
+    private bool TrySpendEventResource(ResourceEventsUI eventData)
+    {
+        if (resourceManager == null || eventData.ResourceToSpend == null ||eventData.ResourceAmount <= 0)
+        {
+            Debug.LogWarning(
+                $"[UIEventManager] Invalid resource cost for '{eventData.EventName}'.",
+                this);
+            return false;
+        }
+
+        bool consumed = resourceManager.ConsumeResource(eventData.ResourceToSpend,eventData.ResourceAmount);
+
+        if (!consumed)
+        {
+            Debug.LogWarning($"[UIEventManager] Not enough {eventData.ResourceToSpend.ResourceName} " + $"for event '{eventData.EventName}'.", this);
+        }
+
+        return consumed;
+    }
+
+    private float GetRandomTimerDuration(float minDuration, float maxDuration)
+    {
+        float min = Mathf.Max(0f, Mathf.Min(minDuration, maxDuration));
+        float max = Mathf.Max(0f, Mathf.Max(minDuration, maxDuration));
+
+        return Random.Range(min, max);
+    }
+
 }
