@@ -7,7 +7,15 @@ public class ObjectiveUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI objectiveNameText;
     [SerializeField] private TextMeshProUGUI objectiveDescriptionText;
 
+
+    [Header("Food Counter")]
+    [SerializeField] private TextMeshProUGUI foodCounterText;
+    [SerializeField] private ResourceDataSO foodResource;
+
     private ObjectiveManager subscribedManager;
+
+    private ResourceManager subscribedResourceManager;
+
 
     private void Start()
     {
@@ -18,12 +26,15 @@ public class ObjectiveUI : MonoBehaviour
     private void OnEnable()
     {
         TrySubscribe();
-        RefreshUI();
+        RefreshUI(); 
+        TrySubscribeResourceManager();
+        RefreshFoodCounter();
     }
 
     private void OnDisable()
     {
         Unsubscribe();
+        UnsubscribeResourceManager(); // NEW
     }
 
     private void Update()
@@ -32,6 +43,12 @@ public class ObjectiveUI : MonoBehaviour
         {
             TrySubscribe();
             RefreshUI();
+        }
+
+        if (subscribedResourceManager == null)
+        {
+            TrySubscribeResourceManager();
+            RefreshFoodCounter();
         }
     }
 
@@ -55,6 +72,59 @@ public class ObjectiveUI : MonoBehaviour
 
         subscribedManager.OnObjectiveUpdated -= RefreshUI;
         subscribedManager = null;
+    }
+
+    private void TrySubscribeResourceManager()
+    {
+        ResourceManager manager = GameManager.Instance.ResourceManager;
+
+        if (manager == null || subscribedResourceManager == manager)
+            return;
+
+        UnsubscribeResourceManager();
+
+        subscribedResourceManager = manager;
+        subscribedResourceManager.OnResourceUpdated += OnResourceUpdated;
+    }
+
+
+    private void UnsubscribeResourceManager()
+    {
+        if (subscribedResourceManager == null)
+            return;
+
+        subscribedResourceManager.OnResourceUpdated -= OnResourceUpdated;
+        subscribedResourceManager = null;
+    }
+
+
+    private void OnResourceUpdated(ResourceDataSO resource, int amount)
+    {
+        if (resource == foodResource)
+            RefreshFoodCounter();
+    }
+
+    private void RefreshFoodCounter()
+    {
+        if (foodCounterText == null)
+            return;
+
+        if (foodResource == null)
+        {
+            foodCounterText.text = "Food: --";
+            return;
+        }
+
+        ResourceManager manager = subscribedResourceManager;
+
+        if (manager == null)
+        {
+            foodCounterText.text = "Food: --";
+            return;
+        }
+
+        foodCounterText.text =
+            $"Food: {manager.GetResourceAmount(foodResource)}";
     }
 
     private void RefreshUI()
