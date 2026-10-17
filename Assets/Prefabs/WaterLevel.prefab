@@ -44,18 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8faa068a1708d147812d5e4b3b39b58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterLevel
-  waterLevelTransform: {fileID: 0}
-  buildingsToRaise: []
-  heightChangePerStage: 5
-  moveSpeed: 2
-  basePumpDrainSpeed: 3
-  defaultFloodRiseSpeed: 2
-  initialFloodSpeed: 1
-  floodAccelerationRate: 0.1
-  gracePeriodDuration: 30
-  currentWaterHeight: 0
-  currentFloodSpeed: 0
-  currentActiveThreshold: 0
-  gracePeriodTimer: 0
-  isTugOfWarActive: 0
-  isGracePeriodActive: 0
+  oceanTransform: {fileID: 0}
+  maxWaterHeight: 300
+  minWaterHeight: 0
+  drainSmoothSpeed: 1
+  pressureIncreaseRate: 0.2
+  baseWaterPressure: 1
