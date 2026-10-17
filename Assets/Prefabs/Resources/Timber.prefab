@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 966669932408674664}
   - component: {fileID: 4261218650583605687}
   - component: {fileID: 8471863455549543278}
-  - component: {fileID: 6632828293124343527}
+  - component: {fileID: 7052651543830064204}
   m_Layer: 0
   m_Name: Timber
   m_TagString: Untagged
@@ -106,7 +106,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 419958e9bb152c2429036da0e422d5f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureHarvestResource
-  structureTitle: Wood Source
+  ignoreSubmersion: 0
+  structureTitle: Timber Source
   laborCost: 1
   productionDuration: 3
   destructionDuration: 3
@@ -114,7 +115,7 @@ MonoBehaviour:
   harvestMode: 0
   maxHarvestCycles: 5
   resourceToProduce: {fileID: 11400000, guid: 01dc29f87c71c4646b9184c0d72979aa, type: 2}
-  productionAmount: 1
+  productionAmount: 50
   isWorking: 0
   isDestroying: 0
   progressPercentage: 0
@@ -155,7 +156,7 @@ MonoBehaviour:
   onInteract:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &6632828293124343527
+--- !u!114 &7052651543830064204
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -164,15 +165,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 5127115869142417961}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 206b2cf6d19eb054f93be8aeadc70734, type: 3}
+  m_Script: {fileID: 11500000, guid: a879bb9e1d49f464fb13dda19ff5f636, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FloatingObject
-  targetSurface: {fileID: 0}
-  includeDeformers: 1
-  verticalOffset: 0
-  followWaterCurrent: 1
-  currentSpeedMultiplier: 5
-  useRigidbodyForCollision: 0
-  obstacleLayers:
-    serializedVersion: 2
-    m_Bits: 0
+  m_EditorClassIdentifier: Assembly-CSharp::FloatingItem
