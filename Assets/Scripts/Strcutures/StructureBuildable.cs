@@ -103,6 +103,13 @@ public class StructureBuildable : Structures
             Vector3 spawnPosition = transform.TransformPoint(spawnOffset);
             GameObject spawnedGO = Instantiate(structureData.StructurePrefab, spawnPosition, transform.rotation);
 
+            StructureWorkersHouse house = spawnedGO.GetComponent<StructureWorkersHouse>();
+
+            if (house != null)
+            {
+                house.SetCurrentPrefab(structureData.StructurePrefab); 
+            }
+
             StructureHarvestResource harvestStruct = spawnedGO.GetComponent<StructureHarvestResource>();
             if (harvestStruct != null)
             {

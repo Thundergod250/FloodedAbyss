@@ -287,6 +287,10 @@ MonoBehaviour:
   resourceRequirementContainer: {fileID: 5469325721737274780}
   resourceCostParent: {fileID: 8110198528456921116}
   resourcePairPrefab: {fileID: 7750372029716409510, guid: d74526e6cf5d42b4eba8760c134d0f19, type: 3}
+  upgradeButton: {fileID: 963168596448434066}
+  upgradeButtonText: {fileID: 67322083576633008}
+  upgradeRequirementContainer: {fileID: 2555135194582450432}
+  upgradeCostParent: {fileID: 239135931868145744}
   destroyButton: {fileID: 8948308195386167751}
   destroyButtonText: {fileID: 1090024157481261333}
   productionBarContainer: {fileID: 4370486110192002134}
@@ -323,9 +327,6 @@ MonoBehaviour:
   ModalPrefab: {fileID: 7065803234320449552}
   resourceEvents:
   - {fileID: 11400000, guid: 798f0cc0c3bf965448f3164f85dede37, type: 2}
-  resourceThreshold: 100
-  minTimerDuration: 60
-  maxTimerDuration: 240
   eventCooldown: 30
   eventPanel: {fileID: 7065803234320449552}
   eventText: {fileID: 3358855536857032463}
@@ -417,24 +418,63 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2794656995072227469, guid: 550ceea440f6cd8479a120b6ca5dd8e0, type: 3}
+      propertyPath: m_Name
+      value: Upgrade Requirement Container
+      objectReference: {fileID: 0}
+    - target: {fileID: 4460557494597022665, guid: 550ceea440f6cd8479a120b6ca5dd8e0, type: 3}
+      propertyPath: m_Name
+      value: Upgrade House Button
+      objectReference: {fileID: 0}
     - target: {fileID: 5626772173856468433, guid: 550ceea440f6cd8479a120b6ca5dd8e0, type: 3}
       propertyPath: m_Name
       value: Workers House
       objectReference: {fileID: 0}
     - target: {fileID: 5626772173856468433, guid: 550ceea440f6cd8479a120b6ca5dd8e0, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7933630435646173760, guid: 550ceea440f6cd8479a120b6ca5dd8e0, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 155.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 550ceea440f6cd8479a120b6ca5dd8e0, type: 3}
+--- !u!114 &67322083576633008 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 383396702480461629, guid: 550ceea440f6cd8479a120b6ca5dd8e0, type: 3}
+  m_PrefabInstance: {fileID: 413544263527741837}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!224 &68154542840615355 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 382549108304422966, guid: 550ceea440f6cd8479a120b6ca5dd8e0, type: 3}
   m_PrefabInstance: {fileID: 413544263527741837}
   m_PrefabAsset: {fileID: 0}
+--- !u!224 &239135931868145744 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 498950190450921949, guid: 550ceea440f6cd8479a120b6ca5dd8e0, type: 3}
+  m_PrefabInstance: {fileID: 413544263527741837}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &963168596448434066 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 639767252973284895, guid: 550ceea440f6cd8479a120b6ca5dd8e0, type: 3}
+  m_PrefabInstance: {fileID: 413544263527741837}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!114 &1090024157481261333 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 764977944203059352, guid: 550ceea440f6cd8479a120b6ca5dd8e0, type: 3}
@@ -457,6 +497,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!1 &2555135194582450432 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2794656995072227469, guid: 550ceea440f6cd8479a120b6ca5dd8e0, type: 3}
+  m_PrefabInstance: {fileID: 413544263527741837}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2734584325013952025 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2327804265952079764, guid: 550ceea440f6cd8479a120b6ca5dd8e0, type: 3}

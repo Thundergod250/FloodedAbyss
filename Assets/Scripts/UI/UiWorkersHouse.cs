@@ -2,6 +2,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using System.Collections.Generic;
+using NUnit.Framework;
+using Unity.Cinemachine;
 
 public class UiWorkersHouse : UiModals
 {
@@ -12,6 +15,12 @@ public class UiWorkersHouse : UiModals
     [SerializeField] private GameObject resourceRequirementContainer; // The orange container panel
     [SerializeField] private Transform resourceCostParent;            // Parent container inside the orange box where PanelResourcePair is spawned
     [SerializeField] private GameObject resourcePairPrefab;           // PanelResourcePair prefab reference
+
+    [Header("Upgrade References")]
+    [SerializeField] private Button upgradeButton;
+    [SerializeField] private TextMeshProUGUI upgradeButtonText;
+    [SerializeField] private GameObject upgradeRequirementContainer;
+    [SerializeField] private Transform upgradeCostParent;
 
     [Header("Destroy Button References")]
     [SerializeField] private Button destroyButton;
@@ -38,6 +47,12 @@ public class UiWorkersHouse : UiModals
         {
             destroyButton.onClick.RemoveAllListeners();
             destroyButton.onClick.AddListener(OnDestroyClicked);
+        }
+
+        if (upgradeButton != null)
+        {
+            upgradeButton.onClick.RemoveAllListeners();
+            upgradeButton.onClick.AddListener(UpgradeHouseVisuals);
         }
 
         if (productionBarContainer != null)
@@ -86,6 +101,7 @@ public class UiWorkersHouse : UiModals
 
         BuildResourceCosts();
 
+        UpdateUpgradeCostsVisuals();
         UpdateActionButtonVisuals();
         UpdateDestroyButtonVisuals();
     }
@@ -172,6 +188,84 @@ public class UiWorkersHouse : UiModals
             colors.selectedColor = targetColor;
             destroyButton.colors = colors;
         }
+    }
+
+    private void UpdateUpgradeCostsVisuals()
+    {
+        if (resourceCostParent == null || resourcePairPrefab == null || currentHouse == null) return;
+
+        foreach (Transform child in upgradeCostParent)
+        {
+            if (child.gameObject != resourcePairPrefab)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+        int nextLevelIndex = currentHouse.HouseLevelVal;
+
+        if (nextLevelIndex < currentHouse.HouseLevels.Count)
+        {
+            StructureDataSO upgradeData = currentHouse.HouseLevels[nextLevelIndex];
+
+            if (upgradeData != null)
+            {
+                foreach (Transform child in upgradeCostParent)
+                {
+                    if (child.gameObject != resourcePairPrefab)
+                        Destroy(child.gameObject);
+                }
+
+                foreach (ResourceCostEntry cost in upgradeData.Costs)
+                {
+                    if (cost.resourceDataSo == null)
+                        continue;
+
+                    GameObject costGO = Instantiate(
+                        resourcePairPrefab,
+                        upgradeCostParent
+                    );
+
+                    costGO.SetActive(true);
+
+                    PanelResourcePair panel = costGO.GetComponent<PanelResourcePair>();
+
+                    if (panel != null)
+                    {
+                        panel.Setup(cost.resourceDataSo, cost.amount);
+                    }
+                    else
+                    {
+                        Debug.LogWarning(
+                            "[UiWorkersHouse] PanelResourcePair component missing on prefab!",
+                            costGO
+                        );
+                    }
+                }
+                upgradeButton.gameObject.SetActive(true);
+            }
+        }
+        else
+        {
+            upgradeButton.gameObject.SetActive(false);
+        }
+    }
+
+    public void UpgradeHouseVisuals()
+    {
+        if (currentHouse == null)
+            return;
+
+        bool upgraded = currentHouse.TryUpgradeHouse();
+
+        if (!upgraded)
+            return;
+
+        if (titleText != null)
+            titleText.text = currentHouse.StructureTitle;
+
+        BuildResourceCosts();
+        UpdateActionButtonVisuals();
+        UpdateDestroyButtonVisuals();
     }
 
     private void OnActionClicked()
