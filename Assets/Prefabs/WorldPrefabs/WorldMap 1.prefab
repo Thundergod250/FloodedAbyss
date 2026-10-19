@@ -565,8 +565,43 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8321433466359038807, guid: 04bb700b5a4204f4fae74c6aed5c65df, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3290614691869408680}
   m_SourcePrefab: {fileID: 100100000, guid: 04bb700b5a4204f4fae74c6aed5c65df, type: 3}
+--- !u!1 &8206767976145092854 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8321433466359038807, guid: 04bb700b5a4204f4fae74c6aed5c65df, type: 3}
+  m_PrefabInstance: {fileID: 189116378677953441}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3290614691869408680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8206767976145092854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6750b3faffa303d4f8d7340923286f74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StructureApexPump
+  ignoreSubmersion: 0
+  acceptedResources:
+  - {fileID: 11400000, guid: 42d0a33d5d93fa0468020c1672f70b5c, type: 2}
+  - {fileID: 11400000, guid: c2ea8a8751d5dc24a97a88facb04274b, type: 2}
+  - {fileID: 11400000, guid: 117f5fa912aefc5448b12f16aef95518, type: 2}
+  - {fileID: 11400000, guid: a86bceec4dedfcc4294e9a09c6abde02, type: 2}
+  - {fileID: 11400000, guid: 662a9021b731c8245acf263628d158a4, type: 2}
+  resourceFuelValues: 01000000050000000a0000001900000032000000i
+  switchFuelCosts: 01000000050000000a0000001400000032000000i
+  consumptionInterval: 1
+  upgradeLevels: []
+  defaultDrainagePowerPerSwitch: 50
+  currentFuel: 0
+  currentUpgradeLevel: 0
+  switchStates: 0000000000y
 --- !u!4 &8840455372970809932 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8660557368508062189, guid: 04bb700b5a4204f4fae74c6aed5c65df, type: 3}
