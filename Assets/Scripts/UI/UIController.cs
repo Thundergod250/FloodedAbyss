@@ -13,6 +13,7 @@ public class UIController : MonoBehaviour
     public UiResourceHarvest UiResourceHarvest { get; private set; }
     public UiBuilding UiBuilding { get; private set; }
     public UiWorkersHouse UiWorkersHouse { get; private set; }
+    public UIEventManager UiEventManager { get; private set; }
 
     private void Awake() => InitializeModals();
 

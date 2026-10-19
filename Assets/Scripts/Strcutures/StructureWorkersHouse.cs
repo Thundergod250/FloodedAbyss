@@ -12,6 +12,7 @@ public class StructureWorkersHouse : Structures
     [SerializeField] private ResourceDataSO recruitmentCostResource;
     [SerializeField] private int recruitmentCostAmount = 5;
 
+    
     [Header("Debug Status")]
     [SerializeField] private bool isOccupied = false;
     [SerializeField] private bool isWorking = false;
@@ -105,6 +106,7 @@ public class StructureWorkersHouse : Structures
 
         actionRoutine = StartCoroutine(ActionRoutine(housingMode));
     }
+   
 
     private void StopAction()
     {
@@ -253,6 +255,7 @@ public class StructureWorkersHouse : Structures
         Destroy(gameObject);
     }
 
+    
     // Getters
     public bool IsOccupied => isOccupied;
     public bool IsWorking => isWorking;
