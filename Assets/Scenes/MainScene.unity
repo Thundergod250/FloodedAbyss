@@ -251,11 +251,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11447bd386944244ab9c2ed6eccf7015, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureWorkersHouse
+  ignoreSubmersion: 0
   structureTitle: Worker's House
   actionDuration: 3
   destructionDuration: 3
   recruitmentCostResource: {fileID: 11400000, guid: 01dc29f87c71c4646b9184c0d72979aa, type: 2}
   recruitmentCostAmount: 5
+  houseLevels: []
+  houseLevelVal: 0
   isOccupied: 0
   isWorking: 0
   isDestroying: 0
@@ -351,11 +354,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11447bd386944244ab9c2ed6eccf7015, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureWorkersHouse
+  ignoreSubmersion: 0
   structureTitle: Worker's House
   actionDuration: 3
   destructionDuration: 3
   recruitmentCostResource: {fileID: 11400000, guid: 01dc29f87c71c4646b9184c0d72979aa, type: 2}
   recruitmentCostAmount: 5
+  houseLevels: []
+  houseLevelVal: 0
   isOccupied: 0
   isWorking: 0
   isDestroying: 0
@@ -1043,6 +1049,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 419958e9bb152c2429036da0e422d5f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureHarvestResource
+  ignoreSubmersion: 0
   structureTitle: Wood Source
   laborCost: 1
   productionDuration: 5
@@ -1483,6 +1490,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 419958e9bb152c2429036da0e422d5f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureHarvestResource
+  ignoreSubmersion: 0
   structureTitle: Wood Source
   laborCost: 1
   productionDuration: 5
@@ -1746,6 +1754,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 419958e9bb152c2429036da0e422d5f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureHarvestResource
+  ignoreSubmersion: 0
   structureTitle: Wood Source
   laborCost: 1
   productionDuration: 5
@@ -1848,6 +1857,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 419958e9bb152c2429036da0e422d5f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureHarvestResource
+  ignoreSubmersion: 0
   structureTitle: Wood Source
   laborCost: 1
   productionDuration: 3
@@ -2289,6 +2299,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 419958e9bb152c2429036da0e422d5f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureHarvestResource
+  ignoreSubmersion: 0
   structureTitle: Wood Source
   laborCost: 1
   productionDuration: 5
@@ -2552,12 +2563,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6750b3faffa303d4f8d7340923286f74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureApexPump
+  ignoreSubmersion: 0
   acceptedResources: []
   resourceFuelValues: 01000000050000000a0000001900000032000000i
   switchFuelCosts: 01000000050000000a0000001400000032000000i
   consumptionInterval: 1
-  drainagePowerPerSwitch: 2
+  upgradeLevels: []
+  defaultDrainagePowerPerSwitch: 50
   currentFuel: 0
+  currentUpgradeLevel: 0
   switchStates: 0000000000y
 --- !u!1001 &2074074452
 PrefabInstance:
@@ -4254,6 +4268,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4299346581139774740, guid: 93962ff5bde69f746af840d31223a209, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5452587202246399068, guid: 93962ff5bde69f746af840d31223a209, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6879466495274620806, guid: 93962ff5bde69f746af840d31223a209, type: 3}

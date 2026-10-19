@@ -454,6 +454,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7457471952100792451, guid: 535d790feb503ae4c9dcc29bc19d8d2a, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7457471952100792451, guid: 535d790feb503ae4c9dcc29bc19d8d2a, type: 3}
       propertyPath: currentWaterHeight
       value: 87
       objectReference: {fileID: 0}
@@ -500,20 +504,48 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7323491085118610899, guid: 535d790feb503ae4c9dcc29bc19d8d2a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7408449467141761121}
   m_SourcePrefab: {fileID: 100100000, guid: 535d790feb503ae4c9dcc29bc19d8d2a, type: 3}
 --- !u!4 &3319988793068889655 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8827514517891661184, guid: 535d790feb503ae4c9dcc29bc19d8d2a, type: 3}
   m_PrefabInstance: {fileID: 6094313232509377463}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &3544647159457711716 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7323491085118610899, guid: 535d790feb503ae4c9dcc29bc19d8d2a, type: 3}
+  m_PrefabInstance: {fileID: 6094313232509377463}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7408449467141761121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3544647159457711716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 946ccaf602529764e967224e4239ad68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TideManager
+  oceanTransform: {fileID: 0}
+  lowTideHeight: 0
+  highTideOffset: 50
+  tideInterval: 60
+  tideTransitionDuration: 0
+  startAtHighTide: 0
+  isHighTide: 0
+  currentWaterHeight: 0
 --- !u!114 &3741676149286568756 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7457471952100792451, guid: 535d790feb503ae4c9dcc29bc19d8d2a, type: 3}
   m_PrefabInstance: {fileID: 6094313232509377463}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_GameObject: {fileID: 3544647159457711716}
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b8faa068a1708d147812d5e4b3b39b58, type: 3}
   m_Name: 
@@ -672,6 +704,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3096870024065945765}
     m_Modifications:
+    - target: {fileID: 3189890912516483907, guid: a40a7bd8228bb494eb5c1317348f634e, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3914779970009516073, guid: a40a7bd8228bb494eb5c1317348f634e, type: 3}
       propertyPath: m_Name
       value: TimeManager
@@ -732,7 +768,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 8755304508536485819}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4080382e461fbe643a8dc754b5991ec3, type: 3}
   m_Name: 

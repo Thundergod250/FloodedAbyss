@@ -101,6 +101,7 @@ GameObject:
   - component: {fileID: 3336947698838539166}
   - component: {fileID: 4846566471344453360}
   - component: {fileID: 9166885320896948226}
+  - component: {fileID: 5870961666463022649}
   m_Layer: 0
   m_Name: Farm
   m_TagString: Untagged
@@ -154,11 +155,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 679729884241510959}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 419958e9bb152c2429036da0e422d5f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureHarvestResource
+  ignoreSubmersion: 0
   structureTitle: Wood Source
   laborCost: 1
   productionDuration: 3
@@ -168,6 +170,29 @@ MonoBehaviour:
   maxHarvestCycles: 5
   resourceToProduce: {fileID: 11400000, guid: 0b63baccc51da1242aff4c9ca59ffdeb, type: 2}
   productionAmount: 1
+  isWorking: 0
+  isDestroying: 0
+  progressPercentage: 0
+--- !u!114 &5870961666463022649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 679729884241510959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc5844eb84d27f943a25dde0441561ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StructureFarm
+  ignoreSubmersion: 0
+  structureTitle: Farm
+  laborCost: 1
+  productionDuration: 5
+  destructionDuration: 3
+  canBeDestroyed: 1
+  foodResource: {fileID: 11400000, guid: 0b63baccc51da1242aff4c9ca59ffdeb, type: 2}
+  foodPerCycle: 1
   isWorking: 0
   isDestroying: 0
   progressPercentage: 0
