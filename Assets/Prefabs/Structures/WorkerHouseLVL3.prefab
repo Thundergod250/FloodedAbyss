@@ -105,6 +105,7 @@ GameObject:
   - component: {fileID: 5864687967966629288}
   - component: {fileID: 1465537041648712108}
   - component: {fileID: 7331981123120887508}
+  - component: {fileID: 2414361128195471078}
   m_Layer: 0
   m_Name: WorkerHouseLVL3
   m_TagString: Untagged
@@ -187,16 +188,28 @@ MonoBehaviour:
   destructionDuration: 3
   recruitmentCostResource: {fileID: 11400000, guid: 01dc29f87c71c4646b9184c0d72979aa, type: 2}
   recruitmentCostAmount: 1
-  houseLevels:
-  - {fileID: 11400000, guid: 8a930be30284f194abfdc58ddff5b98c, type: 2}
-  - {fileID: 11400000, guid: c60dfc26f7c4e2c4d9cb43a9832c2de8, type: 2}
-  - {fileID: 11400000, guid: 9343654494e48084e911a028dd53e0d2, type: 2}
-  houseLevelVal: 1
   isOccupied: 0
   isWorking: 0
   isDestroying: 0
   isReservedForHousing: 0
   progressPercentage: 0
+--- !u!114 &2414361128195471078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3147457400777135028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0439ee291da7b16429426467bde006a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StructureUpgrade
+  houseLevels:
+  - {fileID: 11400000, guid: 8a930be30284f194abfdc58ddff5b98c, type: 2}
+  - {fileID: 11400000, guid: c60dfc26f7c4e2c4d9cb43a9832c2de8, type: 2}
+  - {fileID: 11400000, guid: 9343654494e48084e911a028dd53e0d2, type: 2}
+  houseLevelVal: 1
 --- !u!1 &3895443385424835352
 GameObject:
   m_ObjectHideFlags: 0

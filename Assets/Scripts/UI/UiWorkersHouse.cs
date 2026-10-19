@@ -192,62 +192,75 @@ public class UiWorkersHouse : UiModals
 
     private void UpdateUpgradeCostsVisuals()
     {
-        if (resourceCostParent == null || resourcePairPrefab == null || currentHouse == null) return;
+        // CHANGED: Validate the correct parent and upgrade references.
+        if (upgradeCostParent == null ||
+            resourcePairPrefab == null ||
+            currentHouse == null ||
+            upgradeButton == null)
+            return;
 
+        // NEW: Get upgrade information from StructureUpgrade.
+        StructureUpgrade upgrade = currentHouse.GetComponent<StructureUpgrade>();
+
+        if (upgrade == null)
+        {
+            Debug.LogWarning("[UiWorkersHouse] StructureUpgrade component is missing!", currentHouse);
+            upgradeButton.gameObject.SetActive(false);
+            return;
+        }
+
+        // CHANGED: Clear existing upgrade cost panels.
         foreach (Transform child in upgradeCostParent)
         {
-            if (child.gameObject != resourcePairPrefab)
-            {
-                Destroy(child.gameObject);
-            }
+            Destroy(child.gameObject);
         }
-        int nextLevelIndex = currentHouse.HouseLevelVal;
 
-        if (nextLevelIndex < currentHouse.HouseLevels.Count)
-        {
-            StructureDataSO upgradeData = currentHouse.HouseLevels[nextLevelIndex];
+        // CHANGED: Read the level and list from StructureUpgrade.
+        int nextLevelIndex = upgrade.HouseLevelVal;
 
-            if (upgradeData != null)
-            {
-                foreach (Transform child in upgradeCostParent)
-                {
-                    if (child.gameObject != resourcePairPrefab)
-                        Destroy(child.gameObject);
-                }
-
-                foreach (ResourceCostEntry cost in upgradeData.Costs)
-                {
-                    if (cost.resourceDataSo == null)
-                        continue;
-
-                    GameObject costGO = Instantiate(
-                        resourcePairPrefab,
-                        upgradeCostParent
-                    );
-
-                    costGO.SetActive(true);
-
-                    PanelResourcePair panel = costGO.GetComponent<PanelResourcePair>();
-
-                    if (panel != null)
-                    {
-                        panel.Setup(cost.resourceDataSo, cost.amount);
-                    }
-                    else
-                    {
-                        Debug.LogWarning(
-                            "[UiWorkersHouse] PanelResourcePair component missing on prefab!",
-                            costGO
-                        );
-                    }
-                }
-                upgradeButton.gameObject.SetActive(true);
-            }
-        }
-        else
+        if (nextLevelIndex >= upgrade.HouseLevels.Count)
         {
             upgradeButton.gameObject.SetActive(false);
+            return;
         }
+
+        StructureDataSO upgradeData = upgrade.HouseLevels[nextLevelIndex];
+
+        if (upgradeData == null)
+        {
+            upgradeButton.gameObject.SetActive(false);
+            return;
+        }
+
+        // NEW: Create a resource panel for each upgrade cost.
+        foreach (ResourceCostEntry cost in upgradeData.Costs)
+        {
+            if (cost.resourceDataSo == null)
+                continue;
+
+            GameObject costGO = Instantiate(
+                resourcePairPrefab,
+                upgradeCostParent
+            );
+
+            costGO.SetActive(true);
+
+            PanelResourcePair panel = costGO.GetComponent<PanelResourcePair>();
+
+            if (panel != null)
+            {
+                panel.Setup(cost.resourceDataSo, cost.amount);
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "[UiWorkersHouse] PanelResourcePair component missing on prefab!",
+                    costGO
+                );
+            }
+        }
+
+        upgradeButton.gameObject.SetActive(true);
     }
 
     public void UpgradeHouseVisuals()
@@ -255,15 +268,39 @@ public class UiWorkersHouse : UiModals
         if (currentHouse == null)
             return;
 
-        bool upgraded = currentHouse.TryUpgradeHouse();
+        // NEW: Store the old house reference before upgrading.
+        StructureWorkersHouse oldHouse = currentHouse;
+
+        StructureUpgrade upgrade = oldHouse.GetComponent<StructureUpgrade>();
+
+        if (upgrade == null)
+        {
+            Debug.LogWarning("[UiWorkersHouse] StructureUpgrade component is missing!", oldHouse);
+            return;
+        }
+
+        // CHANGED: Stop if the upgrade fails.
+        bool upgraded = upgrade.TryUpgradeHouse();
 
         if (!upgraded)
             return;
+
+        // NOTE: StructureUpgrade should call Setup(upgradedHouse)
+        // after creating the replacement, so currentHouse is refreshed.
+        // NEW: Refresh the UI using the current house reference.
+        if (currentHouse == oldHouse)
+        {
+            Debug.LogWarning(
+                "[UiWorkersHouse] The upgraded house was not assigned to the UI."
+            );
+            return;
+        }
 
         if (titleText != null)
             titleText.text = currentHouse.StructureTitle;
 
         BuildResourceCosts();
+        UpdateUpgradeCostsVisuals();
         UpdateActionButtonVisuals();
         UpdateDestroyButtonVisuals();
     }

@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class StructureWorkersHouse : Structures
@@ -13,10 +12,7 @@ public class StructureWorkersHouse : Structures
     [SerializeField] private ResourceDataSO recruitmentCostResource;
     [SerializeField] private int recruitmentCostAmount = 5;
 
-    [Header("Upgrade Info")]
-    [SerializeField] private List<StructureDataSO> houseLevels = new List<StructureDataSO>();
-    [SerializeField, Range(1f, 3f)] private int houseLevelVal;
-
+    
     [Header("Debug Status")]
     [SerializeField] private bool isOccupied = false;
     [SerializeField] private bool isWorking = false;
@@ -27,7 +23,6 @@ public class StructureWorkersHouse : Structures
     private Coroutine actionRoutine;
     private Coroutine destroyRoutine;
     private StructureBuildable owningTerminal;
-    private GameObject currentHousePrefab;
 
     public void SetOwningTerminal(StructureBuildable terminal)
     {
@@ -111,112 +106,7 @@ public class StructureWorkersHouse : Structures
 
         actionRoutine = StartCoroutine(ActionRoutine(housingMode));
     }
-    public bool TryUpgradeHouse()
-    {
-        int upgradeIndex = houseLevelVal;
-
-        if (upgradeIndex >= houseLevels.Count)
-        {
-            Debug.Log("[StructureWorkersHouse] House is already at max level!");
-            return false;
-        }
-
-        StructureDataSO upgradeData = houseLevels[upgradeIndex];
-
-        if (upgradeData == null || upgradeData.StructurePrefab == null)
-        {
-            Debug.LogWarning(
-                "[StructureWorkersHouse] Upgrade data or prefab is missing!",
-                this
-            );
-            return false;
-        }
-
-        ResourceManager resourceMgr = GameManager.Instance.ResourceManager;
-
-        if (resourceMgr == null)
-            return false;
-
-        foreach (ResourceCostEntry cost in upgradeData.Costs)
-        {
-            if (cost.resourceDataSo == null || cost.amount < 0)
-                return false;
-
-            if (resourceMgr.GetResourceAmount(cost.resourceDataSo) < cost.amount)
-            {
-                Debug.Log(
-                    $"[StructureWorkersHouse] Not enough " +
-                    $"{cost.resourceDataSo.ResourceName} to upgrade!",
-                    this
-                );
-                return false;
-            }
-        }
-
-        // NEW: Preserve the old house's transform before replacing it.
-        Vector3 spawnPosition = transform.position;
-        Quaternion spawnRotation = transform.rotation;
-        Transform oldParent = transform.parent;
-        Vector3 oldScale = transform.localScale;
-
-        // NEW: Instantiate the prefab specified by the upgrade StructureDataSO.
-        GameObject upgradedObject = Instantiate(
-            upgradeData.StructurePrefab,
-            spawnPosition,
-            spawnRotation,
-            oldParent
-        );
-
-        upgradedObject.transform.localScale = oldScale;
-
-        // NEW: Validate that the upgraded prefab has the required component.
-        StructureWorkersHouse upgradedHouse =
-            upgradedObject.GetComponent<StructureWorkersHouse>();
-
-        if (upgradedHouse == null)
-        {
-            Debug.LogError(
-                "[StructureWorkersHouse] The upgraded prefab needs a StructureWorkersHouse component!",
-                upgradedObject
-            );
-
-            Destroy(upgradedObject);
-            return false;
-        }
-
-        // NEW: Transfer ownership and update the stored prefab.
-        upgradedHouse.SetOwningTerminal(owningTerminal);
-        upgradedHouse.SetCurrentPrefab(upgradeData.StructurePrefab);
-        upgradedHouse.SetHouseLevel(houseLevelVal + 1);
-
-        // NEW: Consume the upgrade costs after the replacement is validated.
-        foreach (ResourceCostEntry cost in upgradeData.Costs)
-        {
-            if (cost.amount > 0 &&
-                !resourceMgr.ConsumeResource(cost.resourceDataSo, cost.amount))
-            {
-                Debug.LogError(
-                    "[StructureWorkersHouse] Failed to consume upgrade costs.",
-                    this
-                );
-
-                Destroy(upgradedObject);
-                return false;
-            }
-        }
-
-        UiWorkersHouse houseUI = GameManager.Instance.uiController.UiWorkersHouse;
-
-        if (houseUI != null && houseUI.IsShowingHouse(this))
-        {
-            houseUI.Setup(upgradedHouse);
-        }
-
-        // NEW: Destroy the old house only after the upgrade succeeds.
-        Destroy(gameObject);
-
-        return true;
-    }
+   
 
     private void StopAction()
     {
@@ -365,15 +255,7 @@ public class StructureWorkersHouse : Structures
         Destroy(gameObject);
     }
 
-    public void SetCurrentPrefab(GameObject prefab)
-    {
-        currentHousePrefab = prefab;
-    }
-    public void SetHouseLevel(int level)
-    {
-        houseLevelVal = level;
-    }
-
+    
     // Getters
     public bool IsOccupied => isOccupied;
     public bool IsWorking => isWorking;
@@ -384,6 +266,4 @@ public class StructureWorkersHouse : Structures
     public ResourceDataSO RecruitmentCostResource => recruitmentCostResource;
     public int RecruitmentCostAmount => recruitmentCostAmount;
     public string ProgressDescription => isDestroying ? "Destroying House..." : (isReservedForHousing ? "Housing Worker..." : "Recruiting Worker...");
-    public int HouseLevelVal => houseLevelVal;
-    public List<StructureDataSO> HouseLevels => houseLevels;
 }

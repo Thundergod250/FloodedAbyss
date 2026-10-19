@@ -42,6 +42,7 @@ public class StructureBuildable : Structures
     public bool TryBuildStructure(StructureDataSO structureData, out string errorMessage)
     {
         errorMessage = string.Empty;
+
         if (isSubmerged)
         {
             errorMessage = "Cannot build; terminal is submerged!";
@@ -51,6 +52,13 @@ public class StructureBuildable : Structures
         if (structureData == null)
         {
             errorMessage = "Invalid structure data.";
+            return false;
+        }
+
+        // NEW: Validate the prefab before consuming resources.
+        if (structureData.StructurePrefab == null)
+        {
+            errorMessage = "Structure prefab is missing!";
             return false;
         }
 
@@ -68,18 +76,27 @@ public class StructureBuildable : Structures
             return false;
         }
 
-        // 1. Check if we meet the minimum available worker threshold (does not consume/hold them)
+        // 1. Check available workers without consuming them.
         if (workerMgr.CurrentWorker < laborCost)
         {
             errorMessage = $"Not enough available workers! Need at least {laborCost}, have {workerMgr.CurrentWorker}.";
             return false;
         }
 
-        // 2. Check resources
+        // 2. Validate all resource costs.
         foreach (var cost in structureData.Costs)
         {
-            if (cost.resourceDataSo == null) continue;
+            if (cost.resourceDataSo == null)
+                continue;
+
+            if (cost.amount < 0)
+            {
+                errorMessage = "Invalid structure resource cost.";
+                return false;
+            }
+
             int currentAmount = resourceManager.GetResourceAmount(cost.resourceDataSo);
+
             if (currentAmount < cost.amount)
             {
                 errorMessage = $"Not enough {cost.resourceDataSo.ResourceName}! Need {cost.amount}, have {currentAmount}.";
@@ -87,44 +104,54 @@ public class StructureBuildable : Structures
             }
         }
 
-        // 3. Consume resources only (Workers are left completely untouched)
+        // 3. Consume resources only; workers remain untouched.
         foreach (var cost in structureData.Costs)
         {
-            if (cost.resourceDataSo == null) continue;
-            resourceManager.ConsumeResource(cost.resourceDataSo, cost.amount);
-        }
+            if (cost.resourceDataSo == null || cost.amount == 0)
+                continue;
 
-        // 4. Instantiate the target structure and pass the terminal reference
-        if (structureData.StructurePrefab != null)
-        {
-            Vector3 spawnPosition = transform.TransformPoint(spawnOffset);
-            GameObject spawnedGO = Instantiate(structureData.StructurePrefab, spawnPosition, transform.rotation);
-
-            StructureWorkersHouse house = spawnedGO.GetComponent<StructureWorkersHouse>();
-
-            if (house != null)
+            if (!resourceManager.ConsumeResource(cost.resourceDataSo, cost.amount))
             {
-                house.SetCurrentPrefab(structureData.StructurePrefab); 
+                errorMessage = $"Failed to consume {cost.resourceDataSo.ResourceName}.";
+                return false;
             }
-
-            StructureHarvestResource harvestStruct = spawnedGO.GetComponent<StructureHarvestResource>();
-            if (harvestStruct != null)
-            {
-                harvestStruct.SetOwningTerminal(this);
-            }
-
-            Debug.Log($"[StructureBuildable] Successfully built {structureData.StructureTitle}. Disabling terminal.");
-            
-            GameManager.Instance.uiController.CloseAllModals();
-            
-            // Disable this terminal to save performance and retain state
-            gameObject.SetActive(false);
         }
-        else
+
+        // 4. Instantiate the target structure.
+        Vector3 spawnPosition = transform.TransformPoint(spawnOffset);
+
+        GameObject spawnedGO = Instantiate(
+            structureData.StructurePrefab,
+            spawnPosition,
+            transform.rotation
+        );
+
+        // NEW: Assign the owning terminal to StructureUpgrade.
+        StructureUpgrade structureUpgrade =
+            spawnedGO.GetComponent<StructureUpgrade>();
+
+        if (structureUpgrade != null)
         {
-            errorMessage = "Structure prefab is missing!";
-            return false;
+            structureUpgrade.SetOwningTerminal(this);
         }
+
+        // Preserve existing harvest structure setup.
+        StructureHarvestResource harvestStruct =
+            spawnedGO.GetComponent<StructureHarvestResource>();
+
+        if (harvestStruct != null)
+        {
+            harvestStruct.SetOwningTerminal(this);
+        }
+
+        Debug.Log(
+            $"[StructureBuildable] Successfully built {structureData.StructureTitle}. Disabling terminal."
+        );
+
+        GameManager.Instance.uiController.CloseAllModals();
+
+        // Disable the terminal while the built structure is active.
+        gameObject.SetActive(false);
 
         return true;
     }
