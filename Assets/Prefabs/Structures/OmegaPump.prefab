@@ -1451,6 +1451,7 @@ GameObject:
   - component: {fileID: 8660557368508062189}
   - component: {fileID: 5765965871512705358}
   - component: {fileID: 6520170872574802281}
+  - component: {fileID: 8958050728163998806}
   m_Layer: 0
   m_Name: OmegaPump
   m_TagString: Untagged
@@ -1466,9 +1467,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8321433466359038807}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1.8227582, y: 5.6943417, z: -0.72039485}
-  m_LocalScale: {x: 0.3188678, y: 0.3188678, z: 0.3188678}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9093133589118576960}
@@ -1529,6 +1530,33 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5, y: 6, z: 5}
   m_Center: {x: 0, y: 1.8, z: 0}
+--- !u!114 &8958050728163998806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8321433466359038807}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6750b3faffa303d4f8d7340923286f74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StructureApexPump
+  ignoreSubmersion: 1
+  acceptedResources:
+  - {fileID: 11400000, guid: 42d0a33d5d93fa0468020c1672f70b5c, type: 2}
+  - {fileID: 11400000, guid: c2ea8a8751d5dc24a97a88facb04274b, type: 2}
+  - {fileID: 11400000, guid: 117f5fa912aefc5448b12f16aef95518, type: 2}
+  - {fileID: 11400000, guid: a86bceec4dedfcc4294e9a09c6abde02, type: 2}
+  - {fileID: 11400000, guid: 662a9021b731c8245acf263628d158a4, type: 2}
+  resourceFuelValues: 01000000050000000a0000001900000032000000i
+  switchFuelCosts: 01000000050000000a0000001400000032000000i
+  consumptionInterval: 1
+  upgradeLevels: []
+  defaultDrainagePowerPerSwitch: 50
+  currentFuel: 0
+  currentUpgradeLevel: 0
+  switchStates: 0000000000y
 --- !u!1 &8335631764363509543
 GameObject:
   m_ObjectHideFlags: 0

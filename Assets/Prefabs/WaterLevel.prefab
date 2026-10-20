@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8827514517891661184}
   - component: {fileID: 7457471952100792451}
-  - component: {fileID: 4909758443784918718}
   m_Layer: 0
   m_Name: WaterLevel
   m_TagString: Untagged
@@ -48,26 +47,6 @@ MonoBehaviour:
   oceanTransform: {fileID: 0}
   maxWaterHeight: 300
   minWaterHeight: 0
-  drainSmoothSpeed: 10
+  drainSmoothSpeed: 1
   pressureIncreaseRate: 0.2
   baseWaterPressure: 1
---- !u!114 &4909758443784918718
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7323491085118610899}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 946ccaf602529764e967224e4239ad68, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TideManager
-  oceanTransform: {fileID: 0}
-  lowTideHeight: 0
-  highTideOffset: 50
-  tideInterval: 60
-  tideTransitionDuration: 0
-  startAtHighTide: 0
-  isHighTide: 0
-  currentWaterHeight: 0
