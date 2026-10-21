@@ -22,35 +22,6 @@ public class TimelineEvents : MonoBehaviour
 
         triggered = true;
 
-        waterForecast.ChangeMaximumWater(waterIncreaseVal);
+       // waterForecast.ChangeMaximumWater(waterIncreaseVal);
     }
-
-   /* private IEnumerator IncreaseWaterLevelOverTime(Transform ocean)
-    {
-        triggered = true;
-
-        float elapsed = 0f;
-        float startHeight = ocean.position.y;
-        float targetHeight = startHeight + heightValue;
-
-        while (elapsed < heightIncreaseDuration)
-        {
-            elapsed += Time.deltaTime;
-
-            float progress = elapsed / heightIncreaseDuration;
-
-            Vector3 position = ocean.position;
-            position.y = Mathf.Lerp(startHeight, targetHeight,progress);
-
-            ocean.position = position;
-
-            yield return null;
-        }
-
-        ocean.position = new Vector3(
-            ocean.position.x,
-            targetHeight,
-            ocean.position.z
-        );
-    }*/
 }
