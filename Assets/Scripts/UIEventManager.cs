@@ -194,22 +194,25 @@ public class UIEventManager : UiModals
 
     private bool TrySpendEventResource(ResourceEventsUI eventData)
     {
-        if (resourceManager == null || eventData.ResourceToSpend == null ||eventData.ResourceAmount <= 0)
+        if (eventData == null || resourceManager == null || eventData.ResourceToSpend == null || eventData.ResourceAmount <= 0)
         {
             Debug.LogWarning(
-                $"[UIEventManager] Invalid resource cost for '{eventData.EventName}'.",
+                $"[UIEventManager] Invalid resource cost for '{eventData?.EventName}'.",
                 this);
+
             return false;
         }
 
-        bool consumed = resourceManager.ConsumeResource(eventData.ResourceToSpend,eventData.ResourceAmount);
-
-        if (!consumed)
+        if (eventData.boonORBane == BoonORBane.Boon)
         {
-            Debug.LogWarning($"[UIEventManager] Not enough {eventData.ResourceToSpend.ResourceName} " + $"for event '{eventData.EventName}'.", this);
+            resourceManager.AddResource(eventData.ResourceToSpend, eventData.ResourceAmount);
+        }
+        else if (eventData.boonORBane == BoonORBane.Bane)
+        {
+            resourceManager.ConsumeResource(eventData.ResourceToSpend, eventData.ResourceAmount);
         }
 
-        return consumed;
+        return true;
     }
 
     private float GetRandomTimerDuration(float minDuration, float maxDuration)

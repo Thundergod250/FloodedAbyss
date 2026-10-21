@@ -13,6 +13,12 @@ public enum ResourceCondition
     AboveOrEqual
 }
 
+public enum BoonORBane
+{
+    Boon,
+    Bane
+}
+
 [CreateAssetMenu(fileName = "ResourceEvent", menuName = "Events/Resource Event")]
 public class ResourceEventsUI : ScriptableObject
 {
@@ -25,6 +31,7 @@ public class ResourceEventsUI : ScriptableObject
     [Header("Trigger")]
     [SerializeField] private ResourceDataSO triggerResource;
     [SerializeField] private ResourceCondition condition = ResourceCondition.BelowOrEqual;
+    [SerializeField] private BoonORBane boonOrbane;
 
 
     [SerializeField] private int triggerThreshold;
@@ -32,10 +39,10 @@ public class ResourceEventsUI : ScriptableObject
     [SerializeField] private float minTimerDuration = 60f;
     [SerializeField] private float maxTimerDuration = 240f;
 
-    [Header("Effect")]
+    [Header("Effect if Bane")]
     [SerializeField] private ResourceEventEffect effectType;
 
-    [Header("Resource Cost")]
+    [Header("Resource Changes")]
     [SerializeField] private ResourceDataSO resourceToSpend;
     [SerializeField] private int resourceAmount = 1;
 
@@ -47,6 +54,7 @@ public class ResourceEventsUI : ScriptableObject
     public ResourceDataSO TriggerResource => triggerResource;
 
     public ResourceCondition Condition => condition;
+    public BoonORBane boonORBane => boonOrbane;
     public int TriggerThreshold => triggerThreshold;
     public float MinTimerDuration => minTimerDuration;
     public float MaxTimerDuration => maxTimerDuration;
