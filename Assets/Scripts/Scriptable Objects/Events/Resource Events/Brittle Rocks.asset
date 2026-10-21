@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3292f12c75147a8458173998c5b46794, type: 3}
+  m_Name: Brittle Rocks
+  m_EditorClassIdentifier: Assembly-CSharp::ResourceEventsUI
+  eventName: Brittle Rocks
+  eventMessage: The rocks that the miners have procured, some of it were too brittle for use.
+  triggerResource: {fileID: 11400000, guid: 09a1015edb6edc547877d148f6a43cb6, type: 2}
+  condition: 3
+  triggerThreshold: 40
+  minTimerDuration: 120
+  maxTimerDuration: 240
+  effectType: 0
+  resourceToSpend: {fileID: 11400000, guid: 01dc29f87c71c4646b9184c0d72979aa, type: 2}
+  resourceAmount: 10
+  reduceWorkerAmount: 1

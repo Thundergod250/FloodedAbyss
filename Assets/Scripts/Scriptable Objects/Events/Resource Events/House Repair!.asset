@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3292f12c75147a8458173998c5b46794, type: 3}
+  m_Name: House Repair!
+  m_EditorClassIdentifier: Assembly-CSharp::ResourceEventsUI
+  eventName: House Repair!
+  eventMessage: The workers used some of the available wooden boards to use for the house repair.
+  triggerResource: {fileID: 11400000, guid: 8213b31a18eaacb449276f5c9659144c, type: 2}
+  condition: 3
+  triggerThreshold: 10
+  minTimerDuration: 120
+  maxTimerDuration: 240
+  effectType: 0
+  resourceToSpend: {fileID: 11400000, guid: 8213b31a18eaacb449276f5c9659144c, type: 2}
+  resourceAmount: 2
+  reduceWorkerAmount: 1
