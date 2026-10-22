@@ -1977,6 +1977,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc5844eb84d27f943a25dde0441561ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureFarm
+  ignoreSubmersion: 0
+  structureTitle: Farm
+  laborCost: 1
+  productionDuration: 5
+  destructionDuration: 3
+  canBeDestroyed: 1
+  foodResource: {fileID: 0}
+  foodPerCycle: 1
+  isWorking: 0
+  isDestroying: 0
+  progressPercentage: 0
 --- !u!54 &1387376081
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3134,7 +3145,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9030414092572748550, guid: ba8e2b97f8e8838498c4d1b12734d262, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 87
+      value: 61
       objectReference: {fileID: 0}
     - target: {fileID: 9030414092572748550, guid: ba8e2b97f8e8838498c4d1b12734d262, type: 3}
       propertyPath: m_LocalPosition.z

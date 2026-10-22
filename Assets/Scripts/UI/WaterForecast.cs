@@ -6,263 +6,142 @@ using UnityEngine.UI;
 
 public class WaterForecast : MonoBehaviour
 {
-    [Header("UI")]
+    [Header("Timeline UI")]
     [SerializeField] private Image currentTimeline;
     [SerializeField] private Image timeline;
-    [SerializeField] private TextMeshProUGUI waterLevelText;
 
-    [Header("Timer")]
-    [SerializeField] private float timer;
+    [Header("Timeline Settings")]
+    [SerializeField] private float timer = 60f;
 
-    [Header("Breakpoints")]
+    [Header("Timeline Events")]
     [SerializeField] private List<Image> eventpoints = new List<Image>();
 
-    [Header("Water Rise")]
-    [SerializeField] private float baseWaterRiseRate = 1f;
-    [SerializeField] private float maximumWaterLevel = 95f;
-    [SerializeField] private float currentMaximumWaterCapacity;
+    private readonly HashSet<TimelineEvents> triggeredEvents =
+        new HashSet<TimelineEvents>();
 
-    private float targetMaximumWaterCapacity;
-    private float waterRiseRate = 1f;
+    private bool timelinePaused = false; 
+    private bool timelineCompleted = false;
 
-    private bool timelinePaused = true;
-    private bool pumpActivated = false;
-
-    private Coroutine maximumCapacityCoroutine;
-    private WaterLevel level;
+    private Coroutine timelineCoroutine;
 
     private void Start()
     {
-        level = GameManager.Instance.WaterLevel;
-
-        if (level != null)
+        if (currentTimeline == null || timeline == null)
         {
-            //maximumWaterLevel = level.CurrentWaterHeight;
-            currentMaximumWaterCapacity = maximumWaterLevel;
-            targetMaximumWaterCapacity = maximumWaterLevel;
+            Debug.LogWarning("[WaterForecast] Timeline UI references are missing.", this);
+            return;
         }
 
-        StartCoroutine(ProgressTimeline());
-    }
-
-    private void Update()
-    {
-        if (level == null) return;
-
-        /*// Display tracked water height directly from WaterLevel
-        waterLevelText.text = level.CurrentWaterHeight.ToString("F1") + "m";
-
-        if (!pumpActivated) return;
-
-        // If below max capacity, continuously increase water level via WaterLevel script
-        if (level.CurrentWaterHeight < currentMaximumWaterCapacity)
+        if (timer <= 0f)
         {
-            float amountToRise = waterRiseRate * Time.deltaTime;
+            Debug.LogWarning("[WaterForecast] Timer must be greater than zero.",this);
+            return;
+        }
 
-            // Cap the rise amount so it doesn't overshoot maximum capacity
-            if (level.CurrentWaterHeight + amountToRise > currentMaximumWaterCapacity)
-            {
-                level.SetWaterLevel(currentMaximumWaterCapacity);
-            }
-            else
-            {
-                level.IncreaseWaterLevel(amountToRise);
-            }
-        }*/
-    }
+        // CHANGED: Reset the marker to its starting position.
+        Vector2 position = currentTimeline.rectTransform.anchoredPosition;
+        position.y = 0f;
+        currentTimeline.rectTransform.anchoredPosition = position;
 
-    public void IncreaseWaterRise(float amount)
-    {
-        waterRiseRate += amount;
-
-        Debug.Log(
-            $"Water rise increased by {amount}. " +
-            $"Current water rise rate: {waterRiseRate}/sec"
-        );
+        // CHANGED: Start the timeline automatically.
+        timelineCoroutine = StartCoroutine(ProgressTimeline());
     }
 
     private IEnumerator ProgressTimeline()
     {
         float elapsed = 0f;
 
+        RectTransform timelineRect = timeline.rectTransform;
+        RectTransform currentRect = currentTimeline.rectTransform;
+
+        float startY = 0f;
+        float endY = timelineRect.rect.height;
+
+        // NEW: Check for an event at the starting position.
+        CheckBreakpoints(currentRect.anchoredPosition.y, 0f);
+
         while (elapsed < timer)
         {
             if (!timelinePaused)
             {
+                float previousElapsed = elapsed;
+
                 elapsed += Time.deltaTime;
 
-                float progress = elapsed / timer;
-
-                RectTransform timelineRect = timeline.rectTransform;
-                RectTransform currentRect = currentTimeline.rectTransform;
-
-                float startY = 0f;
-                float endY = timelineRect.rect.height;
+                float progress = Mathf.Clamp01(elapsed / timer);
 
                 Vector2 position = currentRect.anchoredPosition;
-
-                position.y = Mathf.Lerp(
-                    startY,
-                    endY,
-                    progress
-                );
-
+                position.y = Mathf.Lerp(startY, endY, progress);
                 currentRect.anchoredPosition = position;
 
-                CheckBreakpoints();
+                // CHANGED: Check every event crossed during this frame.
+                CheckBreakpoints(position.y, previousElapsed);
             }
 
             yield return null;
         }
+
+        // NEW: Finish at the exact endpoint.
+        Vector2 finalPosition = currentRect.anchoredPosition;
+        finalPosition.y = endY;
+        currentRect.anchoredPosition = finalPosition;
+
+        CheckBreakpoints(endY, timer);
+
+        timelineCompleted = true;
+        timelinePaused = true;
+        timelineCoroutine = null;
+
+        Debug.Log("[WaterForecast] Timeline completed.", this);
     }
 
-    private void CheckBreakpoints()
+    private void CheckBreakpoints(float currentY, float previousElapsed)
     {
+        float endY = timeline.rectTransform.rect.height;
+        float previousY = Mathf.Lerp(0f, endY, previousElapsed / timer);
+
         foreach (Image eventpoint in eventpoints)
         {
-            if (Mathf.Abs(
-                currentTimeline.rectTransform.anchoredPosition.y -
-                eventpoint.rectTransform.anchoredPosition.y
-            ) < 1f)
+            if (eventpoint == null)
+                continue;
+
+            TimelineEvents timelineEvent =
+                eventpoint.GetComponent<TimelineEvents>();
+
+            if (timelineEvent == null ||
+                triggeredEvents.Contains(timelineEvent))
+                continue;
+
+            float eventY = eventpoint.rectTransform.anchoredPosition.y;
+
+            // CHANGED: Trigger only when the marker crosses the event position.
+            bool crossedEvent =
+                eventY >= previousY && eventY <= currentY;
+
+            if (crossedEvent)
             {
+                triggeredEvents.Add(timelineEvent);
+
                 Debug.Log(
-                    "Current timeline reached breakpoint: " +
-                    eventpoint.name
+                    "[WaterForecast] Timeline reached event: " + eventpoint.name,
+                    eventpoint
                 );
 
-                TimelineEvents timelineEvent =
-                    eventpoint.GetComponent<TimelineEvents>();
-
-                if (timelineEvent != null)
-                {
-                    timelineEvent.IncreaseWaterLevel(this);
-                }
+                timelineEvent.IncreaseWaterLevel(this);
             }
         }
     }
 
-    /// <summary>
-    /// Instantly sets the water height using WaterLevel.
-    /// </summary>
-    public void IncDecWaterLevel(float height)
+    public void PauseTimeline()
     {
-        /*if (level != null)
-        {
-            level.SetWaterLevel(height);
-        }*/
+        timelinePaused = true;
     }
 
-    /// <summary>
-    /// Smoothly lowers the water height to targetHeight over duration using WaterLevel calls.
-    /// </summary>
-    /*public IEnumerator LowerWaterLevel(float targetHeight, float duration)
+    public void ResumeTimeline()
     {
-        /*if (level == null) yield break;
-
-        float startingHeight = level.CurrentWaterHeight;
-        float elapsed = 0f;
-
-        while (elapsed < duration)
+        if (!timelineCompleted && timelineCoroutine != null)
         {
-            elapsed += Time.deltaTime;
-            float progress = Mathf.SmoothStep(0f, 1f, elapsed / duration);
-
-            float newHeight = Mathf.Lerp(startingHeight, targetHeight, progress);
-            level.SetWaterLevel(newHeight);
-
-            yield return null;
-        }
-
-        level.SetWaterLevel(targetHeight);#1#
-    }
-
-    /// <summary>
-    /// Smoothly adjusts the water height by an offset over 5 seconds using WaterLevel calls.
-    /// </summary>
-    public IEnumerator AdjustWaterLevelOverTime(float adjustment)
-    {
-        /*if (level == null) yield break;
-
-        float startingHeight = level.CurrentWaterHeight;
-        float targetHeight = startingHeight + adjustment;
-
-        float duration = 5f;
-        float elapsed = 0f;
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            float progress = Mathf.SmoothStep(0f, 1f, elapsed / duration);
-
-            float newHeight = Mathf.Lerp(startingHeight, targetHeight, progress);
-            level.SetWaterLevel(newHeight);
-
-            yield return null;
-        }
-
-        level.SetWaterLevel(targetHeight);#1#
-    }*/
-
-    /*public float GetCurrentWaterHeight()
-    {
-        return level != null ? level.CurrentWaterHeight : 0f;
-    }*/
-
-    public void EnableTimeline()
-    {
-        if (pumpActivated) return;
-
-        timelinePaused = false;
-        pumpActivated = true;
-        waterRiseRate = baseWaterRiseRate;
-
-        Debug.Log(
-            $"Timeline started. Water rise rate: {waterRiseRate}/sec"
-        );
-    }
-
-    private IEnumerator AnimateMaximumWaterCapacity()
-    {
-        float duration = 5f;
-
-        while (!Mathf.Approximately(
-            currentMaximumWaterCapacity,
-            targetMaximumWaterCapacity))
-        {
-            float startingCapacity = currentMaximumWaterCapacity;
-            float elapsed = 0f;
-
-            while (elapsed < duration)
-            {
-                elapsed += Time.deltaTime;
-
-                float progress = elapsed / duration;
-                progress = Mathf.SmoothStep(0f, 1f, progress);
-
-                currentMaximumWaterCapacity = Mathf.Lerp(
-                    startingCapacity,
-                    targetMaximumWaterCapacity,
-                    progress
-                );
-
-                yield return null;
-            }
-
-            currentMaximumWaterCapacity = targetMaximumWaterCapacity;
-        }
-
-        maximumCapacityCoroutine = null;
-    }
-
-    public void ChangeMaximumWater(float amount)
-    {
-        targetMaximumWaterCapacity += amount;
-
-        if (maximumCapacityCoroutine == null)
-        {
-            maximumCapacityCoroutine = StartCoroutine(
-                AnimateMaximumWaterCapacity()
-            );
+            timelinePaused = false;
         }
     }
 }

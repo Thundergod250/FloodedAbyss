@@ -10,6 +10,7 @@ public class WorkerManager : MonoBehaviour
     [Header("Events")]
     public UnityEvent<int> EvtOnWorkersChanged = new();
     public UnityEvent<int> EvtOnHomelessChanged = new();
+    public UnityEvent<int> EvtOnWorkerReduced = new();
     
     private void Start() 
     {
@@ -27,6 +28,18 @@ public class WorkerManager : MonoBehaviour
     {
         HomelessWorker = Mathf.Max(0, HomelessWorker + amount);
         EvtOnHomelessChanged?.Invoke(HomelessWorker);
+    }
+
+    public void ReduceWorker(int val)
+    {
+        if (val <= 0 || CurrentWorker <= 0)
+            return;
+
+        CurrentWorker = Mathf.Max(0, CurrentWorker - val);
+
+        EvtOnWorkersChanged?.Invoke(CurrentWorker);
+
+        EvtOnWorkerReduced?.Invoke(CurrentWorker);
     }
 
     public bool TryHouseWorker()

@@ -98,7 +98,7 @@ public class PumpResourcePanel : MonoBehaviour
 
                 if (wasEmpty)
                 {
-                    StartWaterForecast();
+                    //StartWaterForecast();
                 }
 
                 UpdateUI();
@@ -251,6 +251,6 @@ public class PumpResourcePanel : MonoBehaviour
             return;
         }
 
-        waterForecast.EnableTimeline();
+        //waterForecast.EnableTimeline();
     }
 }
