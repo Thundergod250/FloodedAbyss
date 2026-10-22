@@ -16,6 +16,12 @@ public class WaterForecast : MonoBehaviour
     [Header("Timeline Events")]
     [SerializeField] private List<Image> eventpoints = new List<Image>();
 
+    [Header("Rain FX")]
+    [SerializeField] private ParticleSystem rainFX;
+    [SerializeField] private int weakRain = 5000;
+    [SerializeField] private int decentRain = 10000;
+    [SerializeField] private int strongRain = 15000;
+
     private readonly HashSet<TimelineEvents> triggeredEvents =
         new HashSet<TimelineEvents>();
 
@@ -26,6 +32,8 @@ public class WaterForecast : MonoBehaviour
 
     private void Start()
     {
+        rainFX.Stop();
+
         if (currentTimeline == null || timeline == null)
         {
             Debug.LogWarning("[WaterForecast] Timeline UI references are missing.", this);
@@ -127,7 +135,7 @@ public class WaterForecast : MonoBehaviour
                     eventpoint
                 );
 
-                timelineEvent.IncreaseWaterLevel(this);
+                timelineEvent.TimelinePlayRain(this);
             }
         }
     }
@@ -144,4 +152,36 @@ public class WaterForecast : MonoBehaviour
             timelinePaused = false;
         }
     }
+
+    #region Rain Stuff
+    public void PlayWeakRain()
+    {
+        var emission = rainFX.emission;
+        emission.rateOverTime = weakRain;
+
+        rainFX.Play();
+    }
+
+    public void PlayDecentRain()
+    {
+        var emission = rainFX.emission;
+        emission.rateOverTime = decentRain;
+
+        rainFX.Play();
+    }
+
+    public void PlayStrongRain()
+    {
+        var emission = rainFX.emission;
+        emission.rateOverTime = strongRain; 
+
+        rainFX.Play();
+    }
+
+    public void StopRain()
+    {
+        rainFX.Stop();
+    }
+
+    #endregion
 }
