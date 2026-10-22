@@ -27,7 +27,7 @@ public class ObjectiveUI : MonoBehaviour
     {
         TrySubscribe();
         RefreshUI(); 
-        TrySubscribeResourceManager();
+        //TrySubscribeResourceManager();
         RefreshFoodCounter();
     }
 
@@ -63,7 +63,7 @@ public class ObjectiveUI : MonoBehaviour
 
         subscribedManager = manager;
         subscribedManager.OnObjectiveUpdated += RefreshUI;
-    }
+    } 
 
     private void Unsubscribe()
     {

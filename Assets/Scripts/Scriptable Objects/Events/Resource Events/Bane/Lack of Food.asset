@@ -10,16 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3292f12c75147a8458173998c5b46794, type: 3}
-  m_Name: Waterlogged Timber
+  m_Name: Lack of Food
   m_EditorClassIdentifier: Assembly-CSharp::ResourceEventsUI
-  eventName: Waterlogged Timber
-  eventMessage: The timber the workers had gathered had some of it with water damage. They threw those out
-  triggerResource: {fileID: 11400000, guid: 01dc29f87c71c4646b9184c0d72979aa, type: 2}
-  condition: 2
-  triggerThreshold: 100
+  eventName: Hungry hungry workers...
+  eventMessage: One worker has passed away due to lack of food.
+  triggerResource: {fileID: 11400000, guid: 0b63baccc51da1242aff4c9ca59ffdeb, type: 2}
+  condition: 1
+  boonOrbane: 1
+  triggerThreshold: 0
   minTimerDuration: 120
   maxTimerDuration: 240
-  effectType: 0
-  resourceToSpend: {fileID: 11400000, guid: 01dc29f87c71c4646b9184c0d72979aa, type: 2}
-  resourceAmount: 25
+  effectType: 1
+  resourceToSpend: {fileID: 0}
+  resourceAmount: 0
   reduceWorkerAmount: 1

@@ -10,16 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3292f12c75147a8458173998c5b46794, type: 3}
-  m_Name: Brittle Rocks
+  m_Name: Random Resource! 1
   m_EditorClassIdentifier: Assembly-CSharp::ResourceEventsUI
-  eventName: Brittle Rocks
-  eventMessage: The rocks that the miners have procured, some of it were too brittle for use.
-  triggerResource: {fileID: 11400000, guid: 09a1015edb6edc547877d148f6a43cb6, type: 2}
+  eventName: Random Resource Found!
+  eventMessage: A worker found a crate passing by containing metal bars!
+  triggerResource: {fileID: 11400000, guid: 01dc29f87c71c4646b9184c0d72979aa, type: 2}
   condition: 3
-  triggerThreshold: 40
-  minTimerDuration: 120
-  maxTimerDuration: 240
+  boonOrbane: 0
+  triggerThreshold: 1
+  minTimerDuration: 155
+  maxTimerDuration: 270
   effectType: 0
-  resourceToSpend: {fileID: 11400000, guid: 01dc29f87c71c4646b9184c0d72979aa, type: 2}
-  resourceAmount: 10
+  resourceToSpend: {fileID: 11400000, guid: 45f98a01a0e572748ae8e1f342d64f08, type: 2}
+  resourceAmount: 3
   reduceWorkerAmount: 1
