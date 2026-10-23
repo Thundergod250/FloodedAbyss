@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
-    public static SoundManager Instance { get; private set; }
+    // Removed static Instance property (GameManager handles access now)
 
     [System.Serializable]
     public class SoundEntry
@@ -47,14 +47,8 @@ public class SoundManager : MonoBehaviour
     // ------------------------------------------------------------------
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-
+        // GameManager handles DontDestroyOnLoad and singleton enforcement,
+        // so we just initialize the sound system components here.
         BuildLookup();
         BuildOneShotPool();
         BuildLoopSources();
