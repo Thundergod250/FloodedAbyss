@@ -74,8 +74,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -173,7 +173,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -22, y: 385.73364}
+  m_AnchoredPosition: {x: -22, y: -313}
   m_SizeDelta: {x: 116.0879, y: 615}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6021088064687786083
@@ -197,7 +197,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -249,7 +249,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 824, y: 463}
+  m_AnchoredPosition: {x: 720, y: -213}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5337293640445713670
@@ -280,7 +280,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: aab682242e2f4d44480562e5d01a4960, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -448,7 +448,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -483,7 +483,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: rainStrength
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: waterIncreaseVal
@@ -494,12 +494,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: b23c31769b2b9194e8ca7f8e5d02c4ca, type: 3}
+    - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_Color.b
-      value: 0.063267946
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_Color.g
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_Color.r
@@ -531,11 +535,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 35
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 4
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_LocalPosition.x
@@ -567,7 +571,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -17.5
+      value: -49.9
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -624,7 +628,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: rainStrength
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: waterIncreaseVal
@@ -632,6 +636,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: heightIncreaseDuration
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 4352f71780c9aad49b8cdbff7f7d2457, type: 3}
+    - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: m_Color.r
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
@@ -660,11 +680,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 35
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 4
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_LocalPosition.x
@@ -696,7 +716,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -17.5
+      value: -50
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -752,6 +772,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: rainStrength
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: waterIncreaseVal
       value: 5
       objectReference: {fileID: 0}
@@ -760,12 +784,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 66613ba9dda0d9545b777daad73de8c4, type: 3}
+    - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_Color.b
-      value: 0.08701122
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_Color.g
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_Color.r
@@ -797,11 +825,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 35
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 4
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_LocalPosition.x
@@ -833,11 +861,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -17.5
+      value: -50.6
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 187.99988
+      value: 161
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
