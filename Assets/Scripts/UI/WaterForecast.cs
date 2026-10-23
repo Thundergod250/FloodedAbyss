@@ -154,12 +154,23 @@ public class WaterForecast : MonoBehaviour
     }
 
     #region Rain Stuff
+    private void PlayRainSFX()
+    {
+        GameManager.Instance.SoundManager.Play("SFXRaining");
+    }
+    
+    private void StopRainSFX()
+    {
+        GameManager.Instance.SoundManager.Stop("SFXRaining");
+    }
+
     public void PlayWeakRain()
     {
         var emission = rainFX.emission;
         emission.rateOverTime = weakRain;
 
         rainFX.Play();
+        PlayRainSFX();
     }
 
     public void PlayDecentRain()
@@ -168,6 +179,7 @@ public class WaterForecast : MonoBehaviour
         emission.rateOverTime = decentRain;
 
         rainFX.Play();
+        PlayRainSFX();
     }
 
     public void PlayStrongRain()
@@ -176,12 +188,13 @@ public class WaterForecast : MonoBehaviour
         emission.rateOverTime = strongRain; 
 
         rainFX.Play();
+        PlayRainSFX();
     }
 
     public void StopRain()
     {
         rainFX.Stop();
+        StopRainSFX();
     }
-
     #endregion
 }
