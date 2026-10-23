@@ -359,6 +359,7 @@ RectTransform:
   m_Children:
   - {fileID: 6771582914591084866}
   - {fileID: 3121546024362228553}
+  - {fileID: 6450892367460604117}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -380,15 +381,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WaterForecast
   currentTimeline: {fileID: 2417342555037053121}
   timeline: {fileID: 1087173683298958933}
-  waterLevelText: {fileID: 3404591494111179113}
   timer: 80
   eventpoints:
   - {fileID: 6634826538647530132}
   - {fileID: 840329395562874026}
   - {fileID: 3391565679484193850}
-  baseWaterRiseRate: 1
-  maximumWaterLevel: 95
-  currentMaximumWaterCapacity: 0
+  rainFX: {fileID: 7886510732276624975}
+  weakRain: 5000
+  decentRain: 10000
+  strongRain: 15000
 --- !u!1 &5884751680091866028
 GameObject:
   m_ObjectHideFlags: 0
@@ -479,6 +480,10 @@ PrefabInstance:
     - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: heightValue
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: rainStrength
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: waterIncreaseVal
@@ -616,6 +621,10 @@ PrefabInstance:
     - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: heightValue
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: rainStrength
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: waterIncreaseVal
@@ -863,3 +872,82 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!1001 &9060157647340668609
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 6658138641234179786}
+    m_Modifications:
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.1629316
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.1629316
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.1629316
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -960
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -342.36703
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3625912346179115636, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_Name
+      value: RainFall
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+--- !u!4 &6450892367460604117 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+  m_PrefabInstance: {fileID: 9060157647340668609}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &7886510732276624975 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 1211088802230102158, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+  m_PrefabInstance: {fileID: 9060157647340668609}
+  m_PrefabAsset: {fileID: 0}

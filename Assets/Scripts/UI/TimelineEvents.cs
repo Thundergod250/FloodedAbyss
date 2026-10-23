@@ -2,11 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum rainStrength
+{
+    Weak,
+    Decent,
+    Strong,
+    Sunny
+}
 public class TimelineEvents : MonoBehaviour
 {
-    [SerializeField] private float heightValue;
-    [SerializeField] private float waterIncreaseVal;
-    [SerializeField] private float heightIncreaseDuration = 2f;
+    [SerializeField] private rainStrength rainStrength;
 
     private bool triggered;
 
@@ -15,13 +20,34 @@ public class TimelineEvents : MonoBehaviour
         triggered = false;
     }
 
-    public void IncreaseWaterLevel(WaterForecast waterForecast)
+    public void TimelinePlayRain(WaterForecast waterForecast)
     {
         if (triggered)
             return;
 
         triggered = true;
 
-       // waterForecast.ChangeMaximumWater(waterIncreaseVal);
+        switch (rainStrength)
+        {
+            case rainStrength.Weak:
+                waterForecast.PlayWeakRain();
+                break;
+
+            case rainStrength.Decent:
+                waterForecast.PlayDecentRain();
+                break;
+
+            case rainStrength.Strong:
+                waterForecast.PlayStrongRain();
+                break;
+
+            case rainStrength.Sunny:
+                waterForecast.StopRain();
+                break;
+
+            default:
+                Debug.LogWarning("[TimelineEvents] Unknown rain strength.", this);
+                break;
+        }
     }
 }
