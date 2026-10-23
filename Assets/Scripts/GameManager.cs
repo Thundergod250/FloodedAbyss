@@ -30,8 +30,12 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-
+        
         ResolveTideManager();
+    }
+    public void Start()
+    {
+        GameManager.Instance.SoundManager.Play("SFXOcean");
     }
 
     private void ResolveTideManager()
