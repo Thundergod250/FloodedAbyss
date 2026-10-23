@@ -75,5 +75,5 @@ public class GameManager : MonoBehaviour
                 "[GameManager] No SoundManager found in the scene. " +
                 "Sound playback will be disabled."
             );
-        }s
+        }
     }
