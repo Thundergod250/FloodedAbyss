@@ -13,19 +13,16 @@ public class TimelineEvents : MonoBehaviour
 {
     [SerializeField] private rainStrength rainStrength;
 
-    private bool triggered;
+    [Header("Weather Icon")]
+    [SerializeField] private Sprite weatherSprite;
 
-    private void Start()
-    {
-        triggered = false;
-    }
+    public Sprite WeatherSprite => weatherSprite;
 
+    // CHANGED: Removed the one-time triggered guard.
     public void TimelinePlayRain(WaterForecast waterForecast)
     {
-        if (triggered)
+        if (waterForecast == null)
             return;
-
-        triggered = true;
 
         switch (rainStrength)
         {
@@ -46,7 +43,8 @@ public class TimelineEvents : MonoBehaviour
                 break;
 
             default:
-                Debug.LogWarning("[TimelineEvents] Unknown rain strength.", this);
+                Debug.LogWarning(
+                    "[TimelineEvents] Unknown rain strength.", this);
                 break;
         }
     }
