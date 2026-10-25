@@ -74,8 +74,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -137,6 +137,231 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &1469553414603311931
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8393938458187476469}
+  - component: {fileID: 3580025362493482564}
+  - component: {fileID: 7829353689423955286}
+  m_Layer: 5
+  m_Name: WeatherIndicator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &8393938458187476469
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1469553414603311931}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6658138641234179786}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -2, y: 351}
+  m_SizeDelta: {x: 194, y: 195}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &3580025362493482564
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1469553414603311931}
+  m_CullTransparentMesh: 1
+--- !u!114 &7829353689423955286
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1469553414603311931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: aab682242e2f4d44480562e5d01a4960, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!1 &1897005764264692523
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4851184470056852997}
+  - component: {fileID: 2580896890977678222}
+  - component: {fileID: 131046144534881935}
+  m_Layer: 5
+  m_Name: WeatherIndicator (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &4851184470056852997
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1897005764264692523}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6658138641234179786}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 297, y: 310}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &2580896890977678222
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1897005764264692523}
+  m_CullTransparentMesh: 1
+--- !u!114 &131046144534881935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1897005764264692523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: aab682242e2f4d44480562e5d01a4960, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!1 &2349614194846527992
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 353289340060364791}
+  - component: {fileID: 995505180928707523}
+  - component: {fileID: 3755326177657396576}
+  m_Layer: 5
+  m_Name: WeatherIndicator (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &353289340060364791
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2349614194846527992}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6658138641234179786}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 168, y: 310}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &995505180928707523
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2349614194846527992}
+  m_CullTransparentMesh: 1
+--- !u!114 &3755326177657396576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2349614194846527992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: aab682242e2f4d44480562e5d01a4960, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &3057608196749720472
 GameObject:
   m_ObjectHideFlags: 0
@@ -171,10 +396,10 @@ RectTransform:
   - {fileID: 1752299709846466613}
   m_Father: {fileID: 6658138641234179786}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -22, y: 385.73364}
-  m_SizeDelta: {x: 116.0879, y: 615}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 58.043945, y: 0}
+  m_SizeDelta: {x: 34, y: 883}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6021088064687786083
 CanvasRenderer:
@@ -197,14 +422,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 2083218e98c84fe488279e9b8807f8be, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -249,7 +474,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 824, y: 463}
+  m_AnchoredPosition: {x: 843, y: -462}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5337293640445713670
@@ -280,7 +505,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: aab682242e2f4d44480562e5d01a4960, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -359,6 +584,10 @@ RectTransform:
   m_Children:
   - {fileID: 6771582914591084866}
   - {fileID: 3121546024362228553}
+  - {fileID: 8393938458187476469}
+  - {fileID: 353289340060364791}
+  - {fileID: 4851184470056852997}
+  - {fileID: 6450892367460604117}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -380,15 +609,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WaterForecast
   currentTimeline: {fileID: 2417342555037053121}
   timeline: {fileID: 1087173683298958933}
-  waterLevelText: {fileID: 3404591494111179113}
   timer: 80
   eventpoints:
   - {fileID: 6634826538647530132}
   - {fileID: 840329395562874026}
   - {fileID: 3391565679484193850}
-  baseWaterRiseRate: 1
-  maximumWaterLevel: 95
-  currentMaximumWaterCapacity: 0
+  rainFX: {fileID: 7886510732276624975}
+  weakRain: 5000
+  decentRain: 10000
+  strongRain: 15000
 --- !u!1 &5884751680091866028
 GameObject:
   m_ObjectHideFlags: 0
@@ -447,7 +676,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -481,6 +710,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: rainStrength
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: waterIncreaseVal
       value: 1
       objectReference: {fileID: 0}
@@ -489,12 +722,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: b23c31769b2b9194e8ca7f8e5d02c4ca, type: 3}
+    - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_Color.b
-      value: 0.063267946
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_Color.g
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_Color.r
@@ -526,11 +763,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 35
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 4
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_LocalPosition.x
@@ -562,7 +799,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -17.5
+      value: -49.9
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -618,11 +855,31 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: rainStrength
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: waterIncreaseVal
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: heightIncreaseDuration
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 4352f71780c9aad49b8cdbff7f7d2457, type: 3}
+    - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: m_Color.r
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
@@ -651,11 +908,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 35
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 4
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_LocalPosition.x
@@ -687,7 +944,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -17.5
+      value: -50
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -743,6 +1000,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: rainStrength
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2464554509843661090, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: waterIncreaseVal
       value: 5
       objectReference: {fileID: 0}
@@ -751,12 +1012,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 66613ba9dda0d9545b777daad73de8c4, type: 3}
+    - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_Color.b
-      value: 0.08701122
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_Color.g
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4373949236199148503, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_Color.r
@@ -788,11 +1053,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 35
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 4
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_LocalPosition.x
@@ -824,11 +1089,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -17.5
+      value: -50.6
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 187.99988
+      value: 161
       objectReference: {fileID: 0}
     - target: {fileID: 7527292781571223603, guid: aac7ff08fa2ecc2479454974e7957cda, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -863,3 +1128,82 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!1001 &9060157647340668609
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 6658138641234179786}
+    m_Modifications:
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.1629316
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.1629316
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.1629316
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -960
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -342.36703
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3625912346179115636, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+      propertyPath: m_Name
+      value: RainFall
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+--- !u!4 &6450892367460604117 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+  m_PrefabInstance: {fileID: 9060157647340668609}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &7886510732276624975 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 1211088802230102158, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
+  m_PrefabInstance: {fileID: 9060157647340668609}
+  m_PrefabAsset: {fileID: 0}

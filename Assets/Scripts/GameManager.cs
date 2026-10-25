@@ -30,8 +30,12 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-
+        
         ResolveTideManager();
+    }
+    public void Start()
+    {
+        GameManager.Instance.SoundManager.Play("SFXOcean", true);
     }
 
     private void ResolveTideManager()
@@ -75,5 +79,7 @@ public class GameManager : MonoBehaviour
                 "[GameManager] No SoundManager found in the scene. " +
                 "Sound playback will be disabled."
             );
-        }s
+        }
     }
+
+}

@@ -1,113 +1,49 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
-    // Removed static Instance property (GameManager handles access now)
-
-    [System.Serializable]
-    public class SoundEntry
-    {
-        [Tooltip("Unique ID used by other scripts to play this sound.")]
-        public string name;
-
-        public AudioClip clip;
-
-        [Tooltip("Volume for this specific sound.")]
-        [Range(0f, 1f)]
-        public float volume = 1f;
-
-        [Tooltip("Loop continuously until Stop() is called.")]
-        public bool loop = false;
-
-        [Tooltip("Pitch variation for variety (1 = normal).")]
-        [Range(0.1f, 3f)]
-        public float pitch = 1f;
-
-        // Runtime-only: dedicated source for looping sounds
-        [HideInInspector] public AudioSource loopSource;
-    }
-
-    [Header("Sound Library")]
-    [SerializeField] private List<SoundEntry> sounds = new List<SoundEntry>();
-
     [Header("Settings")]
     [Range(0f, 1f)]
     [SerializeField] private float masterVolume = 1f;
 
-    [Tooltip("Reusable AudioSources for non-looping SFX.")]
-    [SerializeField, Min(1)] private int oneShotSourceCount = 8;
+    // Dictionary mapping sound names to their corresponding AudioSources on child objects
+    private Dictionary<string, AudioSource> soundSources = new Dictionary<string, AudioSource>();
 
-    private Dictionary<string, SoundEntry> lookup;
-    private AudioSource[] oneShotSources;
-    private int nextOneShotIndex = 0;
+    // Tracks active disable coroutines for non-looping sounds so they don't conflict
+    private Dictionary<string, Coroutine> activeCoroutines = new Dictionary<string, Coroutine>();
 
-    // ------------------------------------------------------------------
-    // LIFECYCLE
-    // ------------------------------------------------------------------
     private void Awake()
     {
-        // GameManager handles DontDestroyOnLoad and singleton enforcement,
-        // so we just initialize the sound system components here.
-        BuildLookup();
-        BuildOneShotPool();
-        BuildLoopSources();
+        InitializeSoundSources();
     }
 
-    private void BuildLookup()
+    /// <summary>
+    /// Automatically finds and maps all AudioSource components on immediate child objects.
+    /// </summary>
+    private void InitializeSoundSources()
     {
-        lookup = new Dictionary<string, SoundEntry>(sounds.Count);
-        foreach (var s in sounds)
+        soundSources.Clear();
+        AudioSource[] childSources = GetComponentsInChildren<AudioSource>(true);
+
+        foreach (var src in childSources)
         {
-            if (string.IsNullOrEmpty(s.name))
+            // Ignore the SoundManager's own AudioSource if it has one
+            if (src.gameObject == gameObject) continue;
+
+            string soundName = src.gameObject.name;
+
+            if (soundSources.ContainsKey(soundName))
             {
-                Debug.LogWarning("[SoundManager] Sound entry has no name; skipped.");
+                Debug.LogWarning($"[SoundManager] Duplicate sound child object name '{soundName}' found.", src.gameObject);
                 continue;
             }
-            if (s.clip == null)
-            {
-                Debug.LogWarning($"[SoundManager] '{s.name}' has no clip assigned.");
-            }
-            if (lookup.ContainsKey(s.name))
-            {
-                Debug.LogWarning($"[SoundManager] Duplicate sound name '{s.name}'; using first.");
-                continue;
-            }
-            lookup[s.name] = s;
-        }
-    }
 
-    private void BuildOneShotPool()
-    {
-        oneShotSources = new AudioSource[oneShotSourceCount];
-        for (int i = 0; i < oneShotSourceCount; i++)
-        {
-            var go = new GameObject($"OneShot_{i}");
-            go.transform.SetParent(transform, false);
-            var src = go.AddComponent<AudioSource>();
-            src.playOnAwake = false;
-            src.loop = false;
-            src.spatialBlend = 0f;
-            oneShotSources[i] = src;
-        }
-    }
+            soundSources.Add(soundName, src);
 
-    private void BuildLoopSources()
-    {
-        foreach (var s in sounds)
-        {
-            if (!s.loop || s.clip == null) continue;
-
-            var go = new GameObject($"Loop_{s.name}");
-            go.transform.SetParent(transform, false);
-            var src = go.AddComponent<AudioSource>();
-            src.playOnAwake = false;
-            src.loop = true;
-            src.clip = s.clip;
-            src.volume = s.volume * masterVolume;
-            src.pitch = s.pitch;
-            src.spatialBlend = 0f;
-            s.loopSource = src;
+            // Ensure they start disabled as requested
+            src.gameObject.SetActive(false);
         }
     }
 
@@ -115,132 +51,144 @@ public class SoundManager : MonoBehaviour
     // PUBLIC API
     // ------------------------------------------------------------------
 
-    /// <summary>Play a sound by name. Respects the per-sound loop setting.</summary>
-    public void Play(string name)
+    /// <summary>
+    /// Play a sound by name. Defaults to not looped. 
+    /// Non-looped sounds will enable the child object, play, and auto-disable when finished.
+    /// </summary>
+    public void Play(string name, bool isLooped = false)
     {
-        if (!TryGet(name, out var entry)) return;
-        if (entry.clip == null) return;
+        if (!TryGetAudioSource(name, out AudioSource source)) return;
 
-        if (entry.loop)
+        // Stop any pending auto-disable coroutine if it's already playing
+        if (activeCoroutines.TryGetValue(name, out Coroutine routine) && routine != null)
         {
-            if (entry.loopSource == null) return;
-            entry.loopSource.volume = entry.volume * masterVolume;
-            entry.loopSource.pitch = entry.pitch;
-            if (!entry.loopSource.isPlaying) entry.loopSource.Play();
+            StopCoroutine(routine);
+            activeCoroutines.Remove(name);
         }
-        else
+
+        GameObject soundObj = source.gameObject;
+        soundObj.SetActive(true);
+
+        source.loop = isLooped;
+        source.volume = masterVolume; // You can multiply by individual volume if you add a per-object setting
+
+        if (!source.isPlaying)
         {
-            var src = GetNextOneShotSource();
-            src.clip = entry.clip;
-            src.pitch = entry.pitch;
-            src.volume = entry.volume * masterVolume;
-            src.Play();
+            source.Play();
+        }
+
+        // If it's not looped, start a coroutine to disable it after the clip finishes
+        if (!isLooped)
+        {
+            if (source.clip != null)
+            {
+                float duration = source.clip.length / Mathf.Max(source.pitch, 0.1f);
+                activeCoroutines[name] = StartCoroutine(DisableAfterDuration(soundObj, duration, name));
+            }
+            else
+            {
+                Debug.LogWarning($"[SoundManager] Sound '{name}' has no AudioClip assigned.");
+                soundObj.SetActive(false);
+            }
         }
     }
 
-    /// <summary>Stop a sound by name (works for loops and one-shots on the pool).</summary>
+    /// <summary>
+    /// Stops a sound and immediately disables its child object.
+    /// </summary>
     public void Stop(string name)
     {
-        if (!TryGet(name, out var entry)) return;
+        if (!TryGetAudioSource(name, out AudioSource source)) return;
 
-        if (entry.loopSource != null)
-            entry.loopSource.Stop();
+        if (activeCoroutines.TryGetValue(name, out Coroutine routine) && routine != null)
+        {
+            StopCoroutine(routine);
+            activeCoroutines.Remove(name);
+        }
 
-        foreach (var src in oneShotSources)
-            if (src.clip == entry.clip) src.Stop();
+        source.Stop();
+        source.gameObject.SetActive(false);
     }
 
-    /// <summary>Stop everything.</summary>
+    /// <summary>
+    /// Stops and disables all sound child objects.
+    /// </summary>
     public void StopAll()
     {
-        foreach (var s in sounds)
-            if (s.loopSource != null) s.loopSource.Stop();
-        foreach (var src in oneShotSources) src.Stop();
-    }
-
-    /// <summary>Change a sound's volume at runtime.</summary>
-    public void SetVolume(string name, float volume)
-    {
-        if (!TryGet(name, out var entry)) return;
-        entry.volume = Mathf.Clamp01(volume);
-        if (entry.loopSource != null)
-            entry.loopSource.volume = entry.volume * masterVolume;
-    }
-
-    /// <summary>Toggle loop at runtime (takes effect next Play).</summary>
-    public void SetLoop(string name, bool loop)
-    {
-        if (!TryGet(name, out var entry)) return;
-        if (entry.loop == loop) return;
-
-        entry.loop = loop;
-
-        // Turning loop OFF while playing → stop the loop source
-        if (!loop && entry.loopSource != null)
-            entry.loopSource.Stop();
-
-        // Turning loop ON at runtime → create a source if needed
-        if (loop && entry.loopSource == null && entry.clip != null)
+        foreach (var kvp in activeCoroutines)
         {
-            var go = new GameObject($"Loop_{entry.name}");
-            go.transform.SetParent(transform, false);
-            var src = go.AddComponent<AudioSource>();
-            src.playOnAwake = false;
-            src.loop = true;
-            src.clip = entry.clip;
-            src.volume = entry.volume * masterVolume;
-            src.pitch = entry.pitch;
-            src.spatialBlend = 0f;
-            entry.loopSource = src;
+            if (kvp.Value != null) StopCoroutine(kvp.Value);
+        }
+        activeCoroutines.Clear();
+
+        foreach (var source in soundSources.Values)
+        {
+            if (source != null)
+            {
+                source.Stop();
+                source.gameObject.SetActive(false);
+            }
         }
     }
 
-    /// <summary>Global volume multiplier (0-1).</summary>
+    /// <summary>
+    /// Global master volume multiplier (0 to 1).
+    /// </summary>
     public void SetMasterVolume(float v)
     {
         masterVolume = Mathf.Clamp01(v);
-        foreach (var s in sounds)
-            if (s.loopSource != null)
-                s.loopSource.volume = s.volume * masterVolume;
+        foreach (var source in soundSources.Values)
+        {
+            if (source != null)
+            {
+                source.volume = masterVolume;
+            }
+        }
     }
 
     public float MasterVolume => masterVolume;
 
-    /// <summary>True if this sound is currently playing.</summary>
+    /// <summary>
+    /// Returns true if the sound's child object is active and playing.
+    /// </summary>
     public bool IsPlaying(string name)
     {
-        if (!TryGet(name, out var entry)) return false;
-
-        if (entry.loopSource != null && entry.loopSource.isPlaying) return true;
-
-        foreach (var src in oneShotSources)
-            if (src.isPlaying && src.clip == entry.clip) return true;
-
+        if (soundSources.TryGetValue(name, out AudioSource source))
+        {
+            return source != null && source.isPlaying;
+        }
         return false;
     }
 
     // ------------------------------------------------------------------
     // INTERNALS
     // ------------------------------------------------------------------
-    private bool TryGet(string name, out SoundEntry entry)
-    {
-        if (!string.IsNullOrEmpty(name) && lookup != null && lookup.TryGetValue(name, out entry))
-            return true;
 
-        Debug.LogWarning($"[SoundManager] Sound '{name}' not found in library.");
-        entry = null;
+    private bool TryGetAudioSource(string name, out AudioSource source)
+    {
+        if (soundSources.TryGetValue(name, out source) && source != null)
+        {
+            return true;
+        }
+
+        Debug.LogWarning($"[SoundManager] Sound child object '{name}' not found.");
+        source = null;
         return false;
     }
 
-    private AudioSource GetNextOneShotSource()
+    private IEnumerator DisableAfterDuration(GameObject soundObj, float duration, string name)
     {
-        // Prefer an idle source so we don't cut off a playing sound
-        foreach (var src in oneShotSources)
-            if (!src.isPlaying) return src;
+        yield return new WaitForSeconds(duration);
 
-        // All busy → round-robin (oldest gets recycled)
-        var chosen = oneShotSources[nextOneShotIndex];
-        nextOneShotIndex = (nextOneShotIndex + 1) % oneShotSources.Length;
-        return chosen;
+        if (soundObj != null)
+        {
+            // Make sure it didn't get restarted in the meantime
+            if (soundSources.TryGetValue(name, out AudioSource src) && !src.isPlaying)
+            {
+                soundObj.SetActive(false);
+            }
+        }
+
+        activeCoroutines.Remove(name);
     }
 }
