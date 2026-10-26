@@ -27,6 +27,9 @@ public class WaterForecast : MonoBehaviour
     [SerializeField] private int decentRain = 10000;
     [SerializeField] private int strongRain = 15000;
 
+    [Header("WaterLevel")]
+    [SerializeField] private Slider waterFill;
+
     // CHANGED: This list contains only current and upcoming events.
     [SerializeField]
     private List<TimelineEvents> weatherBacklog =
@@ -72,6 +75,10 @@ public class WaterForecast : MonoBehaviour
        StartWeather(); //Tempo, Change later to after tutorial finished
     }
 
+    private void Update()
+    {
+        waterFill.value = GameManager.Instance.WaterLevel.CurrentWaterHeight;
+    }
     private void BuildAvailableEvents()
     {
         availableEvents.Clear();
