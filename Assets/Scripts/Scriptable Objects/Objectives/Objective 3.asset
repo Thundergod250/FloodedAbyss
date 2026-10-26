@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c5ac3280672e664cbf9288fcc10183c, type: 3}
   m_Name: Objective 3
   m_EditorClassIdentifier: Assembly-CSharp::ObjectivesSO
-  objectiveName: Build a Worker's Hut
-  objectiveDescription: Build a worker's hut with the resource just gathered.
+  objectiveDescription: Find an empty lot and click it to open the building UI!
   objectives:
-  - objectiveDescription: Build Worker's Hut
-    objectiveType: 0
-    structureToBuild: {fileID: 11400000, guid: 8a930be30284f194abfdc58ddff5b98c, type: 2}
+  - objectiveDescription: Open UI
+    objectiveType: 1
+    structureToBuild: {fileID: 0}
     requiredAmount: 1
-    requiredUIName: 
+    requiredUIName: BuildingUI
+    resourcesToGather: []

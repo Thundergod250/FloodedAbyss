@@ -79,6 +79,7 @@ public class WaterForecast : MonoBehaviour
     {
         waterFill.value = GameManager.Instance.WaterLevel.CurrentWaterHeight;
     }
+
     private void BuildAvailableEvents()
     {
         availableEvents.Clear();

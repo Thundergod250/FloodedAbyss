@@ -12,15 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c5ac3280672e664cbf9288fcc10183c, type: 3}
   m_Name: Objective 1
   m_EditorClassIdentifier: Assembly-CSharp::ObjectivesSO
-  objectiveName: Floating resources
   objectiveDescription: 'Gather the floating resources, flowing in from the west.
 
-    Gather 5 Timber'
+    Gather 50 Fiber and 50 Timber'
   objectives:
-  - objectiveDescription: Floating resources
+  - objectiveDescription: Floating resources asd
     objectiveType: 2
     structureToBuild: {fileID: 0}
     requiredAmount: 0
     requiredUIName: 
-    resourceToGather: {fileID: 11400000, guid: 01dc29f87c71c4646b9184c0d72979aa, type: 2}
-    requiredResourceAmount: 5
+    resourcesToGather:
+    - resource: {fileID: 11400000, guid: 01dc29f87c71c4646b9184c0d72979aa, type: 2}
+      requiredAmount: 50
+    - resource: {fileID: 11400000, guid: 42d0a33d5d93fa0468020c1672f70b5c, type: 2}
+      requiredAmount: 50
