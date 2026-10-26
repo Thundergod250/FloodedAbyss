@@ -15,7 +15,7 @@ public class WaterForecast : MonoBehaviour
     [SerializeField] private float eventDuration = 60f;
 
     [Header("Weather Events")]
-    [SerializeField] private List<Image> eventpoints = new List<Image>();
+    [SerializeField] private List<GameObject> eventpoints = new List<GameObject>();
 
     [Header("Random Backlog")]
     [SerializeField] private int initialEventCount = 3;
@@ -52,6 +52,9 @@ public class WaterForecast : MonoBehaviour
         }
 
         BuildAvailableEvents();
+
+        // CHANGED: Use the first four events in Inspector order.
+        initialEventCount = 4;
         BuildInitialBacklog();
 
         if (weatherBacklog.Count == 0)
@@ -62,22 +65,29 @@ public class WaterForecast : MonoBehaviour
             return;
         }
 
-        UpdateWeatherImages();
+       UpdateWeatherImages();
 
-        // CHANGED: Do not call PlayCurrentWeather() or start the coroutine here.
+       currentWeatherImage.GetComponentInParent<Slider>().maxValue = eventDuration;
+
+       StartWeather(); //Tempo, Change later to after tutorial finished
     }
 
     private void BuildAvailableEvents()
     {
         availableEvents.Clear();
 
-        foreach (Image eventPoint in eventpoints)
+        foreach (GameObject eventPoint in eventpoints)
         {
             if (eventPoint == null)
                 continue;
 
+            // NEW: Try to find TimelineEvents in children first.
             TimelineEvents weatherEvent =
-                eventPoint.GetComponent<TimelineEvents>();
+                eventPoint.GetComponentInChildren<TimelineEvents>();
+
+            // NEW: If not found, check the same GameObject.
+            if (weatherEvent == null)
+                weatherEvent = eventPoint.GetComponent<TimelineEvents>();
 
             if (weatherEvent != null &&
                 !availableEvents.Contains(weatherEvent))
@@ -120,8 +130,10 @@ public class WaterForecast : MonoBehaviour
             while (elapsed < eventDuration)
             {
                 if (!timelinePaused)
+                {
                     elapsed += Time.deltaTime;
-
+                    currentWeatherImage.GetComponentInParent<Slider>().value = elapsed;
+                }
                 yield return null;
             }
 
@@ -178,7 +190,8 @@ public class WaterForecast : MonoBehaviour
         if (targetImage == null)
             return;
 
-        if (eventIndex < 0 || eventIndex >= weatherBacklog.Count ||
+        if (eventIndex < 0 ||
+            eventIndex >= weatherBacklog.Count ||
             weatherBacklog[eventIndex] == null)
         {
             targetImage.sprite = null;
@@ -232,10 +245,6 @@ public class WaterForecast : MonoBehaviour
 
         if (!rainFX.isPlaying)
             rainFX.Play();
-
-        Debug.Log(
-            $"[WaterForecast] Rain emission set to {rate}.",
-            this);
 
         if (rate > 0f)
             PlayRainSFX();
