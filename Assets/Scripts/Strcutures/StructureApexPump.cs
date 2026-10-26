@@ -71,7 +71,13 @@ public class StructureApexPump : Structures
 
         ResourceDataSO targetResource = acceptedResources[resourceIndex];
         if (targetResource == null) return false;
-
+        if (ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance.NotifyResourceDeposited(
+                targetResource,
+                amount
+            );
+        }
         int availableAmount = GameManager.Instance.ResourceManager.GetResourceAmount(targetResource);
         if (availableAmount < amount)
         {
@@ -84,6 +90,14 @@ public class StructureApexPump : Structures
 
         int fuelGained = amount * resourceFuelValues[resourceIndex];
         currentFuel += fuelGained;
+
+        if (ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance.NotifyResourceDeposited(
+                targetResource,
+                amount
+            );
+        }
 
         Debug.Log($"[StructureApexPump] Converted {amount} {targetResource.ResourceName} into {fuelGained} Fuel. Total Fuel: {currentFuel}");
         return true;
@@ -144,7 +158,12 @@ public class StructureApexPump : Structures
 
         switchStates[switchIndex] = !switchStates[switchIndex];
         Debug.Log($"[StructureApexPump] Switch {switchIndex + 1} is now {(switchStates[switchIndex] ? "ON (Green)" : "OFF (Red)")}");
-        
+
+        if (switchStates[switchIndex])
+        {
+            NotifyPumpActivated();
+        }
+
         EvaluateAndApplyDrainage();
     }
 
@@ -258,6 +277,13 @@ public class StructureApexPump : Structures
             }
 
             return false;
+        }
+    }
+    public void NotifyPumpActivated()
+    {
+        if (ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance.NotifyPumpActivated(this);
         }
     }
 }

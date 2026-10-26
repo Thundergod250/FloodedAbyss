@@ -27,7 +27,6 @@ public class ObjectiveUI : MonoBehaviour
     {
         TrySubscribe();
         RefreshUI(); 
-        //TrySubscribeResourceManager();
         RefreshFoodCounter();
     }
 
