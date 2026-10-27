@@ -10,7 +10,9 @@ public class ObjectivesSO : ScriptableObject
         OpenUI,
         GatherResource,
         ActivatePump,
-        DepositResource
+        DepositResource,
+        RecruitWorker,
+        AssignWorkers
     }
 
     [System.Serializable]
@@ -40,6 +42,10 @@ public class ObjectivesSO : ScriptableObject
         [Header("Resource Objective")]
         public List<ResourceRequirement> resourcesToGather =
             new List<ResourceRequirement>();
+        
+        [Header("Assign Workers Objective")]
+        public StructureDataSO structureToAssignWorkers;
+        [Min(1)] public int requiredWorkers = 1;
     }
 
     [Header("Quest Information")]

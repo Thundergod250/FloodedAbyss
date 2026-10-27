@@ -12,11 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c5ac3280672e664cbf9288fcc10183c, type: 3}
   m_Name: Objective 7
   m_EditorClassIdentifier: Assembly-CSharp::ObjectivesSO
-  objectiveDescription: Create a Water Distiller as well!
+  objectiveDescription: 'To start gathering resources, assign workers to the quarry.
+
+    KEEP NOTE: Assigned workers won''t be able to do other stuff until deassigned. '
   objectives:
-  - objectiveDescription: With food, must also come water.
-    objectiveType: 0
-    structureToBuild: {fileID: 11400000, guid: 38f5fd1da118b3643a56c79399f0a61f, type: 2}
+  - objectiveDescription: Work work.
+    objectiveType: 6
+    structureToBuild: {fileID: 11400000, guid: 2c44a2b9bda758b468eaf1167c5df7d4, type: 2}
     requiredAmount: 1
+    resourcesToDeposit: []
     requiredUIName: 
     resourcesToGather: []
+    structureToAssignWorkers: {fileID: 11400000, guid: 2c44a2b9bda758b468eaf1167c5df7d4, type: 2}
+    requiredWorkers: 2
