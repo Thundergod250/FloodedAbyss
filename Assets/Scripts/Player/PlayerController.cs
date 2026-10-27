@@ -4,6 +4,14 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     private PlayerInput playerInput;
+    public PlayerMovement PlayerMovement;
+    public PlayerInteraction PlayerInteraction;
+    public PlayerLook PlayerLook;
+    public PlayerResources PlayerResources;
+    public PlayerStamina PlayerStamina;
+    public PlayerOxygen PlayerOxygen;
+    public Health PlayerHealth;
+    public PlayerStats PlayerStats;
 
     public InputAction MoveAction { get; private set; }
     public InputAction JumpAction { get; private set; }
@@ -11,35 +19,23 @@ public class PlayerController : MonoBehaviour
     public InputAction InteractAction { get; private set; }
     public InputAction AttackAction { get; private set; }
     public InputAction LookAction { get; private set; }
+    public InputAction RunAction { get; private set; }
+    
+    public bool IsInputActive { get; private set; } = true;
 
     private void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
 
         // Bind actions once
-        MoveAction = playerInput.actions["Move"];
+        /*MoveAction = playerInput.actions["Move"];
         JumpAction = playerInput.actions["Jump"];
         UseAction = playerInput.actions["Use"];
         InteractAction = playerInput.actions["Interact"];
-        AttackAction = playerInput.actions["Shoot"];
+        AttackAction = playerInput.actions["Use"];
         LookAction = playerInput.actions["Look"];
+        RunAction = playerInput.actions["Run"];*/
     }
 
-    private void OnEnable()
-    {
-        playerInput.actions.Enable();
-    }
-
-    private void OnDisable()
-    {
-        playerInput.actions.Disable();
-    }
-
-    public void SetInteractionUI(bool isVisible)
-    {
-        if (UIController.Instance != null)
-        {
-            UIController.Instance.ToggleInteractionPrompt(isVisible);
-        }
-    }
+    public void SetInputActive(bool active) => IsInputActive = active;
 }

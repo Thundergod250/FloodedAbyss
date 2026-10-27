@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 4086778909202424231}
   - component: {fileID: 5423204938850752466}
   - component: {fileID: 1576105547078853665}
+  - component: {fileID: -7173215483714310660}
+  - component: {fileID: 761258214544010651}
   m_Layer: 0
   m_Name: BreakableRocks
   m_TagString: Untagged
@@ -90,3 +92,40 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &-7173215483714310660
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8244932616045196703}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &761258214544010651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8244932616045196703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 639eacf06aeade941abe122968d55ace, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MinableRock
+  health: 30
+  orePrefab: {fileID: 853473947766955555, guid: 362d757d70c53704f9567b713ee67800, type: 3}
+  oreDropCount: 3
+  dropScatterForce: 3

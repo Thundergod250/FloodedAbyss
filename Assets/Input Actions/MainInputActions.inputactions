@@ -17,7 +17,7 @@
                     "priority": 0
                 },
                 {
-                    "name": "Use",
+                    "name": "Interact",
                     "type": "Button",
                     "id": "20095181-fe45-41ab-9424-ab6bd382a50e",
                     "expectedControlType": "",
@@ -27,17 +27,7 @@
                     "priority": 0
                 },
                 {
-                    "name": "Interact",
-                    "type": "Button",
-                    "id": "57d49dfc-094b-4af5-993e-44ad41aff9cd",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false,
-                    "priority": 0
-                },
-                {
-                    "name": "Jump",
+                    "name": "PauseTime",
                     "type": "Button",
                     "id": "3451bbc7-39f7-4e5a-bb8c-4d3c5bc7f79f",
                     "expectedControlType": "",
@@ -47,9 +37,29 @@
                     "priority": 0
                 },
                 {
-                    "name": "Shoot",
+                    "name": "Time1",
                     "type": "Button",
-                    "id": "287f7542-4f59-4df5-89ce-f5cd8a48ac37",
+                    "id": "35a51e5c-5a2d-4035-b204-db0d50521a8a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "Time2",
+                    "type": "Button",
+                    "id": "731f5055-f6ed-4240-b7dd-918ca7f3918f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "Time3",
+                    "type": "Button",
+                    "id": "a67de6cf-4402-4a31-9c6b-953120df09a1",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -64,6 +74,56 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true,
+                    "priority": 0
+                },
+                {
+                    "name": "Build",
+                    "type": "Button",
+                    "id": "931907a0-b34a-46d6-b601-775fdf6a1e6a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "Debug",
+                    "type": "Button",
+                    "id": "0e80b348-5fdb-47e3-8479-2dcb6a29f8d0",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "Escape",
+                    "type": "Button",
+                    "id": "2c6c9d9a-f14f-4881-a7a6-12301d993741",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "Scroll",
+                    "type": "Value",
+                    "id": "c7d14971-c8d3-4a1d-8f66-07f01eb3d88b",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true,
+                    "priority": 0
+                },
+                {
+                    "name": "PanCamera",
+                    "type": "Button",
+                    "id": "f0a4f1c1-474c-4c73-958b-216484dd4183",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Hold",
+                    "initialStateCheck": false,
                     "priority": 0
                 }
             ],
@@ -174,17 +234,6 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Use",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "4afb8b6a-e88b-4eae-b4eb-074c05a986c8",
-                    "path": "<Keyboard>/e",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
                     "action": "Interact",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -196,18 +245,40 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Jump",
+                    "action": "PauseTime",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "962dd062-b2f3-4327-9aa0-070cfb9a7de3",
-                    "path": "<Mouse>/rightButton",
+                    "id": "7aed0e55-7382-4ed3-a9fd-309e02a60706",
+                    "path": "<Keyboard>/1",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Shoot",
+                    "action": "Time1",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5f096b48-f6ec-4a1c-bb14-731b1603cf66",
+                    "path": "<Keyboard>/2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Time2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0d9a2d3c-3662-41b0-8fd0-ad1033feb92e",
+                    "path": "<Keyboard>/3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Time3",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -219,6 +290,83 @@
                     "processors": "",
                     "groups": "",
                     "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6605c7c3-404c-4a17-b668-1f43de336da5",
+                    "path": "<Keyboard>/b",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Build",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "One Modifier",
+                    "id": "5dc89e43-6a2c-423d-b074-8f16195ec119",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Debug",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "0a6b8d87-f1ec-47a6-8fe5-f49ce39f5774",
+                    "path": "<Keyboard>/ctrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Debug",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "c5f7e63a-588d-474d-861e-f97c6e585772",
+                    "path": "<Keyboard>/leftBracket",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Debug",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "331626f0-443c-48f6-965a-9798b5ed83fd",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Escape",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "50521be0-3969-4b7b-8cca-c01619bf02ff",
+                    "path": "<Mouse>/scroll",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Scroll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6d06fbf9-3a11-4707-9b69-2458d0114249",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PanCamera",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
