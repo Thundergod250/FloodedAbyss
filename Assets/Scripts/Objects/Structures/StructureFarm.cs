@@ -29,21 +29,30 @@ public class StructureFarm : Structures
     // ------------------------------------------------------------------
     private UiFarm GetFarmUI()
     {
-        if (GameManager.Instance == null || GameManager.Instance.uiController == null)
+        if (GameManager.Instance == null ||
+            GameManager.Instance.uiController == null)
+        {
             return null;
-        return GameManager.Instance.uiController.GetComponent<UiFarm>();
+        }
+
+        return GameManager.Instance.uiController.UiFarm;
     }
 
     public override void Activate()
     {
-        if (isSubmerged && !ignoreSubmersion) return;
+        if (isSubmerged && !ignoreSubmersion)
+            return;
 
         var farmUI = GetFarmUI();
-        if (farmUI != null)
+
+        if (farmUI == null)
         {
-            farmUI.Setup(this);
-            farmUI.Show();
+            Debug.LogWarning("[StructureFarm] UiFarm reference not found!");
+            return;
         }
+
+        farmUI.Setup(this);
+        GameManager.Instance.uiController.OpenModal<UiFarm>();
     }
 
     protected override void HandleSubmergedShutdown()

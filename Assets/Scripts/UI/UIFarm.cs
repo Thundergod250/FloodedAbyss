@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UiFarm : MonoBehaviour
+public class UiFarm : UiModals
 {
     [Header("Modal Reference")]
     [SerializeField] private GameObject ModalPrefab;
