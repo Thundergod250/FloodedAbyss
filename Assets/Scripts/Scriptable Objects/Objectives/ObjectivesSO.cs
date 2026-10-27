@@ -8,7 +8,16 @@ public class ObjectivesSO : ScriptableObject
     {
         BuildStructure,
         OpenUI,
-        GatherResource
+        GatherResource,
+        ActivatePump,
+        DepositResource
+    }
+
+    [System.Serializable]
+    public class ResourceRequirement
+    {
+        public ResourceDataSO resource;
+        [Min(1)] public int requiredAmount = 5;
     }
 
     [System.Serializable]
@@ -16,24 +25,24 @@ public class ObjectivesSO : ScriptableObject
     {
         [Header("Objective")]
         public string objectiveDescription;
-
         public ObjectiveType objectiveType;
 
         [Header("Building Objective")]
         public StructureDataSO structureToBuild;
         [Min(1)] public int requiredAmount = 1;
 
+        [Header("Deposit Resource Objective")]
+        public List<ResourceRequirement> resourcesToDeposit = new List<ResourceRequirement>();
+
         [Header("UI Objective")]
         public string requiredUIName;
 
         [Header("Resource Objective")]
-        public ResourceDataSO resourceToGather;
-        [Min(1)] public int requiredResourceAmount = 5;
+        public List<ResourceRequirement> resourcesToGather =
+            new List<ResourceRequirement>();
     }
 
     [Header("Quest Information")]
-    public string objectiveName;
-
     [TextArea(2, 4)]
     public string objectiveDescription;
 

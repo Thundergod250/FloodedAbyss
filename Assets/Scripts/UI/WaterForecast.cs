@@ -1,20 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class WaterForecast : MonoBehaviour
 {
-    [Header("Timeline UI")]
-    [SerializeField] private Image currentTimeline;
-    [SerializeField] private Image timeline;
+    [Header("Weather UI")]
+    [SerializeField] private Image currentWeatherImage;
+    [SerializeField] private Image nextWeatherImage;
+    [SerializeField] private Image followingWeatherImage;
+    [SerializeField] private Image followingWeather2Image;
 
     [Header("Timeline Settings")]
-    [SerializeField] private float timer = 60f;
+    [SerializeField] private float eventDuration = 60f;
 
-    [Header("Timeline Events")]
-    [SerializeField] private List<Image> eventpoints = new List<Image>();
+    [Header("Weather Events")]
+    [SerializeField] private List<GameObject> eventpoints = new List<GameObject>();
+
+    [Header("Random Backlog")]
+    [SerializeField] private int initialEventCount = 3;
+    [SerializeField] private int generatedBacklogSize = 10;
 
     [Header("Rain FX")]
     [SerializeField] private ParticleSystem rainFX;
@@ -22,122 +27,190 @@ public class WaterForecast : MonoBehaviour
     [SerializeField] private int decentRain = 10000;
     [SerializeField] private int strongRain = 15000;
 
-    private readonly HashSet<TimelineEvents> triggeredEvents =
-        new HashSet<TimelineEvents>();
+    [Header("WaterLevel")]
+    [SerializeField] private Slider waterFill;
 
-    private bool timelinePaused = false; 
-    private bool timelineCompleted = false;
+    // CHANGED: This list contains only current and upcoming events.
+    [SerializeField]
+    private List<TimelineEvents> weatherBacklog =
+        new List<TimelineEvents>();
 
+    private readonly List<TimelineEvents> availableEvents =
+        new List<TimelineEvents>();
+
+    private bool timelinePaused;
     private Coroutine timelineCoroutine;
 
     private void Start()
     {
-        rainFX.Stop();
+        if (rainFX != null)
+            rainFX.Stop();
 
-        if (currentTimeline == null || timeline == null)
+        if (eventDuration <= 0f)
         {
-            Debug.LogWarning("[WaterForecast] Timeline UI references are missing.", this);
+            Debug.LogWarning(
+                "[WaterForecast] Event duration must be greater than zero.",
+                this);
             return;
         }
 
-        if (timer <= 0f)
+        BuildAvailableEvents();
+
+        // CHANGED: Use the first four events in Inspector order.
+        initialEventCount = 4;
+        BuildInitialBacklog();
+
+        if (weatherBacklog.Count == 0)
         {
-            Debug.LogWarning("[WaterForecast] Timer must be greater than zero.",this);
+            Debug.LogWarning(
+                "[WaterForecast] No valid weather events found.",
+                this);
             return;
         }
 
-        // CHANGED: Reset the marker to its starting position.
-        Vector2 position = currentTimeline.rectTransform.anchoredPosition;
-        position.y = 0f;
-        currentTimeline.rectTransform.anchoredPosition = position;
+       UpdateWeatherImages();
 
-        // CHANGED: Start the timeline automatically.
-        timelineCoroutine = StartCoroutine(ProgressTimeline());
+       currentWeatherImage.GetComponentInParent<Slider>().maxValue = eventDuration;
+
+       StartWeather(); //Tempo, Change later to after tutorial finished
+    }
+
+    private void Update()
+    {
+        waterFill.value = GameManager.Instance.WaterLevel.CurrentWaterHeight;
+    }
+
+    private void BuildAvailableEvents()
+    {
+        availableEvents.Clear();
+
+        foreach (GameObject eventPoint in eventpoints)
+        {
+            if (eventPoint == null)
+                continue;
+
+            // NEW: Try to find TimelineEvents in children first.
+            TimelineEvents weatherEvent =
+                eventPoint.GetComponentInChildren<TimelineEvents>();
+
+            // NEW: If not found, check the same GameObject.
+            if (weatherEvent == null)
+                weatherEvent = eventPoint.GetComponent<TimelineEvents>();
+
+            if (weatherEvent != null &&
+                !availableEvents.Contains(weatherEvent))
+            {
+                availableEvents.Add(weatherEvent);
+            }
+        }
+    }
+
+    // CHANGED: Preserve the first events in Inspector order.
+    private void BuildInitialBacklog()
+    {
+        weatherBacklog.Clear();
+
+        int count = Mathf.Min(
+            Mathf.Max(0, initialEventCount),
+            availableEvents.Count
+        );
+
+        for (int i = 0; i < count; i++)
+        {
+            weatherBacklog.Add(availableEvents[i]);
+        }
+
+        if (weatherBacklog.Count < initialEventCount)
+        {
+            Debug.LogWarning(
+                "[WaterForecast] Fewer unique weather events than requested.",
+                this
+            );
+        }
     }
 
     private IEnumerator ProgressTimeline()
     {
-        float elapsed = 0f;
-
-        RectTransform timelineRect = timeline.rectTransform;
-        RectTransform currentRect = currentTimeline.rectTransform;
-
-        float startY = 0f;
-        float endY = timelineRect.rect.height;
-
-        // NEW: Check for an event at the starting position.
-        CheckBreakpoints(currentRect.anchoredPosition.y, 0f);
-
-        while (elapsed < timer)
+        while (true)
         {
-            if (!timelinePaused)
+            float elapsed = 0f;
+
+            while (elapsed < eventDuration)
             {
-                float previousElapsed = elapsed;
-
-                elapsed += Time.deltaTime;
-
-                float progress = Mathf.Clamp01(elapsed / timer);
-
-                Vector2 position = currentRect.anchoredPosition;
-                position.y = Mathf.Lerp(startY, endY, progress);
-                currentRect.anchoredPosition = position;
-
-                // CHANGED: Check every event crossed during this frame.
-                CheckBreakpoints(position.y, previousElapsed);
+                if (!timelinePaused)
+                {
+                    elapsed += Time.deltaTime;
+                    currentWeatherImage.GetComponentInParent<Slider>().value = elapsed;
+                }
+                yield return null;
             }
 
-            yield return null;
-        }
+            // Remove the weather event that just finished.
+            if (weatherBacklog.Count > 0)
+                weatherBacklog.RemoveAt(0);
 
-        // NEW: Finish at the exact endpoint.
-        Vector2 finalPosition = currentRect.anchoredPosition;
-        finalPosition.y = endY;
-        currentRect.anchoredPosition = finalPosition;
+            // Add only one new random event.
+            AddOneRandomWeatherEvent();
 
-        CheckBreakpoints(endY, timer);
-
-        timelineCompleted = true;
-        timelinePaused = true;
-        timelineCoroutine = null;
-
-        Debug.Log("[WaterForecast] Timeline completed.", this);
-    }
-
-    private void CheckBreakpoints(float currentY, float previousElapsed)
-    {
-        float endY = timeline.rectTransform.rect.height;
-        float previousY = Mathf.Lerp(0f, endY, previousElapsed / timer);
-
-        foreach (Image eventpoint in eventpoints)
-        {
-            if (eventpoint == null)
-                continue;
-
-            TimelineEvents timelineEvent =
-                eventpoint.GetComponent<TimelineEvents>();
-
-            if (timelineEvent == null ||
-                triggeredEvents.Contains(timelineEvent))
-                continue;
-
-            float eventY = eventpoint.rectTransform.anchoredPosition.y;
-
-            // CHANGED: Trigger only when the marker crosses the event position.
-            bool crossedEvent =
-                eventY >= previousY && eventY <= currentY;
-
-            if (crossedEvent)
+            if (weatherBacklog.Count == 0)
             {
-                triggeredEvents.Add(timelineEvent);
-
-                Debug.Log(
-                    "[WaterForecast] Timeline reached event: " + eventpoint.name,
-                    eventpoint
+                Debug.LogWarning(
+                    "[WaterForecast] No weather events available.",
+                    this
                 );
 
-                timelineEvent.TimelinePlayRain(this);
+                timelineCoroutine = null;
+                yield break;
             }
+
+            UpdateWeatherImages();
+            PlayCurrentWeather();
         }
+    }
+
+    // NEW: Append randomized events without clearing the existing queue.
+    private void AddOneRandomWeatherEvent()
+    {
+        if (availableEvents.Count == 0)
+            return;
+
+        int randomIndex = Random.Range(0, availableEvents.Count);
+        weatherBacklog.Add(availableEvents[randomIndex]);
+    }
+    private void PlayCurrentWeather()
+    {
+        if (weatherBacklog.Count > 0 && weatherBacklog[0] != null)
+        {
+            weatherBacklog[0].TimelinePlayRain(this);
+        }
+    }
+
+    private void UpdateWeatherImages()
+    {
+        SetWeatherImage(currentWeatherImage, 0);
+        SetWeatherImage(nextWeatherImage, 1);
+        SetWeatherImage(followingWeatherImage, 2);
+        SetWeatherImage(followingWeather2Image, 3);
+    }
+
+    private void SetWeatherImage(Image targetImage, int eventIndex)
+    {
+        if (targetImage == null)
+            return;
+
+        if (eventIndex < 0 ||
+            eventIndex >= weatherBacklog.Count ||
+            weatherBacklog[eventIndex] == null)
+        {
+            targetImage.sprite = null;
+            targetImage.enabled = false;
+            return;
+        }
+
+        Sprite weatherSprite = weatherBacklog[eventIndex].WeatherSprite;
+
+        targetImage.sprite = weatherSprite;
+        targetImage.enabled = weatherSprite != null;
     }
 
     public void PauseTimeline()
@@ -147,54 +220,110 @@ public class WaterForecast : MonoBehaviour
 
     public void ResumeTimeline()
     {
-        if (!timelineCompleted && timelineCoroutine != null)
-        {
+        if (timelineCoroutine != null)
             timelinePaused = false;
-        }
     }
 
     #region Rain Stuff
+
     private void PlayRainSFX()
     {
-        GameManager.Instance.SoundManager.Play("SFXRaining");
+        if (GameManager.Instance != null)
+            GameManager.Instance.SoundManager.Play("SFXRaining");
     }
-    
+
     private void StopRainSFX()
     {
-        GameManager.Instance.SoundManager.Stop("SFXRaining");
+        if (GameManager.Instance != null)
+            GameManager.Instance.SoundManager.Stop("SFXRaining");
+    }
+
+    private void SetRainEmission(float rate)
+    {
+        if (rainFX == null)
+        {
+            Debug.LogWarning(
+                "[WaterForecast] Rain FX is not assigned.",
+                this);
+            return;
+        }
+
+        var emission = rainFX.emission;
+        emission.rateOverTime = new ParticleSystem.MinMaxCurve(rate);
+
+        if (!rainFX.isPlaying)
+            rainFX.Play();
+
+        if (rate > 0f)
+            PlayRainSFX();
     }
 
     public void PlayWeakRain()
     {
-        var emission = rainFX.emission;
-        emission.rateOverTime = weakRain;
-
-        rainFX.Play();
-        PlayRainSFX();
+        SetRainEmission(weakRain);
     }
 
     public void PlayDecentRain()
     {
-        var emission = rainFX.emission;
-        emission.rateOverTime = decentRain;
-
-        rainFX.Play();
-        PlayRainSFX();
+        SetRainEmission(decentRain);
     }
 
     public void PlayStrongRain()
     {
-        var emission = rainFX.emission;
-        emission.rateOverTime = strongRain; 
-
-        rainFX.Play();
-        PlayRainSFX();
+        SetRainEmission(strongRain);
     }
 
     public void StopRain()
     {
-        rainFX.Stop();
+        if (rainFX != null)
+        {
+            var emission = rainFX.emission;
+            emission.rateOverTime = new ParticleSystem.MinMaxCurve(0f);
+
+            rainFX.Stop(
+                false,
+                ParticleSystemStopBehavior.StopEmitting);
+        }
+
         StopRainSFX();
+    }
+
+    #endregion
+
+    #region Start and Stop Weather
+    public void StartWeather()
+    {
+        if (timelineCoroutine != null)
+            return;
+
+        if (weatherBacklog.Count == 0)
+        {
+            Debug.LogWarning(
+                "[WaterForecast] Cannot start: no weather events available.",
+                this);
+            return;
+        }
+
+        timelinePaused = false;
+
+        UpdateWeatherImages();
+        PlayCurrentWeather();
+
+        timelineCoroutine = StartCoroutine(ProgressTimeline());
+    }
+
+    // NEW: Stop weather at the end of the game.
+    public void StopWeather()
+    {
+        timelinePaused = true;
+
+        if (timelineCoroutine != null)
+        {
+            StopCoroutine(timelineCoroutine);
+            timelineCoroutine = null;
+        }
+
+        StopRain();
     }
     #endregion
 }
