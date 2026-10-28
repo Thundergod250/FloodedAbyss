@@ -4,9 +4,6 @@ using UnityEngine.UI;
 
 public class UiFarm : UiModals
 {
-    [Header("Modal Reference")]
-    [SerializeField] private GameObject ModalPrefab;
-
     [Header("Text Fields")]
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI laborCostText;
@@ -25,44 +22,86 @@ public class UiFarm : UiModals
 
     private StructureFarm currentFarm;
 
-    private void Awake()
+    protected override void Initialize()
     {
-        if (activateButton != null) activateButton.onClick.AddListener(OnActivateClicked);
-        if (destroyButton != null) destroyButton.onClick.AddListener(OnDestroyClicked);
+        base.Initialize();
+
+        if (activateButtonText == null && activateButton != null)
+            activateButtonText =
+                activateButton.GetComponentInChildren<TextMeshProUGUI>();
+
+        if (destroyButtonText == null && destroyButton != null)
+            destroyButtonText =
+                destroyButton.GetComponentInChildren<TextMeshProUGUI>();
+
+        if (activateButton != null)
+        {
+            activateButton.onClick.RemoveAllListeners();
+            activateButton.onClick.AddListener(OnActivateClicked);
+        }
+
+        if (destroyButton != null)
+        {
+            destroyButton.onClick.RemoveAllListeners();
+            destroyButton.onClick.AddListener(OnDestroyClicked);
+        }
+
+        if (notEnoughWorkersText != null)
+            notEnoughWorkersText.gameObject.SetActive(false);
+
+        if (productionBarContainer != null)
+            productionBarContainer.SetActive(false);
     }
 
-    private void OnDestroy()
+    private void Update()
     {
-        if (activateButton != null) activateButton.onClick.RemoveListener(OnActivateClicked);
-        if (destroyButton != null) destroyButton.onClick.RemoveListener(OnDestroyClicked);
-    }
+        if (!IsOpen || currentFarm == null)
+            return;
 
-    // ------------------------------------------------------------------
-    // PUBLIC API (called by StructureFarm)
-    // ------------------------------------------------------------------
-    public void Setup(StructureFarm farm)
-    {
-        currentFarm = farm;
+        bool showBar = currentFarm.IsWorking || currentFarm.IsDestroying;
 
-        if (titleText != null) titleText.text = farm.StructureTitle;
-        if (laborCostText != null) laborCostText.text = $"Labor Cost: {farm.LaborCost}";
-        if (notEnoughWorkersText != null) notEnoughWorkersText.gameObject.SetActive(false);
+        if (productionBarContainer != null &&
+            productionBarContainer.activeSelf != showBar)
+        {
+            productionBarContainer.SetActive(showBar);
+        }
 
         UpdateButtonStates();
         UpdateProgressBar();
     }
 
-    public void Show()
+    public void Setup(StructureFarm farm)
     {
-        if (ModalPrefab != null) ModalPrefab.SetActive(true);
-        if (notEnoughWorkersText != null) notEnoughWorkersText.gameObject.SetActive(false);
+        if (farm == null)
+            return;
+
+        currentFarm = farm;
+
+        if (titleText != null)
+            titleText.text = farm.StructureTitle;
+
+        if (laborCostText != null)
+            laborCostText.text = $"Labor Cost: {farm.LaborCost}";
+
+        if (notEnoughWorkersText != null)
+            notEnoughWorkersText.gameObject.SetActive(false);
+
         UpdateButtonStates();
         UpdateProgressBar();
     }
 
     public void Hide()
     {
-        if (ModalPrefab != null) ModalPrefab.SetActive(false);
+        if (GameManager.Instance != null &&
+            GameManager.Instance.uiController != null)
+        {
+            GameManager.Instance.uiController.CloseAllModals();
+        }
+    }
+
+    public bool IsShowingStructure(StructureFarm farm)
+    {
+        return IsOpen && currentFarm == farm;
     }
 
     public void ShowNotEnoughWorkersWarning()
@@ -74,54 +113,59 @@ public class UiFarm : UiModals
         }
     }
 
-    public bool IsShowingStructure(StructureFarm farm) => currentFarm == farm;
-
     public void CompleteProgress()
     {
-        if (fillImage != null) fillImage.fillAmount = 1f;
-    }
-
-    // ------------------------------------------------------------------
-    // UPDATE LOOP (live progress / button states)
-    // ------------------------------------------------------------------
-    private void Update()
-    {
-        if (currentFarm == null) return;
-        if (ModalPrefab != null && !ModalPrefab.activeSelf) return;
-
-        UpdateButtonStates();
-        UpdateProgressBar();
+        if (fillImage != null)
+            fillImage.fillAmount = 1f;
     }
 
     private void UpdateButtonStates()
     {
-        if (currentFarm == null) return;
+        if (currentFarm == null)
+            return;
 
         if (activateButtonText != null)
         {
-            if (currentFarm.IsDestroying) activateButtonText.text = "Destroying...";
-            else if (currentFarm.IsWorking) activateButtonText.text = "Stop Working";
-            else activateButtonText.text = "Start Working";
+            if (currentFarm.IsDestroying)
+                activateButtonText.text = "Destroying...";
+            else if (currentFarm.IsWorking)
+                activateButtonText.text = "Stop Working";
+            else
+                activateButtonText.text = "Start Working";
         }
 
         if (destroyButtonText != null)
-            destroyButtonText.text = currentFarm.IsDestroying ? "Cancel" : "Destroy";
+        {
+            destroyButtonText.text =
+                currentFarm.IsDestroying ? "Cancel" : "Destroy";
+        }
 
-        if (activateButton != null) activateButton.interactable = !currentFarm.IsDestroying;
-        if (destroyButton != null) destroyButton.interactable = currentFarm.CanBeDestroyed;
+        if (activateButton != null)
+            activateButton.interactable = !currentFarm.IsDestroying;
 
-        if (productionBarContainer != null)
-            productionBarContainer.SetActive(currentFarm.IsWorking || currentFarm.IsDestroying);
+        if (destroyButton != null)
+            destroyButton.interactable = currentFarm.CanBeDestroyed;
     }
 
     private void UpdateProgressBar()
     {
-        if (currentFarm == null) return;
-        if (fillImage != null) fillImage.fillAmount = currentFarm.ProgressPercentage;
+        if (currentFarm == null)
+            return;
+
+        if (fillImage != null)
+            fillImage.fillAmount = currentFarm.ProgressPercentage;
+
         if (progressDescriptionText != null)
             progressDescriptionText.text = currentFarm.ProductionDescription;
     }
 
-    private void OnActivateClicked() => currentFarm?.ToggleWorking();
-    private void OnDestroyClicked() => currentFarm?.ToggleDestroying();
+    private void OnActivateClicked()
+    {
+        currentFarm?.ToggleWorking();
+    }
+
+    private void OnDestroyClicked()
+    {
+        currentFarm?.ToggleDestroying();
+    }
 }

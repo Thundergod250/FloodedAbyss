@@ -12,14 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c5ac3280672e664cbf9288fcc10183c, type: 3}
   m_Name: Objective 9
   m_EditorClassIdentifier: Assembly-CSharp::ObjectivesSO
-  objectiveDescription: Use the gathered charcoal to activate the 2nd stage of the pump.
+  objectiveDescription: Create a Water Distiller as well!
   objectives:
-  - objectiveDescription: Throw in the charcoal!
-    objectiveType: 3
-    structureToBuild: {fileID: 0}
+  - objectiveDescription: With food, must also come water.
+    objectiveType: 0
+    structureToBuild: {fileID: 11400000, guid: 38f5fd1da118b3643a56c79399f0a61f, type: 2}
     requiredAmount: 1
-    resourcesToDeposit:
-    - resource: {fileID: 11400000, guid: c2ea8a8751d5dc24a97a88facb04274b, type: 2}
-      requiredAmount: 100
     requiredUIName: 
     resourcesToGather: []

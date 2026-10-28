@@ -94,6 +94,15 @@ public class StructureHarvestResource : Structures
         }
 
         workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker - laborCost);
+
+        if (ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance.NotifyWorkersAssigned(
+                this,
+                laborCost
+            );
+        }
+
         harvestRoutine = StartCoroutine(HarvestLoopRoutine());
     }
 
