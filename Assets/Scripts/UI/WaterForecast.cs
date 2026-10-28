@@ -56,23 +56,29 @@ public class WaterForecast : MonoBehaviour
 
         BuildAvailableEvents();
 
-        // CHANGED: Use the first four events in Inspector order.
         initialEventCount = 4;
         BuildInitialBacklog();
 
         if (weatherBacklog.Count == 0)
         {
-            Debug.LogWarning(
-                "[WaterForecast] No valid weather events found.",
-                this);
+            Debug.LogWarning("[WaterForecast] No valid weather events found.", this);
             return;
         }
 
-       UpdateWeatherImages();
+        UpdateWeatherImages();
 
-       currentWeatherImage.GetComponentInParent<Slider>().maxValue = eventDuration;
+        if (currentWeatherImage != null)
+        {
+            Slider timelineSlider =
+                currentWeatherImage.GetComponentInParent<Slider>();
 
-       StartWeather(); //Tempo, Change later to after tutorial finished
+            if (timelineSlider != null)
+                timelineSlider.maxValue = eventDuration;
+        }
+
+        bool tutorialStillRunning = ObjectiveManager.Instance == null || !ObjectiveManager.Instance.AllObjectiveCompleted;
+
+        SetTutorialPaused(tutorialStillRunning);
     }
 
     private void Update()
@@ -324,6 +330,34 @@ public class WaterForecast : MonoBehaviour
         }
 
         StopRain();
+    }
+
+    public void SetTutorialPaused(bool paused)
+    {
+        if (paused)
+        {
+            timelinePaused = true;
+
+            Debug.Log(
+                "[WaterForecast] Tutorial active. Weather timeline paused.",
+                this);
+
+            return;
+        }
+
+        // Start the timeline if it has never been started.
+        if (timelineCoroutine == null)
+        {
+            StartWeather();
+        }
+        else
+        {
+            ResumeTimeline();
+        }
+
+        Debug.Log(
+            "[WaterForecast] Tutorial complete. Weather timeline enabled.",
+            this);
     }
     #endregion
 }
