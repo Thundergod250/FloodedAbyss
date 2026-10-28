@@ -193,6 +193,7 @@ GameObject:
   - component: {fileID: 8532716654545087796}
   - component: {fileID: 1784266355187973490}
   - component: {fileID: 620789801668064919}
+  - component: {fileID: -3152030326674612445}
   m_Layer: 0
   m_Name: Fiber
   m_TagString: Untagged
@@ -230,6 +231,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureHarvestResource
   ignoreSubmersion: 0
+  BuildablePrefab: {fileID: 0}
   structureTitle: Fiber
   laborCost: 1
   productionDuration: 3
@@ -238,7 +240,7 @@ MonoBehaviour:
   harvestMode: 0
   maxHarvestCycles: 5
   resourceToProduce: {fileID: 11400000, guid: 42d0a33d5d93fa0468020c1672f70b5c, type: 2}
-  productionAmount: 5
+  productionAmount: 10
   isWorking: 0
   isDestroying: 0
   progressPercentage: 0
@@ -291,3 +293,17 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1.5}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-3152030326674612445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9216641677476395219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60cb8c809a19c7b41a7c6adb7aca416d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoverHighlight
+  outlineMaterial: {fileID: 2100000, guid: d625b157ec0b38e459c68a60028fe48a, type: 2}
+  matchObjectColor: 0

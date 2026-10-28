@@ -106,6 +106,7 @@ GameObject:
   - component: {fileID: 1465537041648712108}
   - component: {fileID: 7331981123120887508}
   - component: {fileID: 2414361128195471078}
+  - component: {fileID: -915306771893259358}
   m_Layer: 0
   m_Name: WorkerHouseLVL3
   m_TagString: Untagged
@@ -182,6 +183,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureWorkersHouse
   ignoreSubmersion: 0
+  BuildablePrefab: {fileID: 2104639937772099258, guid: 85cc9829280f72a49a2e6f2948abba66, type: 3}
   structureTitle: Worker's HOA
   actionDuration: 3
   destructionDuration: 3
@@ -209,6 +211,20 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c60dfc26f7c4e2c4d9cb43a9832c2de8, type: 2}
   - {fileID: 11400000, guid: 9343654494e48084e911a028dd53e0d2, type: 2}
   houseLevelVal: 1
+--- !u!114 &-915306771893259358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3147457400777135028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60cb8c809a19c7b41a7c6adb7aca416d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoverHighlight
+  outlineMaterial: {fileID: 2100000, guid: d625b157ec0b38e459c68a60028fe48a, type: 2}
+  matchObjectColor: 0
 --- !u!1 &3895443385424835352
 GameObject:
   m_ObjectHideFlags: 0

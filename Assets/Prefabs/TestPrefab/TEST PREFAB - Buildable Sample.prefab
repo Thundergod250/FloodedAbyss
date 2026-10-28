@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2108070487653039610}
   - component: {fileID: 2369145500716326567}
   - component: {fileID: 4668029822247058794}
+  - component: {fileID: 6327144060300019489}
   m_Layer: 0
   m_Name: TEST PREFAB - Buildable Sample
   m_TagString: Untagged
@@ -135,6 +136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureBuildable
   ignoreSubmersion: 0
+  BuildablePrefab: {fileID: 0}
   availableStructuresToBuild:
   - {fileID: 11400000, guid: 8a930be30284f194abfdc58ddff5b98c, type: 2}
   - {fileID: 11400000, guid: 2c44a2b9bda758b468eaf1167c5df7d4, type: 2}
@@ -155,6 +157,20 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e6a3e9f5ea50ea9479bec9e30bdcff2f, type: 2}
   laborCost: 1
   spawnOffset: {x: 0, y: 0, z: 0}
+--- !u!114 &6327144060300019489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2104639937772099258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60cb8c809a19c7b41a7c6adb7aca416d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoverHighlight
+  outlineMaterial: {fileID: 2100000, guid: d625b157ec0b38e459c68a60028fe48a, type: 2}
+  matchObjectColor: 0
 --- !u!1001 &8388743097986949141
 PrefabInstance:
   m_ObjectHideFlags: 0

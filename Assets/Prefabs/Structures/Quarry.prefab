@@ -194,6 +194,7 @@ GameObject:
   - component: {fileID: 7221564025099111062}
   - component: {fileID: 6764205143962211382}
   - component: {fileID: 6188225160042434694}
+  - component: {fileID: -7948613725004074632}
   m_Layer: 0
   m_Name: Quarry
   m_TagString: Untagged
@@ -268,7 +269,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureHarvestResource
   ignoreSubmersion: 0
-  debrisPrefab: {fileID: 2104639937772099258, guid: 85cc9829280f72a49a2e6f2948abba66, type: 3}
+  BuildablePrefab: {fileID: 2104639937772099258, guid: 85cc9829280f72a49a2e6f2948abba66, type: 3}
   structureTitle: Rock Source
   laborCost: 2
   productionDuration: 3
@@ -281,3 +282,17 @@ MonoBehaviour:
   isWorking: 0
   isDestroying: 0
   progressPercentage: 0
+--- !u!114 &-7948613725004074632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6971226735373163128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60cb8c809a19c7b41a7c6adb7aca416d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoverHighlight
+  outlineMaterial: {fileID: 2100000, guid: d625b157ec0b38e459c68a60028fe48a, type: 2}
+  matchObjectColor: 0
