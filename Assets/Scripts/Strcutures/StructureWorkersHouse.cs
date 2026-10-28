@@ -161,7 +161,7 @@ public class StructureWorkersHouse : Structures
         {
             if (!housingMode)
             {
-                workerMgr.RecruitNewWorker();
+                workerMgr.RecruitNewWorker(this);
             }
         }
 

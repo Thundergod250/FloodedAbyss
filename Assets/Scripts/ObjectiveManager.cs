@@ -116,6 +116,16 @@ public class ObjectiveManager : MonoBehaviour
                 return "Deposit resources into the Apex Pump";
             }
 
+            if (objective.objectiveType == ObjectivesSO.ObjectiveType.RecruitWorker)
+            {
+                return "Recruit a worker using the newly built building.";
+            }
+
+            if (objective.objectiveType == ObjectivesSO.ObjectiveType.AssignWorkers)
+            {
+                return $"Assign {objective.requiredWorkers} worker(s) to the quarry";
+            }
+
             return "Complete the required objective";
         }
     }
@@ -135,7 +145,6 @@ public class ObjectiveManager : MonoBehaviour
     }
 
     #region Structure Objective
-
     public void NotifyStructureBuilt(StructureDataSO builtStructure)
     {
         var objective = CurrentObjective;
@@ -173,7 +182,6 @@ public class ObjectiveManager : MonoBehaviour
     #endregion
 
     #region UI Objective
-
     public void NotifyUIOpened(string uiName)
     {
         var objective = CurrentObjective;
@@ -198,7 +206,6 @@ public class ObjectiveManager : MonoBehaviour
     #endregion
 
     #region Resource Objective
-
     public void NotifyResourceGathered(
         ResourceDataSO resource,
         int amount)
@@ -422,6 +429,50 @@ public class ObjectiveManager : MonoBehaviour
     }
     #endregion
 
+    #region Recruit Worker Objective
+
+    public void NotifyWorkerRecruited(Structures recruitingBuilding)
+    {
+        var objective = CurrentObjective;
+
+        if (objective == null || recruitingBuilding == null)
+            return;
+
+        if (objective.objectiveType !=
+            ObjectivesSO.ObjectiveType.RecruitWorker)
+            return;
+
+        // TODO: Verify that recruitingBuilding is the specific
+        // building required by this objective.
+
+        Debug.Log("[ObjectiveManager] Worker recruited!");
+
+        AdvanceObjective();
+    }
+
+    #endregion
+
+    #region Assign Worker Objective
+    public void NotifyWorkersAssigned(StructureHarvestResource quarry,int assignedWorkers)
+    {
+        var objective = CurrentObjective;
+
+        if (objective == null || quarry == null)
+            return;
+
+        if (objective.objectiveType !=
+            ObjectivesSO.ObjectiveType.AssignWorkers)
+            return;
+
+        if (assignedWorkers >= objective.requiredWorkers)
+        {
+            Debug.Log("Workers assigned to quarry!");
+            AdvanceObjective();
+        }
+    }
+
+    #endregion
+
     #region Objective Progress
 
     private void AdvanceObjective()
@@ -499,6 +550,16 @@ public class ObjectiveManager : MonoBehaviour
                 {
                     return;
                 }
+
+                if (objective.objectiveType == ObjectivesSO.ObjectiveType.RecruitWorker)
+                {
+                    return;
+                }
+
+                if (objective.objectiveType == ObjectivesSO.ObjectiveType.AssignWorkers)
+                {
+                    return;
+                }
             }
 
             currentObjectiveIndex++;
@@ -508,8 +569,7 @@ public class ObjectiveManager : MonoBehaviour
         }
     }
 
-    private bool HasValidResourceRequirements(
-        ObjectivesSO.BuildingObjective objective)
+    private bool HasValidResourceRequirements(ObjectivesSO.BuildingObjective objective)
     {
         if (objective.resourcesToGather == null)
             return false;

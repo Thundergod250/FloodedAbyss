@@ -65,12 +65,20 @@ public class WorkerManager : MonoBehaviour
         EvtOnHomelessChanged?.Invoke(HomelessWorker);
     }
 
-    public void RecruitNewWorker()
+    public void RecruitNewWorker(Structures recruitingBuilding)
     {
+        if (recruitingBuilding == null)
+            return;
+
         CurrentWorker++;
         EvtOnWorkersChanged?.Invoke(CurrentWorker);
+
+        if (ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance.NotifyWorkerRecruited(recruitingBuilding);
+        }
     }
-    
+
     public void CancelHouseReservation()
     {
         if (OccupiedHousesCount > 0)
