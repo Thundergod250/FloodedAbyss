@@ -256,6 +256,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureWorkersHouse
   ignoreSubmersion: 0
+  BuildablePrefab: {fileID: 0}
   structureTitle: Worker's House
   actionDuration: 3
   destructionDuration: 3
@@ -361,6 +362,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureWorkersHouse
   ignoreSubmersion: 0
+  BuildablePrefab: {fileID: 0}
   structureTitle: Worker's House
   actionDuration: 3
   destructionDuration: 3
@@ -966,6 +968,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureHarvestResource
   ignoreSubmersion: 0
+  BuildablePrefab: {fileID: 0}
   structureTitle: Wood Source
   laborCost: 1
   productionDuration: 5
@@ -1418,6 +1421,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureHarvestResource
   ignoreSubmersion: 0
+  BuildablePrefab: {fileID: 0}
   structureTitle: Wood Source
   laborCost: 1
   productionDuration: 5
@@ -1682,6 +1686,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureHarvestResource
   ignoreSubmersion: 0
+  BuildablePrefab: {fileID: 0}
   structureTitle: Wood Source
   laborCost: 1
   productionDuration: 5
@@ -1789,6 +1794,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureHarvestResource
   ignoreSubmersion: 0
+  BuildablePrefab: {fileID: 0}
   structureTitle: Wood Source
   laborCost: 1
   productionDuration: 3
@@ -1978,6 +1984,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureFarm
   ignoreSubmersion: 0
+  BuildablePrefab: {fileID: 0}
   structureTitle: Farm
   laborCost: 1
   productionDuration: 5
@@ -2246,6 +2253,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureHarvestResource
   ignoreSubmersion: 0
+  BuildablePrefab: {fileID: 0}
   structureTitle: Wood Source
   laborCost: 1
   productionDuration: 5
@@ -2510,6 +2518,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureApexPump
   ignoreSubmersion: 0
+  BuildablePrefab: {fileID: 0}
   acceptedResources: []
   resourceFuelValues: 01000000050000000a0000001900000032000000i
   switchFuelCosts: 01000000050000000a0000001400000032000000i
@@ -2936,6 +2945,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ocean
       objectReference: {fileID: 0}
+    - target: {fileID: 1379626211022956419, guid: ba8e2b97f8e8838498c4d1b12734d262, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4943732513755576930, guid: ba8e2b97f8e8838498c4d1b12734d262, type: 3}
       propertyPath: spawnIntervalMax
       value: 1.5
@@ -2946,14 +2959,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4943732513755576930, guid: ba8e2b97f8e8838498c4d1b12734d262, type: 3}
       propertyPath: floatingResourcePrefabs.Array.size
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 4943732513755576930, guid: ba8e2b97f8e8838498c4d1b12734d262, type: 3}
+      propertyPath: 'floatingResourcePrefabs.Array.data[1]'
+      value: 
+      objectReference: {fileID: 5127115869142417961, guid: 50dec171c46d280488a0b589a3dd4ae0, type: 3}
     - target: {fileID: 4943732513755576930, guid: ba8e2b97f8e8838498c4d1b12734d262, type: 3}
       propertyPath: 'floatingResourcePrefabs.Array.data[2]'
       value: 
       objectReference: {fileID: 9216641677476395219, guid: 19613bb4d30e3d0429665be154f97caf, type: 3}
     - target: {fileID: 4943732513755576930, guid: ba8e2b97f8e8838498c4d1b12734d262, type: 3}
       propertyPath: 'floatingResourcePrefabs.Array.data[3]'
+      value: 
+      objectReference: {fileID: 9216641677476395219, guid: 19613bb4d30e3d0429665be154f97caf, type: 3}
+    - target: {fileID: 4943732513755576930, guid: ba8e2b97f8e8838498c4d1b12734d262, type: 3}
+      propertyPath: 'floatingResourcePrefabs.Array.data[4]'
       value: 
       objectReference: {fileID: 9216641677476395219, guid: 19613bb4d30e3d0429665be154f97caf, type: 3}
     - target: {fileID: 5258368358396546808, guid: ba8e2b97f8e8838498c4d1b12734d262, type: 3}

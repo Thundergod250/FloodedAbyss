@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 625329512437147430}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -900, y: 0, z: 45}
+  m_LocalPosition: {x: -1400, y: 0, z: 45}
   m_LocalScale: {x: 1, y: 1, z: 1000}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -127,13 +127,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FloatingResourceSpawner
   floatingResourcePrefabs:
   - {fileID: 5127115869142417961, guid: 50dec171c46d280488a0b589a3dd4ae0, type: 3}
+  - {fileID: 5127115869142417961, guid: 50dec171c46d280488a0b589a3dd4ae0, type: 3}
   - {fileID: 9216641677476395219, guid: 19613bb4d30e3d0429665be154f97caf, type: 3}
-  spawnIntervalMin: 1
-  spawnIntervalMax: 2
+  - {fileID: 9216641677476395219, guid: 19613bb4d30e3d0429665be154f97caf, type: 3}
+  - {fileID: 9216641677476395219, guid: 19613bb4d30e3d0429665be154f97caf, type: 3}
+  spawnIntervalMin: 0.5
+  spawnIntervalMax: 1.5
   spawnedItemsParent: {fileID: 2156945439891776451}
   minSpeed: 20
   maxSpeed: 50
-  itemLifetime: 30
+  itemLifetime: 180
 --- !u!1 &1379626211022956419
 GameObject:
   m_ObjectHideFlags: 0

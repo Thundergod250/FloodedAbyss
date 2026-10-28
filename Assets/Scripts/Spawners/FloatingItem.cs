@@ -2,49 +2,61 @@ using UnityEngine;
 
 public class FloatingItem : MonoBehaviour
 {
-    private Vector3 moveDirection;
-    private float moveSpeed;
-    private float lifetimeTimer;
-    private bool isInitialized = false;
+    [Header("Floating Settings")]
+    public float speed = 20f;
+    public float lifetime = 180f;
+    public Vector3 moveDirection = Vector3.right;
 
-    private StructureHarvestResource harvestResource;
+    private bool isVisible = false;
+    private float currentLifetime;
 
-    private void Awake()
+    private void Start()
     {
-        harvestResource = GetComponent<StructureHarvestResource>();
+        // Failsafe: If the spawner forgot to call Initialize, use the inspector values
+        if (currentLifetime <= 0f)
+        {
+            currentLifetime = lifetime;
+        }
     }
 
-    public void Initialize(Vector3 direction, float speed, float lifetime)
+    // FIX: Matches the Spawner's exact argument order: (Direction, Speed, Lifetime)
+    public void Initialize(Vector3 direction, float moveSpeed, float lifeTime)
     {
         moveDirection = direction.normalized;
-        moveSpeed = speed;
-        lifetimeTimer = lifetime;
-        isInitialized = true;
+        speed = moveSpeed;
+        lifetime = lifeTime;
+        currentLifetime = lifetime;
+    }
+
+    private void OnBecameVisible()
+    {
+        isVisible = true;
+    }
+
+    private void OnBecameInvisible()
+    {
+        isVisible = false;
     }
 
     private void Update()
     {
-        if (!isInitialized) return;
+        // 1. Move the object
+        transform.position += moveDirection * speed * Time.deltaTime;
 
-        // Move across the water surface safely
-        transform.position += moveDirection * (moveSpeed * Time.deltaTime);
-
-        // Handle auto-despawn timer if left uncollected
-        lifetimeTimer -= Time.deltaTime;
-        if (lifetimeTimer <= 0f)
+        // 2. Tick down the timer
+        if (currentLifetime > 0f)
         {
-            DespawnItem();
+            currentLifetime -= Time.deltaTime;
         }
-    }
 
-    private void DespawnItem()
-    {
-        if (harvestResource != null)
+        // 3. ONLY despawn if the timer is up AND the item is off-screen
+        if (currentLifetime <= 0f && !isVisible)
         {
-            // Safely release workers and clean up UI if it was locked in
-            harvestResource.ForceCleanupAndDestroy();
+            Destroy(gameObject);
         }
-        else
+
+        // 4. Failsafe: Force destroy if it drifts miles away into the void
+        if (transform.position.x > 3000f || transform.position.x < -3000f)
         {
             Destroy(gameObject);
         }

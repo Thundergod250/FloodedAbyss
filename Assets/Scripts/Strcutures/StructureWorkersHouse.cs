@@ -12,7 +12,6 @@ public class StructureWorkersHouse : Structures
     [SerializeField] private ResourceDataSO recruitmentCostResource;
     [SerializeField] private int recruitmentCostAmount = 5;
 
-    
     [Header("Debug Status")]
     [SerializeField] private bool isOccupied = false;
     [SerializeField] private bool isWorking = false;
@@ -22,12 +21,6 @@ public class StructureWorkersHouse : Structures
 
     private Coroutine actionRoutine;
     private Coroutine destroyRoutine;
-    private StructureBuildable owningTerminal;
-
-    public void SetOwningTerminal(StructureBuildable terminal)
-    {
-        owningTerminal = terminal;
-    }
 
     public override void Activate()
     {
@@ -41,32 +34,23 @@ public class StructureWorkersHouse : Structures
 
     protected override void HandleSubmergedShutdown()
     {
-        base.HandleSubmergedShutdown();
-
-        if (isWorking)
-        {
-            StopAction();
-        }
+        if (isWorking) StopAction();
 
         var houseUI = GameManager.Instance.uiController.UiWorkersHouse;
         if (houseUI != null && houseUI.IsShowingHouse(this))
         {
             GameManager.Instance.uiController.CloseAllModals();
         }
+
+        // House gets destroyed by flood
+        ExecuteFinalDestruction();
     }
 
     public void ToggleHouseAction()
     {
         if (isOccupied || isDestroying || isSubmerged) return;
-
-        if (isWorking)
-        {
-            StopAction();
-        }
-        else
-        {
-            TryStartAction();
-        }
+        if (isWorking) StopAction();
+        else TryStartAction();
     }
 
     private void TryStartAction()
@@ -106,7 +90,6 @@ public class StructureWorkersHouse : Structures
 
         actionRoutine = StartCoroutine(ActionRoutine(housingMode));
     }
-   
 
     private void StopAction()
     {
@@ -123,7 +106,7 @@ public class StructureWorkersHouse : Structures
         {
             if (isReservedForHousing)
             {
-                workerMgr.CancelHouseReservation(); 
+                workerMgr.CancelHouseReservation();
                 isReservedForHousing = false;
             }
             else if (recruitmentCostResource != null)
@@ -178,14 +161,8 @@ public class StructureWorkersHouse : Structures
 
     public void ToggleDestroying()
     {
-        if (isDestroying || isSubmerged)
-        {
-            CancelDestroying();
-        }
-        else
-        {
-            StartDestroying();
-        }
+        if (isDestroying || isSubmerged) CancelDestroying();
+        else StartDestroying();
     }
 
     private void StartDestroying()
@@ -236,15 +213,6 @@ public class StructureWorkersHouse : Structures
             }
         }
 
-        if (owningTerminal != null)
-        {
-            owningTerminal.gameObject.SetActive(true);
-        }
-        else
-        {
-            Debug.LogWarning($"[StructureWorkersHouse] '{gameObject.name}' has no owning terminal reference to re-enable!");
-        }
-
         var houseUI = GameManager.Instance.uiController.UiWorkersHouse;
         if (houseUI != null && houseUI.IsShowingHouse(this))
         {
@@ -252,11 +220,10 @@ public class StructureWorkersHouse : Structures
             GameManager.Instance.uiController.CloseAllModals();
         }
 
-        Destroy(gameObject);
+        // Spawns Debris, re-enables terminal, destroys self
+        Destroyed();
     }
 
-    
-    // Getters
     public bool IsOccupied => isOccupied;
     public bool IsWorking => isWorking;
     public bool IsDestroying => isDestroying;

@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-public class ObjectiveUI : MonoBehaviour
+public class ObjectiveUI : UiModals
 {
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI objectiveNameText;
