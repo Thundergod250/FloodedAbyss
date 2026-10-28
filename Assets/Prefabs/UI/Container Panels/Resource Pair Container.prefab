@@ -74,7 +74,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
+    rgba: 4294967295
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -224,6 +224,7 @@ GameObject:
   - component: {fileID: 6481734244166075120}
   - component: {fileID: 4811671475023426330}
   - component: {fileID: 5829552809219470602}
+  - component: {fileID: 2438519193490070633}
   m_Layer: 5
   m_Name: Resource Pair Container
   m_TagString: Untagged
@@ -304,3 +305,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PanelResourcePair
   iconImage: {fileID: 8873734271021695614}
   amountText: {fileID: 5702493854664362157}
+--- !u!114 &2438519193490070633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7750372029716409510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b118473cfa4ea9243bcd5cb7e88997ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResourceTooltipTrigger
+  bindingMode: 1
+  resourceData: {fileID: 0}
+  iconImage: {fileID: 0}
