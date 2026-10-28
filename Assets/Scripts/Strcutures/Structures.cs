@@ -3,9 +3,14 @@ using UnityEngine;
 public abstract class Structures : MonoBehaviour
 {
     [Header("Submersion Settings")]
-    [SerializeField] protected bool ignoreSubmersion = false; // Check this true on your floating resource prefabs!
+    [SerializeField] protected bool ignoreSubmersion = false;
 
-    private Collider structureCollider; 
+    [Header("Destruction Settings")]
+    [Tooltip("The Buildable/Debris prefab spawned when this structure is destroyed.")]
+    [SerializeField] protected GameObject BuildablePrefab;
+
+    protected StructureBuildable owningTerminal;
+    private Collider structureCollider;
     protected bool isSubmerged = false;
 
     protected virtual void Awake()
@@ -27,7 +32,7 @@ public abstract class Structures : MonoBehaviour
         if (GameManager.Instance == null || GameManager.Instance.WaterLevel == null) return;
 
         float currentWaterHeight = GameManager.Instance.WaterLevel.CurrentWaterHeight;
-        float objectWorldY = transform.position.y; 
+        float objectWorldY = transform.position.y;
 
         bool shouldBeSubmerged = objectWorldY <= currentWaterHeight;
 
@@ -53,7 +58,32 @@ public abstract class Structures : MonoBehaviour
 
     protected virtual void HandleSubmergedShutdown()
     {
-        // Override in derived classes
+        // By default, built structures are destroyed by floods
+        Destroyed();
+    }
+
+    public void SetOwningTerminal(StructureBuildable terminal)
+    {
+        owningTerminal = terminal;
+    }
+
+    // The centralized destruction function
+    public virtual void Destroyed()
+    {
+        // 1. Re-enable the building terminal
+        if (owningTerminal != null)
+        {
+            owningTerminal.gameObject.SetActive(true);
+        }
+
+        // 2. Spawn the Buildable/Debris prefab
+        if (BuildablePrefab != null)
+        {
+            Instantiate(BuildablePrefab, transform.position, transform.rotation);
+        }
+
+        // 3. Destroy this structure
+        Destroy(gameObject);
     }
 
     public abstract void Activate();
