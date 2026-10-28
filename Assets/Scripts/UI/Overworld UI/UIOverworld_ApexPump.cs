@@ -6,12 +6,21 @@ public class UIOverworld_ApexPump : MonoBehaviour
 {
     [Header("References")] 
     [SerializeField] private GameObject uiObject; 
-    [SerializeField] private TextMeshProUGUI powerText;
-    [SerializeField] private StructureApexPump structureApexPump;
     
     [Header("Settings")]
     [SerializeField] private float updateInterval = 2f;
 
+    [Header("Fuel Color Thresholds")]
+    [SerializeField] private int lowFuelThreshold = 50;
+    [SerializeField] private Color lowFuelColor = Color.red;
+
+    [SerializeField] private int mediumFuelThreshold = 100;
+    [SerializeField] private Color mediumFuelColor = new(1f, 0.5f, 0f); // Orange
+
+    [SerializeField] private Color normalFuelColor = Color.white;
+
+    private TextMeshProUGUI powerText;
+    private StructureApexPump structureApexPump;
     private Coroutine updateRoutine;
 
     private void Awake()
@@ -52,17 +61,33 @@ public class UIOverworld_ApexPump : MonoBehaviour
             if (structureApexPump != null)
             {
                 // Check if the pump has fuel
-                bool hasFuel = structureApexPump.CurrentFuel > 0;
+                int currentFuel = structureApexPump.CurrentFuel;
+                bool hasFuel = currentFuel > 0;
 
                 if (hasFuel)
                 {
                     if (uiObject != null && !uiObject.activeSelf) 
                         uiObject.SetActive(true);
 
-                    // Fetch Current Fuel instead of Power
-                    int currentFuel = structureApexPump.CurrentFuel;
+                    // Update text string
                     if (powerText != null) 
+                    {
                         powerText.text = $"Fuel: {currentFuel}";
+
+                        // Apply color based on thresholds
+                        if (currentFuel <= lowFuelThreshold)
+                        {
+                            powerText.color = lowFuelColor; // Red by default
+                        }
+                        else if (currentFuel <= mediumFuelThreshold)
+                        {
+                            powerText.color = mediumFuelColor; // Orange by default
+                        }
+                        else
+                        {
+                            powerText.color = normalFuelColor; // White / Normal above 100
+                        }
+                    }
                 }
                 else
                 {
