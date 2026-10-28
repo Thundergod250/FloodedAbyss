@@ -1,7 +1,12 @@
 using System.Collections;
 using UnityEngine;
 
-public enum HarvestMode { Consumable, Depletable, Infinite }
+public enum HarvestMode
+{
+    Consumable,
+    Depletable,
+    Infinite
+}
 
 public class StructureHarvestResource : Structures
 {
@@ -52,8 +57,15 @@ public class StructureHarvestResource : Structures
     public void ToggleHarvesting()
     {
         if (isDestroying) return;
-        if (isWorking) StopHarvesting(true);
-        else TryStartHarvest();
+
+        if (isWorking)
+        {
+            StopHarvesting(true);
+        }
+        else
+        {
+            TryStartHarvest();
+        }
     }
 
     public void TryStartHarvest()
@@ -67,7 +79,8 @@ public class StructureHarvestResource : Structures
 
         if (workerMgr.CurrentWorker < laborCost)
         {
-            if (harvestUI != null) harvestUI.ShowNotEnoughWorkersWarning();
+            if (harvestUI != null)
+                harvestUI.ShowNotEnoughWorkersWarning();
             return;
         }
 
@@ -106,15 +119,28 @@ public class StructureHarvestResource : Structures
 
     public void ToggleDestroying()
     {
-        if (!canBeDestroyed) return;
-        if (isDestroying) CancelDestroying();
-        else StartDestroying();
+        // Added a check to prevent destroying if the mode is Consumable
+        if (!CanBeDestroyed || harvestMode == HarvestMode.Consumable) return;
+
+        if (isDestroying)
+        {
+            CancelDestroying();
+        }
+        else
+        {
+            StartDestroying();
+        }
     }
 
     private void StartDestroying()
     {
-        if (!canBeDestroyed || isDestroying) return;
-        if (isWorking) StopHarvesting(true);
+        // Using CanBeDestroyed property here to respect the Consumable rule
+        if (!CanBeDestroyed || isDestroying) return;
+
+        if (isWorking)
+        {
+            StopHarvesting(true);
+        }
 
         isDestroying = true;
         progressPercentage = 0f;
@@ -156,14 +182,18 @@ public class StructureHarvestResource : Structures
 
     public void ForceCleanupAndDestroy()
     {
+        // ONLY refund workers if the harvesting job was actively in progress and holding a worker
         if (isWorking)
         {
             StopHarvesting(true);
         }
-        else if (harvestRoutine != null)
+        else
         {
-            StopCoroutine(harvestRoutine);
-            harvestRoutine = null;
+            if (harvestRoutine != null)
+            {
+                StopCoroutine(harvestRoutine);
+                harvestRoutine = null;
+            }
         }
 
         var harvestUI = GameManager.Instance.uiController.UiResourceHarvest;
@@ -173,7 +203,7 @@ public class StructureHarvestResource : Structures
             GameManager.Instance.uiController.CloseAllModals();
         }
 
-        // Spawns Debris, re-enables terminal, destroys self
+        // Call the base function (handles debris spawning and re-enabling the terminal)
         Destroyed();
     }
 
@@ -225,9 +255,14 @@ public class StructureHarvestResource : Structures
         ForceCleanupAndDestroy();
     }
 
+    // Getters
     public bool IsWorking => isWorking;
     public bool IsDestroying => isDestroying;
-    public bool CanBeDestroyed => canBeDestroyed;
+
+    // UI reads this property. By adding the harvestMode check, the UI will 
+    // automatically hide the destroy button if it's Consumable.
+    public bool CanBeDestroyed => canBeDestroyed && harvestMode != HarvestMode.Consumable;
+
     public float ProgressPercentage => progressPercentage;
     public string StructureTitle => structureTitle;
     public int LaborCost => laborCost;
