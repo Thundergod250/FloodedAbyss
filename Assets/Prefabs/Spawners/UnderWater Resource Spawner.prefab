@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &763500565442749833
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2053951993122082780}
+  - component: {fileID: 6814939288361212762}
+  m_Layer: 0
+  m_Name: UnderWater Resource Spawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2053951993122082780
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 763500565442749833}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6814939288361212762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 763500565442749833}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a94435ce96b194945977a19879b41b6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnderwaterResourceSpawner
+  spawnBoundsSize: {x: 90, y: 100, z: 10}
+  debrisPrefabs:
+  - {fileID: 8583852221319280503, guid: ecc31b2c0a50de34eb2f39c9dca7f891, type: 3}
+  - {fileID: 853473947766955555, guid: 362d757d70c53704f9567b713ee67800, type: 3}
+  - {fileID: 2228777151424521069, guid: 29af8a94ea99d7a4f9af410b6276e846, type: 3}
+  - {fileID: 4243666174625452305, guid: 8972ee575f77d8d44b6cd5a498b81231, type: 3}
+  spawnInterval: 1.5
+  travelDirection: {x: 0, y: 0, z: 1}
+  minSpeed: 2
+  maxSpeed: 5
+  backupLifetime: 30

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c5ac3280672e664cbf9288fcc10183c, type: 3}
+  m_Name: Objective 1
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectivesSO
+  objectiveDescription: 'Gather the floating resources, flowing in from the west.
+
+    Gather 50 Fiber and 50 Timber'
+  objectives:
+  - objectiveDescription: Floating resources asd
+    objectiveType: 2
+    structureToBuild: {fileID: 0}
+    requiredAmount: 0
+    requiredUIName: 
+    resourcesToGather:
+    - resource: {fileID: 11400000, guid: 01dc29f87c71c4646b9184c0d72979aa, type: 2}
+      requiredAmount: 50
+    - resource: {fileID: 11400000, guid: 42d0a33d5d93fa0468020c1672f70b5c, type: 2}
+      requiredAmount: 50
