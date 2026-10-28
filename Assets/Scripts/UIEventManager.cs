@@ -21,6 +21,9 @@ public class UIEventManager : UiModals
     [SerializeField] private TextMeshProUGUI eventText;
 
 
+    [Header("Tutorial")]
+    [SerializeField] private bool pauseDuringTutorial = true;
+
     private WorkerManager workerManager; 
     private ResourceManager resourceManager;
     private readonly Dictionary<ResourceEventsUI, float> eventTimers = new();
@@ -64,6 +67,9 @@ public class UIEventManager : UiModals
 
     private void Update()
     {
+        if (pauseDuringTutorial)
+            return;
+
         if (eventOnCooldown)
         {
             eventCooldownTimer -= Time.deltaTime;
@@ -223,4 +229,8 @@ public class UIEventManager : UiModals
         return Random.Range(min, max);
     }
 
+    public void SetTutorialPaused(bool paused)
+    {
+        pauseDuringTutorial = paused;
+    }
 }

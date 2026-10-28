@@ -17,6 +17,9 @@ public class ObjectiveManager : MonoBehaviour
     [SerializeField] private int currentObjectiveIndex;
     [SerializeField] private int currentObjectiveProgress;
 
+    [Header("Debug - Runtime State")]
+    [SerializeField] private bool debugAllObjectivesCompleted;
+
     // Tracks gathered amounts separately for each resource.
     private readonly Dictionary<ResourceDataSO, int> resourceProgress =
         new Dictionary<ResourceDataSO, int>();
@@ -26,8 +29,7 @@ public class ObjectiveManager : MonoBehaviour
     private bool IsSequenceValid => questSequence != null && currentQuestIndex >= 0 && currentQuestIndex < questSequence.Count;
 
     private readonly Dictionary<ResourceDataSO, int> depositProgress = new Dictionary<ResourceDataSO, int>();
-    public ObjectivesSO CurrentQuest =>
-        IsSequenceValid ? questSequence[currentQuestIndex] : null;
+    public ObjectivesSO CurrentQuest => IsSequenceValid ? questSequence[currentQuestIndex] : null;
 
     public ObjectivesSO.BuildingObjective CurrentObjective
     {
@@ -141,7 +143,19 @@ public class ObjectiveManager : MonoBehaviour
         Instance = this;
 
         SkipCompletedObjectives();
+        UpdateResourceEventsState();
+
         OnObjectiveUpdated?.Invoke();
+    }
+
+    private void Start()
+    {
+        UpdateResourceEventsState();
+    }
+
+    private void Update()
+    {
+        debugAllObjectivesCompleted = AllObjectiveCompleted;
     }
 
     #region Structure Objective
@@ -482,6 +496,9 @@ public class ObjectiveManager : MonoBehaviour
         resourceProgress.Clear();
 
         SkipCompletedObjectives();
+
+        UpdateResourceEventsState();
+
         OnObjectiveUpdated?.Invoke();
 
         if (AllObjectiveCompleted)
@@ -567,6 +584,40 @@ public class ObjectiveManager : MonoBehaviour
             resourceProgress.Clear(); 
             depositProgress.Clear();
         }
+    }
+
+    private void UpdateResourceEventsState()
+    {
+        bool tutorialStillRunning = !AllObjectiveCompleted;
+
+        UIEventManager eventManager =
+            FindObjectOfType<UIEventManager>(true);
+
+        WaterForecast waterForecast =
+            FindObjectOfType<WaterForecast>(true);
+
+        if (eventManager != null)
+        {
+            eventManager.SetTutorialPaused(tutorialStillRunning);
+        }
+        else
+        {
+            Debug.LogError(
+                "[ObjectiveManager] UIEventManager not found in the scene!");
+        }
+
+        if (waterForecast != null)
+        {
+            waterForecast.SetTutorialPaused(tutorialStillRunning);
+        }
+        else
+        {
+            Debug.LogError(
+                "[ObjectiveManager] WaterForecast not found in the scene!");
+        }
+
+        Debug.Log(
+            $"[ObjectiveManager] Tutorial running: {tutorialStillRunning}");
     }
 
     private bool HasValidResourceRequirements(ObjectivesSO.BuildingObjective objective)
