@@ -3523,7 +3523,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3582958559651570835, guid: 526ca26259d15244ba033b85580d17d8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5155966574426463324}
   m_SourcePrefab: {fileID: 100100000, guid: 526ca26259d15244ba033b85580d17d8, type: 3}
 --- !u!1 &4387720985009578126 stripped
 GameObject:
@@ -3552,6 +3555,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!1 &5906070302914503856 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3582958559651570835, guid: 526ca26259d15244ba033b85580d17d8, type: 3}
+  m_PrefabInstance: {fileID: 6939952973364183075}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5155966574426463324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5906070302914503856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93e4bb6ad81264242a1f793668f49a7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UICloseButton
 --- !u!224 &9096599435873691637 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2193875926227150806, guid: 526ca26259d15244ba033b85580d17d8, type: 3}
