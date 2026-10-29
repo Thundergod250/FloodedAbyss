@@ -154,6 +154,7 @@ MonoBehaviour:
   waterPressureText: {fileID: 8940893146930753650}
   resourceContainer: {fileID: 2954262432296546569}
   resourcePairPrefab: {fileID: 7750372029716409510, guid: d74526e6cf5d42b4eba8760c134d0f19, type: 3}
+  UINotification: {fileID: 5481795522764984416}
 --- !u!114 &6940984850502974775
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -188,10 +189,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 689209a6eb9981d4b818fc3d73bfef38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UINotification
-  containerParent: {fileID: 0}
-  panelPrefab: {fileID: 4918986809270964285, guid: 1c165db6509551a4f98df7d162b0a1ab, type: 3}
-  enableSelfTesting: 0
-  testSpawnInterval: 0.8
+  notificationText: {fileID: 1376946961098051335}
+  pulseSpeed: 4
+  minScale: 1
+  maxScale: 1.2
 --- !u!114 &7376929136248131131
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1408,6 +1409,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3491357390702125011, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
   m_PrefabInstance: {fileID: 2478103047148192728}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1376946961098051335 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3564625908760923359, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+  m_PrefabInstance: {fileID: 2478103047148192728}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!114 &2115414011286010851 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4555540841569122363, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}

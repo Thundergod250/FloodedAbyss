@@ -1694,6 +1694,7 @@ GameObject:
   - component: {fileID: 8958050728163998806}
   - component: {fileID: 3323178958204491096}
   - component: {fileID: 221634388653936047}
+  - component: {fileID: 4466569644277375043}
   m_Layer: 0
   m_Name: OmegaPump
   m_TagString: Untagged
@@ -1834,6 +1835,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HoverHighlight
   outlineMaterial: {fileID: 2100000, guid: d625b157ec0b38e459c68a60028fe48a, type: 2}
   matchObjectColor: 0
+--- !u!114 &4466569644277375043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8321433466359038807}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01df9b77c65c18c4ba3e8ffe73472b0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UINotification_Pump
+  lowFuelThreshold: 50
+  checkInterval: 1
+  warningColor: {r: 1, g: 0, b: 0, a: 1}
+  warningMessage: 'WARNING: PUMP LOW FUEL'
 --- !u!1 &8335631764363509543
 GameObject:
   m_ObjectHideFlags: 0
