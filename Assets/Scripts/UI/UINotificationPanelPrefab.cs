@@ -92,8 +92,8 @@ public class UINotificationPanelPrefab : MonoBehaviour
 
     private void CleanupAndPool()
     {
-        if (centralManager != null)
-            centralManager.UnregisterPanel(this);
+        /*if (centralManager != null)
+            centralManager.UnregisterPanel(this);*/
 
         Pool.Destroy(gameObject);
     }

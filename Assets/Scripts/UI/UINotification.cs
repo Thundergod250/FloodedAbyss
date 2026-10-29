@@ -1,111 +1,58 @@
-using System;
 using UnityEngine;
 using TMPro;
-using System.Collections;
-using Object = UnityEngine.Object;
 
 public class UINotification : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private TextMeshProUGUI notificationText;
     
-    [Header("Warning Settings")]
-    [SerializeField] private float lowFuelThreshold = 50f;
-    [SerializeField] private float checkInterval = 1f; // Editable check interval in seconds
-    [SerializeField] private Color warningColor = Color.red;
+    [Header("Pulse Settings")]
     [SerializeField] private float pulseSpeed = 4f;
     [SerializeField] private float minScale = 1f;
     [SerializeField] private float maxScale = 1.2f;
     
-    private StructureApexPump targetApexPump;
     private RectTransform rectTransform;
-    private bool isLowFuel = false;
-    private Coroutine checkRoutine;
+    private bool isPulsing = false;
 
     private void Awake()
     {
-        if (notificationText != null) 
+        if (notificationText == null)
+            notificationText = GetComponent<TextMeshProUGUI>();
+
+        if (notificationText != null)
             rectTransform = notificationText.gameObject.GetComponent<RectTransform>();
-        SetNotificationState(false);
-    }
 
-    private void OnEnable()
-    {
-        if (checkRoutine == null)
-            checkRoutine = StartCoroutine(CheckFuelRoutine());
-    }
-
-    private void OnDisable()
-    {
-        if (checkRoutine != null)
-        {
-            StopCoroutine(checkRoutine);
-            checkRoutine = null;
-        }
-    }
-
-    private IEnumerator CheckFuelRoutine()
-    {
-        WaitForSeconds wait = new WaitForSeconds(checkInterval);
-
-        // Give GameManager a brief moment to initialize if needed
-        yield return null; 
-
-        while (true)
-        {
-            // Safely resolve targetApexPump
-            if (!targetApexPump)
-            {
-                if (GameManager.Instance != null && GameManager.Instance.ApexPump != null)
-                {
-                    targetApexPump = GameManager.Instance.ApexPump;
-                }
-                else
-                {
-                    targetApexPump = Object.FindAnyObjectByType<StructureApexPump>();
-                }
-            }
-
-            // Double check that targetApexPump is truly valid before querying CurrentFuel
-            if (targetApexPump != null)
-            {
-                isLowFuel = targetApexPump.CurrentFuel < lowFuelThreshold;
-
-                if (isLowFuel && notificationText != null && !notificationText.gameObject.activeSelf)
-                    SetNotificationState(true);
-                else if (!isLowFuel && notificationText != null && notificationText.gameObject.activeSelf) 
-                    SetNotificationState(false);
-            }
-
-            yield return wait;
-        }
+        // Start hidden by default
+        SetNotificationActive(false, string.Empty, Color.white);
     }
 
     private void Update()
     {
-        // Update runs strictly for smooth scaling animation when the warning is active
-        if (isLowFuel && notificationText != null && notificationText.gameObject.activeSelf && rectTransform != null)
+        // Consistent pulsing effect for any active notification
+        if (isPulsing && notificationText != null && notificationText.gameObject.activeSelf && rectTransform != null)
         {
             float scale = Mathf.Lerp(minScale, maxScale, (Mathf.Sin(Time.time * pulseSpeed) + 1f) / 2f);
             rectTransform.localScale = new Vector3(scale, scale, 1f);
         }
     }
 
-    private void SetNotificationState(bool active)
+    // Public method to be triggered by other scripts (like UINotification_Pump)
+    public void SetNotificationActive(bool active, string message = "", Color color = default)
     {
-        if (notificationText != null)
+        if (notificationText == null) return;
+
+        isPulsing = active;
+        notificationText.gameObject.SetActive(active);
+
+        if (active)
         {
-            notificationText.gameObject.SetActive(active);
-            if (active)
-            {
-                notificationText.color = warningColor;
-                notificationText.text = "WARNING: PUMP LOW FUEL";
-            }
-            else
-            {
-                if (rectTransform != null)
-                    rectTransform.localScale = Vector3.one;
-            }
+            notificationText.text = message;
+            notificationText.color = color == default ? Color.red : color;
+        }
+        else
+        {
+            if (rectTransform != null)
+                rectTransform.localScale = Vector3.one;
         }
     }
 }

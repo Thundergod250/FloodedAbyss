@@ -49,7 +49,7 @@ public class PlayerStats : MonoBehaviour
         ApplyHealthLevel();
         ApplyStaminaLevel();
         ApplyOxygenLevel();
-        ApplyPickAxeDamageLevel();
+        //ApplyPickAxeDamageLevel();
         ApplyPickAxeAttackSpeedLevel();
     }
 
@@ -58,7 +58,7 @@ public class PlayerStats : MonoBehaviour
     public void UpgradeMaxHealth() => TryIncrementLevel(ref healthLevel, upgradeData?.healthLevels, ApplyHealthLevel);
     public void UpgradeMaxStamina() => TryIncrementLevel(ref staminaLevel, upgradeData?.staminaLevels, ApplyStaminaLevel);
     public void UpgradeMaxOxygen() => TryIncrementLevel(ref oxygenLevel, upgradeData?.oxygenLevels, ApplyOxygenLevel);
-    public void UpgradePickAxeDamage() => TryIncrementLevel(ref pickAxeDamageLevel, upgradeData?.pickAxeDamageLevels, ApplyPickAxeDamageLevel);
+    //public void UpgradePickAxeDamage() => TryIncrementLevel(ref pickAxeDamageLevel, upgradeData?.pickAxeDamageLevels, ApplyPickAxeDamageLevel);
     public void UpgradePickAxeAttackSpeed() => TryIncrementLevel(ref pickAxeAttackSpeedLevel, upgradeData?.pickAxeAttackSpeedLevels, ApplyPickAxeAttackSpeedLevel);
 
     // Pump Threshold Upgrades triggered from the Upgrade Hub
@@ -83,7 +83,7 @@ public class PlayerStats : MonoBehaviour
         UpgradeMaxHealth();
         UpgradeMaxStamina();
         UpgradeMaxOxygen();
-        UpgradePickAxeDamage();
+        //UpgradePickAxeDamage();
         UpgradePickAxeAttackSpeed();
     }
 
@@ -161,8 +161,7 @@ public class PlayerStats : MonoBehaviour
     private void ApplyOxygenLevel() =>
         ApplyStat(upgradeData?.oxygenLevels, oxygenLevel, playerOxygen, playerOxygen.SetMaxOxygen);
 
-    private void ApplyPickAxeDamageLevel() =>
-        ApplyStat(upgradeData?.pickAxeDamageLevels, pickAxeDamageLevel, basePickAxe, basePickAxe.SetDamage);
+    //private void ApplyPickAxeDamageLevel() => ApplyStat(upgradeData?.pickAxeDamageLevels, pickAxeDamageLevel, basePickAxe, basePickAxe.SetDamage);
 
     private void ApplyPickAxeAttackSpeedLevel() =>
         ApplyStat(upgradeData?.pickAxeAttackSpeedLevels, pickAxeAttackSpeedLevel, basePickAxe, basePickAxe.SetAttackSpeed);

@@ -200,11 +200,11 @@ public class UIShopCard : MonoBehaviour
                 break;
 
 
-            case UpgradeType.AxeDamage:
+            /*case UpgradeType.AxeDamage:
 
                 playerStats.UpgradePickAxeDamage();
 
-                break;
+                break;*/
 
 
             case UpgradeType.AxeSpeed:

@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 3984025129540415282}
   - component: {fileID: 2252622275740506855}
   - component: {fileID: 6940984850502974775}
-  - component: {fileID: 5481795522764984416}
   - component: {fileID: 7376929136248131131}
   - component: {fileID: 2142965941019258242}
   - component: {fileID: 1512943821982909042}
@@ -148,7 +147,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHUD
   ModalPrefab: {fileID: 2843186802258320385}
-  UINotification: {fileID: 5481795522764984416}
   workerNumberText: {fileID: 2115414011286010851}
   homelessWorkerText: {fileID: 4877343976955566869}
   waterLevelText: {fileID: 5350315203777554876}
@@ -156,6 +154,7 @@ MonoBehaviour:
   waterPressureText: {fileID: 8940893146930753650}
   resourceContainer: {fileID: 2954262432296546569}
   resourcePairPrefab: {fileID: 7750372029716409510, guid: d74526e6cf5d42b4eba8760c134d0f19, type: 3}
+  UINotification: {fileID: 0}
 --- !u!114 &6940984850502974775
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -178,25 +177,6 @@ MonoBehaviour:
   debugToggleAction: {fileID: 2226932210249216780, guid: ad2be89f7caf9e140bb9d6401be0c40b, type: 3}
   addResource: {fileID: 0}
   upgradeStats: {fileID: 0}
---- !u!114 &5481795522764984416
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6879466495274620806}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 689209a6eb9981d4b818fc3d73bfef38, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UINotification
-  notificationText: {fileID: 0}
-  lowFuelThreshold: 50
-  checkInterval: 1
-  warningColor: {r: 1, g: 0, b: 0, a: 1}
-  pulseSpeed: 4
-  minScale: 1
-  maxScale: 1.2
 --- !u!114 &7376929136248131131
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -401,9 +381,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UINotification
   notificationText: {fileID: 3682277254166663651}
-  lowFuelThreshold: 50
-  checkInterval: 1
-  warningColor: {r: 1, g: 0, b: 0, a: 1}
   pulseSpeed: 3
   minScale: 1
   maxScale: 1.1
