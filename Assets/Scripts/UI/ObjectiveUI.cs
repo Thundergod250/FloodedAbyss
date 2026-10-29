@@ -1,12 +1,11 @@
 using TMPro;
 using UnityEngine;
 
-public class ObjectiveUI : UiModals
+public class ObjectiveUI : MonoBehaviour
 {
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI objectiveNameText;
     [SerializeField] private TextMeshProUGUI objectiveDescriptionText;
-
 
     [Header("Food Counter")]
     [SerializeField] private TextMeshProUGUI foodCounterText;
