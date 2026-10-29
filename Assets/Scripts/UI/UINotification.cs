@@ -22,10 +22,10 @@ public class UINotification : MonoBehaviour
     private bool isLowFuel = false;
     private Coroutine checkRoutine;
 
-    private void Start()
+    private void Awake()
     {
-        rectTransform = notificationText.gameObject.GetComponent<RectTransform>();
-        targetApexPump = GameManager.Instance.ApexPump; 
+        if (notificationText != null) 
+            rectTransform = notificationText.gameObject.GetComponent<RectTransform>();
         SetNotificationState(false);
     }
 
@@ -48,27 +48,27 @@ public class UINotification : MonoBehaviour
     {
         WaitForSeconds wait = new WaitForSeconds(checkInterval);
 
+        // Give GameManager a brief moment to initialize if needed
+        yield return null; 
+
         while (true)
         {
-            // Fallback to auto-find if targetApexPump is missing
-            if (targetApexPump == null)
+            // Safely resolve targetApexPump handling Unity's fake nulls
+            if (!targetApexPump)
             {
-                targetApexPump = Object.FindAnyObjectByType<StructureApexPump>();
+                if (GameManager.Instance != null && GameManager.Instance.ApexPump != null)
+                    targetApexPump = GameManager.Instance.ApexPump;
             }
 
-            if (targetApexPump != null)
+            // Use Unity's overloaded boolean operator to safely check if the component is truly alive
+            if (targetApexPump)
             {
-                // Check if fuel is lower than the threshold
                 isLowFuel = targetApexPump.CurrentFuel < lowFuelThreshold;
 
                 if (isLowFuel && !notificationText.gameObject.activeSelf)
-                {
                     SetNotificationState(true);
-                }
-                else if (!isLowFuel && notificationText.gameObject.activeSelf)
-                {
+                else if (!isLowFuel && notificationText.gameObject.activeSelf) 
                     SetNotificationState(false);
-                }
             }
 
             yield return wait;
@@ -78,7 +78,7 @@ public class UINotification : MonoBehaviour
     private void Update()
     {
         // Update runs strictly for smooth scaling animation when the warning is active
-        if (isLowFuel && notificationText != null && notificationText.gameObject.activeSelf)
+        if (isLowFuel && notificationText != null && notificationText.gameObject.activeSelf && rectTransform != null)
         {
             float scale = Mathf.Lerp(minScale, maxScale, (Mathf.Sin(Time.time * pulseSpeed) + 1f) / 2f);
             rectTransform.localScale = new Vector3(scale, scale, 1f);
