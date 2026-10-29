@@ -16,7 +16,8 @@ public class UIHUD : UiModals
 
     [Header("Resource HUD Settings")]
     [SerializeField] private Transform resourceContainer;       
-    [SerializeField] private GameObject resourcePairPrefab;     
+    [SerializeField] private GameObject resourcePairPrefab;
+    [SerializeField] private UINotification UINotification;  
 
     private bool isSubscribed = false;
     private Dictionary<ResourceDataSO, PanelResourcePair> resourcePanelMap = new();
@@ -160,4 +161,6 @@ public class UIHUD : UiModals
                 panel.UpdateAmount(newAmount);
         }
     }
+
+    public UINotification GetUINotification() => UINotification;
 }

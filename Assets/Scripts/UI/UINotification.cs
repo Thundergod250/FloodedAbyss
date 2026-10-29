@@ -1,90 +1,105 @@
-using System.Collections.Generic;
+using System;
 using UnityEngine;
+using TMPro;
+using System.Collections;
+using Object = UnityEngine.Object;
 
 public class UINotification : MonoBehaviour
 {
-    [Header("UI References")]
-    [SerializeField] private Transform containerParent;
-    [SerializeField] private UINotificationPanelPrefab panelPrefab;
-
-    [Header("Internal Spawner Test")]
-    [SerializeField] private bool enableSelfTesting = false;
-    [SerializeField] private float testSpawnInterval = 0.8f;
-
-    private List<UINotificationPanelPrefab> activePanels = new();
-    private float testTimer;
-    private int testCounter = 1;
-
-    private readonly Color[] testColors = new Color[] 
-    { 
-        Color.green, 
-        Color.red, 
-        Color.yellow, 
-        Color.cyan 
-    };
+    [Header("References")]
+    [SerializeField] private TextMeshProUGUI notificationText;
+    
+    [Header("Warning Settings")]
+    [SerializeField] private float lowFuelThreshold = 50f;
+    [SerializeField] private float checkInterval = 1f; // Editable check interval in seconds
+    [SerializeField] private Color warningColor = Color.red;
+    [SerializeField] private float pulseSpeed = 4f;
+    [SerializeField] private float minScale = 1f;
+    [SerializeField] private float maxScale = 1.2f;
+    
+    private StructureApexPump targetApexPump;
+    private RectTransform rectTransform;
+    private bool isLowFuel = false;
+    private Coroutine checkRoutine;
 
     private void Start()
     {
-        if (containerParent == null)
-            containerParent = transform;
+        rectTransform = notificationText.gameObject.GetComponent<RectTransform>();
+        targetApexPump = GameManager.Instance.ApexPump; 
+        SetNotificationState(false);
+    }
+
+    private void OnEnable()
+    {
+        if (checkRoutine == null)
+            checkRoutine = StartCoroutine(CheckFuelRoutine());
+    }
+
+    private void OnDisable()
+    {
+        if (checkRoutine != null)
+        {
+            StopCoroutine(checkRoutine);
+            checkRoutine = null;
+        }
+    }
+
+    private IEnumerator CheckFuelRoutine()
+    {
+        WaitForSeconds wait = new WaitForSeconds(checkInterval);
+
+        while (true)
+        {
+            // Fallback to auto-find if targetApexPump is missing
+            if (targetApexPump == null)
+            {
+                targetApexPump = Object.FindAnyObjectByType<StructureApexPump>();
+            }
+
+            if (targetApexPump != null)
+            {
+                // Check if fuel is lower than the threshold
+                isLowFuel = targetApexPump.CurrentFuel < lowFuelThreshold;
+
+                if (isLowFuel && !notificationText.gameObject.activeSelf)
+                {
+                    SetNotificationState(true);
+                }
+                else if (!isLowFuel && notificationText.gameObject.activeSelf)
+                {
+                    SetNotificationState(false);
+                }
+            }
+
+            yield return wait;
+        }
     }
 
     private void Update()
     {
-        // Self-testing auto spawner built directly into UINotification
-        if (!enableSelfTesting) return;
-
-        testTimer += Time.deltaTime;
-        if (testTimer >= testSpawnInterval)
+        // Update runs strictly for smooth scaling animation when the warning is active
+        if (isLowFuel && notificationText != null && notificationText.gameObject.activeSelf)
         {
-            testTimer = 0f;
-            Color randomColor = testColors[Random.Range(0, testColors.Length)];
-            ShowNotification($"+{testCounter * 10} Test Resource #{testCounter}", randomColor);
-            testCounter++;
+            float scale = Mathf.Lerp(minScale, maxScale, (Mathf.Sin(Time.time * pulseSpeed) + 1f) / 2f);
+            rectTransform.localScale = new Vector3(scale, scale, 1f);
         }
     }
 
-    public void ShowNotification(string message, Color color)
+    private void SetNotificationState(bool active)
     {
-        if (panelPrefab == null)
+        if (notificationText != null)
         {
-            Debug.LogError("[UINotification] Panel Prefab reference is missing in Inspector!");
-            return;
-        }
-
-        if (containerParent == null) 
-            containerParent = transform;
-
-        // Clean up any destroyed or null panels before enforcement
-        activePanels.RemoveAll(panel => panel == null);
-
-        // Enforce maximum active panel limit
-        while (activePanels.Count >= 4)
-        {
-            UINotificationPanelPrefab oldestPanel = activePanels[0];
-            // ForceDismiss() will invoke UnregisterPanel() internally to cleanly remove itself
-            oldestPanel.ForceDismiss();
-            
-            // Backup check in case ForceDismiss was called on an already inactive object
-            if (activePanels.Count > 0 && activePanels[0] == oldestPanel)
+            notificationText.gameObject.SetActive(active);
+            if (active)
             {
-                activePanels.RemoveAt(0);
+                notificationText.color = warningColor;
+                notificationText.text = "WARNING: PUMP LOW FUEL";
+            }
+            else
+            {
+                if (rectTransform != null)
+                    rectTransform.localScale = Vector3.one;
             }
         }
-
-        // Fetch / Spawn from pool
-        UINotificationPanelPrefab newPanel = Pool.Instantiate(panelPrefab, containerParent);
-
-        if (newPanel != null)
-        {
-            newPanel.Setup(message, color, this);
-            activePanels.Add(newPanel);
-        }
-    }
-
-    public void UnregisterPanel(UINotificationPanelPrefab panel)
-    {
-        if (activePanels.Contains(panel))
-            activePanels.Remove(panel);
     }
 }
