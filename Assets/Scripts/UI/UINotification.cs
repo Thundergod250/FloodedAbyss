@@ -53,21 +53,27 @@ public class UINotification : MonoBehaviour
 
         while (true)
         {
-            // Safely resolve targetApexPump handling Unity's fake nulls
+            // Safely resolve targetApexPump
             if (!targetApexPump)
             {
                 if (GameManager.Instance != null && GameManager.Instance.ApexPump != null)
+                {
                     targetApexPump = GameManager.Instance.ApexPump;
+                }
+                else
+                {
+                    targetApexPump = Object.FindAnyObjectByType<StructureApexPump>();
+                }
             }
 
-            // Use Unity's overloaded boolean operator to safely check if the component is truly alive
-            if (targetApexPump)
+            // Double check that targetApexPump is truly valid before querying CurrentFuel
+            if (targetApexPump != null)
             {
                 isLowFuel = targetApexPump.CurrentFuel < lowFuelThreshold;
 
-                if (isLowFuel && !notificationText.gameObject.activeSelf)
+                if (isLowFuel && notificationText != null && !notificationText.gameObject.activeSelf)
                     SetNotificationState(true);
-                else if (!isLowFuel && notificationText.gameObject.activeSelf) 
+                else if (!isLowFuel && notificationText != null && notificationText.gameObject.activeSelf) 
                     SetNotificationState(false);
             }
 
