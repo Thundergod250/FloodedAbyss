@@ -9,7 +9,7 @@ public class UiApexPump : UiModals
     [Header("UI Containers")]
     [SerializeField] private GameObject resourceButtonContainer;
     [SerializeField] private GameObject amountButtonContainer;
-    [SerializeField] private Transform resourceRequirementContainer; // The orange bar container for upgrade costs[cite: 7, 8]
+    [SerializeField] private Transform resourceRequirementContainer; // The orange bar container for upgrade costs
     [SerializeField] private GameObject resourcePairPrefabTemplate;   // Prefab with PanelResourcePair attached
 
     [Header("Display References")]
@@ -151,7 +151,6 @@ public class UiApexPump : UiModals
                 PanelResourcePair panel = itemGO.GetComponent<PanelResourcePair>();
                 if (panel != null)
                 {
-                    // Pass cost.amount so it displays the exact required upgrade cost (e.g., 2)
                     panel.Setup(cost.resourceDataSo, cost.amount);
                 }
 
@@ -164,7 +163,6 @@ public class UiApexPump : UiModals
     {
         if (currentPump != null)
         {
-            // Attempt the upgrade and capture the error message
             bool success = currentPump.TryUpgradePump(out string errorMsg);
             if (success)
             {
@@ -173,10 +171,7 @@ public class UiApexPump : UiModals
             }
             else
             {
-                // Debug log to console so you can inspect it immediately
                 Debug.LogWarning($"[UiApexPump] Upgrade failed: {errorMsg}");
-                
-                // Fallback text if errorMsg is empty
                 string displayMessage = string.IsNullOrEmpty(errorMsg) ? "Not Enough Resources for Upgrade!" : errorMsg;
                 ShowNotEnoughResourceWarning(displayMessage);
             }
@@ -264,7 +259,12 @@ public class UiApexPump : UiModals
     {
         if (currentPump != null)
         {
-            currentPump.ToggleSwitch(switchIndex);
+            bool success = currentPump.ToggleSwitch(switchIndex, out string errorMsg);
+            if (!success)
+            {
+                // Displays the threshold lock failure message on the notification text element
+                ShowNotEnoughResourceWarning(errorMsg);
+            }
         }
     }
 }

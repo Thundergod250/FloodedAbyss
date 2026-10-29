@@ -28,6 +28,9 @@ public class StructureApexPump : Structures
     [SerializeField] private int[] switchFuelCosts = { 1, 5, 10, 20, 50 }; 
     [SerializeField] private float consumptionInterval = 1f; // How often fuel is burned
 
+    [Header("Switch Fuel Thresholds (Editable)")]
+    [SerializeField] private int[] switchFuelThresholds = { 0, 50, 100, 500, 1000 }; // Minimum fuel required to turn on each switch
+
     [Header("Discharge Pressure Upgrades")]
     [SerializeField] private PumpUpgradeData[] upgradeLevels; // Configurable upgrade tiers (up to 5 levels)
     [SerializeField] private float defaultDrainagePowerPerSwitch = 50f; 
@@ -152,9 +155,22 @@ public class StructureApexPump : Structures
         return true;
     }
 
-    public void ToggleSwitch(int switchIndex)
+    public bool ToggleSwitch(int switchIndex, out string errorMessage)
     {
-        if (switchIndex < 0 || switchIndex >= switchStates.Length) return;
+        errorMessage = string.Empty;
+        if (switchIndex < 0 || switchIndex >= switchStates.Length) return false;
+
+        // If trying to turn ON the switch, verify the fuel threshold lock
+        if (!switchStates[switchIndex])
+        {
+            int requiredThreshold = GetSwitchThreshold(switchIndex);
+            if (currentFuel < requiredThreshold)
+            {
+                errorMessage = $"Cannot activate Switch {switchIndex + 1}! Requires at least {requiredThreshold} Fuel (Current: {currentFuel}).";
+                Debug.LogWarning($"[StructureApexPump] {errorMessage}");
+                return false;
+            }
+        }
 
         switchStates[switchIndex] = !switchStates[switchIndex];
         Debug.Log($"[StructureApexPump] Switch {switchIndex + 1} is now {(switchStates[switchIndex] ? "ON (Green)" : "OFF (Red)")}");
@@ -165,6 +181,7 @@ public class StructureApexPump : Structures
         }
 
         EvaluateAndApplyDrainage();
+        return true;
     }
 
     private IEnumerator ConsumeFuelRoutine()
@@ -180,6 +197,14 @@ public class StructureApexPump : Structures
             {
                 if (switchStates[i])
                 {
+                    // Check if current fuel dropped below this switch's threshold lock
+                    if (currentFuel < GetSwitchThreshold(i))
+                    {
+                        Debug.LogWarning($"[StructureApexPump] Fuel dropped below threshold ({GetSwitchThreshold(i)}) for Switch {i + 1}. Shutting it down.");
+                        switchStates[i] = false;
+                        continue;
+                    }
+
                     totalFuelCost += GetSwitchCost(i);
                     activeSwitchCount++;
                 }
@@ -215,7 +240,16 @@ public class StructureApexPump : Structures
         int activeSwitchCount = 0;
         for (int i = 0; i < switchStates.Length; i++)
         {
-            if (switchStates[i]) activeSwitchCount++;
+            if (switchStates[i])
+            {
+                // Ensure switch shuts down if threshold lock is violated
+                if (currentFuel < GetSwitchThreshold(i))
+                {
+                    switchStates[i] = false;
+                    continue;
+                }
+                activeSwitchCount++;
+            }
         }
 
         if (currentFuel > 0 && activeSwitchCount > 0)
@@ -265,6 +299,7 @@ public class StructureApexPump : Structures
     public int CurrentFuel => currentFuel;
     public int CurrentUpgradeLevel => currentUpgradeLevel;
     public int GetSwitchCost(int index) => (index >= 0 && index < switchFuelCosts.Length) ? switchFuelCosts[index] : 0;
+    public int GetSwitchThreshold(int index) => (index >= 0 && index < switchFuelThresholds.Length) ? switchFuelThresholds[index] : 0;
     public ResourceDataSO[] AcceptedResources => acceptedResources;
     public bool IsPumpActive
     {
