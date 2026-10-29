@@ -7,33 +7,36 @@ public class ObjectiveUI : UiModals
     [SerializeField] private TextMeshProUGUI objectiveNameText;
     [SerializeField] private TextMeshProUGUI objectiveDescriptionText;
 
-
     [Header("Food Counter")]
     [SerializeField] private TextMeshProUGUI foodCounterText;
     [SerializeField] private ResourceDataSO foodResource;
 
     private ObjectiveManager subscribedManager;
-
     private ResourceManager subscribedResourceManager;
 
-
-    private void Start()
+    // FIX: Added 'override' to resolve CS0114 warnings
+    protected override void Start()
     {
+        base.Start(); // Call the base class method to keep its functionality
         TrySubscribe();
         RefreshUI();
     }
 
-    private void OnEnable()
+    // FIX: Added 'override'
+    protected override void OnEnable()
     {
+        base.OnEnable(); // Call the base class method
         TrySubscribe();
-        RefreshUI(); 
+        RefreshUI();
         RefreshFoodCounter();
     }
 
-    private void OnDisable()
+    // FIX: Added 'override'
+    protected override void OnDisable()
     {
+        base.OnDisable(); // Call the base class method
         Unsubscribe();
-        UnsubscribeResourceManager(); // NEW
+        UnsubscribeResourceManager();
     }
 
     private void Update()
@@ -62,7 +65,7 @@ public class ObjectiveUI : UiModals
 
         subscribedManager = manager;
         subscribedManager.OnObjectiveUpdated += RefreshUI;
-    } 
+    }
 
     private void Unsubscribe()
     {
@@ -86,7 +89,6 @@ public class ObjectiveUI : UiModals
         subscribedResourceManager.OnResourceUpdated += OnResourceUpdated;
     }
 
-
     private void UnsubscribeResourceManager()
     {
         if (subscribedResourceManager == null)
@@ -95,7 +97,6 @@ public class ObjectiveUI : UiModals
         subscribedResourceManager.OnResourceUpdated -= OnResourceUpdated;
         subscribedResourceManager = null;
     }
-
 
     private void OnResourceUpdated(ResourceDataSO resource, int amount)
     {
@@ -122,8 +123,7 @@ public class ObjectiveUI : UiModals
             return;
         }
 
-        foodCounterText.text =
-            $"Food: {manager.GetResourceAmount(foodResource)}";
+        foodCounterText.text = $"Food: {manager.GetResourceAmount(foodResource)}";
     }
 
     private void RefreshUI()
@@ -148,8 +148,7 @@ public class ObjectiveUI : UiModals
         {
             if (manager.AllObjectiveCompleted)
                 objectiveNameText.text = "All Objectives Completed";
-            else if (objective != null &&
-                     !string.IsNullOrEmpty(objective.objectiveDescription))
+            else if (objective != null && !string.IsNullOrEmpty(objective.objectiveDescription))
                 objectiveNameText.text = objective.objectiveDescription;
             else
                 objectiveNameText.text = "Current Objective";
