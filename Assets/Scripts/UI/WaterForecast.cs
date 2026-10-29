@@ -19,7 +19,7 @@ public class WaterForecast : MonoBehaviour
 
     [Header("Random Backlog")]
     [SerializeField] private int initialEventCount = 3;
-    [SerializeField] private int generatedBacklogSize = 10;
+    //[SerializeField] private int generatedBacklogSize = 10;
 
     [Header("Rain FX")]
     [SerializeField] private ParticleSystem rainFX;
