@@ -1,90 +1,59 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class UINotification : MonoBehaviour
 {
-    [Header("UI References")]
-    [SerializeField] private Transform containerParent;
-    [SerializeField] private UINotificationPanelPrefab panelPrefab;
+    [Header("References")]
+    [SerializeField] private TextMeshProUGUI notificationText;
+    
+    [Header("Pulse Settings")]
+    [SerializeField] private float pulseSpeed = 4f;
+    [SerializeField] private float minScale = 1f;
+    [SerializeField] private float maxScale = 1.2f;
+    
+    private RectTransform rectTransform;
+    private bool isPulsing = false;
 
-    [Header("Internal Spawner Test")]
-    [SerializeField] private bool enableSelfTesting = false;
-    [SerializeField] private float testSpawnInterval = 0.8f;
-
-    private List<UINotificationPanelPrefab> activePanels = new();
-    private float testTimer;
-    private int testCounter = 1;
-
-    private readonly Color[] testColors = new Color[] 
-    { 
-        Color.green, 
-        Color.red, 
-        Color.yellow, 
-        Color.cyan 
-    };
-
-    private void Start()
+    private void Awake()
     {
-        if (containerParent == null)
-            containerParent = transform;
+        if (notificationText == null)
+            notificationText = GetComponent<TextMeshProUGUI>();
+
+        if (notificationText != null)
+            rectTransform = notificationText.gameObject.GetComponent<RectTransform>();
+
+        // Start hidden by default
+        SetNotificationActive(false, string.Empty, Color.white);
     }
 
     private void Update()
     {
-        // Self-testing auto spawner built directly into UINotification
-        if (!enableSelfTesting) return;
-
-        testTimer += Time.deltaTime;
-        if (testTimer >= testSpawnInterval)
+        // Consistent pulsing effect for any active notification
+        if (isPulsing && notificationText != null && notificationText.gameObject.activeSelf && rectTransform != null)
         {
-            testTimer = 0f;
-            Color randomColor = testColors[Random.Range(0, testColors.Length)];
-            ShowNotification($"+{testCounter * 10} Test Resource #{testCounter}", randomColor);
-            testCounter++;
+            float scale = Mathf.Lerp(minScale, maxScale, (Mathf.Sin(Time.time * pulseSpeed) + 1f) / 2f);
+            rectTransform.localScale = new Vector3(scale, scale, 1f);
         }
     }
 
-    public void ShowNotification(string message, Color color)
+    // Public method to be triggered by other scripts (like UINotification_Pump)
+    public void SetNotificationActive(bool active, string message = "", Color color = default)
     {
-        if (panelPrefab == null)
+        if (notificationText == null) return;
+
+        isPulsing = active;
+        notificationText.gameObject.SetActive(active);
+
+        if (active)
         {
-            Debug.LogError("[UINotification] Panel Prefab reference is missing in Inspector!");
-            return;
+            notificationText.text = message;
+            notificationText.color = color == default ? Color.red : color;
         }
-
-        if (containerParent == null) 
-            containerParent = transform;
-
-        // Clean up any destroyed or null panels before enforcement
-        activePanels.RemoveAll(panel => panel == null);
-
-        // Enforce maximum active panel limit
-        while (activePanels.Count >= 4)
+        else
         {
-            UINotificationPanelPrefab oldestPanel = activePanels[0];
-            // ForceDismiss() will invoke UnregisterPanel() internally to cleanly remove itself
-            oldestPanel.ForceDismiss();
-            
-            // Backup check in case ForceDismiss was called on an already inactive object
-            if (activePanels.Count > 0 && activePanels[0] == oldestPanel)
-            {
-                activePanels.RemoveAt(0);
-            }
+            if (rectTransform != null)
+                rectTransform.localScale = Vector3.one;
         }
-
-        // Fetch / Spawn from pool
-        UINotificationPanelPrefab newPanel = Pool.Instantiate(panelPrefab, containerParent);
-
-        if (newPanel != null)
-        {
-            newPanel.Setup(message, color, this);
-            activePanels.Add(newPanel);
-        }
-    }
-
-    public void UnregisterPanel(UINotificationPanelPrefab panel)
-    {
-        if (activePanels.Contains(panel))
-            activePanels.Remove(panel);
     }
 }
