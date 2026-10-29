@@ -28,6 +28,5 @@ public class UICloseButton : MonoBehaviour
             Debug.LogWarning("[UICloseButton] GameManager or UIController instance is missing!");
 
         GameManager.Instance.SoundManager.Play("SFXButtonClick");
-        Debug.LogWarning("BAAAAAAAAAAAA");
     }
 }
