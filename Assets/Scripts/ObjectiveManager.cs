@@ -49,6 +49,8 @@ public class ObjectiveManager : MonoBehaviour
         }
     }
 
+    public int CQI => currentQuestIndex;
+
     public bool AllObjectiveCompleted => CurrentQuest == null;
 
     public string CurrentObjectiveText
@@ -143,14 +145,24 @@ public class ObjectiveManager : MonoBehaviour
         Instance = this;
 
         SkipCompletedObjectives();
-        UpdateResourceEventsState();
+      //  UpdateResourceEventsState();
 
         OnObjectiveUpdated?.Invoke();
     }
 
-    private void Start()
+    private System.Collections.IEnumerator Start()
     {
+        yield return null; // Wait one frame for UI initialization
+
         UpdateResourceEventsState();
+
+        if (GameManager.Instance != null &&
+            GameManager.Instance.uiController != null &&
+            GameManager.Instance.uiController.GetComponentInChildren<UiTutorial>() != null)
+        {
+            GameManager.Instance.uiController.GetComponentInChildren<UiTutorial>().OpenUI();
+
+        }
     }
 
     private void Update()
@@ -497,6 +509,7 @@ public class ObjectiveManager : MonoBehaviour
 
         SkipCompletedObjectives();
 
+        GameManager.Instance.uiController.GetComponentInChildren<UiTutorial>().OpenUI();
         UpdateResourceEventsState();
 
         OnObjectiveUpdated?.Invoke();
@@ -590,11 +603,9 @@ public class ObjectiveManager : MonoBehaviour
     {
         bool tutorialStillRunning = !AllObjectiveCompleted;
 
-        UIEventManager eventManager =
-            FindObjectOfType<UIEventManager>(true);
+        UIEventManager eventManager = GameManager.Instance.uiController.GetComponent<UIEventManager>();
 
-        WaterForecast waterForecast =
-            FindObjectOfType<WaterForecast>(true);
+        WaterForecast waterForecast = GameManager.Instance.uiController.GetComponentInChildren<WaterForecast>();
 
         if (eventManager != null)
         {
