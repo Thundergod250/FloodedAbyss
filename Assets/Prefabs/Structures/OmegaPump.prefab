@@ -1695,6 +1695,7 @@ GameObject:
   - component: {fileID: 3323178958204491096}
   - component: {fileID: 221634388653936047}
   - component: {fileID: 4466569644277375043}
+  - component: {fileID: 273326963030022457}
   m_Layer: 0
   m_Name: OmegaPump
   m_TagString: Untagged
@@ -1797,6 +1798,7 @@ MonoBehaviour:
   resourceFuelValues: 01000000050000000a0000001900000032000000i
   switchFuelCosts: 01000000050000000a0000001400000032000000i
   consumptionInterval: 1
+  switchFuelThresholds: 000000003200000064000000f4010000e8030000i
   upgradeLevels: []
   defaultDrainagePowerPerSwitch: 50
   currentFuel: 0
@@ -1851,6 +1853,24 @@ MonoBehaviour:
   checkInterval: 1
   warningColor: {r: 1, g: 0, b: 0, a: 1}
   warningMessage: 'WARNING: PUMP LOW FUEL'
+  warningMessage2: 'WARNING: PUMP NO FUEL REFUEL IMMEDIATELY'
+--- !u!114 &273326963030022457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8321433466359038807}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a18e4128973124c4ebf7b206f3afd523, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StructurePumpFinalStand
+  finalStand: 0
+  finalStandWaterLevel: 80
+  finalStandDuration: 15
+  finalStandActivated: 0
+  resetFinalStand: 0
 --- !u!1 &8335631764363509543
 GameObject:
   m_ObjectHideFlags: 0

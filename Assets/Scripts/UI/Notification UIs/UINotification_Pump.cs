@@ -8,6 +8,7 @@ public class UINotification_Pump : MonoBehaviour
     [SerializeField] private float checkInterval = 1f; // Editable check interval in seconds
     [SerializeField] private Color warningColor = Color.red;
     [SerializeField] private string warningMessage = "WARNING: PUMP LOW FUEL";
+    [SerializeField] private string warningMessage2 = "WARNING: PUMP NO FUEL REFUEL IMMEDIATELY";
 
     private StructureApexPump apexPump;
     private UINotification uiNotification; 
@@ -42,8 +43,12 @@ public class UINotification_Pump : MonoBehaviour
         {
             if (apexPump != null && uiNotification != null)
             {
+                bool isZeroFuel = apexPump.CurrentFuel <= 0;
                 bool isLowFuel = apexPump.CurrentFuel < lowFuelThreshold;
-                if (isLowFuel)
+
+                if (isZeroFuel)
+                    uiNotification.SetNotificationActive(true, warningMessage2, warningColor);
+                else if(isLowFuel)
                     uiNotification.SetNotificationActive(true, warningMessage, warningColor);
                 else
                     uiNotification.SetNotificationActive(false);

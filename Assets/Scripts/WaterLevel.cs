@@ -60,6 +60,11 @@ public class WaterLevel : MonoBehaviour
         netDischargePower = Mathf.Max(0f, amount);
     }
 
+    public void SetOceanHeight(int amount)
+    {
+        maxWaterHeight = Mathf.Max(0f, amount);
+    }
+
     public float CurrentWaterHeight => oceanTransform != null ? oceanTransform.position.y : currentWaterHeight;
     public float NetDischargePower => netDischargePower;
     
