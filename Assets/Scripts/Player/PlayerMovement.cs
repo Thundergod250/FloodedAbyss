@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement-Climbing (Minecraft Style)")]
     public float climbSpeed = 3.5f;
     public bool isClimbing;
-    private int ladderTriggerCount = 0;
+    //private int ladderTriggerCount = 0;
 
     [Header("Movement-Water")]
     public float underwaterMoveSpeed;

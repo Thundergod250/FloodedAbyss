@@ -18,7 +18,7 @@ public class UiModals : MonoBehaviour
         {
             canvasGroup = targetGO.GetComponent<CanvasGroup>();
             if (canvasGroup == null) 
-                Debug.LogWarning($"[UiModals] Target modal object '{targetGO.name}' on '{gameObject.name}' is missing a CanvasGroup component! Falling back to SetActive().", this);
+                Debug.LogWarning($"[UiModals] {GetType().Name}: Target modal object '{targetGO.name}' on '{gameObject.name}' is missing a CanvasGroup component! Falling back to SetActive().", this);
         }
     }
 
