@@ -9,6 +9,18 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 95fdcca8f98cfa848a9129b9bdf30ff7, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 95fdcca8f98cfa848a9129b9bdf30ff7, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 95fdcca8f98cfa848a9129b9bdf30ff7, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 95fdcca8f98cfa848a9129b9bdf30ff7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -55,5 +67,99 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 95fdcca8f98cfa848a9129b9bdf30ff7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6092089453972331440}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 95fdcca8f98cfa848a9129b9bdf30ff7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 245563150626326806}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 95fdcca8f98cfa848a9129b9bdf30ff7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1876503218624423457}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 95fdcca8f98cfa848a9129b9bdf30ff7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8457981423054638144}
   m_SourcePrefab: {fileID: 100100000, guid: 95fdcca8f98cfa848a9129b9bdf30ff7, type: 3}
+--- !u!1 &3382180652377164000 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 95fdcca8f98cfa848a9129b9bdf30ff7, type: 3}
+  m_PrefabInstance: {fileID: 2463049755206284721}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &6092089453972331440
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3382180652377164000}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 9.273392, y: 5.8160996, z: 6.655105}
+  m_Center: {x: 2.0234137, y: 2.8520305, z: 0.004422903}
+--- !u!114 &245563150626326806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3382180652377164000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 586d09e3430c3fa4bb4b7161e1b7ee7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Interactables
+  interactionMessage: 
+  onInteract:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &1876503218624423457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3382180652377164000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 419958e9bb152c2429036da0e422d5f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StructureHarvestResource
+  ignoreSubmersion: 0
+  BuildablePrefab: {fileID: 2104639937772099258, guid: 85cc9829280f72a49a2e6f2948abba66, type: 3}
+  structureTitle: Metal Bar Source
+  laborCost: 4
+  productionDuration: 5
+  destructionDuration: 3
+  canBeDestroyed: 1
+  harvestMode: 1
+  maxHarvestCycles: 5
+  resourceToProduce: {fileID: 11400000, guid: 45f98a01a0e572748ae8e1f342d64f08, type: 2}
+  productionAmount: 1
+  isWorking: 0
+  isDestroying: 0
+  progressPercentage: 0
+--- !u!114 &8457981423054638144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3382180652377164000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60cb8c809a19c7b41a7c6adb7aca416d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoverHighlight
+  outlineMaterial: {fileID: 2100000, guid: d625b157ec0b38e459c68a60028fe48a, type: 2}
+  matchObjectColor: 0
