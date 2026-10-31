@@ -189,6 +189,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 906306606700106712}
+  - component: {fileID: 7400086514763544060}
+  - component: {fileID: 2889879101081265995}
+  - component: {fileID: 1289119993765839450}
+  - component: {fileID: 9048506050373324807}
   m_Layer: 0
   m_Name: MiningDrillLVL1
   m_TagString: Untagged
@@ -215,6 +219,83 @@ Transform:
   - {fileID: 3715671411205516759}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7400086514763544060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6770069056963228478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 586d09e3430c3fa4bb4b7161e1b7ee7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Interactables
+  interactionMessage: 
+  onInteract:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &2889879101081265995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6770069056963228478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 419958e9bb152c2429036da0e422d5f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StructureHarvestResource
+  ignoreSubmersion: 0
+  BuildablePrefab: {fileID: 1058038040027629035, guid: 2f578e65b9c30d144a28be802c66de7e, type: 3}
+  structureTitle: Ore Source
+  laborCost: 1
+  productionDuration: 3
+  destructionDuration: 3
+  canBeDestroyed: 1
+  harvestMode: 2
+  maxHarvestCycles: 5
+  resourceToProduce: {fileID: 11400000, guid: d6cdf2898ecf11445a9b136f67877a09, type: 2}
+  productionAmount: 5
+  isWorking: 0
+  isDestroying: 0
+  progressPercentage: 0
+--- !u!65 &1289119993765839450
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6770069056963228478}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 7.8, y: 8.81, z: 6.56}
+  m_Center: {x: 0, y: 3.99, z: 0}
+--- !u!114 &9048506050373324807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6770069056963228478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60cb8c809a19c7b41a7c6adb7aca416d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoverHighlight
+  outlineMaterial: {fileID: 0}
+  matchObjectColor: 0
 --- !u!1 &7500049236658551028
 GameObject:
   m_ObjectHideFlags: 0
