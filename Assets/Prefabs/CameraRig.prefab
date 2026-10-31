@@ -71,15 +71,19 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9129820665014219239}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3375f9685735cec4f90eec10d72830fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraMovement
   wasdSpeed: 300
   dragSpeed: 50
+  minX: -500
+  maxX: 500
+  minZ: -500
+  maxZ: 500
   cinemachineFollow: {fileID: 0}
   zoomSpeed: 15
-  minZoomY: 200
-  maxZoomY: 400
+  minZoomY: 300
+  maxZoomY: 500
   zoomDamping: 10
