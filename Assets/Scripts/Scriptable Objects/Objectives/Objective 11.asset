@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c5ac3280672e664cbf9288fcc10183c, type: 3}
   m_Name: Objective 11
   m_EditorClassIdentifier: Assembly-CSharp::ObjectivesSO
-  objectiveDescription: Use the gathered charcoal to activate the 2nd stage of the pump.
+  objectiveName: Prepare for the Great Flood
   objectives:
-  - objectiveDescription: Throw in the charcoal!
-    objectiveType: 3
+  - objectiveDescription: Throw in the 100 charcoal into the Pumps!
+    objectiveType: 4
     structureToBuild: {fileID: 0}
     requiredAmount: 1
     resourcesToDeposit:
@@ -23,3 +23,5 @@ MonoBehaviour:
       requiredAmount: 100
     requiredUIName: 
     resourcesToGather: []
+    structureToAssignWorkers: {fileID: 0}
+    requiredWorkers: 1

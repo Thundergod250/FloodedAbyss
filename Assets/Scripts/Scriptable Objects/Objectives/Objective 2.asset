@@ -12,11 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c5ac3280672e664cbf9288fcc10183c, type: 3}
   m_Name: Objective 2
   m_EditorClassIdentifier: Assembly-CSharp::ObjectivesSO
-  objectiveDescription: With the gathered resources , look for the pump, deposit 50 fiber then activate
+  objectiveName: Prepare for the Great Flood
   objectives:
-  - objectiveDescription: Activate Pump
+  - objectiveDescription: Deposit 50 Fiber into the Pump
+    objectiveType: 4
+    structureToBuild: {fileID: 0}
+    requiredAmount: 1
+    resourcesToDeposit: []
+    requiredUIName: 
+    resourcesToGather: []
+    structureToAssignWorkers: {fileID: 0}
+    requiredWorkers: 1
+  - objectiveDescription: Activate the Pump
     objectiveType: 3
     structureToBuild: {fileID: 0}
     requiredAmount: 1
+    resourcesToDeposit: []
     requiredUIName: 
     resourcesToGather: []
+    structureToAssignWorkers: {fileID: 0}
+    requiredWorkers: 1

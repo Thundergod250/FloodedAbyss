@@ -12,11 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c5ac3280672e664cbf9288fcc10183c, type: 3}
   m_Name: Objective 1
   m_EditorClassIdentifier: Assembly-CSharp::ObjectivesSO
-  objectiveDescription: 'Gather the floating resources, flowing in from the west.
-
-    Gather 50 Fiber and 50 Timber'
+  objectiveName: Prepare for the Great Flood
   objectives:
-  - objectiveDescription: 'Floating resources '
+  - objectiveDescription: Gather 50 Timber
     objectiveType: 2
     structureToBuild: {fileID: 0}
     requiredAmount: 0
@@ -25,6 +23,15 @@ MonoBehaviour:
     resourcesToGather:
     - resource: {fileID: 11400000, guid: 01dc29f87c71c4646b9184c0d72979aa, type: 2}
       requiredAmount: 50
+    structureToAssignWorkers: {fileID: 0}
+    requiredWorkers: 1
+  - objectiveDescription: Gather 50 Fiber
+    objectiveType: 2
+    structureToBuild: {fileID: 0}
+    requiredAmount: 0
+    resourcesToDeposit: []
+    requiredUIName: 
+    resourcesToGather:
     - resource: {fileID: 11400000, guid: 42d0a33d5d93fa0468020c1672f70b5c, type: 2}
       requiredAmount: 50
     structureToAssignWorkers: {fileID: 0}

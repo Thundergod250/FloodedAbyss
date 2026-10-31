@@ -20,9 +20,7 @@ public class ObjectiveManager : MonoBehaviour
     [Header("Debug - Runtime State")]
     [SerializeField] private bool debugAllObjectivesCompleted;
 
-    // Tracks gathered amounts separately for each resource.
-    private readonly Dictionary<ResourceDataSO, int> resourceProgress =
-        new Dictionary<ResourceDataSO, int>();
+    private readonly Dictionary<ResourceDataSO, int> resourceProgress = new Dictionary<ResourceDataSO, int>();
 
     public event Action OnObjectiveUpdated;
 
@@ -35,17 +33,20 @@ public class ObjectiveManager : MonoBehaviour
     {
         get
         {
+            EnsureObjectiveStates();
+
             ObjectivesSO quest = CurrentQuest;
 
-            if (quest == null ||
-                quest.objectives == null ||
-                currentObjectiveIndex < 0 ||
-                currentObjectiveIndex >= quest.objectives.Count)
-            {
+            if (quest == null)
                 return null;
+
+            for (int i = 0; i < quest.objectives.Count; i++)
+            {
+                if (!objectiveStates[i].completed)
+                    return quest.objectives[i];
             }
 
-            return quest.objectives[currentObjectiveIndex];
+            return null;
         }
     }
 
@@ -134,6 +135,22 @@ public class ObjectiveManager : MonoBehaviour
         }
     }
 
+    private class ObjectiveRuntimeState
+    {
+        public bool completed;
+        public int countProgress;
+
+        public Dictionary<ResourceDataSO, int> gatherProgress =
+            new Dictionary<ResourceDataSO, int>();
+
+        public Dictionary<ResourceDataSO, int> depositProgress =
+            new Dictionary<ResourceDataSO, int>();
+    }
+
+    private List<ObjectiveRuntimeState> objectiveStates = new List<ObjectiveRuntimeState>();
+
+    private ObjectivesSO trackedQuest;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -144,8 +161,8 @@ public class ObjectiveManager : MonoBehaviour
 
         Instance = this;
 
-        SkipCompletedObjectives();
-      //  UpdateResourceEventsState();
+        EnsureObjectiveStates();
+        //  UpdateResourceEventsState();
 
         OnObjectiveUpdated?.Invoke();
     }
@@ -173,36 +190,33 @@ public class ObjectiveManager : MonoBehaviour
     #region Structure Objective
     public void NotifyStructureBuilt(StructureDataSO builtStructure)
     {
-        var objective = CurrentObjective;
-
-        if (objective == null || builtStructure == null)
+        if (builtStructure == null || CurrentQuest == null)
             return;
 
-        if (objective.objectiveType !=
-            ObjectivesSO.ObjectiveType.BuildStructure)
+        EnsureObjectiveStates();
+
+        bool changed = false;
+
+        for (int i = 0; i < CurrentQuest.objectives.Count; i++)
         {
-            return;
+            var objective = CurrentQuest.objectives[i];
+            var state = objectiveStates[i];
+
+            if (state.completed ||
+                objective.objectiveType != ObjectivesSO.ObjectiveType.BuildStructure ||
+                objective.structureToBuild != builtStructure)
+                continue;
+
+            state.countProgress++;
+
+            if (state.countProgress >= Mathf.Max(1, objective.requiredAmount))
+                CompleteChecklistItem(i);
+
+            changed = true;
         }
 
-        if (objective.structureToBuild != builtStructure)
-            return;
-
-        currentObjectiveProgress++;
-
-        Debug.Log(
-            $"[ObjectiveManager] {CurrentObjectiveText}: " +
-            $"{currentObjectiveProgress}/{objective.requiredAmount}"
-        );
-
-        if (currentObjectiveProgress >=
-            Mathf.Max(1, objective.requiredAmount))
-        {
-            AdvanceObjective();
-        }
-        else
-        {
-            OnObjectiveUpdated?.Invoke();
-        }
+        if (changed)
+            CheckQuestCompletion();
     }
 
     #endregion
@@ -210,142 +224,120 @@ public class ObjectiveManager : MonoBehaviour
     #region UI Objective
     public void NotifyUIOpened(string uiName)
     {
-        var objective = CurrentObjective;
-
-        if (objective == null)
+        if (CurrentQuest == null || string.IsNullOrEmpty(uiName))
             return;
 
-        if (objective.objectiveType !=
-            ObjectivesSO.ObjectiveType.OpenUI)
+        EnsureObjectiveStates();
+
+        bool changed = false;
+
+        for (int i = 0; i < CurrentQuest.objectives.Count; i++)
         {
-            return;
+            var objective = CurrentQuest.objectives[i];
+
+            if (objectiveStates[i].completed)
+                continue;
+
+            if (objective.objectiveType != ObjectivesSO.ObjectiveType.OpenUI ||
+                objective.requiredUIName != uiName)
+                continue;
+
+            CompleteChecklistItem(i);
+            changed = true;
         }
 
-        if (objective.requiredUIName != uiName)
-            return;
-
-        Debug.Log($"[ObjectiveManager] UI opened: {uiName}");
-
-        AdvanceObjective();
+        if (changed)
+            CheckQuestCompletion();
     }
 
     #endregion
 
     #region Resource Objective
-    public void NotifyResourceGathered(
-        ResourceDataSO resource,
-        int amount)
+    public void NotifyResourceGathered(ResourceDataSO resource, int amount)
     {
-        var objective = CurrentObjective;
-
-        if (objective == null || resource == null || amount <= 0)
+        if (resource == null || amount <= 0 || CurrentQuest == null)
             return;
 
-        if (objective.objectiveType !=
-            ObjectivesSO.ObjectiveType.GatherResource)
+        EnsureObjectiveStates();
+
+        bool changed = false;
+
+        for (int i = 0; i < CurrentQuest.objectives.Count; i++)
         {
-            return;
+            var objective = CurrentQuest.objectives[i];
+            var state = objectiveStates[i];
+
+            if (state.completed ||
+                objective.objectiveType != ObjectivesSO.ObjectiveType.GatherResource ||
+                objective.resourcesToGather == null)
+                continue;
+
+            int requiredAmount = 0;
+
+            foreach (var requirement in objective.resourcesToGather)
+            {
+                if (requirement != null && requirement.resource == resource)
+                    requiredAmount += Mathf.Max(1, requirement.requiredAmount);
+            }
+
+            if (requiredAmount <= 0)
+                continue;
+
+            if (!state.gatherProgress.ContainsKey(resource))
+                state.gatherProgress[resource] = 0;
+
+            state.gatherProgress[resource] += amount;
+
+            Debug.Log(
+                $"[ObjectiveManager] {resource.ResourceName}: " +
+                $"{state.gatherProgress[resource]}/{requiredAmount}"
+            );
+
+            if (AreAllResourcesGatheredForItem(objective, state))
+                CompleteChecklistItem(i);
+
+            changed = true;
         }
 
-        if (objective.resourcesToGather == null ||
-            objective.resourcesToGather.Count == 0)
-        {
-            return;
-        }
-
-        // Only accept resources required by this objective.
-        bool resourceRequired = objective.resourcesToGather.Exists(
-            requirement =>
-                requirement != null &&
-                requirement.resource == resource &&
-                requirement.requiredAmount > 0
-        );
-
-        if (!resourceRequired)
-            return;
-
-        if (!resourceProgress.ContainsKey(resource))
-            resourceProgress[resource] = 0;
-
-        resourceProgress[resource] += amount;
-
-        int requiredAmount = GetRequiredResourceAmount(
-            objective, resource);
-
-        int gatheredAmount = resourceProgress[resource];
-
-        Debug.Log(
-            $"[ObjectiveManager] Gathering {resource.ResourceName}: " +
-            $"{gatheredAmount}/{requiredAmount}"
-        );
-
-        // Advance only when every required resource is complete.
-        if (AreAllResourcesGathered(objective))
-        {
-            Debug.Log("[ObjectiveManager] All required resources gathered!");
-            AdvanceObjective();
-        }
-        else
-        {
-            OnObjectiveUpdated?.Invoke();
-        }
+        if (changed)
+            CheckQuestCompletion();
     }
 
-    private int GetRequiredResourceAmount(
-        ObjectivesSO.BuildingObjective objective,
-        ResourceDataSO resource)
+    private bool AreAllResourcesGatheredForItem(
+     ObjectivesSO.BuildingObjective objective,
+     ObjectiveRuntimeState state)
     {
-        int totalRequired = 0;
-
         if (objective.resourcesToGather == null)
-            return 0;
-
-        foreach (var requirement in objective.resourcesToGather)
-        {
-            if (requirement == null ||
-                requirement.resource != resource)
-            {
-                continue;
-            }
-
-            totalRequired += Mathf.Max(1, requirement.requiredAmount);
-        }
-
-        return totalRequired;
-    }
-
-    private bool AreAllResourcesGathered(
-        ObjectivesSO.BuildingObjective objective)
-    {
-        if (objective.resourcesToGather == null ||
-            objective.resourcesToGather.Count == 0)
-        {
             return false;
-        }
 
-        bool foundRequirement = false;
+        Dictionary<ResourceDataSO, int> requirements =
+            new Dictionary<ResourceDataSO, int>();
 
         foreach (var requirement in objective.resourcesToGather)
         {
-            if (requirement == null ||
-                requirement.resource == null ||
+            if (requirement == null || requirement.resource == null ||
                 requirement.requiredAmount <= 0)
-            {
                 continue;
-            }
 
-            foundRequirement = true;
+            if (!requirements.ContainsKey(requirement.resource))
+                requirements[requirement.resource] = 0;
 
-            int gathered = resourceProgress.TryGetValue(
-                requirement.resource, out int progress)
-                ? progress
-                : 0;
+            requirements[requirement.resource] += requirement.requiredAmount;
+        }
 
-            if (gathered < requirement.requiredAmount)
+        if (requirements.Count == 0)
+            return false;
+
+        foreach (var requirement in requirements)
+        {
+            int gathered = state.gatherProgress.TryGetValue(
+                requirement.Key, out int progress) ? progress : 0;
+
+            if (gathered < requirement.Value)
                 return false;
         }
 
-        return foundRequirement;
+        return true;
     }
 
     #endregion
@@ -353,68 +345,101 @@ public class ObjectiveManager : MonoBehaviour
     #region ApexPump Objective
     public void NotifyPumpActivated(StructureApexPump pump)
     {
-        var objective = CurrentObjective;
-
-        if (objective == null || pump == null)
+        if (pump == null || CurrentQuest == null)
             return;
 
-        if (objective.objectiveType !=
-            ObjectivesSO.ObjectiveType.ActivatePump)
-            return;
+        EnsureObjectiveStates();
 
-        Debug.Log("[ObjectiveManager] Apex Pump activated!");
+        bool changed = false;
 
-        AdvanceObjective();
+        for (int i = 0; i < CurrentQuest.objectives.Count; i++)
+        {
+            if (objectiveStates[i].completed)
+                continue;
+
+            if (CurrentQuest.objectives[i].objectiveType !=
+                ObjectivesSO.ObjectiveType.ActivatePump)
+                continue;
+
+            CompleteChecklistItem(i);
+            changed = true;
+        }
+
+        if (changed)
+            CheckQuestCompletion();
     }
 
     #endregion
 
     #region Deposit Objective
-    public void NotifyResourceDeposited(
-    ResourceDataSO resource,
-    int amount)
+    public void NotifyResourceDeposited(ResourceDataSO resource, int amount)
     {
-        var objective = CurrentObjective;
-
-        if (objective == null || resource == null || amount <= 0)
+        if (resource == null || amount <= 0 || CurrentQuest == null)
             return;
 
-        if (objective.objectiveType !=
-            ObjectivesSO.ObjectiveType.DepositResource)
-            return;
+        EnsureObjectiveStates();
 
-        if (objective.resourcesToDeposit == null)
-            return;
+        bool changed = false;
 
-        bool required = objective.resourcesToDeposit.Exists(
-            r => r != null &&
-                 r.resource == resource &&
-                 r.requiredAmount > 0
-        );
-
-        if (!required)
-            return;
-
-        if (!depositProgress.ContainsKey(resource))
-            depositProgress[resource] = 0;
-
-        depositProgress[resource] += amount;
-
-        Debug.Log(
-            $"[ObjectiveManager] Deposited {resource.ResourceName}: " +
-            $"{depositProgress[resource]}/" +
-            $"{GetDepositRequirement(objective, resource)}"
-        );
-
-        if (AreAllDepositsComplete(objective))
+        for (int i = 0; i < CurrentQuest.objectives.Count; i++)
         {
-            Debug.Log("[ObjectiveManager] Deposit objective completed!");
-            AdvanceObjective();
+            var objective = CurrentQuest.objectives[i];
+            var state = objectiveStates[i];
+
+            if (state.completed ||
+                objective.objectiveType != ObjectivesSO.ObjectiveType.DepositResource ||
+                objective.resourcesToDeposit == null)
+                continue;
+
+            int requiredAmount = 0;
+
+            foreach (var requirement in objective.resourcesToDeposit)
+            {
+                if (requirement != null && requirement.resource == resource)
+                    requiredAmount += Mathf.Max(1, requirement.requiredAmount);
+            }
+
+            if (requiredAmount <= 0)
+                continue;
+
+            if (!state.depositProgress.ContainsKey(resource))
+                state.depositProgress[resource] = 0;
+
+            state.depositProgress[resource] += amount;
+
+            if (AreAllDepositsCompleteForItem(objective, state))
+                CompleteChecklistItem(i);
+
+            changed = true;
         }
-        else
+
+        if (changed)
+            CheckQuestCompletion();
+    }
+
+    private bool AreAllDepositsCompleteForItem(
+        ObjectivesSO.BuildingObjective objective,
+        ObjectiveRuntimeState state)
+    {
+        bool foundRequirement = false;
+
+        foreach (var requirement in objective.resourcesToDeposit)
         {
-            OnObjectiveUpdated?.Invoke();
+            if (requirement == null ||
+                requirement.resource == null ||
+                requirement.requiredAmount <= 0)
+                continue;
+
+            foundRequirement = true;
+
+            int deposited = state.depositProgress.TryGetValue(
+                requirement.resource, out int progress) ? progress : 0;
+
+            if (deposited < requirement.requiredAmount)
+                return false;
         }
+
+        return foundRequirement;
     }
 
     private int GetDepositRequirement(
@@ -459,73 +484,107 @@ public class ObjectiveManager : MonoBehaviour
 
     public void NotifyWorkerRecruited(Structures recruitingBuilding)
     {
-        var objective = CurrentObjective;
-
-        if (objective == null || recruitingBuilding == null)
+        if (recruitingBuilding == null || CurrentQuest == null)
             return;
 
-        if (objective.objectiveType !=
-            ObjectivesSO.ObjectiveType.RecruitWorker)
-            return;
+        EnsureObjectiveStates();
 
-        // TODO: Verify that recruitingBuilding is the specific
-        // building required by this objective.
+        bool changed = false;
 
-        Debug.Log("[ObjectiveManager] Worker recruited!");
+        for (int i = 0; i < CurrentQuest.objectives.Count; i++)
+        {
+            if (objectiveStates[i].completed)
+                continue;
 
-        AdvanceObjective();
+            if (CurrentQuest.objectives[i].objectiveType !=
+                ObjectivesSO.ObjectiveType.RecruitWorker)
+                continue;
+
+            CompleteChecklistItem(i);
+            changed = true;
+        }
+
+        if (changed)
+            CheckQuestCompletion();
     }
-
     #endregion
 
     #region Assign Worker Objective
-    public void NotifyWorkersAssigned(StructureHarvestResource quarry,int assignedWorkers)
+    public void NotifyWorkersAssigned(StructureHarvestResource quarry, int assignedWorkers)
     {
-        var objective = CurrentObjective;
-
-        if (objective == null || quarry == null)
+        if (quarry == null || CurrentQuest == null)
             return;
 
-        if (objective.objectiveType !=
-            ObjectivesSO.ObjectiveType.AssignWorkers)
-            return;
+        EnsureObjectiveStates();
 
-        if (assignedWorkers >= objective.requiredWorkers)
+        bool changed = false;
+
+        for (int i = 0; i < CurrentQuest.objectives.Count; i++)
         {
-            Debug.Log("Workers assigned to quarry!");
-            AdvanceObjective();
+            var objective = CurrentQuest.objectives[i];
+
+            if (objectiveStates[i].completed ||
+                objective.objectiveType != ObjectivesSO.ObjectiveType.AssignWorkers)
+                continue;
+
+            if (assignedWorkers >= objective.requiredWorkers)
+            {
+                CompleteChecklistItem(i);
+                changed = true;
+            }
         }
+
+        if (changed)
+            CheckQuestCompletion();
     }
 
     #endregion
 
     #region Objective Progress
 
-    private void AdvanceObjective()
+    private void CompleteChecklistItem(int index)
     {
-        currentObjectiveIndex++;
-        currentObjectiveProgress = 0;
-        resourceProgress.Clear();
+        if (index < 0 || index >= objectiveStates.Count)
+            return;
 
-        SkipCompletedObjectives();
+        objectiveStates[index].completed = true;
 
-        GameManager.Instance.uiController.GetComponentInChildren<UiTutorial>().OpenUI();
-        UpdateResourceEventsState();
+        Debug.Log(
+            $"[ObjectiveManager] Completed checklist item: " +
+            $"{GetChecklistItemText(index)}"
+        );
+    }
+
+    private void CheckQuestCompletion()
+    {
+        EnsureObjectiveStates();
+
+        if (CurrentQuest == null)
+            return;
+
+        bool allCompleted = objectiveStates.Count > 0 &&
+            objectiveStates.TrueForAll(state => state.completed);
+
+        if (allCompleted)
+        {
+            Debug.Log("[ObjectiveManager] Quest completed!");
+
+            currentQuestIndex++;
+            currentObjectiveIndex = 0;
+            currentObjectiveProgress = 0;
+
+            trackedQuest = null;
+            objectiveStates.Clear();
+
+            EnsureObjectiveStates();
+
+            if (AllObjectiveCompleted)
+                Debug.Log("[ObjectiveManager] All quests completed!");
+
+            UpdateResourceEventsState();
+        }
 
         OnObjectiveUpdated?.Invoke();
-
-        if (AllObjectiveCompleted)
-        {
-            Debug.Log("[ObjectiveManager] All quests completed!");
-        }
-        else
-        {
-            Debug.Log(
-                $"[ObjectiveManager] New objective: {CurrentObjectiveText}"
-            );
-        }
-
-        depositProgress.Clear();
     }
 
     private void SkipCompletedObjectives()
@@ -653,6 +712,67 @@ public class ObjectiveManager : MonoBehaviour
         ObjectivesSO.ObjectiveType.GatherResource
             ? GetTotalGatheredResourceProgress()
             : currentObjectiveProgress;
+
+    private void EnsureObjectiveStates()
+    {
+        ObjectivesSO quest = CurrentQuest;
+
+        if (quest == trackedQuest &&
+            objectiveStates.Count == (quest != null && quest.objectives != null
+                ? quest.objectives.Count
+                : 0))
+        {
+            return;
+        }
+
+        trackedQuest = quest;
+        objectiveStates.Clear();
+
+        if (quest == null || quest.objectives == null)
+            return;
+
+        for (int i = 0; i < quest.objectives.Count; i++)
+        {
+            objectiveStates.Add(new ObjectiveRuntimeState());
+        }
+    }
+
+    public int ObjectiveCount
+    {
+        get
+        {
+            EnsureObjectiveStates();
+            return objectiveStates.Count;
+        }
+    }
+
+    public bool IsChecklistItemCompleted(int index)
+    {
+        EnsureObjectiveStates();
+
+        if (index < 0 || index >= objectiveStates.Count)
+            return false;
+
+        return objectiveStates[index].completed;
+    }
+
+    public string GetChecklistItemText(int index)
+    {
+        ObjectivesSO quest = CurrentQuest;
+
+        if (quest == null ||
+            quest.objectives == null ||
+            index < 0 ||
+            index >= quest.objectives.Count)
+            return "";
+
+        var objective = quest.objectives[index];
+
+        if (!string.IsNullOrEmpty(objective.objectiveDescription))
+            return objective.objectiveDescription;
+
+        return "Complete objective";
+    }
 
     public int RequiredAmount
     {

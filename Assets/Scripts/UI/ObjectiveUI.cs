@@ -1,4 +1,4 @@
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
 public class ObjectiveUI : MonoBehaviour
@@ -7,46 +7,30 @@ public class ObjectiveUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI objectiveNameText;
     [SerializeField] private TextMeshProUGUI objectiveDescriptionText;
 
-    [Header("Food Counter")]
-    [SerializeField] private TextMeshProUGUI foodCounterText;
-    [SerializeField] private ResourceDataSO foodResource;
+    [Header("Checklist References")]
+    [SerializeField] private Transform checklistParent;
+    [SerializeField] private UIObjectiveChecklist checklistItemPrefab;
 
     private ObjectiveManager subscribedManager;
 
-    private ResourceManager subscribedResourceManager;
-
-
-    private void Start()
+    private void OnEnable()
     {
         TrySubscribe();
         RefreshUI();
     }
 
-    private void OnEnable()
-    {
-        TrySubscribe();
-        RefreshUI(); 
-        RefreshFoodCounter();
-    }
-
     private void OnDisable()
     {
         Unsubscribe();
-        UnsubscribeResourceManager(); // NEW
     }
 
     private void Update()
     {
-        if (subscribedManager == null && ObjectiveManager.Instance != null)
+        if (subscribedManager == null &&
+            ObjectiveManager.Instance != null)
         {
             TrySubscribe();
             RefreshUI();
-        }
-
-        if (subscribedResourceManager == null)
-        {
-            TrySubscribeResourceManager();
-            RefreshFoodCounter();
         }
     }
 
@@ -61,7 +45,7 @@ public class ObjectiveUI : MonoBehaviour
 
         subscribedManager = manager;
         subscribedManager.OnObjectiveUpdated += RefreshUI;
-    } 
+    }
 
     private void Unsubscribe()
     {
@@ -70,59 +54,6 @@ public class ObjectiveUI : MonoBehaviour
 
         subscribedManager.OnObjectiveUpdated -= RefreshUI;
         subscribedManager = null;
-    }
-
-    private void TrySubscribeResourceManager()
-    {
-        ResourceManager manager = GameManager.Instance.ResourceManager;
-
-        if (manager == null || subscribedResourceManager == manager)
-            return;
-
-        UnsubscribeResourceManager();
-
-        subscribedResourceManager = manager;
-        subscribedResourceManager.OnResourceUpdated += OnResourceUpdated;
-    }
-
-
-    private void UnsubscribeResourceManager()
-    {
-        if (subscribedResourceManager == null)
-            return;
-
-        subscribedResourceManager.OnResourceUpdated -= OnResourceUpdated;
-        subscribedResourceManager = null;
-    }
-
-
-    private void OnResourceUpdated(ResourceDataSO resource, int amount)
-    {
-        if (resource == foodResource)
-            RefreshFoodCounter();
-    }
-
-    private void RefreshFoodCounter()
-    {
-        if (foodCounterText == null)
-            return;
-
-        if (foodResource == null)
-        {
-            foodCounterText.text = "Food: --";
-            return;
-        }
-
-        ResourceManager manager = subscribedResourceManager;
-
-        if (manager == null)
-        {
-            foodCounterText.text = "Food: --";
-            return;
-        }
-
-        foodCounterText.text =
-            $"Food: {manager.GetResourceAmount(foodResource)}";
     }
 
     private void RefreshUI()
@@ -137,31 +68,62 @@ public class ObjectiveUI : MonoBehaviour
             if (objectiveDescriptionText != null)
                 objectiveDescriptionText.text = "Objective manager not found.";
 
+            ClearChecklist();
             return;
         }
 
         ObjectivesSO quest = manager.CurrentQuest;
-        ObjectivesSO.BuildingObjective objective = manager.CurrentObjective;
 
-        if (objectiveNameText != null)
+        if (manager.AllObjectiveCompleted || quest == null)
         {
-            if (manager.AllObjectiveCompleted)
+            if (objectiveNameText != null)
                 objectiveNameText.text = "All Objectives Completed";
-            else if (objective != null &&
-                     !string.IsNullOrEmpty(objective.objectiveDescription))
-                objectiveNameText.text = objective.objectiveDescription;
-            else
-                objectiveNameText.text = "Current Objective";
+
+            if (objectiveDescriptionText != null)
+                objectiveDescriptionText.text = "You've completed every quest!";
+
+            ClearChecklist();
+            return;
         }
 
+        if (objectiveNameText != null)
+            objectiveNameText.text = quest.objectiveName;
+
         if (objectiveDescriptionText != null)
+            objectiveDescriptionText.text = "";
+
+        // Rebuild the checklist once.
+        RefreshChecklist(manager);
+    }
+
+    private void ClearChecklist()
+    {
+        if (checklistParent == null)
+            return;
+
+        foreach (Transform child in checklistParent)
         {
-            if (manager.AllObjectiveCompleted)
-                objectiveDescriptionText.text = "You've completed every quest!";
-            else if (quest != null)
-                objectiveDescriptionText.text = quest.objectiveDescription;
-            else
-                objectiveDescriptionText.text = "";
+            Destroy(child.gameObject);
+        }
+    }
+
+    private void RefreshChecklist(ObjectiveManager manager)
+    {
+        // Clear previous checklist items.
+        foreach (Transform child in checklistParent)
+        {
+            Destroy(child.gameObject);
+        }
+
+        for (int i = 0; i < manager.ObjectiveCount; i++)
+        {
+            UIObjectiveChecklist item =
+                Instantiate(checklistItemPrefab, checklistParent);
+
+            item.Setup(
+                manager.GetChecklistItemText(i),
+                manager.IsChecklistItemCompleted(i)
+            );
         }
     }
 }
