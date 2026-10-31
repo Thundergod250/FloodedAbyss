@@ -9,6 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3771885053216324313}
+  - component: {fileID: 421844445156128571}
+  - component: {fileID: 4549580653277594758}
+  - component: {fileID: 6049963557546397485}
+  - component: {fileID: 2244093647692811138}
   m_Layer: 0
   m_Name: ElectronicFactory
   m_TagString: Untagged
@@ -32,6 +36,82 @@ Transform:
   - {fileID: 1085682508305984500}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &421844445156128571
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5207249959057284704}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 7.76, y: 6.07, z: 6.73}
+  m_Center: {x: 0, y: 3.91, z: -1.29}
+--- !u!114 &4549580653277594758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5207249959057284704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 586d09e3430c3fa4bb4b7161e1b7ee7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Interactables
+  interactionMessage: 
+  onInteract:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &6049963557546397485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5207249959057284704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 419958e9bb152c2429036da0e422d5f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StructureHarvestResource
+  ignoreSubmersion: 0
+  BuildablePrefab: {fileID: 1058038040027629035, guid: 2f578e65b9c30d144a28be802c66de7e, type: 3}
+  structureTitle: Electronic Source
+  laborCost: 1
+  productionDuration: 3
+  destructionDuration: 3
+  canBeDestroyed: 1
+  harvestMode: 2
+  maxHarvestCycles: 5
+  resourceToProduce: {fileID: 11400000, guid: f9c452418422fe646a1f53847e2f67bf, type: 2}
+  productionAmount: 10
+  isWorking: 0
+  isDestroying: 0
+  progressPercentage: 0
+--- !u!114 &2244093647692811138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5207249959057284704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efe69d35dca1a5941b18a1fb4e82a7ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MouseHoverHighlight
+  highlightRenderer: {fileID: 3315922471885273748}
 --- !u!1 &7815145660874067874
 GameObject:
   m_ObjectHideFlags: 0
