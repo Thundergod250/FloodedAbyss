@@ -1483,7 +1483,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6450892367460604117}
   - {fileID: 674082205035677256}
   - {fileID: 3370473834201986691}
   m_Father: {fileID: 0}
@@ -1517,10 +1516,6 @@ MonoBehaviour:
   - {fileID: 5261657498397279699}
   - {fileID: 823230392634178795}
   initialEventCount: 3
-  rainFX: {fileID: 7886510732276624975}
-  weakRain: 200
-  decentRain: 600
-  strongRain: 900
   waterFill: {fileID: 3678273137768921237}
   weatherBacklog: []
 --- !u!1 &5195986231592229829
@@ -2826,82 +2821,3 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!1001 &9060157647340668609
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 6658138641234179786}
-    m_Modifications:
-    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1.1629316
-      objectReference: {fileID: 0}
-    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.1629316
-      objectReference: {fileID: 0}
-    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1.1629316
-      objectReference: {fileID: 0}
-    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -960
-      objectReference: {fileID: 0}
-    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -200
-      objectReference: {fileID: 0}
-    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3625912346179115636, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
-      propertyPath: m_Name
-      value: RainFall
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
---- !u!4 &6450892367460604117 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2610408892634701332, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
-  m_PrefabInstance: {fileID: 9060157647340668609}
-  m_PrefabAsset: {fileID: 0}
---- !u!198 &7886510732276624975 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 1211088802230102158, guid: 1a19160a8c8aed9449e4259072c459e5, type: 3}
-  m_PrefabInstance: {fileID: 9060157647340668609}
-  m_PrefabAsset: {fileID: 0}
