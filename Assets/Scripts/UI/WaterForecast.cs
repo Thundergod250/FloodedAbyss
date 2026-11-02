@@ -1,19 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class WaterForecast : MonoBehaviour
 {
-    [Header("Weather UI")]
-    [SerializeField] private Image currentWeatherImage;
-    [SerializeField] private Image nextWeatherImage;
-    [SerializeField] private Image followingWeatherImage;
-    [SerializeField] private Image followingWeather2Image;
-    [SerializeField] private Slider weatherTimerSlider;
-
     [Header("Timeline Settings")]
     [SerializeField] private float eventDuration = 60f;
+    public float EventDuration => eventDuration;
 
     [Header("Weather Events")]
     [SerializeField] private List<GameObject> eventpoints = new();
@@ -21,18 +14,23 @@ public class WaterForecast : MonoBehaviour
     [Header("Random Backlog")]
     [SerializeField] private int initialEventCount = 3;
 
-    [Header("WaterLevel")]
-    [SerializeField] private Slider waterFill;
-
-    [SerializeField]
-    private List<TimelineEvents> weatherBacklog = new();
+    [SerializeField] private List<TimelineEvents> weatherBacklog = new();
+    
+    [Header("Debug")]
+    [SerializeField] private float currentTime;
+    public float CurrentTime => currentTime;
 
     private readonly List<TimelineEvents> availableEvents = new();
 
     private bool timelinePaused;
     private Coroutine timelineCoroutine;
 
-    private void Start()
+    private void Awake()
+    {
+        BuildAvailableEvents();
+    }
+
+    private void OnEnable()
     {
         if (eventDuration <= 0f)
         {
@@ -40,21 +38,11 @@ public class WaterForecast : MonoBehaviour
             return;
         }
 
-        if (weatherTimerSlider == null && currentWeatherImage != null)
+        if (weatherBacklog.Count == 0)
         {
-            weatherTimerSlider = currentWeatherImage.GetComponentInParent<Slider>();
+            initialEventCount = 4;
+            BuildInitialBacklog();
         }
-
-        if (weatherTimerSlider != null)
-        {
-            weatherTimerSlider.maxValue = eventDuration;
-            weatherTimerSlider.value = 0f;
-        }
-
-        BuildAvailableEvents();
-
-        initialEventCount = 4;
-        BuildInitialBacklog();
 
         if (weatherBacklog.Count == 0)
         {
@@ -62,16 +50,12 @@ public class WaterForecast : MonoBehaviour
             return;
         }
 
-        UpdateWeatherImages();
         StartWeather();
     }
 
-    private void Update()
+    private void OnDisable()
     {
-        if (waterFill != null && GameManager.Instance != null && GameManager.Instance.WaterLevel != null)
-        {
-            waterFill.value = GameManager.Instance.WaterLevel.CurrentWaterHeight;
-        }
+        StopWeather();
     }
 
     private void BuildAvailableEvents()
@@ -107,22 +91,13 @@ public class WaterForecast : MonoBehaviour
     {
         while (true)
         {
-            float elapsed = 0f;
+            currentTime = 0f;
 
-            if (weatherTimerSlider != null)
-            {
-                weatherTimerSlider.maxValue = eventDuration;
-            }
-
-            while (elapsed < eventDuration)
+            while (currentTime < eventDuration)
             {
                 if (!timelinePaused)
                 {
-                    elapsed += Time.deltaTime;
-                    if (weatherTimerSlider != null)
-                    {
-                        weatherTimerSlider.value = elapsed;
-                    }
+                    currentTime += Time.deltaTime;
                 }
                 yield return null;
             }
@@ -138,7 +113,7 @@ public class WaterForecast : MonoBehaviour
                 yield break;
             }
 
-            UpdateWeatherImages();
+            currentTime = 0f;
             PlayCurrentWeather();
         }
     }
@@ -158,72 +133,51 @@ public class WaterForecast : MonoBehaviour
         }
     }
 
-    private void UpdateWeatherImages()
+    public TimelineEvents GetWeatherEvent(int index)
     {
-        SetWeatherImage(currentWeatherImage, 0);
-        SetWeatherImage(nextWeatherImage, 1);
-        SetWeatherImage(followingWeatherImage, 2);
-        SetWeatherImage(followingWeather2Image, 3);
-    }
-
-    private void SetWeatherImage(Image targetImage, int eventIndex)
-    {
-        if (targetImage == null) return;
-
-        if (eventIndex < 0 || eventIndex >= weatherBacklog.Count || weatherBacklog[eventIndex] == null)
-        {
-            targetImage.sprite = null;
-            targetImage.enabled = false;
-            return;
-        }
-
-        Sprite weatherSprite = weatherBacklog[eventIndex].WeatherSprite;
-        targetImage.sprite = weatherSprite;
-        targetImage.enabled = weatherSprite != null;
+        if (index < 0 || index >= weatherBacklog.Count) return null;
+        return weatherBacklog[index];
     }
 
     public void PauseTimeline() => timelinePaused = true;
     public void ResumeTimeline() { if (timelineCoroutine != null) timelinePaused = false; }
 
-    #region Rain Delegation to VFXController
-
-    private void PlayRainSFX()
+    private void SetRainState(rainStrength strength, bool playAudio)
     {
-        if (GameManager.Instance != null)
-            GameManager.Instance.SoundManager.Play("SFXRaining");
+        if (GameManager.Instance == null) return;
+
+        if (GameManager.Instance.VFXController != null)
+        {
+            if (strength == rainStrength.Sunny)
+                GameManager.Instance.VFXController.StopRain();
+            else
+                GameManager.Instance.VFXController.PlayRain(strength);
+        }
+
+        if (GameManager.Instance.SoundManager != null)
+        {
+            if (playAudio)
+                GameManager.Instance.SoundManager.Play("SFXRaining");
+            else
+                GameManager.Instance.SoundManager.Stop("SFXRaining");
+        }
     }
 
-    private void StopRainSFX()
-    {
-        if (GameManager.Instance != null)
-            GameManager.Instance.SoundManager.Stop("SFXRaining");
-    }
-
-    public void PlayWeakRain()
-    {
-        GameManager.Instance.VFXController.PlayRain(rainStrength.Weak);
-        PlayRainSFX();
-    }
-
-    public void PlayDecentRain()
-    {
-        GameManager.Instance.VFXController.PlayRain(rainStrength.Decent);
-        PlayRainSFX();
-    }
-
-    public void PlayStrongRain()
-    {
-        GameManager.Instance.VFXController.PlayRain(rainStrength.Strong);
-        PlayRainSFX();
-    }
+    public void PlayWeakRain()   => SetRainState(rainStrength.Weak, true);
+    public void PlayDecentRain() => SetRainState(rainStrength.Decent, true);
+    public void PlayStrongRain() => SetRainState(rainStrength.Strong, true);
 
     public void StopRain()
     {
-        GameManager.Instance.VFXController.StopRain();
-        StopRainSFX();
-    }
+        if (GameManager.Instance != null)
+        {
+            if (GameManager.Instance.VFXController != null)
+                GameManager.Instance.VFXController.StopRain();
 
-    #endregion
+            if (GameManager.Instance.SoundManager != null)
+                GameManager.Instance.SoundManager.Stop("SFXRaining");
+        }
+    }
 
     #region Start and Stop Weather
     public void StartWeather()
@@ -232,7 +186,6 @@ public class WaterForecast : MonoBehaviour
         if (weatherBacklog.Count == 0) return;
 
         timelinePaused = false;
-        UpdateWeatherImages();
         PlayCurrentWeather();
 
         timelineCoroutine = StartCoroutine(ProgressTimeline());

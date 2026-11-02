@@ -155,6 +155,7 @@ MonoBehaviour:
   resourceContainer: {fileID: 2954262432296546569}
   resourcePairPrefab: {fileID: 7750372029716409510, guid: d74526e6cf5d42b4eba8760c134d0f19, type: 3}
   UINotification: {fileID: 5481795522764984416}
+  waterForecast: {fileID: 5111733362874223069}
 --- !u!114 &6940984850502974775
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -712,11 +713,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5549730094249737998, guid: ffe8e050cce974f4fbb026c3991c3997, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -63.7
+      value: -63.69995
       objectReference: {fileID: 0}
     - target: {fileID: 5549730094249737998, guid: ffe8e050cce974f4fbb026c3991c3997, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -63.8
+      value: -63.799988
       objectReference: {fileID: 0}
     - target: {fileID: 8610490122549759211, guid: ffe8e050cce974f4fbb026c3991c3997, type: 3}
       propertyPath: m_Pivot.x
@@ -1307,6 +1308,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -57
       objectReference: {fileID: 0}
+    - target: {fileID: 4159220831469161662, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+      propertyPath: m_FillAmount
+      value: 0.02
+      objectReference: {fileID: 0}
     - target: {fileID: 4511024998696170559, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
       propertyPath: m_Name
       value: Camera Movemnet
@@ -1413,7 +1418,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6084683324760006245, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
       propertyPath: m_fontSize
-      value: 11.3
+      value: 11.35
       objectReference: {fileID: 0}
     - target: {fileID: 6089993787216974529, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
       propertyPath: m_fontSize
@@ -1477,7 +1482,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6807071427009508266, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
       propertyPath: m_fontSize
-      value: 11.3
+      value: 11.35
       objectReference: {fileID: 0}
     - target: {fileID: 6977245836360411092, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
       propertyPath: m_Enabled
@@ -1627,6 +1632,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &5111733362874223069 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7247272558682524165, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+  m_PrefabInstance: {fileID: 2478103047148192728}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2a78d039b32a5b47b19d3b1302fc8c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIWaterForecast
 --- !u!114 &5350315203777554876 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7504086333893945956, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
