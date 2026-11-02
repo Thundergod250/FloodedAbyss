@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     public StructureProgression structureProgression;
     public TideManager TideManager;
     public SoundManager SoundManager;
+    public UIMainMenu UIMainMenu;
 
     private void Awake()
     {
