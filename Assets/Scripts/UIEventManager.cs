@@ -67,8 +67,8 @@ public class UIEventManager : UiModals
 
     private void Update()
     {
-        if (pauseDuringTutorial)
-            return;
+       // if (pauseDuringTutorial)
+          // return;
 
         if (eventOnCooldown)
         {

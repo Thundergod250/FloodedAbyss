@@ -48,11 +48,10 @@ public class ObjectivesSO : ScriptableObject
         [Min(1)] public int requiredWorkers = 1;
     }
 
-    [Header("Quest Information")]
-    [TextArea(2, 4)]
-    public string objectiveDescription;
+    [Header("Objective Information")]
+    public string objectiveName;
 
-    [Header("Objectives (In Order)")]
+    [Header("Checklist")]
     public List<BuildingObjective> objectives =
         new List<BuildingObjective>();
 }
