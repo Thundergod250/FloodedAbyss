@@ -33,10 +33,25 @@ public class FloatingResourceSpawner : MonoBehaviour
     {
         while (true)
         {
+            // Stop spawning if water level is 0 or lower.
+            if (GameManager.Instance == null ||
+                GameManager.Instance.WaterLevel == null ||
+                GameManager.Instance.WaterLevel.CurrentWaterHeight < 1f)
+            {
+                yield return new WaitForSeconds(0.5f);
+                continue;
+            }
+
             float waitTime = Random.Range(spawnIntervalMin, spawnIntervalMax);
             yield return new WaitForSeconds(waitTime);
 
-            SpawnResource();
+            // Check again before spawning in case water reached 0 while waiting.
+            if (GameManager.Instance != null &&
+                GameManager.Instance.WaterLevel != null &&
+                GameManager.Instance.WaterLevel.CurrentWaterHeight >= 1f)
+            {
+                SpawnResource();
+            }
         }
     }
 
