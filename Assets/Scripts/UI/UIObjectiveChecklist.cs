@@ -8,9 +8,8 @@ public class UIObjectiveChecklist : MonoBehaviour
     [SerializeField] private Image statusImage;
     [SerializeField] private TextMeshProUGUI descriptionText;
 
-    [Header("Checklist Colours")]
-    [SerializeField] private Color uncheckedColor = Color.white;
-    [SerializeField] private Color checkedColor = Color.green;
+    [Header("Checklist")]
+    [SerializeField] private Image check;
 
     public void Setup(string description, bool completed)
     {
@@ -20,10 +19,9 @@ public class UIObjectiveChecklist : MonoBehaviour
 
     public void SetCompleted(bool completed)
     {
-        if (statusImage == null) return;
-
-        statusImage.color = completed
-            ? checkedColor
-            : uncheckedColor;
+        if (check != null)
+        {
+            check.gameObject.SetActive(completed);
+        }
     }
 }
