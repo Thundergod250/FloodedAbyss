@@ -150,8 +150,8 @@ public class WaterForecast : MonoBehaviour
 
     private void PlayCurrentWeather()
     {
-        if (weatherBacklog.Count > 0) 
-            ApplyWeatherEffects(weatherBacklog[0].Type);
+        /*if (weatherBacklog.Count > 0) 
+            ApplyWeatherEffects(weatherBacklog[0].Type);*/
     }
 
     public WeatherDefinition? GetWeatherEvent(int index)
