@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     public TideManager TideManager;
     public SoundManager SoundManager;
     public UIMainMenu UIMainMenu;
+    public VFXController VFXController;
 
     private void Awake()
     {
