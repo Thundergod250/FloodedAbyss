@@ -10,6 +10,7 @@ public class WaterForecast : MonoBehaviour
     [SerializeField] private Image nextWeatherImage;
     [SerializeField] private Image followingWeatherImage;
     [SerializeField] private Image followingWeather2Image;
+    [SerializeField] private Slider weatherTimerSlider; // Direct reference to the weather timer slider
 
     [Header("Timeline Settings")]
     [SerializeField] private float eventDuration = 60f;
@@ -19,7 +20,6 @@ public class WaterForecast : MonoBehaviour
 
     [Header("Random Backlog")]
     [SerializeField] private int initialEventCount = 3;
-    //[SerializeField] private int generatedBacklogSize = 10;
 
     [Header("Rain FX")]
     [SerializeField] private ParticleSystem rainFX;
@@ -30,7 +30,6 @@ public class WaterForecast : MonoBehaviour
     [Header("WaterLevel")]
     [SerializeField] private Slider waterFill;
 
-    // CHANGED: This list contains only current and upcoming events.
     [SerializeField]
     private List<TimelineEvents> weatherBacklog =
         new List<TimelineEvents>();
@@ -54,6 +53,18 @@ public class WaterForecast : MonoBehaviour
             return;
         }
 
+        // Auto-find weather timer slider if not assigned in Inspector
+        if (weatherTimerSlider == null && currentWeatherImage != null)
+        {
+            weatherTimerSlider = currentWeatherImage.GetComponentInParent<Slider>();
+        }
+
+        if (weatherTimerSlider != null)
+        {
+            weatherTimerSlider.maxValue = eventDuration;
+            weatherTimerSlider.value = 0f;
+        }
+
         BuildAvailableEvents();
 
         initialEventCount = 4;
@@ -66,25 +77,15 @@ public class WaterForecast : MonoBehaviour
         }
 
         UpdateWeatherImages();
-
-        if (currentWeatherImage != null)
-        {
-            Slider timelineSlider =
-                currentWeatherImage.GetComponentInParent<Slider>();
-
-            if (timelineSlider != null)
-                timelineSlider.maxValue = eventDuration;
-        }
-
-        //bool tutorialStillRunning = ObjectiveManager.Instance == null || !ObjectiveManager.Instance.AllObjectiveCompleted;
-
-        // SetTutorialPaused(tutorialStillRunning);
         StartWeather();
     }
 
     private void Update()
     {
-        waterFill.value = GameManager.Instance.WaterLevel.CurrentWaterHeight;
+        if (waterFill != null && GameManager.Instance != null && GameManager.Instance.WaterLevel != null)
+        {
+            waterFill.value = GameManager.Instance.WaterLevel.CurrentWaterHeight;
+        }
     }
 
     private void BuildAvailableEvents()
@@ -96,11 +97,9 @@ public class WaterForecast : MonoBehaviour
             if (eventPoint == null)
                 continue;
 
-            // NEW: Try to find TimelineEvents in children first.
             TimelineEvents weatherEvent =
                 eventPoint.GetComponentInChildren<TimelineEvents>();
 
-            // NEW: If not found, check the same GameObject.
             if (weatherEvent == null)
                 weatherEvent = eventPoint.GetComponent<TimelineEvents>();
 
@@ -112,7 +111,6 @@ public class WaterForecast : MonoBehaviour
         }
     }
 
-    // CHANGED: Preserve the first events in Inspector order.
     private void BuildInitialBacklog()
     {
         weatherBacklog.Clear();
@@ -142,12 +140,21 @@ public class WaterForecast : MonoBehaviour
         {
             float elapsed = 0f;
 
+            if (weatherTimerSlider != null)
+            {
+                weatherTimerSlider.maxValue = eventDuration;
+            }
+
             while (elapsed < eventDuration)
             {
                 if (!timelinePaused)
                 {
                     elapsed += Time.deltaTime;
-                    currentWeatherImage.GetComponentInParent<Slider>().value = elapsed;
+
+                    if (weatherTimerSlider != null)
+                    {
+                        weatherTimerSlider.value = elapsed;
+                    }
                 }
                 yield return null;
             }
@@ -156,7 +163,6 @@ public class WaterForecast : MonoBehaviour
             if (weatherBacklog.Count > 0)
                 weatherBacklog.RemoveAt(0);
 
-            // Add only one new random event.
             AddOneRandomWeatherEvent();
 
             if (weatherBacklog.Count == 0)
@@ -175,7 +181,6 @@ public class WaterForecast : MonoBehaviour
         }
     }
 
-    // NEW: Append randomized events without clearing the existing queue.
     private void AddOneRandomWeatherEvent()
     {
         if (availableEvents.Count == 0)
@@ -184,6 +189,7 @@ public class WaterForecast : MonoBehaviour
         int randomIndex = Random.Range(0, availableEvents.Count);
         weatherBacklog.Add(availableEvents[randomIndex]);
     }
+
     private void PlayCurrentWeather()
     {
         if (weatherBacklog.Count > 0 && weatherBacklog[0] != null)
@@ -265,20 +271,9 @@ public class WaterForecast : MonoBehaviour
             PlayRainSFX();
     }
 
-    public void PlayWeakRain()
-    {
-        SetRainEmission(weakRain);
-    }
-
-    public void PlayDecentRain()
-    {
-        SetRainEmission(decentRain);
-    }
-
-    public void PlayStrongRain()
-    {
-        SetRainEmission(strongRain);
-    }
+    public void PlayWeakRain() => SetRainEmission(weakRain);
+    public void PlayDecentRain() => SetRainEmission(decentRain);
+    public void PlayStrongRain() => SetRainEmission(strongRain);
 
     public void StopRain()
     {
@@ -286,10 +281,7 @@ public class WaterForecast : MonoBehaviour
         {
             var emission = rainFX.emission;
             emission.rateOverTime = new ParticleSystem.MinMaxCurve(0f);
-
-            rainFX.Stop(
-                false,
-                ParticleSystemStopBehavior.StopEmitting);
+            rainFX.Stop(false, ParticleSystemStopBehavior.StopEmitting);
         }
 
         StopRainSFX();
@@ -319,7 +311,6 @@ public class WaterForecast : MonoBehaviour
         timelineCoroutine = StartCoroutine(ProgressTimeline());
     }
 
-    // NEW: Stop weather at the end of the game.
     public void StopWeather()
     {
         timelinePaused = true;
@@ -331,34 +322,6 @@ public class WaterForecast : MonoBehaviour
         }
 
         StopRain();
-    }
-
-    public void SetTutorialPaused(bool paused)
-    {
-        if (paused)
-        {
-            timelinePaused = true;
-
-            Debug.Log(
-                "[WaterForecast] Tutorial active. Weather timeline paused.",
-                this);
-
-            return;
-        }
-
-        // Start the timeline if it has never been started.
-        if (timelineCoroutine == null)
-        {
-            StartWeather();
-        }
-        else
-        {
-            ResumeTimeline();
-        }
-
-        Debug.Log(
-            "[WaterForecast] Tutorial complete. Weather timeline enabled.",
-            this);
     }
     #endregion
 }
