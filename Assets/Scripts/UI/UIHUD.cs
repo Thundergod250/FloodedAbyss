@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEngine.UI;
 
 public class UIHUD : UiModals
 {
@@ -17,7 +18,10 @@ public class UIHUD : UiModals
     [Header("Resource HUD Settings")]
     [SerializeField] private Transform resourceContainer;       
     [SerializeField] private GameObject resourcePairPrefab;  
-    [SerializeField] private UINotification UINotification;  
+    [SerializeField] private UINotification UINotification; 
+    
+    [Header("Water Forecast UI")]
+    [SerializeField] private UIWaterForecast waterForecast;
 
     private bool isSubscribed = false;
     private Dictionary<ResourceDataSO, PanelResourcePair> resourcePanelMap = new();
@@ -46,6 +50,7 @@ public class UIHUD : UiModals
     }
     
     public UINotification GetUINotification() => UINotification;
+    public UIWaterForecast GetUIWaterForecast() => waterForecast;
 
     private IEnumerator ConnectAndBuildHUDRoutine()
     {
