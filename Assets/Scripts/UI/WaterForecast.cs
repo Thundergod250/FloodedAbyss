@@ -29,7 +29,13 @@ public class WaterForecast : MonoBehaviour
     private bool timelinePaused;
     private Coroutine timelineCoroutine;
 
-    private void Start()
+    private void Awake()
+    {
+        // Parse available events once when the object is created
+        BuildAvailableEvents();
+    }
+
+    private void OnEnable()
     {
         if (eventDuration <= 0f)
         {
@@ -37,10 +43,12 @@ public class WaterForecast : MonoBehaviour
             return;
         }
 
-        BuildAvailableEvents();
-
-        initialEventCount = 4;
-        BuildInitialBacklog();
+        // Build initial backlog if it's empty when enabled
+        if (weatherBacklog.Count == 0)
+        {
+            initialEventCount = 4;
+            BuildInitialBacklog();
+        }
 
         if (weatherBacklog.Count == 0)
         {
@@ -48,7 +56,14 @@ public class WaterForecast : MonoBehaviour
             return;
         }
 
+        // Automatically start or resume weather when the panel becomes active
         StartWeather();
+    }
+
+    private void OnDisable()
+    {
+        // Cleanly stop the coroutine when the panel is hidden/disabled
+        StopWeather();
     }
 
     private void Update()
@@ -134,7 +149,6 @@ public class WaterForecast : MonoBehaviour
         }
     }
 
-    // Public accessor for UIWaterForecast to query current/upcoming items safely
     public TimelineEvents GetWeatherEvent(int index)
     {
         if (index < 0 || index >= weatherBacklog.Count) return null;
