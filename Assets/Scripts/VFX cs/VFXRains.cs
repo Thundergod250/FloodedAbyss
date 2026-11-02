@@ -1,49 +1,45 @@
-using System;
 using UnityEngine;
 
 public class VFXRains : MonoBehaviour
 {
-    [SerializeField] private GameObject strongRainVFX;
-    [SerializeField] private GameObject decentRainVFX;
-    [SerializeField] private GameObject weakRainVFX;
+    [Header("Particle Systems")]
+    [SerializeField] private ParticleSystem strongRainVFX;
+    [SerializeField] private ParticleSystem decentRainVFX;
+    [SerializeField] private ParticleSystem weakRainVFX;
 
-    private void Start() => TurnOffAllRains();
-
-    public void TurnOffAllRains()
+    private void Start()
     {
-        // Turn everything off first
-        if (strongRainVFX != null) strongRainVFX.SetActive(false);
-        if (decentRainVFX != null) decentRainVFX.SetActive(false);
-        if (weakRainVFX != null) weakRainVFX.SetActive(false);
+        StopAllRain();
     }
-    
+
     public void SetRainState(rainStrength strength)
     {
-        // Turn everything off first
-        TurnOffAllRains();
+        // Gracefully stop whatever is currently playing before switching
+        StopAllRain();
 
-        // Turn on the appropriate one
+        // Play the newly requested rain type
         switch (strength)
         {
             case rainStrength.Strong:
-                if (strongRainVFX != null) strongRainVFX.SetActive(true);
+                if (strongRainVFX != null) strongRainVFX.Play();
                 break;
             case rainStrength.Decent:
-                if (decentRainVFX != null) decentRainVFX.SetActive(true);
+                if (decentRainVFX != null) decentRainVFX.Play();
                 break;
             case rainStrength.Weak:
-                if (weakRainVFX != null) weakRainVFX.SetActive(true);
+                if (weakRainVFX != null) weakRainVFX.Play();
                 break;
             case rainStrength.Sunny:
-                // All remain inactive
+                // All remain stopped/fading out
                 break;
         }
     }
 
     public void StopAllRain()
     {
-        if (strongRainVFX != null) strongRainVFX.SetActive(false);
-        if (decentRainVFX != null) decentRainVFX.SetActive(false);
-        if (weakRainVFX != null) weakRainVFX.SetActive(false);
+        // StopEmitting allows current particles to fall/fade naturally instead of popping out
+        if (strongRainVFX != null) strongRainVFX.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        if (decentRainVFX != null) decentRainVFX.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        if (weakRainVFX != null) weakRainVFX.Stop(true, ParticleSystemStopBehavior.StopEmitting);
     }
 }
