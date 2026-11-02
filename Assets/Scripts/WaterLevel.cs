@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class WaterLevel : MonoBehaviour
@@ -13,6 +14,11 @@ public class WaterLevel : MonoBehaviour
     [Header("Water Pressure Progression")]
     [SerializeField] private float pressureIncreaseRate = 0.2f;    // How fast water pressure accumulates per second smoothly
     [SerializeField] private float baseWaterPressure = 1f;         // Starting water pressure value
+
+    [Header("Great Flood Settings")]
+    [SerializeField] private bool forceStartGreatFlood = false;
+    [SerializeField] private float greatFloodPressureIncrease = 15f;
+    private bool greatFloodStarted = false;
 
     [Header("Pump Mechanics")]
     private float baseWaterHeight = 87f;                           // Captured starting baseline height
@@ -33,8 +39,21 @@ public class WaterLevel : MonoBehaviour
         currentWaterPressureFloat = baseWaterPressure;
     }
 
+    private void Start()
+    {
+        if (!forceStartGreatFlood)
+        {
+            StartCoroutine(GreatFloodTimer());
+        }
+    }
+
     private void Update()
     {
+        if (forceStartGreatFlood && !greatFloodStarted)
+        {
+            StartGreatFlood();
+        }
+
         // 1. Water Pressure accumulates smoothly over time as a float rate
         currentWaterPressureFloat += pressureIncreaseRate * Time.deltaTime;
 
@@ -63,6 +82,23 @@ public class WaterLevel : MonoBehaviour
     public void SetOceanHeight(int amount)
     {
         maxWaterHeight = Mathf.Max(0f, amount);
+    }
+
+    public IEnumerator GreatFloodTimer()
+    {
+        yield return new WaitForSeconds(10f * 60f);
+
+        StartGreatFlood();
+    }
+
+    public void StartGreatFlood()
+    {
+        if (greatFloodStarted) return;
+
+        greatFloodStarted = true;
+        pressureIncreaseRate += greatFloodPressureIncrease;
+
+        Debug.Log("GREAT FLOOD STARTED!");
     }
 
     public float CurrentWaterHeight => oceanTransform != null ? oceanTransform.position.y : currentWaterHeight;
