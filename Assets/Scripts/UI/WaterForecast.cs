@@ -136,6 +136,8 @@ public class WaterForecast : MonoBehaviour
 
     private IEnumerator ProgressTimeline()
     {
+        Debug.Log("[WaterForecast] ProgressTimeline coroutine started successfully!");
+
         while (true)
         {
             float elapsed = 0f;
@@ -156,8 +158,14 @@ public class WaterForecast : MonoBehaviour
                         weatherTimerSlider.value = elapsed;
                     }
                 }
+                else
+                {
+                    Debug.LogWarning("[WaterForecast] Timeline is currently paused!");
+                }
                 yield return null;
             }
+
+            Debug.Log("[WaterForecast] Weather event finished. Cycling to next event.");
 
             // Remove the weather event that just finished.
             if (weatherBacklog.Count > 0)

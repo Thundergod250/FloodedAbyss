@@ -2398,7 +2398,6 @@ GameObject:
   - component: {fileID: 7840659020074832469}
   - component: {fileID: 99211476491780958}
   - component: {fileID: 9033748165638434972}
-  - component: {fileID: 114721624140665962}
   m_Layer: 0
   m_Name: Droplets
   m_TagString: Untagged
@@ -2415,7 +2414,7 @@ Transform:
   m_GameObject: {fileID: 8544705214553288805}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.000052483876, y: -203, z: 0}
+  m_LocalPosition: {x: 0.000052483876, y: -175, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4812,18 +4811,3 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
---- !u!114 &114721624140665962
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8544705214553288805}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ef5029825383b14a8c66481bbfe91a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VFXFollowCamera
-  followX: 1
-  followY: 0
-  followZ: 1
