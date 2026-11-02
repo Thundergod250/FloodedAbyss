@@ -41,6 +41,10 @@ public class WaterForecast : MonoBehaviour
     private bool timelinePaused;
     private Coroutine timelineCoroutine;
 
+    // State caching guards to prevent redundant calls and hitching
+    private rainStrength? currentActiveRainState = null;
+    private bool isWeatherInitialized = false;
+
     private void OnEnable()
     {
         if (eventDuration <= 0f)
@@ -143,7 +147,9 @@ public class WaterForecast : MonoBehaviour
             while (chosenWeather.Type == lastWeather.Type && safety < 10);
         }
         else
+        {
             chosenWeather = weatherDatabase[Random.Range(0, weatherDatabase.Count)];
+        }
 
         weatherBacklog.Add(chosenWeather);
     }
@@ -167,30 +173,46 @@ public class WaterForecast : MonoBehaviour
     {
         if (GameManager.Instance == null) return;
 
+        bool isSunny = (weatherType == WeatherType.Sunny);
+        rainStrength targetStrength = rainStrength.Weak;
+
+        if (!isSunny)
+        {
+            if (weatherType == WeatherType.Stormy) targetStrength = rainStrength.Decent;
+            else if (weatherType == WeatherType.Typhoon) targetStrength = rainStrength.Strong;
+        }
+
+        // Optimization check: If the weather state hasn't changed, exit immediately to prevent hitching
+        if (isWeatherInitialized)
+        {
+            if (isSunny && currentActiveRainState == null) return;
+            if (!isSunny && currentActiveRainState == targetStrength) return;
+        }
+
         // Handle VFX based on the specific WeatherType
         if (GameManager.Instance.VFXController != null)
         {
-            if (weatherType == WeatherType.Sunny)
+            if (isSunny)
                 GameManager.Instance.VFXController.StopRain();
             else
-            {
-                rainStrength mappedStrength = rainStrength.Weak;
-                
-                if (weatherType == WeatherType.Stormy) mappedStrength = rainStrength.Decent;
-                else if (weatherType == WeatherType.Typhoon) mappedStrength = rainStrength.Strong;
+                GameManager.Instance.VFXController.PlayRain(targetStrength);
+        }
 
-                GameManager.Instance.VFXController.PlayRain(mappedStrength);
+        // Handle Audio (Passed true for isLooped so rain ambiance loops seamlessly without restarting instances)
+        if (GameManager.Instance.SoundManager != null)
+        {
+            if (isSunny)
+            {
+                GameManager.Instance.SoundManager.Stop("SFXRaining");
+            }
+            else
+            {
+                GameManager.Instance.SoundManager.Play("SFXRaining", true);
             }
         }
 
-        // Handle Audio
-        /*if (GameManager.Instance.SoundManager != null)
-        {
-            if (weatherType == WeatherType.Sunny)
-                GameManager.Instance.SoundManager.Stop("SFXRaining");
-            else
-                GameManager.Instance.SoundManager.Play("SFXRaining");
-        }*/
+        currentActiveRainState = isSunny ? null : targetStrength;
+        isWeatherInitialized = true;
     }
 
     #region Start and Stop Weather

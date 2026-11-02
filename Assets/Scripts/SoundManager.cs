@@ -20,7 +20,8 @@ public class SoundManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Automatically finds and maps all AudioSource components on immediate child objects.
+    /// Automatically finds and maps all AudioSource components on immediate child objects,
+    /// and prewarms them to prevent first-time activation lag spikes.
     /// </summary>
     private void InitializeSoundSources()
     {
@@ -42,8 +43,18 @@ public class SoundManager : MonoBehaviour
 
             soundSources.Add(soundName, src);
 
-            // Ensure they start disabled as requested
-            src.gameObject.SetActive(false);
+            // 1. Preload the audio clip data into memory so it doesn't hitch on first play
+            if (src.clip != null)
+            {
+                src.clip.LoadAudioData();
+            }
+
+            // 2. Briefly activate and deactivate the GameObject to prewarm Unity's audio components and mixer routing
+            GameObject soundObj = src.gameObject;
+            bool wasActive = soundObj.activeSelf;
+
+            soundObj.SetActive(true);
+            soundObj.SetActive(false);
         }
     }
 
