@@ -1,5 +1,8 @@
+using System.Resources;
 using UnityEngine;
 using UnityEngine.Events;
+using System.Collections.Generic;
+using System.Collections;
 
 public class WorkerManager : MonoBehaviour
 {
@@ -11,11 +14,18 @@ public class WorkerManager : MonoBehaviour
     public UnityEvent<int> EvtOnWorkersChanged = new();
     public UnityEvent<int> EvtOnHomelessChanged = new();
     public UnityEvent<int> EvtOnWorkerReduced = new();
-    
+
+    [Header("Worker Resource Consumption")]
+    [SerializeField] private ResourceDataSO resourceToConsume;
+    [SerializeField] private int consumptionPerWorker = 1;
+    [SerializeField] private float consumptionInterval = 10f;
+
     private void Start() 
     {
         EvtOnWorkersChanged?.Invoke(CurrentWorker);
         EvtOnHomelessChanged?.Invoke(HomelessWorker);
+
+       StartCoroutine(WorkerConsumptionRoutine());
     }
 
     public void SetCurrentWorkers(int amount)
@@ -87,5 +97,26 @@ public class WorkerManager : MonoBehaviour
         }
         HomelessWorker++;
         EvtOnHomelessChanged?.Invoke(HomelessWorker);
+    }
+
+    private IEnumerator WorkerConsumptionRoutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(consumptionInterval);
+
+            if (resourceToConsume == null)
+                continue;
+
+            int totalConsumption = CurrentWorker * consumptionPerWorker;
+
+            if (totalConsumption > 0)
+            {
+                GameManager.Instance.ResourceManager.ConsumeResource(
+                    resourceToConsume,
+                    totalConsumption
+                );
+            }
+        }
     }
 }
