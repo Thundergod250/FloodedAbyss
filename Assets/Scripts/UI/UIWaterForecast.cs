@@ -4,7 +4,10 @@ using UnityEngine.UI;
 public class UIWaterForecast : MonoBehaviour
 {
     [SerializeField] private WaterForecast waterForecast;
+    
+    [Header("UI Sliders")]
     [SerializeField] private Slider weatherTimerSlider;
+    [SerializeField] private Slider waterFill; 
 
     [Header("Weather UI Images")]
     [SerializeField] private Image currentWeatherImage;
@@ -15,18 +18,15 @@ public class UIWaterForecast : MonoBehaviour
     private void Update()
     {
         if (waterForecast == null) return;
-
-        // Sync slider values
         if (weatherTimerSlider != null)
         {
-            if (weatherTimerSlider.maxValue != waterForecast.EventDuration)
-            {
-                weatherTimerSlider.maxValue = waterForecast.EventDuration;
-            }
+            weatherTimerSlider.maxValue = waterForecast.EventDuration;
             weatherTimerSlider.value = waterForecast.CurrentTime;
         }
-
-        // Keep UI images synchronized with the backlog queue
+        
+        if (waterFill != null && GameManager.Instance != null && GameManager.Instance.WaterLevel != null) 
+            waterFill.value = GameManager.Instance.WaterLevel.CurrentWaterHeight;
+        
         UpdateWeatherImages();
     }
 

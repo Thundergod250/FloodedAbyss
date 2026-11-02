@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class WaterForecast : MonoBehaviour
 {
@@ -14,9 +13,6 @@ public class WaterForecast : MonoBehaviour
 
     [Header("Random Backlog")]
     [SerializeField] private int initialEventCount = 3;
-
-    [Header("WaterLevel")]
-    [SerializeField] private Slider waterFill;
 
     [SerializeField] private List<TimelineEvents> weatherBacklog = new();
     
@@ -31,7 +27,6 @@ public class WaterForecast : MonoBehaviour
 
     private void Awake()
     {
-        // Parse available events once when the object is created
         BuildAvailableEvents();
     }
 
@@ -43,7 +38,6 @@ public class WaterForecast : MonoBehaviour
             return;
         }
 
-        // Build initial backlog if it's empty when enabled
         if (weatherBacklog.Count == 0)
         {
             initialEventCount = 4;
@@ -56,22 +50,12 @@ public class WaterForecast : MonoBehaviour
             return;
         }
 
-        // Automatically start or resume weather when the panel becomes active
         StartWeather();
     }
 
     private void OnDisable()
     {
-        // Cleanly stop the coroutine when the panel is hidden/disabled
         StopWeather();
-    }
-
-    private void Update()
-    {
-        if (waterFill != null && GameManager.Instance != null && GameManager.Instance.WaterLevel != null)
-        {
-            waterFill.value = GameManager.Instance.WaterLevel.CurrentWaterHeight;
-        }
     }
 
     private void BuildAvailableEvents()
