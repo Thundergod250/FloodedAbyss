@@ -76,9 +76,10 @@ public class WaterForecast : MonoBehaviour
                 timelineSlider.maxValue = eventDuration;
         }
 
-        bool tutorialStillRunning = ObjectiveManager.Instance == null || !ObjectiveManager.Instance.AllObjectiveCompleted;
+        //bool tutorialStillRunning = ObjectiveManager.Instance == null || !ObjectiveManager.Instance.AllObjectiveCompleted;
 
-        SetTutorialPaused(tutorialStillRunning);
+        // SetTutorialPaused(tutorialStillRunning);
+        StartWeather();
     }
 
     private void Update()
