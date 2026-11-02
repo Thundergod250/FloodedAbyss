@@ -2,33 +2,44 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum WeatherType
+{
+    Sunny,
+    Drizzle,
+    Stormy,
+    Typhoon
+}
+
+[System.Serializable]
+public struct WeatherDefinition
+{
+    [Header("Weather Settings")]
+    [SerializeField] private WeatherType weatherType;
+    [SerializeField] private Sprite weatherSprite;
+
+    public WeatherType Type => weatherType;
+    public Sprite Sprite => weatherSprite;
+}
+
 public class WaterForecast : MonoBehaviour
 {
     [Header("Timeline Settings")]
     [SerializeField] private float eventDuration = 60f;
     public float EventDuration => eventDuration;
 
-    [Header("Weather Events")]
-    [SerializeField] private List<GameObject> eventpoints = new();
+    [Header("Available Weather Types Pool")]
+    [SerializeField] private List<WeatherDefinition> weatherDatabase = new();
 
-    [Header("Random Backlog")]
-    [SerializeField] private int initialEventCount = 3;
+    [Header("Active Weather Queue (Backlog)")]
+    [SerializeField] private List<WeatherDefinition> weatherBacklog = new();
+    [SerializeField] private int initialBacklogCount = 4;
 
-    [SerializeField] private List<TimelineEvents> weatherBacklog = new();
-    
     [Header("Debug")]
     [SerializeField] private float currentTime;
     public float CurrentTime => currentTime;
 
-    private readonly List<TimelineEvents> availableEvents = new();
-
     private bool timelinePaused;
     private Coroutine timelineCoroutine;
-
-    private void Awake()
-    {
-        BuildAvailableEvents();
-    }
 
     private void OnEnable()
     {
@@ -38,53 +49,48 @@ public class WaterForecast : MonoBehaviour
             return;
         }
 
-        if (weatherBacklog.Count == 0)
-        {
-            initialEventCount = 4;
+        if (weatherBacklog.Count == 0) 
             BuildInitialBacklog();
-        }
 
         if (weatherBacklog.Count == 0)
         {
-            Debug.LogWarning("[WaterForecast] No valid weather events found.", this);
+            Debug.LogWarning("[WaterForecast] Weather database is empty! Please add weather definitions in the Inspector.", this);
             return;
         }
 
         StartWeather();
     }
 
-    private void OnDisable()
-    {
-        StopWeather();
-    }
-
-    private void BuildAvailableEvents()
-    {
-        availableEvents.Clear();
-
-        foreach (GameObject eventPoint in eventpoints)
-        {
-            if (eventPoint == null) continue;
-
-            TimelineEvents weatherEvent = eventPoint.GetComponentInChildren<TimelineEvents>();
-            if (weatherEvent == null) weatherEvent = eventPoint.GetComponent<TimelineEvents>();
-
-            if (weatherEvent != null && !availableEvents.Contains(weatherEvent))
-            {
-                availableEvents.Add(weatherEvent);
-            }
-        }
-    }
+    private void OnDisable() => StopWeather();
 
     private void BuildInitialBacklog()
     {
         weatherBacklog.Clear();
-        int count = Mathf.Min(Mathf.Max(0, initialEventCount), availableEvents.Count);
+        if (weatherDatabase.Count == 0) return;
 
-        for (int i = 0; i < count; i++)
+        // 1. Always force the very first weather event to be Sunny
+        WeatherDefinition? sunnyDef = GetSunnyDefinition();
+        if (sunnyDef.HasValue)
+            weatherBacklog.Add(sunnyDef.Value);
+        else
         {
-            weatherBacklog.Add(availableEvents[i]);
+            Debug.LogWarning("[WaterForecast] 'Sunny' weather type not found in database! Using database entry 0 as fallback.");
+            weatherBacklog.Add(weatherDatabase[0]);
         }
+
+        // 2. Fill the remaining slots of the initial count with randomized weather
+        for (int i = 1; i < initialBacklogCount; i++) 
+            AddRandomWeatherToBacklog();
+    }
+
+    private WeatherDefinition? GetSunnyDefinition()
+    {
+        foreach (var def in weatherDatabase)
+        {
+            if (def.Type == WeatherType.Sunny)
+                return def;
+        }
+        return null;
     }
 
     private IEnumerator ProgressTimeline()
@@ -95,17 +101,17 @@ public class WaterForecast : MonoBehaviour
 
             while (currentTime < eventDuration)
             {
-                if (!timelinePaused)
-                {
+                if (!timelinePaused) 
                     currentTime += Time.deltaTime;
-                }
                 yield return null;
             }
 
+            // Remove the finished current weather at index 0
             if (weatherBacklog.Count > 0)
                 weatherBacklog.RemoveAt(0);
 
-            AddOneRandomWeatherEvent();
+            // Add a new random weather event to the end of the queue
+            AddRandomWeatherToBacklog();
 
             if (weatherBacklog.Count == 0)
             {
@@ -118,22 +124,37 @@ public class WaterForecast : MonoBehaviour
         }
     }
 
-    private void AddOneRandomWeatherEvent()
+    private void AddRandomWeatherToBacklog()
     {
-        if (availableEvents.Count == 0) return;
-        int randomIndex = Random.Range(0, availableEvents.Count);
-        weatherBacklog.Add(availableEvents[randomIndex]);
+        if (weatherDatabase.Count == 0) return;
+
+        WeatherDefinition chosenWeather;
+
+        // Prevent instant back-to-back duplicate weather types if possible
+        if (weatherDatabase.Count > 1 && weatherBacklog.Count > 0)
+        {
+            WeatherDefinition lastWeather = weatherBacklog[weatherBacklog.Count - 1];
+            int safety = 0;
+            do
+            {
+                chosenWeather = weatherDatabase[Random.Range(0, weatherDatabase.Count)];
+                safety++;
+            }
+            while (chosenWeather.Type == lastWeather.Type && safety < 10);
+        }
+        else
+            chosenWeather = weatherDatabase[Random.Range(0, weatherDatabase.Count)];
+
+        weatherBacklog.Add(chosenWeather);
     }
 
     private void PlayCurrentWeather()
     {
-        if (weatherBacklog.Count > 0 && weatherBacklog[0] != null)
-        {
-            weatherBacklog[0].TimelinePlayRain(this);
-        }
+        if (weatherBacklog.Count > 0) 
+            ApplyWeatherEffects(weatherBacklog[0].Type);
     }
 
-    public TimelineEvents GetWeatherEvent(int index)
+    public WeatherDefinition? GetWeatherEvent(int index)
     {
         if (index < 0 || index >= weatherBacklog.Count) return null;
         return weatherBacklog[index];
@@ -142,40 +163,33 @@ public class WaterForecast : MonoBehaviour
     public void PauseTimeline() => timelinePaused = true;
     public void ResumeTimeline() { if (timelineCoroutine != null) timelinePaused = false; }
 
-    private void SetRainState(rainStrength strength, bool playAudio)
+    private void ApplyWeatherEffects(WeatherType weatherType)
     {
         if (GameManager.Instance == null) return;
 
+        // Handle VFX based on the specific WeatherType
         if (GameManager.Instance.VFXController != null)
         {
-            if (strength == rainStrength.Sunny)
+            if (weatherType == WeatherType.Sunny)
                 GameManager.Instance.VFXController.StopRain();
             else
-                GameManager.Instance.VFXController.PlayRain(strength);
+            {
+                rainStrength mappedStrength = rainStrength.Weak;
+                
+                if (weatherType == WeatherType.Stormy) mappedStrength = rainStrength.Decent;
+                else if (weatherType == WeatherType.Typhoon) mappedStrength = rainStrength.Strong;
+
+                GameManager.Instance.VFXController.PlayRain(mappedStrength);
+            }
         }
 
+        // Handle Audio
         if (GameManager.Instance.SoundManager != null)
         {
-            if (playAudio)
-                GameManager.Instance.SoundManager.Play("SFXRaining");
+            if (weatherType == WeatherType.Sunny)
+                GameManager.Instance.SoundManager.Stop("SFXRaining");
             else
-                GameManager.Instance.SoundManager.Stop("SFXRaining");
-        }
-    }
-
-    public void PlayWeakRain()   => SetRainState(rainStrength.Weak, true);
-    public void PlayDecentRain() => SetRainState(rainStrength.Decent, true);
-    public void PlayStrongRain() => SetRainState(rainStrength.Strong, true);
-
-    public void StopRain()
-    {
-        if (GameManager.Instance != null)
-        {
-            if (GameManager.Instance.VFXController != null)
-                GameManager.Instance.VFXController.StopRain();
-
-            if (GameManager.Instance.SoundManager != null)
-                GameManager.Instance.SoundManager.Stop("SFXRaining");
+                GameManager.Instance.SoundManager.Play("SFXRaining");
         }
     }
 
@@ -199,7 +213,14 @@ public class WaterForecast : MonoBehaviour
             StopCoroutine(timelineCoroutine);
             timelineCoroutine = null;
         }
-        StopRain();
+        
+        if (GameManager.Instance != null)
+        {
+            if (GameManager.Instance.VFXController != null)
+                GameManager.Instance.VFXController.StopRain();
+            if (GameManager.Instance.SoundManager != null)
+                GameManager.Instance.SoundManager.Stop("SFXRaining");
+        }
     }
     #endregion
 }

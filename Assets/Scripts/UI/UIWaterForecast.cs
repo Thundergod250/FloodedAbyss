@@ -9,7 +9,7 @@ public class UIWaterForecast : MonoBehaviour
     [SerializeField] private Slider weatherTimerSlider;
     [SerializeField] private Slider waterFill; 
 
-    [Header("Weather UI Images")]
+    [Header("Weather UI Images (Circles)")]
     [SerializeField] private Image currentWeatherImage;
     [SerializeField] private Image nextWeatherImage;
     [SerializeField] private Image followingWeatherImage;
@@ -18,14 +18,19 @@ public class UIWaterForecast : MonoBehaviour
     private void Update()
     {
         if (waterForecast == null) return;
+
+        // Sync timer slider values
         if (weatherTimerSlider != null)
         {
             weatherTimerSlider.maxValue = waterForecast.EventDuration;
             weatherTimerSlider.value = waterForecast.CurrentTime;
         }
         
+        // Sync water level bar
         if (waterFill != null && GameManager.Instance != null && GameManager.Instance.WaterLevel != null) 
+        {
             waterFill.value = GameManager.Instance.WaterLevel.CurrentWaterHeight;
+        }
         
         UpdateWeatherImages();
     }
@@ -38,19 +43,18 @@ public class UIWaterForecast : MonoBehaviour
         SetWeatherImage(followingWeather2Image, waterForecast.GetWeatherEvent(3));
     }
 
-    private void SetWeatherImage(Image targetImage, TimelineEvents weatherEvent)
+    private void SetWeatherImage(Image targetImage, WeatherDefinition? weatherDef)
     {
         if (targetImage == null) return;
 
-        if (weatherEvent == null || weatherEvent.WeatherSprite == null)
+        if (weatherDef == null || weatherDef.Value.Sprite == null)
         {
             targetImage.sprite = null;
             targetImage.enabled = false;
             return;
         }
 
-        Sprite weatherSprite = weatherEvent.WeatherSprite;
-        targetImage.sprite = weatherSprite;
-        targetImage.enabled = weatherSprite != null;
+        targetImage.sprite = weatherDef.Value.Sprite;
+        targetImage.enabled = true;
     }
 }
