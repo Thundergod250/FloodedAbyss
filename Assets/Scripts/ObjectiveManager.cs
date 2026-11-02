@@ -171,7 +171,7 @@ public class ObjectiveManager : MonoBehaviour
     {
         yield return null; // Wait one frame for UI initialization
 
-        UpdateResourceEventsState();
+       // UpdateResourceEventsState();
 
         if (GameManager.Instance != null &&
             GameManager.Instance.uiController != null &&
@@ -581,7 +581,7 @@ public class ObjectiveManager : MonoBehaviour
             if (AllObjectiveCompleted)
                 Debug.Log("[ObjectiveManager] All quests completed!");
 
-            UpdateResourceEventsState();
+           // UpdateResourceEventsState();
         }
 
         OnObjectiveUpdated?.Invoke();
@@ -668,7 +668,7 @@ public class ObjectiveManager : MonoBehaviour
 
         if (eventManager != null)
         {
-            eventManager.SetTutorialPaused(tutorialStillRunning);
+           // eventManager.SetTutorialPaused(tutorialStillRunning);
         }
         else
         {
@@ -678,7 +678,7 @@ public class ObjectiveManager : MonoBehaviour
 
         if (waterForecast != null)
         {
-            waterForecast.SetTutorialPaused(tutorialStillRunning);
+            //waterForecast.SetTutorialPaused(tutorialStillRunning);
         }
         else
         {
