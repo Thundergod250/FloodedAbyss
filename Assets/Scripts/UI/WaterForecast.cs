@@ -150,8 +150,8 @@ public class WaterForecast : MonoBehaviour
 
     private void PlayCurrentWeather()
     {
-        /*if (weatherBacklog.Count > 0) 
-            ApplyWeatherEffects(weatherBacklog[0].Type);*/
+        if (weatherBacklog.Count > 0) 
+            ApplyWeatherEffects(weatherBacklog[0].Type);
     }
 
     public WeatherDefinition? GetWeatherEvent(int index)
@@ -184,13 +184,13 @@ public class WaterForecast : MonoBehaviour
         }
 
         // Handle Audio
-        if (GameManager.Instance.SoundManager != null)
+        /*if (GameManager.Instance.SoundManager != null)
         {
             if (weatherType == WeatherType.Sunny)
                 GameManager.Instance.SoundManager.Stop("SFXRaining");
             else
                 GameManager.Instance.SoundManager.Play("SFXRaining");
-        }
+        }*/
     }
 
     #region Start and Stop Weather
