@@ -26,7 +26,7 @@ public class TimelineEvents : MonoBehaviour
 
         switch (rainStrength)
         {
-            case rainStrength.Weak:
+            /*case rainStrength.Weak:
                 waterForecast.PlayWeakRain();
                 break;
 
@@ -40,7 +40,7 @@ public class TimelineEvents : MonoBehaviour
 
             case rainStrength.Sunny:
                 waterForecast.StopRain();
-                break;
+                break;*/
 
             default:
                 Debug.LogWarning(

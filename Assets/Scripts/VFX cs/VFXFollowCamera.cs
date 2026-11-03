@@ -10,7 +10,7 @@ public class VFXFollowCamera : MonoBehaviour
     private Transform mainCameraTransform;
     private Vector3 initialPosition;
 
-    private void Start()
+    private void OnEnable()
     {
         if (Camera.main != null)
             mainCameraTransform = Camera.main.transform;
