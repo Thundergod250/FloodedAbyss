@@ -84,6 +84,11 @@ public class WaterLevel : MonoBehaviour
         maxWaterHeight = Mathf.Max(0f, amount);
     }
 
+    public void ReduceWaterPressure(float amount)
+    {
+        pressureIncreaseRate -= amount;
+    }
+
     public IEnumerator GreatFloodTimer()
     {
         yield return new WaitForSeconds(10f * 60f);
