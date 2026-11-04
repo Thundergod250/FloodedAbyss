@@ -91,11 +91,6 @@ public class WaterLevel : MonoBehaviour
         pressureIncreaseRate -= amount;
     }
 
-    public void IncWaterPressure(float amount)
-    {
-        pressureIncreaseRate += amount;
-    }
-
     public IEnumerator GreatFloodTimer()
     {
         yield return new WaitForSeconds(greatFloodTimer * 60f);
