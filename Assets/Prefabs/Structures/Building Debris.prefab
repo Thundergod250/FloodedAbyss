@@ -9,6 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6965316304116858285}
+  - component: {fileID: 2555323084899428618}
+  - component: {fileID: 411560667248324322}
+  - component: {fileID: -3516345141454083904}
+  - component: {fileID: 8602168902277043653}
   m_Layer: 0
   m_Name: Building Debris
   m_TagString: Untagged
@@ -36,6 +40,92 @@ Transform:
   - {fileID: 4129418810477208772}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2555323084899428618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1058038040027629035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60cb8c809a19c7b41a7c6adb7aca416d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoverHighlight
+  outlineMaterial: {fileID: 2100000, guid: d625b157ec0b38e459c68a60028fe48a, type: 2}
+  matchObjectColor: 0
+--- !u!65 &411560667248324322
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1058038040027629035}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-3516345141454083904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1058038040027629035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 586d09e3430c3fa4bb4b7161e1b7ee7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Interactables
+  interactionMessage: 
+  onInteract:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &8602168902277043653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1058038040027629035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afb238a91dc2ad746a26ab575406bd9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StructureBuildable
+  ignoreSubmersion: 0
+  BuildablePrefab: {fileID: 0}
+  availableStructuresToBuild:
+  - {fileID: 11400000, guid: 8a930be30284f194abfdc58ddff5b98c, type: 2}
+  - {fileID: 11400000, guid: 2c44a2b9bda758b468eaf1167c5df7d4, type: 2}
+  - {fileID: 11400000, guid: 0bb1c459624260b43a0596c317134be6, type: 2}
+  - {fileID: 11400000, guid: 38f5fd1da118b3643a56c79399f0a61f, type: 2}
+  - {fileID: 11400000, guid: f73ec0b473b2c8b4e8614135157bb3a4, type: 2}
+  - {fileID: 11400000, guid: d0060c8ccae1fb14b84f8c7c87da6c4c, type: 2}
+  - {fileID: 11400000, guid: 6be9101e12a721645ac0ec5d965b5c10, type: 2}
+  - {fileID: 11400000, guid: 48b11a885abd9e04faabbd30f1980633, type: 2}
+  - {fileID: 11400000, guid: 5858b67bc7f766346852e29de7e7378f, type: 2}
+  - {fileID: 11400000, guid: d0a29aaeb2966fd4bb37907dc6b93255, type: 2}
+  - {fileID: 11400000, guid: 5f24ee30bdf65854aae60fc780c0b4b7, type: 2}
+  - {fileID: 11400000, guid: e0df34c226fae5947b367ae1c3d09d3c, type: 2}
+  - {fileID: 11400000, guid: c2c868423f53b0b47a565787c837b88b, type: 2}
+  - {fileID: 11400000, guid: a742c940bce512f41a578530c2ba39dc, type: 2}
+  - {fileID: 11400000, guid: 477a81f4ba827f74eb00c02c0539b174, type: 2}
+  - {fileID: 11400000, guid: ec2de4b004214b844abeee3b34143145, type: 2}
+  - {fileID: 11400000, guid: e6a3e9f5ea50ea9479bec9e30bdcff2f, type: 2}
+  - {fileID: 11400000, guid: ef4be1a875f887d428cab6e9a56425ec, type: 2}
+  laborCost: 1
+  spawnOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &2899824563787199092
 GameObject:
   m_ObjectHideFlags: 0
