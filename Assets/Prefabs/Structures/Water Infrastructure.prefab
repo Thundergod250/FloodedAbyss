@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5632610223182594058}
   - component: {fileID: -1341605930212751647}
   m_Layer: 0
-  m_Name: Concrete River Wall
+  m_Name: Water Infrastructure
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -104,22 +104,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa1ec667b714a1e4c849135e4e65b139, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureWaterInfrastructure
-  ignoreSubmersion: 1
+  ignoreSubmersion: 0
   BuildablePrefab: {fileID: 2104639937772099258, guid: 85cc9829280f72a49a2e6f2948abba66, type: 3}
-  infrastructureType: 0
-  structureName: 
-  waterReduc: 0.03
-  requiresWorkers: 0
-  laborCost: 1
-  canStoreWater: 1
-  waterRemoveDuration: 5
-  waterStored: 0
-  maxWaterStored: 100
-  waterPerSecInc: 0.1
-  requiresManualActivation: 0
-  isWorking: 0
-  isDestroying: 0
-  progressPercentage: 0
+  waterReduc: 0.025
 --- !u!1 &2330256794431470205
 GameObject:
   m_ObjectHideFlags: 0

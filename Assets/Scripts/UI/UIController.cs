@@ -15,7 +15,6 @@ public class UIController : MonoBehaviour
     public UiWorkersHouse UiWorkersHouse { get; private set; }
     public UIEventManager UiEventManager { get; private set; }
     public UiFarm UiFarm { get; private set; }
-    public UIWaterInfrastructure UIWaterInfrastructure { get; private set; }
 
     private void Awake() => InitializeModals();
 
