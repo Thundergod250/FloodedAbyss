@@ -18,6 +18,8 @@ public class WaterLevel : MonoBehaviour
     [Header("Great Flood Settings")]
     [SerializeField] private bool forceStartGreatFlood = false;
     [SerializeField] private float greatFloodPressureIncrease = 15f;
+    [SerializeField] private int greatFloodTimer;
+
     private bool greatFloodStarted = false;
 
     [Header("Pump Mechanics")]
@@ -91,7 +93,7 @@ public class WaterLevel : MonoBehaviour
 
     public IEnumerator GreatFloodTimer()
     {
-        yield return new WaitForSeconds(10f * 60f);
+        yield return new WaitForSeconds(greatFloodTimer * 60f);
 
         StartGreatFlood();
     }
