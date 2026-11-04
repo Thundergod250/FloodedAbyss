@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2306482097802242787}
   - component: {fileID: 5390150028260122058}
   - component: {fileID: 7069905321151655983}
+  - component: {fileID: -1736697208287092414}
   m_Layer: 0
   m_Name: CoalHouse
   m_TagString: Untagged
@@ -99,6 +100,20 @@ MonoBehaviour:
   onInteract:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &-1736697208287092414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7211730591948805634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60cb8c809a19c7b41a7c6adb7aca416d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoverHighlight
+  outlineMaterial: {fileID: 2100000, guid: d625b157ec0b38e459c68a60028fe48a, type: 2}
+  matchObjectColor: 0
 --- !u!1001 &2712109131409868877
 PrefabInstance:
   m_ObjectHideFlags: 0

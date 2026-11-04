@@ -193,6 +193,7 @@ GameObject:
   - component: {fileID: 3782065719671218947}
   - component: {fileID: 3546139710130683797}
   - component: {fileID: 9157455902357144910}
+  - component: {fileID: 3238618365470631553}
   m_Layer: 0
   m_Name: Biorefinery
   m_TagString: Untagged
@@ -294,3 +295,17 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 8.43, y: 3.78, z: 5.68}
   m_Center: {x: 0, y: 1.88, z: 0}
+--- !u!114 &3238618365470631553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8255725005642933932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60cb8c809a19c7b41a7c6adb7aca416d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoverHighlight
+  outlineMaterial: {fileID: 2100000, guid: d625b157ec0b38e459c68a60028fe48a, type: 2}
+  matchObjectColor: 0
