@@ -21,6 +21,23 @@ public class StructureWorkersHouse : Structures
 
     private Coroutine actionRoutine;
     private Coroutine destroyRoutine;
+    private void OnEnable()
+    {
+        if (GameManager.Instance != null &&
+            GameManager.Instance.WorkerManager != null)
+        {
+            GameManager.Instance.WorkerManager.RegisterWorkerHouse(this);
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (GameManager.Instance != null &&
+            GameManager.Instance.WorkerManager != null)
+        {
+            GameManager.Instance.WorkerManager.UnregisterWorkerHouse(this);
+        }
+    }
 
     public override void Activate()
     {
@@ -157,6 +174,13 @@ public class StructureWorkersHouse : Structures
         {
             houseUI.CompleteProgress();
         }
+    }
+
+    public void RemoveWorkerDueToDeath()
+    {
+        if (!isOccupied) return;
+
+        isOccupied = false;
     }
 
     public void ToggleDestroying()
