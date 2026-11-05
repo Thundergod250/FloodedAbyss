@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3771885053216324313}
-  - component: {fileID: 421844445156128571}
   - component: {fileID: 4549580653277594758}
   - component: {fileID: 6049963557546397485}
   - component: {fileID: 5679187850341024396}
+  - component: {fileID: 6822776186264811765}
   m_Layer: 0
   m_Name: ElectronicFactory
   m_TagString: Untagged
@@ -36,27 +36,6 @@ Transform:
   - {fileID: 1085682508305984500}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &421844445156128571
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5207249959057284704}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 7.76, y: 6.07, z: 6.73}
-  m_Center: {x: 0, y: 3.91, z: 0}
 --- !u!114 &4549580653277594758
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,6 +94,27 @@ MonoBehaviour:
   outlineScale: 1.03
   matchObjectColor: 0
   fallbackOutlineColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!65 &6822776186264811765
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5207249959057284704}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 13.2, y: 11.9, z: 16.9}
+  m_Center: {x: 2.34, y: 6.06, z: 0}
 --- !u!1 &7815145660874067874
 GameObject:
   m_ObjectHideFlags: 0
@@ -143,7 +143,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3771885053216324313}
