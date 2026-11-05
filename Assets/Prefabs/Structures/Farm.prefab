@@ -100,9 +100,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3336947698838539166}
   - component: {fileID: 4846566471344453360}
-  - component: {fileID: 5870961666463022649}
   - component: {fileID: -721840584770936787}
   - component: {fileID: -3893207560928706510}
+  - component: {fileID: 8832913444691279047}
   m_Layer: 0
   m_Name: Farm
   m_TagString: Untagged
@@ -150,30 +150,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 21.350164, y: 5.3558884, z: 21.24807}
   m_Center: {x: 0.068060875, y: 1.5994277, z: -0.051045895}
---- !u!114 &5870961666463022649
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 679729884241510959}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc5844eb84d27f943a25dde0441561ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StructureFarm
-  ignoreSubmersion: 0
-  BuildablePrefab: {fileID: 2104639937772099258, guid: 85cc9829280f72a49a2e6f2948abba66, type: 3}
-  structureTitle: Farm
-  laborCost: 1
-  productionDuration: 5
-  destructionDuration: 3
-  canBeDestroyed: 1
-  foodResource: {fileID: 11400000, guid: 0b63baccc51da1242aff4c9ca59ffdeb, type: 2}
-  foodPerCycle: 5
-  isWorking: 0
-  isDestroying: 0
-  progressPercentage: 0
 --- !u!114 &-721840584770936787
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,6 +182,32 @@ MonoBehaviour:
   outlineScale: 1.3
   matchObjectColor: 0
   fallbackOutlineColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &8832913444691279047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 679729884241510959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 419958e9bb152c2429036da0e422d5f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StructureHarvestResource
+  ignoreSubmersion: 0
+  BuildablePrefab: {fileID: 1058038040027629035, guid: 2f578e65b9c30d144a28be802c66de7e, type: 3}
+  structureTitle: Farm
+  laborCost: 1
+  productionDuration: 3
+  destructionDuration: 3
+  canBeDestroyed: 1
+  harvestMode: 2
+  maxHarvestCycles: 5
+  resourceToProduce: {fileID: 11400000, guid: 0b63baccc51da1242aff4c9ca59ffdeb, type: 2}
+  productionAmount: 5
+  isWorking: 0
+  isDestroying: 0
+  progressPercentage: 0
 --- !u!1 &2838933864308704348
 GameObject:
   m_ObjectHideFlags: 0
