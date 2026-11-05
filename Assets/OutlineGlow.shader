@@ -4,8 +4,14 @@ Shader "Custom/OutlineGlow"
     Properties
     {
         [HDR] _OutlineColor ("Outline Color (HDR)", Color) = (1, 1, 0, 1)
-        _OutlineWidth ("Outline Width (Pixels)", Range(0, 20)) = 3.0
-        _GlowIntensity ("Glow Intensity", Range(0, 25)) = 5.0
+
+        [Enum(World Space, 0, Screen Pixels, 1)]
+        _OutlineMode ("Outline Mode", Float) = 0
+
+        _WorldOutlineWidth ("World Space Width", Range(0, 0.5)) = 0.025
+        _PixelOutlineWidth ("Pixel Width", Range(0, 20)) = 3.0
+
+        _GlowIntensity ("Glow Intensity", Range(1, 25)) = 5.0
     }
 
     SubShader
@@ -23,6 +29,7 @@ Shader "Custom/OutlineGlow"
             Cull Front
             ZWrite Off
             ZTest LEqual
+            Offset -1, -1
 
             Blend SrcAlpha OneMinusSrcAlpha
 
@@ -46,52 +53,56 @@ Shader "Custom/OutlineGlow"
             };
 
             float4 _OutlineColor;
-            float _OutlineWidth;
+            float _OutlineMode;
+            float _WorldOutlineWidth;
+            float _PixelOutlineWidth;
             float _GlowIntensity;
 
             v2f vert(appdata v)
             {
                 v2f o;
 
-                // Original vertex position in clip space
-                o.pos = UnityObjectToClipPos(v.vertex);
-
-                // Transform the normal into view space
-                float3 normalVS = normalize(
-                    mul((float3x3)UNITY_MATRIX_IT_MV, v.normal)
-                );
-
-                // Project the normal into screen space
-                float2 projectedNormal =
-                    TransformViewToProjection(normalVS.xy);
-
-                // Normalize the projected direction
-                float normalLength = length(projectedNormal);
-
-                if (normalLength > 0.00001)
+                // MODE 0: WORLD SPACE
+                if (_OutlineMode < 0.5)
                 {
-                    projectedNormal /= normalLength;
+                    float3 worldPos =
+                        mul(unity_ObjectToWorld, v.vertex).xyz;
+
+                    float3 worldNormal =
+                        normalize(UnityObjectToWorldNormal(v.normal));
+
+                    // Expand using actual world units.
+                    worldPos += worldNormal * _WorldOutlineWidth;
+
+                    o.pos = mul(
+                        UNITY_MATRIX_VP,
+                        float4(worldPos, 1.0)
+                    );
                 }
+                // MODE 1: SCREEN PIXELS
                 else
                 {
-                    projectedNormal = float2(0, 0);
+                    o.pos = UnityObjectToClipPos(v.vertex);
+
+                    float3 normalVS = normalize(
+                        mul((float3x3)UNITY_MATRIX_IT_MV, v.normal)
+                    );
+
+                    float2 projectedNormal =
+                        mul((float2x2)UNITY_MATRIX_P, normalVS.xy);
+
+                    float2 pixelOffset =
+                        projectedNormal *
+                        (2.0 * _PixelOutlineWidth / _ScreenParams.xy);
+
+                    o.pos.xy += pixelOffset * o.pos.w;
                 }
-
-                // Expand in actual screen pixels.
-                // Multiplying by clip W keeps the width consistent
-                // regardless of camera distance.
-                float2 pixelOffset =
-                    projectedNormal *
-                    (2.0 * _OutlineWidth / _ScreenParams.xy);
-
-                o.pos.xy += pixelOffset * o.pos.w;
 
                 return o;
             }
 
             float4 frag(v2f i) : SV_Target
             {
-                // Increase RGB brightness without changing opacity.
                 float3 finalColor =
                     _OutlineColor.rgb * _GlowIntensity;
 
