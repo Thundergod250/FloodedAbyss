@@ -2,7 +2,7 @@ Shader "Custom/HoverGlow"
 {
     Properties
     {
-        _Color ("Glow Color", Color) = (1, 1, 0, 1)
+        [HDR] _Color ("Glow Color", Color) = (1, 1, 0, 1)
         _GlowPower ("Glow Power", Range(0.5, 5.0)) = 3.0
         _Thickness ("Thickness (Make Bigger)", Range(0.0, 1.0)) = 0.02
     }
