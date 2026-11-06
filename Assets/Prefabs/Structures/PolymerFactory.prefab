@@ -101,8 +101,8 @@ GameObject:
   - component: {fileID: 257146494720606409}
   - component: {fileID: 416160880301059777}
   - component: {fileID: 6097217672722259288}
-  - component: {fileID: 7872451675675566225}
   - component: {fileID: 6457890174232005223}
+  - component: {fileID: -4466091823112420724}
   m_Layer: 0
   m_Name: PolymerFactory
   m_TagString: Untagged
@@ -174,19 +174,6 @@ MonoBehaviour:
   isWorking: 0
   isDestroying: 0
   progressPercentage: 0
---- !u!114 &7872451675675566225
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3587069043965215885}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: efe69d35dca1a5941b18a1fb4e82a7ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MouseHoverHighlight
-  highlightRenderer: {fileID: 0}
 --- !u!114 &6457890174232005223
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -203,6 +190,22 @@ MonoBehaviour:
   onInteract:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &-4466091823112420724
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3587069043965215885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60cb8c809a19c7b41a7c6adb7aca416d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoverHighlight
+  outlineMaterial: {fileID: 2100000, guid: 7acbd91d8e966974ab6e064478f09800, type: 2}
+  outlineScale: 1.03
+  matchObjectColor: 0
+  fallbackOutlineColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &7991071457751408859
 GameObject:
   m_ObjectHideFlags: 0
