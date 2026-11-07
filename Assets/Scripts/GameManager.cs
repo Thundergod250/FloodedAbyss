@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     public SoundManager SoundManager;
     public UIMainMenu UIMainMenu;
     public VFXController VFXController;
+    public TutorialController TutorialController;
 
     private void Awake()
     {
