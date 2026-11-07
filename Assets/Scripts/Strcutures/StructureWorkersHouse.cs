@@ -19,6 +19,10 @@ public class StructureWorkersHouse : Structures
     [SerializeField] private bool isReservedForHousing = false;
     [SerializeField, Range(0f, 1f)] private float progressPercentage = 0f;
 
+    [Header("Housing Capacity")]
+    [SerializeField] private int housingCapacity = 2;
+
+    public int HousingCapacity => housingCapacity;
     private Coroutine actionRoutine;
     private Coroutine destroyRoutine;
     private void OnEnable()
@@ -181,6 +185,11 @@ public class StructureWorkersHouse : Structures
         if (!isOccupied) return;
 
         isOccupied = false;
+    }
+
+    public void SetHousingCapacity(int amount)
+    {
+        housingCapacity = Mathf.Max(1, amount);
     }
 
     public void ToggleDestroying()

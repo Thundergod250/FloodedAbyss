@@ -195,6 +195,7 @@ MonoBehaviour:
   isDestroying: 0
   isReservedForHousing: 0
   progressPercentage: 0
+  housingCapacity: 3
 --- !u!114 &2414361128195471078
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -225,7 +226,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HoverHighlight
   outlineMaterial: {fileID: 2100000, guid: 7acbd91d8e966974ab6e064478f09800, type: 2}
+  outlineScale: 1.03
   matchObjectColor: 0
+  fallbackOutlineColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &3895443385424835352
 GameObject:
   m_ObjectHideFlags: 0
