@@ -22,6 +22,9 @@ public class TutorialArrowController : MonoBehaviour
         // Find all world objects dynamically
         allHarvesters = FindObjectsByType<StructureHarvestResource>(FindObjectsInactive.Exclude);
         allPumps = FindObjectsByType<StructureApexPump>(FindObjectsInactive.Exclude);
+
+        // Find the UI panel immediately so we can disable its arrows if Objective 1 is active
+        FindPumpPanel();
     }
 
     private void Update()
@@ -75,7 +78,13 @@ public class TutorialArrowController : MonoBehaviour
             }
         }
 
-        // --- HANDLE PUMP UI ARROWS (Objective 2) ---
+        // --- HANDLE PUMP UI ARROWS ---
+        // Failsafe: If the panel wasn't in the scene at Start, try finding it again
+        if (apexPumpPanel == null)
+        {
+            FindPumpPanel();
+        }
+
         if (isObjective2)
         {
             SetupPumpUI();
@@ -83,24 +92,18 @@ public class TutorialArrowController : MonoBehaviour
         }
         else
         {
-            // Ensure UI arrows are hidden if we are past objective 2
+            // Ensure UI arrows are hidden if we are NOT on Objective 2
             if (apexPumpPanel != null)
             {
-                Transform a1 = apexPumpPanel.transform.Find("Arrow_1");
-                Transform a2 = apexPumpPanel.transform.Find("Arrow_2");
-                Transform a3 = apexPumpPanel.transform.Find("Arrow_3");
-
-                if (a1 != null) a1.gameObject.SetActive(false);
-                if (a2 != null) a2.gameObject.SetActive(false);
-                if (a3 != null) a3.gameObject.SetActive(false);
+                SetArrowState("Arrow_1", false);
+                SetArrowState("Arrow_2", false);
+                SetArrowState("Arrow_3", false);
             }
         }
     }
 
-    private void SetupPumpUI()
+    private void FindPumpPanel()
     {
-        if (isUIHooked) return;
-
         // Find the Panel (even if it's currently inactive/hidden in the scene)
         var allTransforms = FindObjectsByType<Transform>(FindObjectsInactive.Include);
         foreach (var t in allTransforms)
@@ -111,8 +114,11 @@ public class TutorialArrowController : MonoBehaviour
                 break;
             }
         }
+    }
 
-        if (apexPumpPanel == null) return;
+    private void SetupPumpUI()
+    {
+        if (isUIHooked || apexPumpPanel == null) return;
 
         // Hook Resource Buttons
         Transform resContainer = apexPumpPanel.transform.Find("Pump Panel/Resource Button Container");
@@ -152,21 +158,21 @@ public class TutorialArrowController : MonoBehaviour
     {
         if (apexPumpPanel == null) return;
 
-        Transform a1 = apexPumpPanel.transform.Find("Arrow_1");
-        Transform a2 = apexPumpPanel.transform.Find("Arrow_2");
-        Transform a3 = apexPumpPanel.transform.Find("Arrow_3");
-
         // Arrow 1: Visible until a resource is clicked
-        if (a1 != null)
-            a1.gameObject.SetActive(!clickedResource);
-
+        SetArrowState("Arrow_1", !clickedResource);
         // Arrow 2: Visible AFTER resource is clicked, UNTIL amount is clicked
-        if (a2 != null)
-            a2.gameObject.SetActive(clickedResource && !clickedAmount);
-
+        SetArrowState("Arrow_2", clickedResource && !clickedAmount);
         // Arrow 3: Visible AFTER amount is clicked, UNTIL activate is clicked
-        if (a3 != null)
-            a3.gameObject.SetActive(clickedAmount && !clickedActivate);
+        SetArrowState("Arrow_3", clickedAmount && !clickedActivate);
+    }
+
+    private void SetArrowState(string arrowName, bool state)
+    {
+        Transform arrow = apexPumpPanel.transform.Find(arrowName);
+        if (arrow != null && arrow.gameObject.activeSelf != state)
+        {
+            arrow.gameObject.SetActive(state);
+        }
     }
 
     // Finds the Arrowdown child attached to the prefab by checking its name
