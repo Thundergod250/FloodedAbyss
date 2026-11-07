@@ -7,10 +7,8 @@ public class StructureUpgrade : MonoBehaviour
     [SerializeField] private List<StructureDataSO> houseLevels = new List<StructureDataSO>();
     [SerializeField, Range(1, 3)] private int houseLevelVal = 1;
 
-    // NEW: Assign these references from the structure-building script.
     private StructureBuildable owningTerminal;
 
-    // NEW: Store the owning terminal reference.
     public void SetOwningTerminal(StructureBuildable terminal)
     {
         owningTerminal = terminal;
@@ -47,7 +45,6 @@ public class StructureUpgrade : MonoBehaviour
         if (resourceMgr == null)
             return false;
 
-        // CHANGED: Validate all resource costs before instantiating.
         foreach (ResourceCostEntry cost in upgradeData.Costs)
         {
             if (cost.resourceDataSo == null || cost.amount < 0)
@@ -63,7 +60,6 @@ public class StructureUpgrade : MonoBehaviour
             }
         }
 
-        // NEW: Preserve the old house's transform.
         Vector3 spawnPosition = transform.position;
         Quaternion spawnRotation = transform.rotation;
         Transform oldParent = transform.parent;
@@ -92,7 +88,6 @@ public class StructureUpgrade : MonoBehaviour
             return false;
         }
 
-        // NEW: Transfer terminal ownership through StructureUpgrade.
         StructureUpgrade upgradedUpgrade =
             upgradedObject.GetComponent<StructureUpgrade>();
 
@@ -102,7 +97,10 @@ public class StructureUpgrade : MonoBehaviour
             upgradedUpgrade.SetHouseLevel(houseLevelVal + 1);
         }
 
-        // NEW: Consume the upgrade costs.
+        int capacityDifference = upgradedHouse.HousingCapacity - house.HousingCapacity;
+
+        GameManager.Instance.WorkerManager.AddHousingCapacity(capacityDifference);
+
         foreach (ResourceCostEntry cost in upgradeData.Costs)
         {
             if (cost.amount > 0 &&
@@ -114,7 +112,6 @@ public class StructureUpgrade : MonoBehaviour
             }
         }
 
-        // NEW: Refresh the house UI.
         UiWorkersHouse houseUI = GameManager.Instance.uiController.UiWorkersHouse;
 
         if (houseUI != null && houseUI.IsShowingHouse(house))
@@ -122,13 +119,11 @@ public class StructureUpgrade : MonoBehaviour
             houseUI.Setup(upgradedHouse);
         }
 
-        // CHANGED: Destroy the old house after a successful upgrade.
         Destroy(gameObject);
 
         return true;
     }
 
-    // NEW: Set the level without modifying StructureWorkersHouse.
     public void SetHouseLevel(int level)
     {
         houseLevelVal = level;

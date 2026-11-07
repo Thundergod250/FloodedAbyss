@@ -192,14 +192,12 @@ public class UiWorkersHouse : UiModals
 
     private void UpdateUpgradeCostsVisuals()
     {
-        // CHANGED: Validate the correct parent and upgrade references.
         if (upgradeCostParent == null ||
             resourcePairPrefab == null ||
             currentHouse == null ||
             upgradeButton == null)
             return;
 
-        // NEW: Get upgrade information from StructureUpgrade.
         StructureUpgrade upgrade = currentHouse.GetComponent<StructureUpgrade>();
 
         if (upgrade == null)
@@ -209,13 +207,11 @@ public class UiWorkersHouse : UiModals
             return;
         }
 
-        // CHANGED: Clear existing upgrade cost panels.
         foreach (Transform child in upgradeCostParent)
         {
             Destroy(child.gameObject);
         }
 
-        // CHANGED: Read the level and list from StructureUpgrade.
         int nextLevelIndex = upgrade.HouseLevelVal;
 
         if (nextLevelIndex >= upgrade.HouseLevels.Count)
@@ -232,7 +228,6 @@ public class UiWorkersHouse : UiModals
             return;
         }
 
-        // NEW: Create a resource panel for each upgrade cost.
         foreach (ResourceCostEntry cost in upgradeData.Costs)
         {
             if (cost.resourceDataSo == null)
@@ -268,7 +263,6 @@ public class UiWorkersHouse : UiModals
         if (currentHouse == null)
             return;
 
-        // NEW: Store the old house reference before upgrading.
         StructureWorkersHouse oldHouse = currentHouse;
 
         StructureUpgrade upgrade = oldHouse.GetComponent<StructureUpgrade>();
@@ -279,15 +273,12 @@ public class UiWorkersHouse : UiModals
             return;
         }
 
-        // CHANGED: Stop if the upgrade fails.
+
         bool upgraded = upgrade.TryUpgradeHouse();
 
         if (!upgraded)
             return;
 
-        // NOTE: StructureUpgrade should call Setup(upgradedHouse)
-        // after creating the replacement, so currentHouse is refreshed.
-        // NEW: Refresh the UI using the current house reference.
         if (currentHouse == oldHouse)
         {
             Debug.LogWarning(
