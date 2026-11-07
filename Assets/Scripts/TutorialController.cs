@@ -1,11 +1,14 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TutorialArrowController : MonoBehaviour
+public class TutorialController : MonoBehaviour
 {
     [Header("Objective Assets")]
     public ObjectivesSO objective1;
     public ObjectivesSO objective2;
+    public List<GameObject> currentGlowbox; 
+    
 
     private StructureHarvestResource[] allHarvesters;
     private StructureApexPump[] allPumps;
