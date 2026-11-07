@@ -11,6 +11,8 @@ public class PanelStructureCard : MonoBehaviour
     [SerializeField] private Transform costContainer; // Container holding the ResourcePair prefabs for costs
     [SerializeField] private Button cardButton;
 
+    public Button CardButton => cardButton;
+
     private StructureDataSO boundData;
     private System.Action<StructureDataSO> onCardClickedCallback;
 
