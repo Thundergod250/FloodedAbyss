@@ -9,6 +9,7 @@ public class WorkerManager : MonoBehaviour
     [field: SerializeField] public int CurrentWorker { get; private set; } = 1;
     [field: SerializeField] public int HomelessWorker { get; private set; } = 1; // Starts with 1 homeless worker
     [field: SerializeField] public int OccupiedHousesCount { get; private set; } = 0;
+    [field: SerializeField] public int TotalHousingCapacity { get; private set; }
 
     [Header("Events")]
     public UnityEvent<int> EvtOnWorkersChanged = new();
@@ -133,6 +134,11 @@ public class WorkerManager : MonoBehaviour
                 );
             }
         }
+    }
+
+    public void AddHousingCapacity(int amount)
+    {
+        TotalHousingCapacity += amount;
     }
 
     public void RegisterWorkerHouse(StructureWorkersHouse house)
