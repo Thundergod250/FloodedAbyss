@@ -5,6 +5,6 @@ public class UIGlowBox : MonoBehaviour
 {
     private void Awake()
     {
-        GameManager.Instance.TutorialController.currentGlowbox.Add(gameObject); 
+        //GameManager.Instance.TutorialController.currentGlowbox.Add(gameObject); 
     }
 }

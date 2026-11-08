@@ -9,204 +9,241 @@ public class TutorialController : MonoBehaviour
     public ObjectivesSO objective1;
     public ObjectivesSO objective2;
     public ObjectivesSO objective3;
-    public List<GameObject> currentGlowbox;
 
+    // --- Objective 1 & 2 ---
     private StructureHarvestResource[] allHarvesters;
     private StructureApexPump[] allPumps;
-
-    // Objective 2 Tracking
     private GameObject apexPumpPanel;
-    private bool isUIHooked = false;
-    private bool clickedResource = false;
-    private bool clickedAmount = false;
-    private bool clickedActivate = false;
+    private bool pumpUIHooked = false;
+    private bool clickedResource, clickedAmount, clickedActivate;
 
-    // Objective 3 Tracking
+    // --- Objective 3 ---
+    private enum Obj3State
+    {
+        Inactive,
+        ShowArrows,        // Tutorial Arrows active (world-space pointers at debris)
+        ShowBuildClick,    // ClickBuildStructure glow active
+        ShowHouseArrow,    // HouseArrow active (arrow on the built house)
+        ShowRecruitClick,  // ClickRecruitWorker glow active (in house panel)
+        Complete
+    }
+    private Obj3State obj3State = Obj3State.Inactive;
     private GameObject tutorialArrows;
-    private GameObject buildCardGlowBox;
     private StructureWorkersHouse builtHouse;
-    private GameObject housePanelGlowBox;
-
-    private bool hasBuiltHouse = false;
-    private bool clickedHouseWorld = false;
+    private int housesAtTutorialStart = 0;
     private bool clickedRecruitWorker = false;
-    private bool hookedHousePanel = false;
+    private bool activateButtonHooked = false;
+
+    // Debug tracking
+    private ObjectivesSO previousQuest;
 
     private void Start()
     {
         allHarvesters = FindObjectsByType<StructureHarvestResource>(FindObjectsInactive.Exclude);
         allPumps = FindObjectsByType<StructureApexPump>(FindObjectsInactive.Exclude);
-
         FindPumpPanel();
 
-        // Failsafe: Find and disable Tutorial Arrows right at the start
-        FindTutorialArrows();
+        tutorialArrows = FindFirst("TutorialArrows")?.gameObject;
         if (tutorialArrows != null) tutorialArrows.SetActive(false);
     }
 
     private void Update()
     {
-        if (ObjectiveManager.Instance == null || ObjectiveManager.Instance.CurrentQuest == null)
-            return;
+        if (ObjectiveManager.Instance == null || ObjectiveManager.Instance.CurrentQuest == null) return;
+        var quest = ObjectiveManager.Instance.CurrentQuest;
 
-        ObjectivesSO currentQuest = ObjectiveManager.Instance.CurrentQuest;
-
-        bool isObjective1 = (currentQuest == objective1);
-        bool isObjective2 = (currentQuest == objective2);
-        bool isObjective3 = (currentQuest == objective3);
-
-        // --- OBJECTIVE 1 & 2 ---
-        HandleHarvestArrows(isObjective1);
-        HandlePumpWorldArrows(isObjective2);
-        HandlePumpUIArrows(isObjective2);
-
-        // --- OBJECTIVE 3 ---
-        if (isObjective3)
+        // Debug logs for obj 1 & 2 only (obj 3 completion is logged by state machine)
+        if (quest != previousQuest)
         {
-            HandleObjective3();
+            if (previousQuest == objective1) Debug.Log("Objective 1 is completed");
+            else if (previousQuest == objective2) Debug.Log("Objective 2 is completed");
+            previousQuest = quest;
         }
-        else
-        {
-            // Fail-safe: Ensure everything Obj 3 is hidden if we aren't on Obj 3
-            if (tutorialArrows != null) tutorialArrows.SetActive(false);
-            if (buildCardGlowBox != null) buildCardGlowBox.SetActive(false);
-            if (housePanelGlowBox != null) housePanelGlowBox.SetActive(false);
-            if (builtHouse != null)
-            {
-                Transform arrow = GetArrowChild(builtHouse.transform);
-                if (arrow != null) arrow.gameObject.SetActive(false);
-            }
-        }
+
+        HandleHarvestArrows(quest == objective1);
+        HandlePumpWorldArrows(quest == objective2);
+        HandlePumpUIArrows(quest == objective2);
+        HandleObjective3(quest == objective3);
     }
 
-    private void HandleObjective3()
+    // ========================================================
+    // OBJECTIVE 3 — state machine
+    // ========================================================
+    private void HandleObjective3(bool isObj3)
     {
-        // 1. Tutorial Arrows (Active only until a house is built)
-        if (tutorialArrows == null) FindTutorialArrows();
-        if (tutorialArrows != null) tutorialArrows.SetActive(!hasBuiltHouse);
-
-        // 2. Check if house is built
-        if (builtHouse == null) builtHouse = FindAnyObjectByType<StructureWorkersHouse>();
-        if (builtHouse != null) hasBuiltHouse = true;
-
-        // 3. TEST Container Glow Box (Active only until house is built)
-        if (buildCardGlowBox == null && !hasBuiltHouse)
+        // Start on first frame obj 3 activates
+        if (isObj3 && obj3State == Obj3State.Inactive)
         {
-            // Find it dynamically while the Building UI is open
-            var allTransforms = FindObjectsByType<Transform>(FindObjectsInactive.Include);
-            foreach (var t in allTransforms)
-            {
-                if (t.name.Contains("TEST Container"))
+            obj3State = Obj3State.ShowArrows;
+            housesAtTutorialStart = FindObjectsByType<StructureWorkersHouse>(FindObjectsInactive.Exclude).Length;
+            Debug.Log($"[Tutorial] Objective 3 started. Click the debris. (pre-existing houses: {housesAtTutorialStart})");
+        }
+
+        switch (obj3State)
+        {
+            case Obj3State.ShowArrows:
+                // Building UI open when structure cards spawn
+                if (FindObjectsByType<PanelStructureCard>(FindObjectsInactive.Exclude).Length > 0)
                 {
-                    Transform glow = t.Find("UI Glow Box");
-                    if (glow != null) buildCardGlowBox = glow.gameObject;
+                    obj3State = Obj3State.ShowBuildClick;
+                    Debug.Log("[Tutorial] Building UI opened. Click the Worker's House card.");
+                }
+                break;
+
+            case Obj3State.ShowBuildClick:
+                var houses = FindObjectsByType<StructureWorkersHouse>(FindObjectsInactive.Exclude);
+                if (houses.Length > housesAtTutorialStart)
+                {
+                    builtHouse = houses[houses.Length - 1];
+                    obj3State = Obj3State.ShowHouseArrow;
+                    Debug.Log("[Tutorial] House built. Click the house.");
+                }
+                break;
+
+            case Obj3State.ShowHouseArrow:
+                if (IsHousePanelOpen())
+                {
+                    obj3State = Obj3State.ShowRecruitClick;
+                    Debug.Log("[Tutorial] Panel opened. Click Activate.");
+                }
+                break;
+
+            case Obj3State.ShowRecruitClick:
+                HookActivateButton();
+                if (clickedRecruitWorker)
+                {
+                    obj3State = Obj3State.Complete;
+                    Debug.Log("Objective 3 is completed");
+                }
+                break;
+        }
+
+        ApplyObj3Visibility();
+    }
+
+    private void ApplyObj3Visibility()
+    {
+        bool showArrows = obj3State == Obj3State.ShowArrows;
+        bool showBuildClick = obj3State == Obj3State.ShowBuildClick;
+        bool showHouseArrow = obj3State == Obj3State.ShowHouseArrow;
+        bool showRecruitClick = obj3State == Obj3State.ShowRecruitClick;
+
+        // TutorialArrows
+        if (tutorialArrows == null) tutorialArrows = FindFirst("TutorialArrows")?.gameObject;
+        if (tutorialArrows != null && tutorialArrows.activeSelf != showArrows)
+            tutorialArrows.SetActive(showArrows);
+
+        // ClickBuildStructure glow boxes (catch every spawned card)
+        foreach (var g in FindAll("ClickBuildStructure"))
+            if (g.gameObject.activeSelf != showBuildClick)
+                g.gameObject.SetActive(showBuildClick);
+
+        // HouseArrow on the built house
+        if (builtHouse != null)
+            foreach (var c in builtHouse.GetComponentsInChildren<Transform>(true))
+                if (c.name == "HouseArrow")
+                {
+                    if (c.gameObject.activeSelf != showHouseArrow)
+                        c.gameObject.SetActive(showHouseArrow);
                     break;
                 }
-            }
-        }
-        if (buildCardGlowBox != null) buildCardGlowBox.SetActive(!hasBuiltHouse);
 
-        // 4. Once the house is built
-        if (hasBuiltHouse && builtHouse != null)
-        {
-            // A. WorkerHouseLVL1 Arrow
-            Transform houseArrow = GetArrowChild(builtHouse.transform);
-            if (houseArrow != null) houseArrow.gameObject.SetActive(!clickedHouseWorld);
-
-            // B. Workers House Panel Glow Box
-            var houseUI = GameManager.Instance.uiController.UiWorkersHouse;
-            if (houseUI != null && houseUI.gameObject.activeInHierarchy)
-            {
-                if (houseUI.IsShowingHouse(builtHouse)) clickedHouseWorld = true;
-
-                if (housePanelGlowBox == null)
-                {
-                    Transform glow = houseUI.transform.Find("UI Glow Box");
-                    if (glow != null) housePanelGlowBox = glow.gameObject;
-                }
-
-                if (housePanelGlowBox != null)
-                {
-                    // Hook the Activate Button using EventTrigger to bypass RemoveAllListeners
-                    if (!hookedHousePanel)
-                    {
-                        var buttons = houseUI.GetComponentsInChildren<Button>(true);
-                        foreach (var btn in buttons)
-                        {
-                            if (btn.name == "Activate Button")
-                            {
-                                var trigger = btn.gameObject.GetComponent<EventTrigger>();
-                                if (trigger == null) trigger = btn.gameObject.AddComponent<EventTrigger>();
-                                var entry = new EventTrigger.Entry { eventID = EventTriggerType.PointerClick };
-                                entry.callback.AddListener((data) => { clickedRecruitWorker = true; });
-                                trigger.triggers.Add(entry);
-                                hookedHousePanel = true;
-                                break;
-                            }
-                        }
-                    }
-                    housePanelGlowBox.SetActive(!clickedRecruitWorker);
-                }
-            }
-        }
+        // ClickRecruitWorker glow boxes
+        foreach (var g in FindAll("ClickRecruitWorker"))
+            if (g.gameObject.activeSelf != showRecruitClick)
+                g.gameObject.SetActive(showRecruitClick);
     }
 
-    // --- HELPER METHODS ---
-
-    private void FindTutorialArrows()
+    private bool IsHousePanelOpen()
     {
-        if (tutorialArrows != null) return;
-        var allTransforms = FindObjectsByType<Transform>(FindObjectsInactive.Include);
-        foreach (var t in allTransforms)
-        {
-            if (t.name == "TutorialArrows")
-            {
-                tutorialArrows = t.gameObject;
-                break;
-            }
-        }
+        if (builtHouse == null) return false;
+        var houseUI = GameManager.Instance?.uiController?.UiWorkersHouse;
+        if (houseUI == null) return false;
+        if (houseUI.IsShowingHouse(builtHouse)) return true;
+
+        var modal = houseUI.transform.Find("Workers House");
+        return modal != null && modal.gameObject.activeInHierarchy;
     }
 
-    private void HandleHarvestArrows(bool isObjective1)
+    private void HookActivateButton()
     {
-        foreach (var harvester in allHarvesters)
+        if (activateButtonHooked) return;
+
+        var houseUI = GameManager.Instance?.uiController?.UiWorkersHouse;
+        if (houseUI == null) return;
+
+        // Find ONLY the Workers House modal — never touch any other modal's buttons
+        Transform modal = null;
+        foreach (var t in houseUI.GetComponentsInChildren<Transform>(true))
         {
-            if (harvester == null) continue;
-            Transform arrow = GetArrowChild(harvester.transform);
+            if (t.name == "Workers House") { modal = t; break; }
+        }
+
+        if (modal == null)
+        {
+            Debug.LogWarning("[Tutorial] Could not find Workers House modal to hook Activate Button.");
+            return;
+        }
+
+        foreach (var btn in modal.GetComponentsInChildren<Button>(true))
+        {
+            if (btn.name != "Activate Button") continue;
+
+            var trigger = btn.gameObject.GetComponent<EventTrigger>();
+            if (trigger == null) trigger = btn.gameObject.AddComponent<EventTrigger>();
+            var entry = new EventTrigger.Entry { eventID = EventTriggerType.PointerClick };
+            entry.callback.AddListener(_ =>
+            {
+                clickedRecruitWorker = true;
+                Debug.Log("[Tutorial] Activate clicked (correct button).");
+            });
+            trigger.triggers.Add(entry);
+
+            activateButtonHooked = true;
+            return;
+        }
+
+        Debug.LogWarning("[Tutorial] Activate Button not found in Workers House modal.");
+    }
+
+    // ========================================================
+    // OBJECTIVES 1 & 2 (unchanged behavior)
+    // ========================================================
+    private void HandleHarvestArrows(bool active)
+    {
+        foreach (var h in allHarvesters)
+        {
+            if (h == null) continue;
+            var arrow = GetArrowChild(h.transform);
             if (arrow == null) continue;
-            if (isObjective1) arrow.gameObject.SetActive(!harvester.IsWorking);
-            else arrow.gameObject.SetActive(false);
+            arrow.gameObject.SetActive(active && !h.IsWorking);
         }
     }
 
-    private void HandlePumpWorldArrows(bool isObjective2)
+    private void HandlePumpWorldArrows(bool active)
     {
-        foreach (var pump in allPumps)
+        foreach (var p in allPumps)
         {
-            if (pump == null) continue;
-            Transform arrow = GetArrowChild(pump.transform);
+            if (p == null) continue;
+            var arrow = GetArrowChild(p.transform);
             if (arrow == null) continue;
-            if (isObjective2)
-            {
-                bool isFueled = pump.CurrentFuel > 0 || pump.IsPumpActive;
-                arrow.gameObject.SetActive(!isFueled);
-            }
-            else arrow.gameObject.SetActive(false);
+            arrow.gameObject.SetActive(active && !(p.CurrentFuel > 0 || p.IsPumpActive));
         }
     }
 
-    private void HandlePumpUIArrows(bool isObjective2)
+    private void HandlePumpUIArrows(bool active)
     {
         if (apexPumpPanel == null) FindPumpPanel();
-        if (isObjective2)
+        if (apexPumpPanel == null) return;
+
+        if (active)
         {
             SetupPumpUI();
-            if (apexPumpPanel == null) return;
             SetArrowState("Arrow_1", !clickedResource);
             SetArrowState("Arrow_2", clickedResource && !clickedAmount);
             SetArrowState("Arrow_3", clickedAmount && !clickedActivate);
         }
-        else if (apexPumpPanel != null)
+        else
         {
             SetArrowState("Arrow_1", false);
             SetArrowState("Arrow_2", false);
@@ -214,54 +251,64 @@ public class TutorialController : MonoBehaviour
         }
     }
 
-    private void FindPumpPanel()
-    {
-        var allTransforms = FindObjectsByType<Transform>(FindObjectsInactive.Include);
-        foreach (var t in allTransforms)
-        {
-            if (t.name == "ApexPump Panel")
-            {
-                apexPumpPanel = t.gameObject;
-                break;
-            }
-        }
-    }
-
     private void SetupPumpUI()
     {
-        if (isUIHooked || apexPumpPanel == null) return;
+        if (pumpUIHooked) return;
 
-        Transform resContainer = apexPumpPanel.transform.Find("Pump Panel/Resource Button Container");
+        var resContainer = apexPumpPanel.transform.Find("Pump Panel/Resource Button Container");
         if (resContainer != null)
-            foreach (var btn in resContainer.GetComponentsInChildren<Button>(true))
-                btn.onClick.AddListener(() => clickedResource = true);
+            foreach (var b in resContainer.GetComponentsInChildren<Button>(true))
+                b.onClick.AddListener(() => clickedResource = true);
 
-        Transform amtContainer = apexPumpPanel.transform.Find("Pump Panel/Amount Button Container");
+        var amtContainer = apexPumpPanel.transform.Find("Pump Panel/Amount Button Container");
         if (amtContainer != null)
-            foreach (var btn in amtContainer.GetComponentsInChildren<Button>(true))
-                btn.onClick.AddListener(() => clickedAmount = true);
+            foreach (var b in amtContainer.GetComponentsInChildren<Button>(true))
+                b.onClick.AddListener(() => clickedAmount = true);
 
-        Transform actBtn = apexPumpPanel.transform.Find("Pump Panel/Activate Button");
+        var actBtn = apexPumpPanel.transform.Find("Pump Panel/Activate Button");
         if (actBtn != null)
         {
-            var btnComponent = actBtn.GetComponent<Button>();
-            if (btnComponent != null) btnComponent.onClick.AddListener(() => clickedActivate = true);
+            var b = actBtn.GetComponent<Button>();
+            if (b != null) b.onClick.AddListener(() => clickedActivate = true);
         }
-        isUIHooked = true;
+
+        pumpUIHooked = true;
     }
 
-    private void SetArrowState(string arrowName, bool state)
+    private void SetArrowState(string name, bool state)
     {
-        Transform arrow = apexPumpPanel.transform.Find(arrowName);
-        if (arrow != null && arrow.gameObject.activeSelf != state) arrow.gameObject.SetActive(state);
+        var a = apexPumpPanel.transform.Find(name);
+        if (a != null && a.gameObject.activeSelf != state) a.gameObject.SetActive(state);
+    }
+
+    // ========================================================
+    // HELPERS
+    // ========================================================
+    private void FindPumpPanel()
+    {
+        var t = FindFirst("ApexPump Panel");
+        if (t != null) apexPumpPanel = t.gameObject;
+    }
+
+    private Transform FindFirst(string name)
+    {
+        foreach (var t in FindObjectsByType<Transform>(FindObjectsInactive.Include))
+            if (t.name == name) return t;
+        return null;
+    }
+
+    private List<Transform> FindAll(string name)
+    {
+        var list = new List<Transform>();
+        foreach (var t in FindObjectsByType<Transform>(FindObjectsInactive.Include))
+            if (t.name == name) list.Add(t);
+        return list;
     }
 
     private Transform GetArrowChild(Transform parent)
     {
-        foreach (Transform child in parent.GetComponentsInChildren<Transform>(true))
-        {
-            if (child.name.Contains("Arrow")) return child;
-        }
+        foreach (var c in parent.GetComponentsInChildren<Transform>(true))
+            if (c.name.Contains("Arrow")) return c;
         return null;
     }
 }
