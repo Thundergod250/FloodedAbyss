@@ -32,6 +32,13 @@ public class ObjectiveUI : MonoBehaviour
             TrySubscribe();
             RefreshUI();
         }
+
+        if (objectiveNameText != null)
+        {
+            WaterLevel wl = GameManager.Instance.WaterLevel;
+            objectiveNameText.text = "TIME UNTIL GREAT FLOOD\n" + wl.TimeUntilGreatFlood.ToString("F0") + " / " + wl.MaxTimeUntilGreatFlood.ToString("F0");
+        }
+
     }
 
     private void TrySubscribe()
@@ -76,9 +83,6 @@ public class ObjectiveUI : MonoBehaviour
 
         if (manager.AllObjectiveCompleted || quest == null)
         {
-            if (objectiveNameText != null)
-                objectiveNameText.text = "All Objectives Completed";
-
             if (objectiveDescriptionText != null)
                 objectiveDescriptionText.text = "You've completed every quest!";
 
