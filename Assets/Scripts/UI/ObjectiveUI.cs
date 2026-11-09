@@ -33,7 +33,7 @@ public class ObjectiveUI : MonoBehaviour
             RefreshUI();
         }
 
-        if (objectiveNameText != null)
+        if (ObjectiveManager.Instance.AllObjectiveCompleted && objectiveNameText != null)
         {
             WaterLevel wl = GameManager.Instance.WaterLevel;
             objectiveNameText.text = "TIME UNTIL GREAT FLOOD\n" + wl.TimeUntilGreatFlood.ToString("F0") + " / " + wl.MaxTimeUntilGreatFlood.ToString("F0");
