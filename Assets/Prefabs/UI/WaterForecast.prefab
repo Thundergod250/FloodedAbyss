@@ -1034,7 +1034,6 @@ GameObject:
   - component: {fileID: 5323760136109754595}
   - component: {fileID: 9078990227547926378}
   - component: {fileID: 1795766469425668069}
-  - component: {fileID: 6887721012564561086}
   m_Layer: 5
   m_Name: Water Level
   m_TagString: Untagged
@@ -1100,20 +1099,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6887721012564561086
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3817660719977473495}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d69638fddfc5cb14eafaedc5e095fd89, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TimelineEvents
-  rainStrength: 1
-  weatherSprite: {fileID: 21300000, guid: 5d99cf30b1e503a45b3c246b92662913, type: 3}
 --- !u!1 &3856348328997003914
 GameObject:
   m_ObjectHideFlags: 0
@@ -1490,7 +1475,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8100790e02eb02498f76125d3c97495, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterForecast
-  eventDuration: 5
+  eventDuration: 20
   weatherDatabase:
   - weatherType: 0
     weatherSprite: {fileID: 21300000, guid: 59f56e69dc57c144e98da1d0d29c8570, type: 3}
@@ -1502,6 +1487,10 @@ MonoBehaviour:
     weatherSprite: {fileID: 21300000, guid: cfb16cd5c41f1f14a8681d586f0c59b4, type: 3}
   weatherBacklog: []
   initialBacklogCount: 4
+  sunnyVal: 0
+  drizzlVal: 0.05
+  stormyVal: 0.25
+  typhoonVal: 0.5
   currentTime: 0
 --- !u!114 &567766620380257450
 MonoBehaviour:
@@ -1522,6 +1511,7 @@ MonoBehaviour:
   nextWeatherImage: {fileID: 3489743977064378661}
   followingWeatherImage: {fileID: 1220110622100072635}
   followingWeather2Image: {fileID: 292380938145620987}
+  storedWaterAdjustments: 0
 --- !u!1 &5195986231592229829
 GameObject:
   m_ObjectHideFlags: 0
@@ -2078,7 +2068,6 @@ GameObject:
   - component: {fileID: 4312669182264757424}
   - component: {fileID: 1447073946783865651}
   - component: {fileID: 3507022354228134196}
-  - component: {fileID: 21017096996343828}
   m_Layer: 5
   m_Name: Increase Water Level
   m_TagString: Untagged
@@ -2144,20 +2133,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &21017096996343828
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6951933965711170345}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d69638fddfc5cb14eafaedc5e095fd89, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TimelineEvents
-  rainStrength: 1
-  weatherSprite: {fileID: 21300000, guid: 5d99cf30b1e503a45b3c246b92662913, type: 3}
 --- !u!1 &7229131964829123706
 GameObject:
   m_ObjectHideFlags: 0
@@ -2524,7 +2499,6 @@ GameObject:
   - component: {fileID: 716038979259296525}
   - component: {fileID: 7901301463446574861}
   - component: {fileID: 3583052275511779627}
-  - component: {fileID: 8045887199462594205}
   m_Layer: 5
   m_Name: Decrease Water Level
   m_TagString: Untagged
@@ -2590,20 +2564,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8045887199462594205
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8415077063735144557}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d69638fddfc5cb14eafaedc5e095fd89, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TimelineEvents
-  rainStrength: 1
-  weatherSprite: {fileID: 21300000, guid: 5d99cf30b1e503a45b3c246b92662913, type: 3}
 --- !u!1 &8579723816441358890
 GameObject:
   m_ObjectHideFlags: 0
