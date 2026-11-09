@@ -34,6 +34,13 @@ public class WaterForecast : MonoBehaviour
     [SerializeField] private List<WeatherDefinition> weatherBacklog = new();
     [SerializeField] private int initialBacklogCount = 4;
 
+    [Header("Active Weather Water Adjustment")]
+    [SerializeField] private float sunnyVal;
+    [SerializeField] private float drizzlVal;
+    [SerializeField] private float stormyVal;
+    [SerializeField] private float typhoonVal;
+    private float storedWaterAdjustment; // storing previous increase in water
+
     [Header("Debug")]
     [SerializeField] private float currentTime;
     public float CurrentTime => currentTime;
@@ -211,8 +218,58 @@ public class WaterForecast : MonoBehaviour
             }
         }
 
+        ApplyWaterWeatherAdjustment(targetStrength, isSunny);
+
         currentActiveRainState = isSunny ? null : targetStrength;
         isWeatherInitialized = true;
+    }
+
+    private void AdjustWaterLevel(float amount)
+    {
+        if (amount >= 0) // positive
+        {
+            GameManager.Instance.WaterLevel.IncWaterPressure(amount);
+        }
+        else if (amount < 0)
+        {
+            GameManager.Instance.WaterLevel.ReduceWaterPressure(Mathf.Abs(amount));
+        }
+    }
+
+    private void ApplyWaterWeatherAdjustment(rainStrength targetStrength, bool isSunny)
+    {
+        AdjustWaterLevel(-storedWaterAdjustment);
+
+        storedWaterAdjustment = 0;
+
+        if (!isSunny)
+        {
+            float newAdjustment = GetWaterAdjustment(targetStrength);
+
+            AdjustWaterLevel(newAdjustment);
+            storedWaterAdjustment = newAdjustment;
+        }
+    }
+
+    private float GetWaterAdjustment(rainStrength rainStr)
+    {
+        switch (rainStr)
+        {
+            case rainStrength.Weak:
+                return drizzlVal;
+
+            case rainStrength.Decent:
+                return stormyVal;
+
+            case rainStrength.Strong:
+                return typhoonVal;
+
+            case rainStrength.Sunny:
+                 return sunnyVal;
+
+            default:
+                return 0;
+        }
     }
 
     #region Start and Stop Weather
