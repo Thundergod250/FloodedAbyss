@@ -11,21 +11,32 @@ public class UISlideDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     private Vector2 shownPosition;
     private Vector2 hiddenPosition;
     private bool isHovered = false;
+    private bool hasBeenHovered = false; // Tracks if the player has hovered at least once
 
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
         shownPosition = rectTransform.anchoredPosition;
         hiddenPosition = shownPosition + slideOffset;
-        rectTransform.anchoredPosition = hiddenPosition;
+        rectTransform.anchoredPosition = shownPosition;
     }
 
     private void Update()
     {
-        Vector2 targetPosition = isHovered ? shownPosition : hiddenPosition;
+        Vector2 targetPosition;
+        if (!hasBeenHovered)
+            targetPosition = shownPosition;
+        else
+            targetPosition = isHovered ? shownPosition : hiddenPosition;
+
         rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, targetPosition, Time.unscaledDeltaTime * slideSpeed);
     }
 
-    public void OnPointerEnter(PointerEventData eventData) => isHovered = true;
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        isHovered = true;
+        hasBeenHovered = true; 
+    }
+
     public void OnPointerExit(PointerEventData eventData) => isHovered = false;
 }
