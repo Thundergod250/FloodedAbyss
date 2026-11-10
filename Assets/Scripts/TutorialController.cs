@@ -9,6 +9,8 @@ public class TutorialController : MonoBehaviour
     public ObjectivesSO objective1;
     public ObjectivesSO objective2;
     public ObjectivesSO objective3;
+    public GameObject[] FirstScene; 
+    public GameObject[] SecondScene; 
 
     // --- Objective 1 & 2 ---
     private StructureHarvestResource[] allHarvesters;
@@ -45,6 +47,11 @@ public class TutorialController : MonoBehaviour
 
         tutorialArrows = FindFirst("TutorialArrows")?.gameObject;
         if (tutorialArrows != null) tutorialArrows.SetActive(false);
+
+        foreach (var objects in FirstScene)
+        {
+            objects.SetActive(false);
+        }
     }
 
     private void Update()
@@ -67,7 +74,7 @@ public class TutorialController : MonoBehaviour
     }
 
     // ========================================================
-    // OBJECTIVE 3 — state machine
+    // OBJECTIVE 3 ï¿½ state machine
     // ========================================================
     private void HandleObjective3(bool isObj3)
     {
@@ -172,7 +179,7 @@ public class TutorialController : MonoBehaviour
         var houseUI = GameManager.Instance?.uiController?.UiWorkersHouse;
         if (houseUI == null) return;
 
-        // Find ONLY the Workers House modal — never touch any other modal's buttons
+        // Find ONLY the Workers House modal ï¿½ never touch any other modal's buttons
         Transform modal = null;
         foreach (var t in houseUI.GetComponentsInChildren<Transform>(true))
         {
