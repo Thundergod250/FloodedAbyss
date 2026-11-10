@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -10,6 +11,7 @@ public class UiTutorial : MonoBehaviour
     private void Start()
     {
         tutorialList[0].SetActive(true);
+        StartCoroutine(CloseFirstTutorial());
     }
 
     public void OpenUI()
@@ -21,6 +23,8 @@ public class UiTutorial : MonoBehaviour
             Debug.LogError("[UiTutorial] ObjectiveManager.Instance is null.");
             return;
         }
+
+        tutorialList[0].SetActive(false);
 
         for (int i = 1; i < tutorialList.Count; i++)
         {
@@ -36,6 +40,14 @@ public class UiTutorial : MonoBehaviour
         {
             tutorialList[2].SetActive(true);
         }
+    }
+
+    private IEnumerator CloseFirstTutorial()
+    {
+        yield return new WaitForSeconds(30f);
+
+        if (tutorialList[0] != null)
+            tutorialList[0].SetActive(false);
     }
 }
 
