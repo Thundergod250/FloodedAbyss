@@ -29,6 +29,10 @@ public class StructureWaterInfrastructure : Structures
     [SerializeField] private float maxWaterStored = 100f;
     [SerializeField] private float waterPerSecInc;
 
+    [Header("Great Flood Durability Damage")]
+    [SerializeField] private bool damageDuringGreatFlood = true;
+    [SerializeField] private float greatFloodDamagePerSecond = 1f;
+
     [Header("Flood Gate Settings")]
     [SerializeField] private bool requiresManualActivation = false;
 
@@ -76,6 +80,11 @@ public class StructureWaterInfrastructure : Structures
         {
             ToggleActivation();
             needToDump = true;
+        }
+
+        if (GameManager.Instance.WaterLevel.GreatFloodStarted)
+        {
+            waterStored = Mathf.Min(waterStored + (10f * Time.deltaTime), maxWaterStored);
         }
     }
 
