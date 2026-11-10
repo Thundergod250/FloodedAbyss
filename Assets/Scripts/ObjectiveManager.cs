@@ -8,9 +8,8 @@ public class ObjectiveManager : MonoBehaviour
     public static ObjectiveManager Instance { get; private set; }
 
     [Header("Quest Sequence")]
-    [SerializeField]
-    private List<ObjectivesSO> questSequence =
-        new List<ObjectivesSO>();
+    [SerializeField]private List<ObjectivesSO> questSequence = new List<ObjectivesSO>();
+    private bool endGameSequenceStarted = false;
 
     [Header("Debug - Runtime State")]
     [SerializeField] private int currentQuestIndex;
@@ -578,10 +577,18 @@ public class ObjectiveManager : MonoBehaviour
 
             EnsureObjectiveStates();
 
-            if (AllObjectiveCompleted)
+            if (AllObjectiveCompleted && !endGameSequenceStarted)
             {
+                endGameSequenceStarted = true;
+
                 WaterLevel wl = GameManager.Instance.WaterLevel;
-                wl.StartCoroutine(wl.GreatFloodTimer());
+
+                if (wl != null)
+                {
+                    wl.StartCoroutine(wl.GreatFloodTimer());
+                    wl.StartWaterRise(true);
+                }
+
                 EnableWeather();
             }
         }

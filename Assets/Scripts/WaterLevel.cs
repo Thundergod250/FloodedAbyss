@@ -14,6 +14,7 @@ public class WaterLevel : MonoBehaviour
     [Header("Water Pressure Progression")]
     [SerializeField] private float pressureIncreaseRate = 0.2f;    // How fast water pressure accumulates per second smoothly
     [SerializeField] private float baseWaterPressure = 1f;         // Starting water pressure value
+    [SerializeField] private bool startWaterPressure;        // Start water pressure
 
     [Header("Great Flood Settings")]
     [SerializeField] private bool forceStartGreatFlood = false;
@@ -57,6 +58,10 @@ public class WaterLevel : MonoBehaviour
             StartGreatFlood();
         }
 
+        if (!startWaterPressure)
+            return;
+
+
         // 1. Water Pressure accumulates smoothly over time as a float rate
         currentWaterPressureFloat += pressureIncreaseRate * Time.deltaTime;
 
@@ -75,6 +80,7 @@ public class WaterLevel : MonoBehaviour
             pos.y = currentWaterHeight;
             oceanTransform.position = pos;
         }
+
     }
     
     public void SetDischargePower(float amount)
@@ -89,7 +95,7 @@ public class WaterLevel : MonoBehaviour
 
     public void ReduceWaterPressure(float amount)
     {
-        pressureIncreaseRate -= amount;
+        pressureIncreaseRate -= Mathf.Max(0f, pressureIncreaseRate - amount);
     }
 
     public void IncWaterPressure(float amount)
@@ -119,6 +125,12 @@ public class WaterLevel : MonoBehaviour
         pressureIncreaseRate += greatFloodPressureIncrease;
 
         Debug.Log("GREAT FLOOD STARTED!");
+    }
+
+    public void StartWaterRise(bool val)
+    {
+        startWaterPressure = val;
+        currentWaterPressureFloat += 1;
     }
 
     public float CurrentWaterHeight => oceanTransform != null ? oceanTransform.position.y : currentWaterHeight;
