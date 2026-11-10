@@ -19,7 +19,7 @@ public class WaterLevel : MonoBehaviour
     [Header("Great Flood Settings")]
     [SerializeField] private bool forceStartGreatFlood = false;
     [SerializeField] private float greatFloodPressureIncrease = 15f;
-    [SerializeField] private int greatFloodTimer;
+    [SerializeField] private int greatFloodTimerMins;
     [SerializeField] private float greatFloodTimerProgress;
 
     private bool greatFloodStarted = false;
@@ -104,7 +104,7 @@ public class WaterLevel : MonoBehaviour
 
     public IEnumerator GreatFloodTimer()
     {
-        float maxTime = greatFloodTimer * 60f;
+        float maxTime = greatFloodTimerMins * 60f;
         greatFloodTimerProgress = 0f;
 
         while (greatFloodTimerProgress < maxTime)
@@ -135,7 +135,7 @@ public class WaterLevel : MonoBehaviour
     public float CurrentWaterHeight => oceanTransform != null ? oceanTransform.position.y : currentWaterHeight;
     public float NetDischargePower => netDischargePower;
     public float TimeUntilGreatFlood => greatFloodTimerProgress;
-    public float MaxTimeUntilGreatFlood => greatFloodTimer * 60;
+    public float MaxTimeUntilGreatFlood => greatFloodTimerMins * 60;
     public bool GreatFloodStarted => greatFloodStarted;
     
     // Water Pressure casts to an integer for your red HUD text so it displays whole numbers (1, 2, 3...) 
