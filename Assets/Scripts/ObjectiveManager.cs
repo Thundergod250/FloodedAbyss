@@ -582,10 +582,8 @@ public class ObjectiveManager : MonoBehaviour
             {
                 WaterLevel wl = GameManager.Instance.WaterLevel;
                 wl.StartCoroutine(wl.GreatFloodTimer());
+                EnableWeather();
             }
-
-
-           // UpdateResourceEventsState();
         }
 
         OnObjectiveUpdated?.Invoke();
@@ -662,36 +660,14 @@ public class ObjectiveManager : MonoBehaviour
         }
     }
 
-    private void UpdateResourceEventsState()
+    private void EnableWeather()
     {
-        bool tutorialStillRunning = !AllObjectiveCompleted;
-
-        UIEventManager eventManager = GameManager.Instance.uiController.GetComponent<UIEventManager>();
-
         WaterForecast waterForecast = GameManager.Instance.uiController.GetComponentInChildren<WaterForecast>();
-
-        if (eventManager != null)
-        {
-           // eventManager.SetTutorialPaused(tutorialStillRunning);
-        }
-        else
-        {
-            Debug.LogError(
-                "[ObjectiveManager] UIEventManager not found in the scene!");
-        }
 
         if (waterForecast != null)
         {
-            //waterForecast.SetTutorialPaused(tutorialStillRunning);
+            waterForecast.StartWeather();
         }
-        else
-        {
-            Debug.LogError(
-                "[ObjectiveManager] WaterForecast not found in the scene!");
-        }
-
-        Debug.Log(
-            $"[ObjectiveManager] Tutorial running: {tutorialStillRunning}");
     }
 
     private bool HasValidResourceRequirements(ObjectivesSO.BuildingObjective objective)
