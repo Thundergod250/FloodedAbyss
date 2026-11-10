@@ -137,6 +137,7 @@ public class WaterLevel : MonoBehaviour
     public float NetDischargePower => netDischargePower;
     public float TimeUntilGreatFlood => greatFloodTimerProgress;
     public float MaxTimeUntilGreatFlood => greatFloodTimer * 60;
+    public bool GreatFloodStarted => greatFloodStarted;
     
     // Water Pressure casts to an integer for your red HUD text so it displays whole numbers (1, 2, 3...) 
     // while the underlying float increments smoothly.

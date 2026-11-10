@@ -36,6 +36,8 @@ public class StructureHarvestResource : Structures
     private Coroutine harvestRoutine;
     private Coroutine destroyRoutine;
 
+    private bool greatFlood;
+
     public override void Activate()
     {
         if (isSubmerged && !ignoreSubmersion) return;
@@ -46,6 +48,13 @@ public class StructureHarvestResource : Structures
             harvestUI.Setup(this);
             GameManager.Instance.uiController.OpenModal<UiResourceHarvest>();
         }
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        greatFlood = GameManager.Instance.WaterLevel.GreatFloodStarted;
     }
 
     protected override void HandleSubmergedShutdown()
@@ -228,7 +237,14 @@ public class StructureHarvestResource : Structures
 
             if (resourceToProduce != null && GameManager.Instance.ResourceManager != null)
             {
-                GameManager.Instance.ResourceManager.AddResource(resourceToProduce, productionAmount);
+                if(greatFlood)
+                {
+                    GameManager.Instance.ResourceManager.AddResource(resourceToProduce, Mathf.Max(1, productionAmount / 2));
+                }
+                else if(!greatFlood)
+                {
+                    GameManager.Instance.ResourceManager.AddResource(resourceToProduce, productionAmount);
+                }
             }
 
             if (harvestMode == HarvestMode.Consumable)
