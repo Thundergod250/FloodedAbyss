@@ -166,21 +166,6 @@ public class ObjectiveManager : MonoBehaviour
         OnObjectiveUpdated?.Invoke();
     }
 
-    private System.Collections.IEnumerator Start()
-    {
-        yield return null; // Wait one frame for UI initialization
-
-       // UpdateResourceEventsState();
-
-        if (GameManager.Instance != null &&
-            GameManager.Instance.uiController != null &&
-            GameManager.Instance.uiController.GetComponentInChildren<UiTutorial>() != null)
-        {
-            GameManager.Instance.uiController.GetComponentInChildren<UiTutorial>().OpenUI();
-
-        }
-    }
-
     private void Update()
     {
         debugAllObjectivesCompleted = AllObjectiveCompleted;
@@ -591,6 +576,8 @@ public class ObjectiveManager : MonoBehaviour
 
                 EnableWeather();
             }
+
+            GameManager.Instance.uiController.GetComponentInChildren<UiTutorial>().OpenUI();
         }
 
         OnObjectiveUpdated?.Invoke();
