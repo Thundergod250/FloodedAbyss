@@ -14,7 +14,7 @@ public class WaterLevel : MonoBehaviour
     [Header("Water Pressure Progression")]
     [SerializeField] private float pressureIncreaseRate = 0.2f;    // How fast water pressure accumulates per second smoothly
     [SerializeField] private float baseWaterPressure = 1f;         // Starting water pressure value
-    [SerializeField] private bool startWaterPressure;        // Start water pressure
+    [SerializeField] private bool startWaterPressure = false;        // Start water pressure
 
     [Header("Great Flood Settings")]
     [SerializeField] private bool forceStartGreatFlood = false;
@@ -58,8 +58,11 @@ public class WaterLevel : MonoBehaviour
             StartGreatFlood();
         }
 
-        // 1. Water Pressure accumulates smoothly over time as a float rate
-        currentWaterPressureFloat += pressureIncreaseRate * Time.deltaTime;
+        if (startWaterPressure)
+        {
+            // 1. Water Pressure accumulates smoothly over time as a float rate
+            currentWaterPressureFloat += pressureIncreaseRate * Time.deltaTime;
+        }
 
         // 2. Target Water Height = Base Starting Height + Water Pressure - Discharge Pressure
         float targetHeight = baseWaterHeight + currentWaterPressureFloat - netDischargePower;
