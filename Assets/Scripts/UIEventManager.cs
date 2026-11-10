@@ -215,7 +215,7 @@ public class UIEventManager : UiModals
         }
         else if (eventData.boonORBane == BoonORBane.Bane)
         {
-            resourceManager.ConsumeResource(eventData.ResourceToSpend, eventData.ResourceAmount);
+            resourceManager.ConsumeResourcePercent(eventData.ResourceToSpend, eventData.ResourceAmount);
         }
 
         return true;

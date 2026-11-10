@@ -71,4 +71,20 @@ public class ResourceManager : MonoBehaviour
         }
         return false;
     }
+
+    public bool ConsumeResourcePercent(ResourceDataSO dataSo, float percent)
+    {
+        if (resourceInventory.ContainsKey(dataSo) && percent >= 0f && percent <= 100f)
+        {
+            int amountToRemove = Mathf.CeilToInt(resourceInventory[dataSo] * (percent / 100f));
+
+            resourceInventory[dataSo] -= amountToRemove;
+
+            OnResourceUpdated?.Invoke(dataSo, resourceInventory[dataSo]);
+
+            return true;
+        }
+
+        return false;
+    }
 }
