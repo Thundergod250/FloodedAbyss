@@ -579,7 +579,11 @@ public class ObjectiveManager : MonoBehaviour
             EnsureObjectiveStates();
 
             if (AllObjectiveCompleted)
-                Debug.Log("[ObjectiveManager] All quests completed!");
+            {
+                WaterLevel wl = GameManager.Instance.WaterLevel;
+                wl.StartCoroutine(wl.GreatFloodTimer());
+            }
+
 
            // UpdateResourceEventsState();
         }
