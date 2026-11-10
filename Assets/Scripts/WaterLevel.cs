@@ -58,10 +58,6 @@ public class WaterLevel : MonoBehaviour
             StartGreatFlood();
         }
 
-        if (!startWaterPressure)
-            return;
-
-
         // 1. Water Pressure accumulates smoothly over time as a float rate
         currentWaterPressureFloat += pressureIncreaseRate * Time.deltaTime;
 
