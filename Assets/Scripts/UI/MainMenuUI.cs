@@ -9,16 +9,23 @@ public class MainMenuUI : MonoBehaviour
 
     public void LoadMainMenu()
     {
+        if(Time.timeScale == 0)
+        {
+            Time.timeScale = 1;
+        }
+
         LoadScene(mainMenuSceneName);
     }
 
-    // NEW: Start the game by loading the gameplay scene.
     public void StartGame()
     {
+        if (Time.timeScale == 0)
+        {
+            Time.timeScale = 1;
+        }
         LoadScene(gameSceneName);
     }
 
-    // NEW: Load a scene by its name with basic validation.
     private void LoadScene(string sceneName)
     {
         if (string.IsNullOrWhiteSpace(sceneName))
@@ -27,7 +34,6 @@ public class MainMenuUI : MonoBehaviour
             return;
         }
 
-        // NEW: Check that the scene is included in the project's build scene list.
         if (!Application.CanStreamedLevelBeLoaded(sceneName))
         {
             Debug.LogError(
@@ -41,7 +47,6 @@ public class MainMenuUI : MonoBehaviour
         SceneManager.LoadScene(sceneName);
     }
 
-    // NEW: Quit the application.
     public void QuitGame()
     {
         Debug.Log("[MainMenuManager] Quitting game.");
