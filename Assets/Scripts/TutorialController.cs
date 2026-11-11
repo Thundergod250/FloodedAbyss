@@ -23,6 +23,11 @@ public class TutorialController : MonoBehaviour
     [SerializeField] private GameObject[] FirstScene;
     [SerializeField] private GameObject[] SecondScene;
 
+    [Header("Finale Settings")]
+    [Tooltip("If FALSE (default), the finale fires when Objective 3 completes (tutorial ends). " +
+             "If TRUE, it waits until every quest in the ObjectiveManager sequence completes.")]
+    [SerializeField] private bool waitForAllQuests = false;
+
     [Header("Specific Tutorial References")]
     [SerializeField] private GameObject resourcesPanel;
     [Tooltip("HUD panel that shows worker count. Revealed at the same time as TutorialPanel_3.")]
@@ -79,13 +84,11 @@ public class TutorialController : MonoBehaviour
             foreach (var obj in FirstScene)
                 if (obj != null) obj.SetActive(false);
 
-        // Explicitly hide specific panels (safe even if also in FirstScene)
         if (resourcesPanel != null) resourcesPanel.SetActive(false);
         if (workersPanel != null) workersPanel.SetActive(false);
         if (pumpCollider != null) pumpCollider.enabled = false;
         if (floatingResourceSpawner != null) floatingResourceSpawner.SetActive(false);
 
-        // Show only panel 1
         ShowPanel(tutorialPanel_1);
 
         var rm = GameManager.Instance?.ResourceManager;
@@ -97,19 +100,7 @@ public class TutorialController : MonoBehaviour
 
     private void Update()
     {
-        if (ObjectiveManager.Instance == null) return;
-
-        // Finale — must run even when CurrentQuest has been cleared,
-        // so this check lives ABOVE the CurrentQuest == null guard.
-        if (!allObjectivesHandled && ObjectiveManager.Instance.AllObjectiveCompleted)
-        {
-            allObjectivesHandled = true;
-            Debug.Log("[Tutorial] AllObjectiveCompleted detected! Starting finale.");
-            OnAllObjectivesComplete();
-            return; // nothing else to do this frame
-        }
-
-        if (ObjectiveManager.Instance.CurrentQuest == null) return;
+        if (ObjectiveManager.Instance == null || ObjectiveManager.Instance.CurrentQuest == null) return;
 
         var quest = ObjectiveManager.Instance.CurrentQuest;
 
@@ -127,7 +118,7 @@ public class TutorialController : MonoBehaviour
         HandlePumpUIArrows(quest == objective2);
         HandleObjective3(quest == objective3);
 
-        // Panel 4 dismissal — pump UI opened
+        // --- Panel 4 dismissal ---
         if (tutorialPanel_4 != null && tutorialPanel_4.activeSelf && !tutorialPanel4Dismissed
             && apexPumpPanel != null && apexPumpPanel.activeInHierarchy)
         {
@@ -136,7 +127,7 @@ public class TutorialController : MonoBehaviour
             Debug.Log("[Tutorial] Panel 4 dismissed (pump clicked).");
         }
 
-        // Panel 5 dismissal — Building UI opened
+        // --- Panel 5 dismissal ---
         if (tutorialPanel_5 != null && tutorialPanel_5.activeSelf && !tutorialPanel5Dismissed)
         {
             if (buildingPanel == null) buildingPanel = FindFirst("Building Panel")?.gameObject;
@@ -145,6 +136,23 @@ public class TutorialController : MonoBehaviour
                 tutorialPanel5Dismissed = true;
                 tutorialPanel_5.SetActive(false);
                 Debug.Log("[Tutorial] Panel 5 dismissed (debris clicked).");
+            }
+        }
+
+        // --- FINALE CHECK (fires same frame as obj 3 completion) ---
+        if (!allObjectivesHandled)
+        {
+            bool shouldFire = waitForAllQuests
+                ? ObjectiveManager.Instance.AllObjectiveCompleted
+                : (obj3State == Obj3State.Complete);
+
+            if (shouldFire)
+            {
+                allObjectivesHandled = true;
+                Debug.Log(waitForAllQuests
+                    ? "[Tutorial] Finale triggered: all quests complete."
+                    : "[Tutorial] Finale triggered: Objective 3 complete (tutorial finished).");
+                OnAllObjectivesComplete();
             }
         }
     }
@@ -229,28 +237,20 @@ public class TutorialController : MonoBehaviour
             foreach (var obj in SecondScene)
                 if (obj != null) obj.SetActive(true);
 
-        if (floatingResourceSpawner != null)
-        {
-            floatingResourceSpawner.SetActive(true);
-
-            // If the spawner is still not visible, a parent is disabled.
-            if (!floatingResourceSpawner.activeInHierarchy)
-            {
-                Debug.LogWarning(
-                    $"[Tutorial] ⚠ '{floatingResourceSpawner.name}' was set active but is not visible. " +
-                    $"A parent GameObject must be disabled. Hierarchy: " +
-                    $"{string.Join(" > ", GetParentChain(floatingResourceSpawner.transform))}"
-                );
-            }
-            else
-            {
-                Debug.Log($"[Tutorial] Floating resource spawner re-enabled: {floatingResourceSpawner.name}");
-            }
-        }
-
+        if (floatingResourceSpawner != null) floatingResourceSpawner.SetActive(true);
         if (pumpCollider != null) pumpCollider.enabled = true;
 
         Debug.Log("[Tutorial] Finale complete. Full UI + spawner re-enabled.");
+    }
+
+    // Manual test trigger
+    [ContextMenu("Force Tutorial Finale")]
+    public void ForceTutorialFinale()
+    {
+        if (allObjectivesHandled)
+            Debug.LogWarning("[Tutorial] Finale already fired. Re-firing anyway for test.");
+        allObjectivesHandled = true;
+        OnAllObjectivesComplete();
     }
 
     // ========================================================
@@ -504,17 +504,85 @@ public class TutorialController : MonoBehaviour
         return null;
     }
 
-    // Returns the ancestry chain of a transform, root-first, with each
-    // GameObject's activeSelf state, so warnings can pinpoint which parent
-    // is keeping a child hidden.
-    private static IEnumerable<string> GetParentChain(Transform t)
+    // ========================================================
+    // DIAGNOSTIC — right-click component header → "Dump UI State"
+    // ========================================================
+    [ContextMenu("Dump UI State (Diagnostic)")]
+    public void DumpUIState()
     {
-        var stack = new Stack<string>();
-        while (t != null)
+        Debug.Log("========== UI STATE DUMP ==========");
+
+        LogPanelState("ApexPump Panel", FindFirst("ApexPump Panel")?.gameObject);
+        LogPanelState("Building Panel", FindFirst("Building Panel")?.gameObject);
+        LogPanelState("Workers House Panel", FindFirst("Workers House")?.gameObject);
+        LogPanelState("Workable Panel", FindFirst("Workable Panel")?.gameObject);
+        LogPanelState("Farm Panel", FindFirst("Farm Panel")?.gameObject);
+
+        Debug.Log("---- FirstScene entries ----");
+        if (FirstScene != null)
+            foreach (var o in FirstScene)
+                if (o != null)
+                    Debug.Log($"  {o.name}: activeSelf={o.activeSelf}, activeInHierarchy={o.activeInHierarchy}");
+
+        Debug.Log("---- Spawner ----");
+        if (floatingResourceSpawner != null)
         {
-            stack.Push($"{t.name}(activeSelf={t.gameObject.activeSelf})");
-            t = t.parent;
+            var sp = floatingResourceSpawner.GetComponent<FloatingResourceSpawner>();
+            Debug.Log($"  Spawner GO: activeSelf={floatingResourceSpawner.activeSelf}, " +
+                      $"activeInHierarchy={floatingResourceSpawner.activeInHierarchy}, " +
+                      $"script enabled={(sp != null ? sp.enabled.ToString() : "MISSING")}");
+            if (floatingResourceSpawner.transform.parent != null)
+                Debug.Log($"  Parent: {floatingResourceSpawner.transform.parent.name}, " +
+                          $"activeInHierarchy={floatingResourceSpawner.transform.parent.gameObject.activeInHierarchy}");
         }
-        return stack;
+        else Debug.Log("  floatingResourceSpawner reference: NULL");
+
+        Debug.Log("---- Pump ----");
+        if (pumpCollider != null)
+            Debug.Log($"  pumpCollider.enabled={pumpCollider.enabled}, " +
+                      $"collider GO active={pumpCollider.gameObject.activeInHierarchy}");
+        else Debug.Log("  pumpCollider reference: NULL");
+
+        Debug.Log("---- Fullscreen raycast blockers ----");
+        foreach (var graphic in FindObjectsByType<Graphic>(FindObjectsInactive.Exclude))
+        {
+            if (!graphic.raycastTarget) continue;
+            if (!(graphic is Image || graphic is TMPro.TextMeshProUGUI)) continue;
+
+            var canvas = graphic.canvas;
+            if (canvas == null) continue;
+
+            var rt = graphic.rectTransform;
+            Vector2 canvasSize = canvas.GetComponent<RectTransform>().rect.size;
+            if (rt.rect.width >= canvasSize.x * 0.9f &&
+                rt.rect.height >= canvasSize.y * 0.9f)
+            {
+                Debug.LogWarning(
+                    $"  Possible raycast blocker: '{graphic.gameObject.name}' " +
+                    $"(parent: {graphic.transform.parent?.name}) " +
+                    $"size {rt.rect.size} vs canvas {canvasSize}");
+            }
+        }
+
+        Debug.Log("========== END DUMP ==========");
+    }
+
+    private void LogPanelState(string label, GameObject panel)
+    {
+        if (panel == null)
+        {
+            Debug.Log($"  {label}: NOT FOUND");
+            return;
+        }
+
+        bool inFirst = false;
+        if (FirstScene != null)
+            foreach (var o in FirstScene)
+                if (o == panel) { inFirst = true; break; }
+
+        Debug.Log($"  {label}: activeSelf={panel.activeSelf}, " +
+                  $"activeInHierarchy={panel.activeInHierarchy}, " +
+                  $"parent={panel.transform.parent?.name}, " +
+                  $"inFirstScene={inFirst}");
     }
 }
