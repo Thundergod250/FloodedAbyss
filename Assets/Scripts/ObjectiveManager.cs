@@ -577,7 +577,10 @@ public class ObjectiveManager : MonoBehaviour
                 EnableWeather();
             }
 
-            GameManager.Instance.uiController.GetComponentInChildren<UiTutorial>().OpenUI();
+            if(GameManager.Instance.uiController.GetComponentInChildren<UiTutorial>() != null)
+            {
+                GameManager.Instance.uiController.GetComponentInChildren<UiTutorial>().OpenUI();    
+            }
         }
 
         OnObjectiveUpdated?.Invoke();
