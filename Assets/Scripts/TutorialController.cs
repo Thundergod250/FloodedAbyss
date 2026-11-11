@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,65 +20,69 @@ public class TutorialController : MonoBehaviour
     [SerializeField] private GameObject tutorialPanel_6;
     [SerializeField] private GameObject tutorialPanel_7;
 
-    [Header("Scene Element Lists")]
+    [Header("Scene Elements")]
     [SerializeField] private GameObject[] FirstScene;
-    [SerializeField] private GameObject[] SecondScene;
 
-    [Header("Finale Settings")]
-    [Tooltip("If FALSE (default), the finale fires when Objective 3 completes (tutorial ends). " +
-             "If TRUE, it waits until every quest in the ObjectiveManager sequence completes.")]
-    [SerializeField] private bool waitForAllQuests = false;
+    [Header("Finale")]
+    [Tooltip("Seconds before panel 7 auto-hides. 0 = leave visible.")]
+    [SerializeField] private float panel7AutoDismissSeconds = 5f;
 
     [Header("Specific Tutorial References")]
     [SerializeField] private GameObject resourcesPanel;
-    [Tooltip("HUD panel that shows worker count. Revealed at the same time as TutorialPanel_3.")]
     [SerializeField] private GameObject workersPanel;
     [SerializeField] private Collider pumpCollider;
     [SerializeField] private GameObject floatingResourceSpawner;
     [SerializeField] private ResourceDataSO timberResource;
     [SerializeField] private ResourceDataSO fiberResource;
 
-    // --- Objective 1 & 2 ---
+    private GameObject[] tutorialPanels;
+
+    // Objective 1 & 2
     private StructureHarvestResource[] allHarvesters;
     private StructureApexPump[] allPumps;
     private GameObject apexPumpPanel;
-    private bool pumpUIHooked = false;
+    private bool pumpUIHooked;
     private bool clickedResource, clickedAmount, clickedActivate;
 
-    // --- Objective 3 state ---
+    // Objective 3
     private enum Obj3State { Inactive, ShowArrows, ShowBuildClick, ShowHouseArrow, ShowRecruitClick, Complete }
     private Obj3State obj3State = Obj3State.Inactive;
     private GameObject tutorialArrows;
     private StructureWorkersHouse builtHouse;
-    private int housesAtTutorialStart = 0;
-    private bool clickedRecruitWorker = false;
-    private bool activateButtonHooked = false;
+    private int housesAtTutorialStart;
+    private bool clickedRecruitWorker;
+    private bool activateButtonHooked;
 
-    // --- Tutorial panel progression ---
-    private int resourcesCollectedCount = 0;
-    private int lastTimberAmount = 0;
-    private int lastFiberAmount = 0;
-    private bool tutorialPanel4Dismissed = false;
-    private bool tutorialPanel5Dismissed = false;
+    // Panel progression
+    private int resourcesCollectedCount;
+    private int lastTimberAmount;
+    private int lastFiberAmount;
+    private bool tutorialPanel4Dismissed;
+    private bool tutorialPanel5Dismissed;
 
-    // --- Finale ---
-    private bool allObjectivesHandled = false;
+    // Finale
+    private bool allObjectivesHandled;
+    private Coroutine panel7DismissRoutine;
 
     private GameObject buildingPanel;
     private ObjectivesSO previousQuest;
 
-    // ========================================================
-    // LIFECYCLE
-    // ========================================================
+    private void Awake()
+    {
+        tutorialPanels = new[] {
+            tutorialPanel_1, tutorialPanel_2, tutorialPanel_3, tutorialPanel_4,
+            tutorialPanel_5, tutorialPanel_6, tutorialPanel_7
+        };
+    }
+
     private void Start()
     {
         allHarvesters = FindObjectsByType<StructureHarvestResource>(FindObjectsInactive.Exclude);
         allPumps = FindObjectsByType<StructureApexPump>(FindObjectsInactive.Exclude);
-        FindPumpPanel();
-
+        apexPumpPanel = FindFirst("ApexPump Panel")?.gameObject;
         buildingPanel = FindFirst("Building Panel")?.gameObject;
-
         tutorialArrows = FindFirst("TutorialArrows")?.gameObject;
+
         if (tutorialArrows != null) tutorialArrows.SetActive(false);
 
         if (FirstScene != null)
@@ -94,8 +99,6 @@ public class TutorialController : MonoBehaviour
         var rm = GameManager.Instance?.ResourceManager;
         if (rm != null && timberResource != null) lastTimberAmount = rm.GetResourceAmount(timberResource);
         if (rm != null && fiberResource != null) lastFiberAmount = rm.GetResourceAmount(fiberResource);
-
-        Debug.Log("[Tutorial] Panel 1 shown. Collect resources.");
     }
 
     private void Update()
@@ -106,8 +109,8 @@ public class TutorialController : MonoBehaviour
 
         if (quest != previousQuest)
         {
-            if (previousQuest == objective1) { Debug.Log("Objective 1 is completed"); OnObjective1Complete(); }
-            else if (previousQuest == objective2) { Debug.Log("Objective 2 is completed"); OnObjective2Complete(); }
+            if (previousQuest == objective1) OnObjective1Complete();
+            else if (previousQuest == objective2) OnObjective2Complete();
             previousQuest = quest;
         }
 
@@ -118,48 +121,34 @@ public class TutorialController : MonoBehaviour
         HandlePumpUIArrows(quest == objective2);
         HandleObjective3(quest == objective3);
 
-        // --- Panel 4 dismissal ---
-        if (tutorialPanel_4 != null && tutorialPanel_4.activeSelf && !tutorialPanel4Dismissed
+        // Dismiss panel 4 when pump UI opens
+        if (!tutorialPanel4Dismissed && tutorialPanel_4 != null && tutorialPanel_4.activeSelf
             && apexPumpPanel != null && apexPumpPanel.activeInHierarchy)
         {
             tutorialPanel4Dismissed = true;
             tutorialPanel_4.SetActive(false);
-            Debug.Log("[Tutorial] Panel 4 dismissed (pump clicked).");
         }
 
-        // --- Panel 5 dismissal ---
-        if (tutorialPanel_5 != null && tutorialPanel_5.activeSelf && !tutorialPanel5Dismissed)
+        // Dismiss panel 5 when building UI opens
+        if (!tutorialPanel5Dismissed && tutorialPanel_5 != null && tutorialPanel_5.activeSelf)
         {
             if (buildingPanel == null) buildingPanel = FindFirst("Building Panel")?.gameObject;
             if (buildingPanel != null && buildingPanel.activeInHierarchy)
             {
                 tutorialPanel5Dismissed = true;
                 tutorialPanel_5.SetActive(false);
-                Debug.Log("[Tutorial] Panel 5 dismissed (debris clicked).");
             }
         }
 
-        // --- FINALE CHECK (fires same frame as obj 3 completion) ---
-        if (!allObjectivesHandled)
+        if (!allObjectivesHandled && obj3State == Obj3State.Complete)
         {
-            bool shouldFire = waitForAllQuests
-                ? ObjectiveManager.Instance.AllObjectiveCompleted
-                : (obj3State == Obj3State.Complete);
-
-            if (shouldFire)
-            {
-                allObjectivesHandled = true;
-                Debug.Log(waitForAllQuests
-                    ? "[Tutorial] Finale triggered: all quests complete."
-                    : "[Tutorial] Finale triggered: Objective 3 complete (tutorial finished).");
-                OnAllObjectivesComplete();
-            }
+            allObjectivesHandled = true;
+            OnAllObjectivesComplete();
         }
     }
 
-    // ========================================================
-    // PANEL PROGRESSION
-    // ========================================================
+    // -------- Panel progression --------
+
     private void TrackResourceCollection()
     {
         if (resourcesCollectedCount >= 2) return;
@@ -168,7 +157,6 @@ public class TutorialController : MonoBehaviour
 
         int curTimber = (timberResource != null) ? rm.GetResourceAmount(timberResource) : 0;
         int curFiber = (fiberResource != null) ? rm.GetResourceAmount(fiberResource) : 0;
-
         int gains = (curTimber > lastTimberAmount ? 1 : 0) + (curFiber > lastFiberAmount ? 1 : 0);
 
         for (int i = 0; i < gains && resourcesCollectedCount < 2; i++)
@@ -178,13 +166,11 @@ public class TutorialController : MonoBehaviour
             {
                 if (resourcesPanel != null) resourcesPanel.SetActive(true);
                 ShowPanel(tutorialPanel_2);
-                Debug.Log("[Tutorial] Panel 2 shown. Resources panel enabled.");
             }
-            else if (resourcesCollectedCount == 2)
+            else
             {
                 if (workersPanel != null) workersPanel.SetActive(true);
                 ShowPanel(tutorialPanel_3);
-                Debug.Log("[Tutorial] Panel 3 shown. Workers panel enabled.");
             }
         }
 
@@ -196,83 +182,53 @@ public class TutorialController : MonoBehaviour
     {
         if (pumpCollider != null) pumpCollider.enabled = true;
         ShowPanel(tutorialPanel_4);
-        Debug.Log("[Tutorial] Panel 4 shown. Pump collider enabled.");
     }
 
     private void OnObjective2Complete()
     {
         ShowPanel(tutorialPanel_5);
-        Debug.Log("[Tutorial] Panel 5 shown.");
     }
 
     private void OnAllObjectivesComplete()
     {
-        HideAllPanels();
+        // Hide panels 1-6, keep 7 as the completion banner
+        for (int i = 0; i < 6; i++)
+            if (tutorialPanels[i] != null) tutorialPanels[i].SetActive(false);
 
         if (FirstScene != null)
-        {
             foreach (var obj in FirstScene)
-            {
-                if (obj == null)
-                {
-                    Debug.LogWarning("[Tutorial] FirstScene has a NULL entry — check the Inspector array.");
-                    continue;
-                }
-
-                obj.SetActive(true);
-                Debug.Log($"[Tutorial] Re-enabled: {obj.name}");
-
-                if (!obj.activeInHierarchy)
-                {
-                    Debug.LogWarning(
-                        $"[Tutorial] ⚠ '{obj.name}' was set active but is not visible. " +
-                        $"A parent GameObject must be disabled. " +
-                        $"Trace the hierarchy above '{obj.name}' and remove that parent from FirstScene if it's there."
-                    );
-                }
-            }
-        }
-
-        if (SecondScene != null)
-            foreach (var obj in SecondScene)
                 if (obj != null) obj.SetActive(true);
 
         if (floatingResourceSpawner != null) floatingResourceSpawner.SetActive(true);
         if (pumpCollider != null) pumpCollider.enabled = true;
 
-        Debug.Log("[Tutorial] Finale complete. Full UI + spawner re-enabled.");
+        if (panel7DismissRoutine != null) StopCoroutine(panel7DismissRoutine);
+        if (panel7AutoDismissSeconds > 0f && tutorialPanel_7 != null)
+            panel7DismissRoutine = StartCoroutine(AutoDismissPanel7());
     }
 
-    // Manual test trigger
-    [ContextMenu("Force Tutorial Finale")]
-    public void ForceTutorialFinale()
+    private IEnumerator AutoDismissPanel7()
     {
-        if (allObjectivesHandled)
-            Debug.LogWarning("[Tutorial] Finale already fired. Re-firing anyway for test.");
-        allObjectivesHandled = true;
-        OnAllObjectivesComplete();
+        yield return new WaitForSeconds(panel7AutoDismissSeconds);
+        if (tutorialPanel_7 != null) tutorialPanel_7.SetActive(false);
+        panel7DismissRoutine = null;
     }
 
-    // ========================================================
-    // OBJECTIVE 3 — state machine
-    // ========================================================
+    // -------- Objective 3 state machine --------
+
     private void HandleObjective3(bool isObj3)
     {
         if (isObj3 && obj3State == Obj3State.Inactive)
         {
             obj3State = Obj3State.ShowArrows;
             housesAtTutorialStart = FindObjectsByType<StructureWorkersHouse>(FindObjectsInactive.Exclude).Length;
-            Debug.Log($"[Tutorial] Objective 3 started. (pre-existing houses: {housesAtTutorialStart})");
         }
 
         switch (obj3State)
         {
             case Obj3State.ShowArrows:
                 if (FindObjectsByType<PanelStructureCard>(FindObjectsInactive.Exclude).Length > 0)
-                {
                     obj3State = Obj3State.ShowBuildClick;
-                    Debug.Log("[Tutorial] Building UI opened.");
-                }
                 break;
 
             case Obj3State.ShowBuildClick:
@@ -282,16 +238,14 @@ public class TutorialController : MonoBehaviour
                     builtHouse = houses[houses.Length - 1];
                     obj3State = Obj3State.ShowHouseArrow;
                     ShowPanel(tutorialPanel_6);
-                    Debug.Log("[Tutorial] House built. Panel 6 shown.");
                 }
                 break;
 
             case Obj3State.ShowHouseArrow:
                 if (IsHousePanelOpen())
                 {
-                    SetPanelActive(tutorialPanel_6, false);
+                    if (tutorialPanel_6 != null) tutorialPanel_6.SetActive(false);
                     obj3State = Obj3State.ShowRecruitClick;
-                    Debug.Log("[Tutorial] Panel 6 dismissed.");
                 }
                 break;
 
@@ -301,7 +255,6 @@ public class TutorialController : MonoBehaviour
                 {
                     obj3State = Obj3State.Complete;
                     ShowPanel(tutorialPanel_7);
-                    Debug.Log("Objective 3 is completed. Panel 7 shown.");
                 }
                 break;
         }
@@ -338,17 +291,15 @@ public class TutorialController : MonoBehaviour
                 g.gameObject.SetActive(showRecruitClick);
     }
 
-    // ========================================================
-    // OBJECTIVES 1 & 2
-    // ========================================================
+    // -------- Objectives 1 & 2 arrows --------
+
     private void HandleHarvestArrows(bool active)
     {
         foreach (var h in allHarvesters)
         {
             if (h == null) continue;
             var arrow = GetArrowChild(h.transform);
-            if (arrow == null) continue;
-            arrow.gameObject.SetActive(active && !h.IsWorking);
+            if (arrow != null) arrow.gameObject.SetActive(active && !h.IsWorking);
         }
     }
 
@@ -358,14 +309,12 @@ public class TutorialController : MonoBehaviour
         {
             if (p == null) continue;
             var arrow = GetArrowChild(p.transform);
-            if (arrow == null) continue;
-            arrow.gameObject.SetActive(active && !(p.CurrentFuel > 0 || p.IsPumpActive));
+            if (arrow != null) arrow.gameObject.SetActive(active && !(p.CurrentFuel > 0 || p.IsPumpActive));
         }
     }
 
     private void HandlePumpUIArrows(bool active)
     {
-        if (apexPumpPanel == null) FindPumpPanel();
         if (apexPumpPanel == null) return;
 
         if (active)
@@ -413,9 +362,8 @@ public class TutorialController : MonoBehaviour
         if (a != null && a.gameObject.activeSelf != state) a.gameObject.SetActive(state);
     }
 
-    // ========================================================
-    // HELPERS
-    // ========================================================
+    // -------- Helpers --------
+
     private void ShowPanel(GameObject panel)
     {
         HideAllPanels();
@@ -424,13 +372,8 @@ public class TutorialController : MonoBehaviour
 
     private void HideAllPanels()
     {
-        SetPanelActive(tutorialPanel_1, false);
-        SetPanelActive(tutorialPanel_2, false);
-        SetPanelActive(tutorialPanel_3, false);
-        SetPanelActive(tutorialPanel_4, false);
-        SetPanelActive(tutorialPanel_5, false);
-        SetPanelActive(tutorialPanel_6, false);
-        SetPanelActive(tutorialPanel_7, false);
+        foreach (var p in tutorialPanels)
+            if (p != null && p.activeSelf) p.SetActive(false);
     }
 
     private bool IsHousePanelOpen()
@@ -453,7 +396,7 @@ public class TutorialController : MonoBehaviour
         Transform modal = null;
         foreach (var t in houseUI.GetComponentsInChildren<Transform>(true))
             if (t.name == "Workers House") { modal = t; break; }
-        if (modal == null) { Debug.LogWarning("[Tutorial] No Workers House modal."); return; }
+        if (modal == null) return;
 
         foreach (var btn in modal.GetComponentsInChildren<Button>(true))
         {
@@ -462,24 +405,12 @@ public class TutorialController : MonoBehaviour
             var trigger = btn.gameObject.GetComponent<EventTrigger>();
             if (trigger == null) trigger = btn.gameObject.AddComponent<EventTrigger>();
             var entry = new EventTrigger.Entry { eventID = EventTriggerType.PointerClick };
-            entry.callback.AddListener(_ => { clickedRecruitWorker = true; Debug.Log("[Tutorial] Activate clicked."); });
+            entry.callback.AddListener(_ => clickedRecruitWorker = true);
             trigger.triggers.Add(entry);
 
             activateButtonHooked = true;
             return;
         }
-    }
-
-    private void SetPanelActive(GameObject panel, bool active)
-    {
-        if (panel == null) return;
-        if (panel.activeSelf != active) panel.SetActive(active);
-    }
-
-    private void FindPumpPanel()
-    {
-        var t = FindFirst("ApexPump Panel");
-        if (t != null) apexPumpPanel = t.gameObject;
     }
 
     private Transform FindFirst(string name)
@@ -502,87 +433,5 @@ public class TutorialController : MonoBehaviour
         foreach (var c in parent.GetComponentsInChildren<Transform>(true))
             if (c.name.Contains("Arrow")) return c;
         return null;
-    }
-
-    // ========================================================
-    // DIAGNOSTIC — right-click component header → "Dump UI State"
-    // ========================================================
-    [ContextMenu("Dump UI State (Diagnostic)")]
-    public void DumpUIState()
-    {
-        Debug.Log("========== UI STATE DUMP ==========");
-
-        LogPanelState("ApexPump Panel", FindFirst("ApexPump Panel")?.gameObject);
-        LogPanelState("Building Panel", FindFirst("Building Panel")?.gameObject);
-        LogPanelState("Workers House Panel", FindFirst("Workers House")?.gameObject);
-        LogPanelState("Workable Panel", FindFirst("Workable Panel")?.gameObject);
-        LogPanelState("Farm Panel", FindFirst("Farm Panel")?.gameObject);
-
-        Debug.Log("---- FirstScene entries ----");
-        if (FirstScene != null)
-            foreach (var o in FirstScene)
-                if (o != null)
-                    Debug.Log($"  {o.name}: activeSelf={o.activeSelf}, activeInHierarchy={o.activeInHierarchy}");
-
-        Debug.Log("---- Spawner ----");
-        if (floatingResourceSpawner != null)
-        {
-            var sp = floatingResourceSpawner.GetComponent<FloatingResourceSpawner>();
-            Debug.Log($"  Spawner GO: activeSelf={floatingResourceSpawner.activeSelf}, " +
-                      $"activeInHierarchy={floatingResourceSpawner.activeInHierarchy}, " +
-                      $"script enabled={(sp != null ? sp.enabled.ToString() : "MISSING")}");
-            if (floatingResourceSpawner.transform.parent != null)
-                Debug.Log($"  Parent: {floatingResourceSpawner.transform.parent.name}, " +
-                          $"activeInHierarchy={floatingResourceSpawner.transform.parent.gameObject.activeInHierarchy}");
-        }
-        else Debug.Log("  floatingResourceSpawner reference: NULL");
-
-        Debug.Log("---- Pump ----");
-        if (pumpCollider != null)
-            Debug.Log($"  pumpCollider.enabled={pumpCollider.enabled}, " +
-                      $"collider GO active={pumpCollider.gameObject.activeInHierarchy}");
-        else Debug.Log("  pumpCollider reference: NULL");
-
-        Debug.Log("---- Fullscreen raycast blockers ----");
-        foreach (var graphic in FindObjectsByType<Graphic>(FindObjectsInactive.Exclude))
-        {
-            if (!graphic.raycastTarget) continue;
-            if (!(graphic is Image || graphic is TMPro.TextMeshProUGUI)) continue;
-
-            var canvas = graphic.canvas;
-            if (canvas == null) continue;
-
-            var rt = graphic.rectTransform;
-            Vector2 canvasSize = canvas.GetComponent<RectTransform>().rect.size;
-            if (rt.rect.width >= canvasSize.x * 0.9f &&
-                rt.rect.height >= canvasSize.y * 0.9f)
-            {
-                Debug.LogWarning(
-                    $"  Possible raycast blocker: '{graphic.gameObject.name}' " +
-                    $"(parent: {graphic.transform.parent?.name}) " +
-                    $"size {rt.rect.size} vs canvas {canvasSize}");
-            }
-        }
-
-        Debug.Log("========== END DUMP ==========");
-    }
-
-    private void LogPanelState(string label, GameObject panel)
-    {
-        if (panel == null)
-        {
-            Debug.Log($"  {label}: NOT FOUND");
-            return;
-        }
-
-        bool inFirst = false;
-        if (FirstScene != null)
-            foreach (var o in FirstScene)
-                if (o == panel) { inFirst = true; break; }
-
-        Debug.Log($"  {label}: activeSelf={panel.activeSelf}, " +
-                  $"activeInHierarchy={panel.activeInHierarchy}, " +
-                  $"parent={panel.transform.parent?.name}, " +
-                  $"inFirstScene={inFirst}");
     }
 }

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,15 +18,29 @@ public class FloatingResourceSpawner : MonoBehaviour
     [SerializeField] private float itemLifetime = 20f; // Despawns after this many seconds if uncollected
 
     private BoxCollider spawnerCollider;
+    private Coroutine spawnRoutine;
 
     private void Awake()
     {
         spawnerCollider = GetComponent<BoxCollider>();
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        StartCoroutine(SpawnRoutine());
+        // Restart the spawn loop every time this object becomes active.
+        // (Start() only ever runs once, so a SetActive(false) → SetActive(true)
+        // cycle would permanently kill the coroutine started there.)
+        if (spawnRoutine != null) StopCoroutine(spawnRoutine);
+        spawnRoutine = StartCoroutine(SpawnRoutine());
+    }
+
+    private void OnDisable()
+    {
+        if (spawnRoutine != null)
+        {
+            StopCoroutine(spawnRoutine);
+            spawnRoutine = null;
+        }
     }
 
     private IEnumerator SpawnRoutine()
@@ -69,7 +83,7 @@ public class FloatingResourceSpawner : MonoBehaviour
             float randomX = Random.Range(-size.x / 2f, size.x / 2f);
             float randomY = Random.Range(-size.y / 2f, size.y / 2f);
             float randomZ = Random.Range(-size.z / 2f, size.z / 2f);
-            
+
             spawnPos = spawnerCollider.transform.TransformPoint(new Vector3(randomX, randomY, randomZ));
         }
 
@@ -80,7 +94,7 @@ public class FloatingResourceSpawner : MonoBehaviour
         if (floatingItem != null)
         {
             float speed = Random.Range(minSpeed, maxSpeed);
-            Vector3 moveDirection = transform.right; 
+            Vector3 moveDirection = transform.right;
             floatingItem.Initialize(moveDirection, speed, itemLifetime);
         }
     }

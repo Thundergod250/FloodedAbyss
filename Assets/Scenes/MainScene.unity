@@ -2653,6 +2653,11 @@ BoxCollider:
   m_CorrespondingSourceObject: {fileID: 6405152781524908744, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
   m_PrefabInstance: {fileID: 1107054101}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2016512338 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 625329512437147430, guid: ba8e2b97f8e8838498c4d1b12734d262, type: 3}
+  m_PrefabInstance: {fileID: 3133404017693254291}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2074074452
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3615,13 +3620,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2109535626}
     - target: {fileID: 6834249402503474105, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
+      propertyPath: waitForAllQuests
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6834249402503474105, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
       propertyPath: FirstScene.Array.size
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6834249402503474105, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
       propertyPath: floatingResourceSpawner
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2016512338}
     - target: {fileID: 6834249402503474105, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
       propertyPath: 'FirstScene.Array.data[0]'
       value: 
@@ -3703,6 +3712,10 @@ PrefabInstance:
       propertyPath: m_AnchorMin.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2416002470108927556, guid: 93962ff5bde69f746af840d31223a209, type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2734584325013952025, guid: 93962ff5bde69f746af840d31223a209, type: 3}
       propertyPath: m_hasFontAssetChanged
       value: 0
@@ -3725,6 +3738,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3538751142248732473, guid: 93962ff5bde69f746af840d31223a209, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3768018090376484244, guid: 93962ff5bde69f746af840d31223a209, type: 3}
+      propertyPath: m_RaycastTarget
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3989177107832400350, guid: 93962ff5bde69f746af840d31223a209, type: 3}
@@ -3834,6 +3851,14 @@ PrefabInstance:
     - target: {fileID: 5350315203777554876, guid: 93962ff5bde69f746af840d31223a209, type: 3}
       propertyPath: m_fontSize
       value: 22.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 5572124029965026682, guid: 93962ff5bde69f746af840d31223a209, type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5915283033762240167, guid: 93962ff5bde69f746af840d31223a209, type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6740199474758386260, guid: 93962ff5bde69f746af840d31223a209, type: 3}
       propertyPath: m_AnchoredPosition.y
