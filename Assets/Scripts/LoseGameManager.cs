@@ -9,6 +9,10 @@ public class LoseGameManager : MonoBehaviour
 
     private void Start()
     {
+        if(losePanel== null)
+        {
+            losePanel = GameManager.Instance.uiController.GetComponentInChildren<MainMenuUI>().gameObject;
+        }
         hasPlayerLost = false;
         losePanel.SetActive(false);
     }
