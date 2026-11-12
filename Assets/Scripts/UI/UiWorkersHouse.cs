@@ -144,7 +144,7 @@ public class UiWorkersHouse : UiModals
         if (actionButton != null && currentHouse != null)
         {
             var workerMgr = GameManager.Instance.WorkerManager;
-            bool isHousingAction = currentHouse.IsReservedForHousing || (workerMgr != null && workerMgr.HomelessWorker > 0);
+            bool isHousingAction = currentHouse.IsReservedForHousing; //|| (workerMgr != null && workerMgr.HomelessWorker > 0);
 
             if (resourceRequirementContainer != null)
             {
