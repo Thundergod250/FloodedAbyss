@@ -91,7 +91,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HoverHighlight
   outlineMaterial: {fileID: 2100000, guid: 7acbd91d8e966974ab6e064478f09800, type: 2}
+  outlineScale: 1.03
   matchObjectColor: 0
+  fallbackOutlineColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &-1341605930212751647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116,6 +118,8 @@ MonoBehaviour:
   waterStored: 0
   maxWaterStored: 100
   waterPerSecInc: 2.5
+  damageDuringGreatFlood: 1
+  greatFloodDamagePerSecond: 10
   requiresManualActivation: 0
   isWorking: 0
   isDestroying: 0
