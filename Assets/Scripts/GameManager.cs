@@ -32,7 +32,6 @@ public class GameManager : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject);
         
         ResolveTideManager();
     }
