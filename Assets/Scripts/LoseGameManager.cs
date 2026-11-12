@@ -3,7 +3,8 @@ using UnityEngine;
 public class LoseGameManager : MonoBehaviour
 {
     [Header("Lose Panel")]
-    [SerializeField] private GameObject losePanel;
+    [SerializeField] private int waterHeightBeforeLosing;
+    private GameObject losePanel;
 
     private bool hasPlayerLost;
 
@@ -19,7 +20,7 @@ public class LoseGameManager : MonoBehaviour
 
     void Update()
     {
-        if (GameManager.Instance.WaterLevel.CurrentWaterHeight == 300 && !hasPlayerLost)
+        if (GameManager.Instance.WaterLevel.CurrentWaterHeight == waterHeightBeforeLosing && !hasPlayerLost)
         {
             Time.timeScale = 0;
             hasPlayerLost = true;
