@@ -10,7 +10,7 @@ public class UiBuilding : UiModals
     [SerializeField] private Transform contentContainer;         // Scroll View Content container for cards
     [SerializeField] private GameObject structureCardPrefab;     // Prefab with StructureCardPanel attached
     [SerializeField] private GameObject resourcePairPrefabTemplate; // Reference to the resource pair prefab for costs
-    [SerializeField] private TextMeshProUGUI warningText;        // Optional warning message if resources are short
+    [SerializeField] private TextMeshProUGUI warningText;        // Optional general warning message (e.g. locked structures)
     [SerializeField] private TextMeshProUGUI laborCostText;      // Text field for displaying the labor cost
 
 
@@ -47,10 +47,8 @@ public class UiBuilding : UiModals
         if (warningText != null) warningText.gameObject.SetActive(false);
 
         // Update Labor Cost UI text if assigned
-        if (laborCostText != null)
-        {
+        if (laborCostText != null) 
             laborCostText.text = $"Labor Cost: {buildable.LaborCost}";
-        }
 
         PopulateCards();
     }
@@ -61,10 +59,8 @@ public class UiBuilding : UiModals
 
         foreach (Transform child in contentContainer)
         {
-            if (child.gameObject != structureCardPrefab)
-            {
+            if (child.gameObject != structureCardPrefab) 
                 Destroy(child.gameObject);
-            }
         }
 
         foreach (var structureData in currentBuildable.AvailableStructuresToBuild)
@@ -72,9 +68,7 @@ public class UiBuilding : UiModals
             if (structureData == null) continue;
 
             if (progression != null && !progression.IsUnlocked(structureData))
-            {
                 continue;
-            }
 
             GameObject cardGO = Instantiate(structureCardPrefab, contentContainer);
 
@@ -82,21 +76,18 @@ public class UiBuilding : UiModals
             cardGO.SetActive(true);
 
             PanelStructureCard cardPanel = cardGO.GetComponent<PanelStructureCard>();
-            if (cardPanel != null)
-            {
-                cardPanel.Setup(structureData, resourcePairPrefabTemplate, OnCardSelected);
-            }
+            if (cardPanel != null) 
+                cardPanel.Setup(structureData, resourcePairPrefabTemplate, (data) => OnCardSelected(data, cardPanel));
         }
 
         scrollRect.GetComponent<ScrollRect>().content = contentContainer.GetComponent<RectTransform>();
     }
 
-    private void OnCardSelected(StructureDataSO structureData)
+    private void OnCardSelected(StructureDataSO structureData, PanelStructureCard clickedCard)
     {
         if (currentBuildable != null)
         {
-            if (progression != null &&
-            !progression.IsUnlocked(structureData))
+            if (progression != null && !progression.IsUnlocked(structureData))
             {
                 ShowWarning("This structure is locked!");
                 return;
@@ -108,16 +99,18 @@ public class UiBuilding : UiModals
                 if (progression != null)
                     progression.NotifyStructureBuilt(structureData);
 
-                if (ObjectiveManager.Instance != null)
-                {
+                if (ObjectiveManager.Instance != null) 
                     ObjectiveManager.Instance.NotifyStructureBuilt(structureData);
-                }
 
                 GameManager.Instance.uiController.CloseAllModals();
             }
             else
             {
-                ShowWarning(errorMsg);
+                // If it fails (like not enough workers), trigger the specific card's warning flash
+                if (clickedCard != null)
+                    clickedCard.ShowNotEnoughWorkersWarning();
+                else
+                    ShowWarning(errorMsg);
             }
         }
     }
