@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 public enum HarvestMode { Consumable, Depletable, Infinite }
 
@@ -23,6 +24,10 @@ public class StructureHarvestResource : Structures
     [SerializeField] private ResourceDataSO resourceToProduce;
     [SerializeField] private int productionAmount = 1;
 
+    [Header("Events")]
+    [HideInInspector] public UnityEvent EvtOnBuildingWorking;
+    [HideInInspector] public UnityEvent EvtOnBuildingNotWorking;
+
     [Header("Debug Status")]
     [SerializeField] private bool isWorking = false;
     [SerializeField] private bool isDestroying = false;
@@ -34,11 +39,7 @@ public class StructureHarvestResource : Structures
     protected override void Awake()
     {
         base.Awake();
-
-        if (harvestMode == HarvestMode.Consumable)
-        {
-            ignoreSubmersion = true;
-        }
+        if (harvestMode == HarvestMode.Consumable) ignoreSubmersion = true;
     }
 
     public override void Activate()
@@ -83,10 +84,8 @@ public class StructureHarvestResource : Structures
 
         workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker - laborCost);
 
-        if (ObjectiveManager.Instance != null)
-        {
+        if (ObjectiveManager.Instance != null) 
             ObjectiveManager.Instance.NotifyWorkersAssigned(this, laborCost);
-        }
 
         harvestRoutine = StartCoroutine(HarvestLoopRoutine());
     }
@@ -104,14 +103,14 @@ public class StructureHarvestResource : Structures
         if (returnWorkers)
         {
             var workerMgr = GameManager.Instance.WorkerManager;
-            if (workerMgr != null)
-            {
+            if (workerMgr != null) 
                 workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker + laborCost);
-            }
         }
 
         isWorking = false;
         progressPercentage = 0f;
+        
+        EvtOnBuildingNotWorking?.Invoke();
     }
 
     public void ToggleDestroying()
@@ -159,21 +158,22 @@ public class StructureHarvestResource : Structures
         ExecuteFinalDestruction();
     }
 
-    private void ExecuteFinalDestruction()
-    {
-        ForceCleanupAndDestroy();
-    }
+    private void ExecuteFinalDestruction() => ForceCleanupAndDestroy();
 
     public void ForceCleanupAndDestroy()
     {
         if (isWorking)
-        {
             StopHarvesting(true);
-        }
         else if (harvestRoutine != null)
         {
             StopCoroutine(harvestRoutine);
             harvestRoutine = null;
+        }
+
+        if (isWorking)
+        {
+            isWorking = false;
+            EvtOnBuildingNotWorking?.Invoke();
         }
 
         var harvestUI = GameManager.Instance.uiController.UiResourceHarvest;
@@ -189,6 +189,7 @@ public class StructureHarvestResource : Structures
     private IEnumerator HarvestLoopRoutine()
     {
         isWorking = true;
+        EvtOnBuildingWorking?.Invoke();
 
         while (true)
         {
@@ -205,13 +206,10 @@ public class StructureHarvestResource : Structures
 
             progressPercentage = 1f;
 
-            // Wrap so a throwing event subscriber can't kill this coroutine
             try
             {
-                if (resourceToProduce != null && GameManager.Instance.ResourceManager != null)
-                {
+                if (resourceToProduce != null && GameManager.Instance.ResourceManager != null) 
                     GameManager.Instance.ResourceManager.AddResource(resourceToProduce, productionAmount);
-                }
             }
             catch (System.Exception e)
             {
@@ -237,10 +235,7 @@ public class StructureHarvestResource : Structures
         }
     }
 
-    private void FinishAndDestroyAutomatically()
-    {
-        ForceCleanupAndDestroy();
-    }
+    private void FinishAndDestroyAutomatically() => ForceCleanupAndDestroy();
 
     public bool IsWorking => isWorking;
     public bool IsDestroying => isDestroying;

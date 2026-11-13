@@ -10,17 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5c5ac3280672e664cbf9288fcc10183c, type: 3}
-  m_Name: Objective 11
+  m_Name: Objective 8 UNUSED
   m_EditorClassIdentifier: Assembly-CSharp::ObjectivesSO
   objectiveName: Prepare for the Great Flood
   objectives:
-  - objectiveDescription: Throw in the 100 charcoal into the Pumps!
-    objectiveType: 4
-    structureToBuild: {fileID: 0}
+  - objectiveDescription: Build a Farm
+    objectiveType: 0
+    structureToBuild: {fileID: 11400000, guid: 0bb1c459624260b43a0596c317134be6, type: 2}
     requiredAmount: 1
-    resourcesToDeposit:
-    - resource: {fileID: 11400000, guid: c2ea8a8751d5dc24a97a88facb04274b, type: 2}
-      requiredAmount: 100
+    resourcesToDeposit: []
     requiredUIName: 
     resourcesToGather: []
     structureToAssignWorkers: {fileID: 0}
