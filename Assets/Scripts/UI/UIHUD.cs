@@ -149,7 +149,7 @@ public class UIHUD : UiModals
     private void HandleWorkersChanged(int current)
     {
         if (workerNumberText != null) 
-            workerNumberText.text = $"Workers {current}";
+            workerNumberText.text = $" {current}";
     }
 
     private void HandleHomelessChanged(int homelessCount)

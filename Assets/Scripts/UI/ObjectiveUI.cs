@@ -5,6 +5,7 @@ public class ObjectiveUI : MonoBehaviour
 {
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI objectiveNameText;
+    [SerializeField] private TextMeshProUGUI GreatFloodText;
     [SerializeField] private TextMeshProUGUI objectiveDescriptionText;
 
     [Header("Checklist References")]
@@ -27,18 +28,19 @@ public class ObjectiveUI : MonoBehaviour
     private void Update()
     {
         if (subscribedManager == null &&
-            ObjectiveManager.Instance != null)
+              ObjectiveManager.Instance != null)
         {
             TrySubscribe();
             RefreshUI();
         }
 
-        if (ObjectiveManager.Instance.AllObjectiveCompleted && objectiveNameText != null)
-        {
-            WaterLevel wl = GameManager.Instance.WaterLevel;
-            objectiveNameText.text = "TIME UNTIL GREAT FLOOD\n" + wl.TimeUntilGreatFlood.ToString("F0") + " / " + wl.MaxTimeUntilGreatFlood.ToString("F0");
-        }
+        WaterLevel wl = GameManager.Instance.WaterLevel;
 
+        System.TimeSpan time = System.TimeSpan.FromSeconds(
+            Mathf.Max(0, Mathf.CeilToInt(wl.TimeUntilGreatFlood))
+        );
+
+        GreatFloodText.text = $"{time.Minutes}:{time.Seconds:D2}";
     }
 
     private void TrySubscribe()

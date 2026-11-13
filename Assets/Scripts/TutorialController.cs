@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
+using Unity.VisualScripting;
 
 public class TutorialController : MonoBehaviour
 {
@@ -16,9 +18,11 @@ public class TutorialController : MonoBehaviour
     [SerializeField] private GameObject tutorialPanel_2;
     [SerializeField] private GameObject tutorialPanel_3;
     [SerializeField] private GameObject tutorialPanel_4;
+    [SerializeField] private GameObject tutorialPanel_4point5;
     [SerializeField] private GameObject tutorialPanel_5;
     [SerializeField] private GameObject tutorialPanel_6;
     [SerializeField] private GameObject tutorialPanel_7;
+    [SerializeField] private GameObject tutorialPanel_8;
 
     [Header("Scene Elements")]
     [SerializeField] private GameObject[] FirstScene;
@@ -34,6 +38,7 @@ public class TutorialController : MonoBehaviour
     [SerializeField] private GameObject floatingResourceSpawner;
     [SerializeField] private ResourceDataSO timberResource;
     [SerializeField] private ResourceDataSO fiberResource;
+    [SerializeField] private TextMeshProUGUI GreatFloodTimer;
 
     private GameObject[] tutorialPanels;
 
@@ -93,6 +98,7 @@ public class TutorialController : MonoBehaviour
         if (workersPanel != null) workersPanel.SetActive(false);
         if (pumpCollider != null) pumpCollider.enabled = false;
         if (floatingResourceSpawner != null) floatingResourceSpawner.SetActive(false);
+        if (GreatFloodTimer != null) GreatFloodTimer.gameObject.SetActive(false);
 
         ShowPanel(tutorialPanel_1);
 
@@ -127,6 +133,7 @@ public class TutorialController : MonoBehaviour
         {
             tutorialPanel4Dismissed = true;
             tutorialPanel_4.SetActive(false);
+            tutorialPanel_4point5.SetActive(true);
         }
 
         // Dismiss panel 5 when building UI opens
@@ -165,11 +172,13 @@ public class TutorialController : MonoBehaviour
             if (resourcesCollectedCount == 1)
             {
                 if (resourcesPanel != null) resourcesPanel.SetActive(true);
+                if (workersPanel != null) workersPanel.SetActive(true);
+                if (floatingResourceSpawner != null) floatingResourceSpawner.SetActive(true);
+
                 ShowPanel(tutorialPanel_2);
             }
             else
             {
-                if (workersPanel != null) workersPanel.SetActive(true);
                 ShowPanel(tutorialPanel_3);
             }
         }
@@ -182,10 +191,12 @@ public class TutorialController : MonoBehaviour
     {
         if (pumpCollider != null) pumpCollider.enabled = true;
         ShowPanel(tutorialPanel_4);
+
     }
 
     private void OnObjective2Complete()
     {
+        tutorialPanel_4point5.SetActive(false);
         ShowPanel(tutorialPanel_5);
     }
 
@@ -199,7 +210,6 @@ public class TutorialController : MonoBehaviour
             foreach (var obj in FirstScene)
                 if (obj != null) obj.SetActive(true);
 
-        if (floatingResourceSpawner != null) floatingResourceSpawner.SetActive(true);
         if (pumpCollider != null) pumpCollider.enabled = true;
 
         if (panel7DismissRoutine != null) StopCoroutine(panel7DismissRoutine);
@@ -211,6 +221,7 @@ public class TutorialController : MonoBehaviour
     {
         yield return new WaitForSeconds(panel7AutoDismissSeconds);
         if (tutorialPanel_7 != null) tutorialPanel_7.SetActive(false);
+        if (tutorialPanel_8 != null) tutorialPanel_8.SetActive(true);
         panel7DismissRoutine = null;
     }
 
@@ -244,16 +255,17 @@ public class TutorialController : MonoBehaviour
             case Obj3State.ShowHouseArrow:
                 if (IsHousePanelOpen())
                 {
-                    if (tutorialPanel_6 != null) tutorialPanel_6.SetActive(false);
+                    //if (tutorialPanel_6 != null) tutorialPanel_6.SetActive(false);
                     obj3State = Obj3State.ShowRecruitClick;
                 }
                 break;
 
             case Obj3State.ShowRecruitClick:
                 HookActivateButton();
-                if (clickedRecruitWorker)
+                if (clickedRecruitWorker && GameManager.Instance.WorkerManager.CurrentWorker > 1)
                 {
-                    obj3State = Obj3State.Complete;
+                    obj3State = Obj3State.Complete; 
+                    GreatFloodTimer.gameObject.SetActive(true);
                     ShowPanel(tutorialPanel_7);
                 }
                 break;
@@ -368,6 +380,11 @@ public class TutorialController : MonoBehaviour
     {
         HideAllPanels();
         if (panel != null) panel.SetActive(true);
+
+        if(panel == tutorialPanel_3)
+        {
+            FirstScene[0].SetActive(true);
+        }
     }
 
     private void HideAllPanels()
