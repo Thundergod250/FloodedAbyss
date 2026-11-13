@@ -81,7 +81,23 @@ public class StructureWorkersHouse : Structures
         var workerMgr = GameManager.Instance.WorkerManager;
         if (workerMgr == null) return;
 
-        bool housingMode = workerMgr.HomelessWorker > 0;
+        if (recruitmentCostResource != null)
+        {
+            var resourceMgr = GameManager.Instance.ResourceManager;
+            if (resourceMgr != null)
+            {
+                if (resourceMgr.GetResourceAmount(recruitmentCostResource) < recruitmentCostAmount)
+                {
+                    Debug.Log("[StructureWorkersHouse] Not enough resources to recruit worker!");
+                    return;
+                }
+
+                resourceMgr.ConsumeResource(recruitmentCostResource, recruitmentCostAmount);
+            }
+        }
+        actionRoutine = StartCoroutine(ActionRoutine(false));
+
+        /*bool housingMode = workerMgr.HomelessWorker > 0;
 
         if (housingMode)
         {
@@ -94,22 +110,9 @@ public class StructureWorkersHouse : Structures
         }
         else
         {
-            if (recruitmentCostResource != null)
-            {
-                var resourceMgr = GameManager.Instance.ResourceManager;
-                if (resourceMgr != null)
-                {
-                    if (resourceMgr.GetResourceAmount(recruitmentCostResource) < recruitmentCostAmount)
-                    {
-                        Debug.Log("[StructureWorkersHouse] Not enough resources to recruit worker!");
-                        return;
-                    }
-                    resourceMgr.ConsumeResource(recruitmentCostResource, recruitmentCostAmount);
-                }
-            }
-        }
+            
+        }*/
 
-        actionRoutine = StartCoroutine(ActionRoutine(housingMode));
     }
 
     private void StopAction()

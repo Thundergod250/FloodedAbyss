@@ -16,7 +16,7 @@ public class WorkerManager : MonoBehaviour
     public UnityEvent<int> EvtOnHomelessChanged = new();
     public UnityEvent<int> EvtOnWorkerReduced = new();
 
-    [Header("Worker Resource Consumption")]
+    [Header("Worker Resource Consumption Unused")]
     [SerializeField] private ResourceDataSO resourceToConsume;
     [SerializeField] private int consumptionPerWorker = 1;
     [SerializeField] private float consumptionInterval = 10f;
@@ -26,9 +26,9 @@ public class WorkerManager : MonoBehaviour
     private void Start() 
     {
         EvtOnWorkersChanged?.Invoke(CurrentWorker);
-        EvtOnHomelessChanged?.Invoke(HomelessWorker);
+     //   EvtOnHomelessChanged?.Invoke(HomelessWorker);
 
-       StartCoroutine(WorkerConsumptionRoutine());
+      // StartCoroutine(WorkerConsumptionRoutine());
     }
 
     public void SetCurrentWorkers(int amount)
@@ -87,8 +87,12 @@ public class WorkerManager : MonoBehaviour
             OccupiedHousesCount--;
         }
         // When an occupied house is destroyed, the housed worker becomes homeless again!
-        HomelessWorker++;
-        EvtOnHomelessChanged?.Invoke(HomelessWorker);
+
+        //HomelessWorker++;
+       // EvtOnHomelessChanged?.Invoke(HomelessWorker);
+
+        CurrentWorker = Mathf.Max(1, CurrentWorker - 1);
+        EvtOnWorkersChanged?.Invoke(CurrentWorker);
     }
 
     public void RecruitNewWorker(Structures recruitingBuilding)
@@ -111,8 +115,8 @@ public class WorkerManager : MonoBehaviour
         {
             OccupiedHousesCount--;
         }
-        HomelessWorker++;
-        EvtOnHomelessChanged?.Invoke(HomelessWorker);
+        //HomelessWorker++;
+       // EvtOnHomelessChanged?.Invoke(HomelessWorker);
     }
 
     private IEnumerator WorkerConsumptionRoutine()

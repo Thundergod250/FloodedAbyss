@@ -67,7 +67,7 @@ public class UIHUD : UiModals
         isSubscribed = true;
 
         HandleWorkersChanged(GameManager.Instance.WorkerManager.CurrentWorker);
-        HandleHomelessChanged(GameManager.Instance.WorkerManager.HomelessWorker);
+       // HandleHomelessChanged(GameManager.Instance.WorkerManager.HomelessWorker);
 
         BuildResourceHUD();
     }

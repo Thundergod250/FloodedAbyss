@@ -574,6 +574,8 @@ public class ObjectiveManager : MonoBehaviour
                     wl.StartWaterRise(true);
                 }
 
+                GameManager.Instance.uiController.GetComponentInChildren<UIEventManager>().SetTutorialPaused(false);
+
                 EnableWeather();
             }
 
