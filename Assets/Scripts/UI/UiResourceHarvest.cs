@@ -159,7 +159,7 @@ public class UiResourceHarvest : UiModals
                 }
                 else
                 {
-                    // Not enough workers -> show warning and keep UI open
+                    // Not enough workers -> show warning with dynamic worker count and keep UI open
                     ShowNotEnoughWorkersWarning();
                 }
             }
@@ -174,9 +174,14 @@ public class UiResourceHarvest : UiModals
 
     public void ShowNotEnoughWorkersWarning()
     {
-        if (notEnoughWorkersText != null)
+        if (notEnoughWorkersText != null && currentStructure != null)
         {
-            if (warningRoutine != null) StopCoroutine(warningRoutine);
+            int cost = currentStructure.LaborCost;
+            string workerUnit = cost == 1 ? "Worker" : "Workers";
+            notEnoughWorkersText.text = $"Needs {cost} Available {workerUnit}";
+
+            if (warningRoutine != null)
+                StopCoroutine(warningRoutine);
             warningRoutine = StartCoroutine(FlashWarningRoutine());
         }
     }
