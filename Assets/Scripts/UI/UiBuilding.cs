@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class UiBuilding : UiModals
@@ -108,24 +109,38 @@ public class UiBuilding : UiModals
             {
                 if (clickedCard != null)
                 {
-                    // Check error message context to decide whether it's resources or workers
-                    string displayMsg = "No Available Worker";
-                    
-                    if (!string.IsNullOrEmpty(errorMsg) && (errorMsg.ToLower().Contains("resource") || errorMsg.ToLower().Contains("material") || errorMsg.ToLower().Contains("cost")))
+                    List<string> missingRequirements = new List<string>();
+
+                    // 1. Check worker shortage
+                    var workerMgr = GameManager.Instance.WorkerManager;
+                    if (workerMgr != null && workerMgr.CurrentWorker < currentBuildable.LaborCost)
                     {
-                        displayMsg = "Insufficient Resources";
-                    }
-                    else if (!string.IsNullOrEmpty(errorMsg) && errorMsg.ToLower().Contains("worker"))
-                    {
-                        displayMsg = "No Available Worker";
-                    }
-                    else if (!string.IsNullOrEmpty(errorMsg))
-                    {
-                        // Fallback to checking general short-resource keywords if needed, or default to checking error message
-                        displayMsg = errorMsg; 
+                        missingRequirements.Add("Needs Worker");
                     }
 
-                    clickedCard.ShowWarningMessage(displayMsg);
+                    // 2. Check resource shortages for all required costs
+                    var resourceManager = GameManager.Instance.ResourceManager;
+                    if (structureData.Costs != null && resourceManager != null)
+                    {
+                        foreach (var cost in structureData.Costs)
+                        {
+                            if (cost.resourceDataSo == null) continue;
+                            int hasAmount = resourceManager.GetResourceAmount(cost.resourceDataSo);
+                            if (hasAmount < cost.amount)
+                            {
+                                int needed = cost.amount - hasAmount; // Or display total cost depending on preference; using needed amount here
+                                string resName = cost.resourceDataSo.ResourceName;
+                                missingRequirements.Add($"Needs {cost.amount} {resName}");
+                            }
+                        }
+                    }
+
+                    // Build final multi-line message, falling back to errorMsg if list is empty
+                    string finalMessage = missingRequirements.Count > 0 
+                        ? string.Join("\n", missingRequirements) 
+                        : (!string.IsNullOrEmpty(errorMsg) ? errorMsg : "Cannot Build");
+
+                    clickedCard.ShowWarningMessage(finalMessage);
                 }
                 else
                 {

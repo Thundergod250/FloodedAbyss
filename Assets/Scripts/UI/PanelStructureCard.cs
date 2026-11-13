@@ -9,7 +9,7 @@ public class PanelStructureCard : MonoBehaviour
     [SerializeField] private Image structureImage;
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI infoText;
-    [SerializeField] private TextMeshProUGUI notEnoughWorkersText; // Red warning text
+    [SerializeField] private TextMeshProUGUI notEnoughWorkersText; // Red warning text (now handles all shortages)
     [SerializeField] private float warningDisplayDuration = 2f;    // Editable duration
     [SerializeField] private Transform costContainer; // Container holding the ResourcePair prefabs for costs
     [SerializeField] private Button cardButton;
@@ -51,7 +51,7 @@ public class PanelStructureCard : MonoBehaviour
         BuildCostDisplay(resourcePairPrefabTemplate);
     }
 
-    public void ShowWarningMessage(string message = "No Available Worker")
+    public void ShowWarningMessage(string message)
     {
         if (notEnoughWorkersText != null)
         {
@@ -62,7 +62,7 @@ public class PanelStructureCard : MonoBehaviour
 
     private IEnumerator FlashWarningRoutine(string message)
     {
-        // Hide both Title and Info text, show warning text with custom message
+        // Hide both Title and Info text, show compiled multi-line warning
         if (titleText != null) titleText.gameObject.SetActive(false);
         if (infoText != null) infoText.gameObject.SetActive(false);
         
