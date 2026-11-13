@@ -66,20 +66,14 @@ public class UiResourceHarvest : UiModals
             }
 
             bool showBar = currentStructure.IsWorking || currentStructure.IsDestroying;
-            if (productionBarContainer != null && productionBarContainer.activeSelf != showBar)
-            {
+            if (productionBarContainer != null && productionBarContainer.activeSelf != showBar) 
                 productionBarContainer.SetActive(showBar);
-            }
 
-            if (showBar && fillImage != null)
-            {
+            if (showBar && fillImage != null) 
                 fillImage.fillAmount = currentStructure.ProgressPercentage;
-            }
 
-            if (progressDescriptionText != null)
-            {
+            if (progressDescriptionText != null) 
                 progressDescriptionText.text = currentStructure.ProductionDescription;
-            }
 
             UpdateActivateButtonVisuals();
             UpdateDestroyButtonVisuals();
@@ -95,29 +89,22 @@ public class UiResourceHarvest : UiModals
         if (notEnoughWorkersText != null) notEnoughWorkersText.gameObject.SetActive(false);
 
         // Show or hide destroy button based on structure configuration
-        if (destroyButton != null)
-        {
+        if (destroyButton != null) 
             destroyButton.gameObject.SetActive(structure.CanBeDestroyed);
-        }
 
         UpdateActivateButtonVisuals();
         UpdateDestroyButtonVisuals();
     }
 
-    public bool IsShowingStructure(StructureHarvestResource structure)
-    {
-        return IsOpen && currentStructure == structure;
-    }
+    public bool IsShowingStructure(StructureHarvestResource structure) => IsOpen && currentStructure == structure;
 
     private void UpdateActivateButtonVisuals()
     {
         if (activateButton != null && currentStructure != null)
         {
             bool isWorking = currentStructure.IsWorking;
-            if (activateButtonText != null)
-            {
+            if (activateButtonText != null) 
                 activateButtonText.text = isWorking ? "Deactivate" : "Activate";
-            }
 
             ColorBlock colors = activateButton.colors;
             Color targetColor = isWorking ? new Color(1f, 0.6f, 0f) : Color.white;
@@ -137,10 +124,8 @@ public class UiResourceHarvest : UiModals
         {
             bool isDestroying = currentStructure.IsDestroying;
 
-            if (destroyButtonText != null)
-            {
+            if (destroyButtonText != null) 
                 destroyButtonText.text = isDestroying ? "Cancel" : "Destroy Structure";
-            }
 
             ColorBlock colors = destroyButton.colors;
             Color targetColor = isDestroying ? Color.red : new Color(1f, 0.85f, 0f); 
@@ -157,16 +142,34 @@ public class UiResourceHarvest : UiModals
     {
         if (currentStructure != null)
         {
-            currentStructure.ToggleHarvesting();
+            // If it's already working, deactivating always succeeds -> toggle & close UI
+            if (currentStructure.IsWorking)
+            {
+                currentStructure.ToggleHarvesting();
+                GameManager.Instance.uiController.CloseAllModals();
+            }
+            else
+            {
+                // Check if we have enough workers before activating
+                var workerMgr = GameManager.Instance.WorkerManager;
+                if (workerMgr != null && workerMgr.CurrentWorker >= currentStructure.LaborCost)
+                {
+                    currentStructure.ToggleHarvesting();
+                    GameManager.Instance.uiController.CloseAllModals();
+                }
+                else
+                {
+                    // Not enough workers -> show warning and keep UI open
+                    ShowNotEnoughWorkersWarning();
+                }
+            }
         }
     }
 
     private void OnDestroyClicked()
     {
-        if (currentStructure != null)
-        {
+        if (currentStructure != null) 
             currentStructure.ToggleDestroying();
-        }
     }
 
     public void ShowNotEnoughWorkersWarning()
@@ -187,6 +190,7 @@ public class UiResourceHarvest : UiModals
 
     public void CompleteProgress()
     {
-        if (productionBarContainer != null) productionBarContainer.SetActive(false);
+        if (productionBarContainer != null) 
+            productionBarContainer.SetActive(false);
     }
 }
