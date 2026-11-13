@@ -134,7 +134,7 @@ public class WaterLevel : MonoBehaviour
 
     public float CurrentWaterHeight => oceanTransform != null ? oceanTransform.position.y : currentWaterHeight;
     public float NetDischargePower => netDischargePower;
-    public float TimeUntilGreatFlood => greatFloodTimerProgress;
+    public float TimeUntilGreatFlood => Mathf.Max(0f, (greatFloodTimerMins * 60f) - greatFloodTimerProgress);
     public float MaxTimeUntilGreatFlood => greatFloodTimerMins * 60;
     public bool GreatFloodStarted => greatFloodStarted;
     
