@@ -151,7 +151,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHUD
   ModalPrefab: {fileID: 2843186802258320385}
-  workerNumberText: {fileID: 2115414011286010851}
+  workerNumberText: {fileID: 0}
   homelessWorkerText: {fileID: 0}
   waterLevelText: {fileID: 5350315203777554876}
   dischargePressureText: {fileID: 8508107465316163005}
@@ -293,11 +293,13 @@ MonoBehaviour:
   titleText: {fileID: 2734584325013952025}
   actionButton: {fileID: 1464245431665659856}
   actionButtonText: {fileID: 8446756098658062322}
+  actionMissingResourceText: {fileID: 1017511188879266418}
   resourceRequirementContainer: {fileID: 5469325721737274780}
   resourceCostParent: {fileID: 8110198528456921116}
   resourcePairPrefab: {fileID: 7750372029716409510, guid: d74526e6cf5d42b4eba8760c134d0f19, type: 3}
   upgradeButton: {fileID: 963168596448434066}
   upgradeButtonText: {fileID: 67322083576633008}
+  upgradeMissingResourceText: {fileID: 3160148831144716705}
   upgradeRequirementContainer: {fileID: 2555135194582450432}
   upgradeCostParent: {fileID: 239135931868145744}
   destroyButton: {fileID: 8948308195386167751}
@@ -305,6 +307,7 @@ MonoBehaviour:
   productionBarContainer: {fileID: 4370486110192002134}
   fillImage: {fileID: 3854027279927044477}
   progressDescriptionText: {fileID: 7657358736896412265}
+  warningDisplayDuration: 2
 --- !u!114 &2793307166259673174
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -762,6 +765,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!114 &1017511188879266418 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 838752927708015615, guid: 550ceea440f6cd8479a120b6ca5dd8e0, type: 3}
+  m_PrefabInstance: {fileID: 413544263527741837}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!114 &1090024157481261333 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 764977944203059352, guid: 550ceea440f6cd8479a120b6ca5dd8e0, type: 3}
@@ -792,6 +806,17 @@ GameObject:
 --- !u!114 &2734584325013952025 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2327804265952079764, guid: 550ceea440f6cd8479a120b6ca5dd8e0, type: 3}
+  m_PrefabInstance: {fileID: 413544263527741837}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &3160148831144716705 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3343411241770520620, guid: 550ceea440f6cd8479a120b6ca5dd8e0, type: 3}
   m_PrefabInstance: {fileID: 413544263527741837}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
@@ -1934,17 +1959,6 @@ RectTransform:
 --- !u!114 &1376946961098051335 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3564625908760923359, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
-  m_PrefabInstance: {fileID: 2478103047148192728}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!114 &2115414011286010851 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4555540841569122363, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
   m_PrefabInstance: {fileID: 2478103047148192728}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
