@@ -152,7 +152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIHUD
   ModalPrefab: {fileID: 2843186802258320385}
   workerNumberText: {fileID: 2115414011286010851}
-  homelessWorkerText: {fileID: 4877343976955566869}
+  homelessWorkerText: {fileID: 0}
   waterLevelText: {fileID: 5350315203777554876}
   dischargePressureText: {fileID: 8508107465316163005}
   waterPressureText: {fileID: 8940893146930753650}
@@ -1841,6 +1841,10 @@ PrefabInstance:
       propertyPath: m_fontSize
       value: 22.15
       objectReference: {fileID: 0}
+    - target: {fileID: 7508800330117506967, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 150
+      objectReference: {fileID: 0}
     - target: {fileID: 7841843784522740484, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
       propertyPath: m_fontSizeBase
       value: 20
@@ -1908,6 +1912,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 445013756103936501, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+    - {fileID: 9085517802733319228, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
@@ -1986,17 +1991,6 @@ MonoBehaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!114 &4877343976955566869 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7047063690734409933, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
-  m_PrefabInstance: {fileID: 2478103047148192728}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
