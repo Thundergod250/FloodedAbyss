@@ -39,21 +39,22 @@ public class StructureApexPump : Structures
     [SerializeField] private int currentFuel = 0;
     [SerializeField] private int currentUpgradeLevel = 0;
     [SerializeField] private bool[] switchStates = new bool[5]; 
+    [SerializeField] private float estimatedRemainingTime = 0f; // ETA
 
     private Coroutine consumptionRoutine;
 
-    private void Start()
+    private void Start() => consumptionRoutine = StartCoroutine(ConsumeFuelRoutine());
+
+    private void Update()
     {
-        consumptionRoutine = StartCoroutine(ConsumeFuelRoutine());
+        // Continuously update the Inspector ETA debug field
+        estimatedRemainingTime = CalculatedEstimatedRemainingTime;
     }
 
     private void OnDisable()
     {
-        if (consumptionRoutine != null)
-        {
+        if (consumptionRoutine != null) 
             StopCoroutine(consumptionRoutine);
-        }
-        
         ClearDischargePower();
     }
 
@@ -175,10 +176,8 @@ public class StructureApexPump : Structures
         switchStates[switchIndex] = !switchStates[switchIndex];
         Debug.Log($"[StructureApexPump] Switch {switchIndex + 1} is now {(switchStates[switchIndex] ? "ON (Green)" : "OFF (Red)")}");
 
-        if (switchStates[switchIndex])
-        {
+        if (switchStates[switchIndex]) 
             NotifyPumpActivated();
-        }
 
         EvaluateAndApplyDrainage();
         return true;
@@ -221,17 +220,13 @@ public class StructureApexPump : Structures
                 {
                     Debug.LogWarning("[StructureApexPump] Out of fuel! Shutting down all switches.");
                     currentFuel = 0;
-                    for (int i = 0; i < switchStates.Length; i++)
-                    {
+                    for (int i = 0; i < switchStates.Length; i++) 
                         switchStates[i] = false;
-                    }
                     ClearDischargePower();
                 }
             }
             else
-            {
                 ClearDischargePower();
-            }
         }
     }
 
@@ -253,13 +248,9 @@ public class StructureApexPump : Structures
         }
 
         if (currentFuel > 0 && activeSwitchCount > 0)
-        {
             ApplyWaterDrainage(activeSwitchCount);
-        }
         else
-        {
             ClearDischargePower();
-        }
     }
 
     private void ApplyWaterDrainage(int activeSwitchCount)
@@ -268,9 +259,7 @@ public class StructureApexPump : Structures
         {
             float powerPerSwitch = defaultDrainagePowerPerSwitch;
             if (upgradeLevels != null && currentUpgradeLevel > 0 && currentUpgradeLevel <= upgradeLevels.Length)
-            {
                 powerPerSwitch = upgradeLevels[currentUpgradeLevel - 1].drainagePowerPerSwitch;
-            }
 
             float totalDrainage = activeSwitchCount * powerPerSwitch;
             GameManager.Instance.WaterLevel.SetDischargePower(totalDrainage);
@@ -279,19 +268,34 @@ public class StructureApexPump : Structures
 
     private void ClearDischargePower()
     {
-        if (GameManager.Instance != null && GameManager.Instance.WaterLevel != null)
-        {
+        if (GameManager.Instance != null && GameManager.Instance.WaterLevel != null) 
             GameManager.Instance.WaterLevel.SetDischargePower(0f);
-        }
     }
 
     public PumpUpgradeData GetNextUpgradeData()
     {
         if (upgradeLevels != null && currentUpgradeLevel < upgradeLevels.Length)
-        {
             return upgradeLevels[currentUpgradeLevel];
-        }
         return default;
+    }
+
+    public float CalculatedEstimatedRemainingTime
+    {
+        get
+        {
+            int totalCostPerInterval = 0;
+            for (int i = 0; i < switchStates.Length; i++)
+            {
+                if (switchStates[i]) 
+                    totalCostPerInterval += GetSwitchCost(i);
+            }
+
+            if (totalCostPerInterval <= 0 || currentFuel <= 0 || consumptionInterval <= 0f)
+                return 0f;
+
+            float burnRatePerSecond = (float)totalCostPerInterval / consumptionInterval;
+            return currentFuel / burnRatePerSecond;
+        }
     }
 
     public bool IsMaxLevel => upgradeLevels == null || currentUpgradeLevel >= upgradeLevels.Length;
@@ -316,9 +320,7 @@ public class StructureApexPump : Structures
     }
     public void NotifyPumpActivated()
     {
-        if (ObjectiveManager.Instance != null)
-        {
+        if (ObjectiveManager.Instance != null) 
             ObjectiveManager.Instance.NotifyPumpActivated(this);
-        }
     }
 }
