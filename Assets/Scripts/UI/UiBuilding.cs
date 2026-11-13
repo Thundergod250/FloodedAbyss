@@ -106,11 +106,31 @@ public class UiBuilding : UiModals
             }
             else
             {
-                // If it fails (like not enough workers), trigger the specific card's warning flash
                 if (clickedCard != null)
-                    clickedCard.ShowNotEnoughWorkersWarning();
+                {
+                    // Check error message context to decide whether it's resources or workers
+                    string displayMsg = "No Available Worker";
+                    
+                    if (!string.IsNullOrEmpty(errorMsg) && (errorMsg.ToLower().Contains("resource") || errorMsg.ToLower().Contains("material") || errorMsg.ToLower().Contains("cost")))
+                    {
+                        displayMsg = "Insufficient Resources";
+                    }
+                    else if (!string.IsNullOrEmpty(errorMsg) && errorMsg.ToLower().Contains("worker"))
+                    {
+                        displayMsg = "No Available Worker";
+                    }
+                    else if (!string.IsNullOrEmpty(errorMsg))
+                    {
+                        // Fallback to checking general short-resource keywords if needed, or default to checking error message
+                        displayMsg = errorMsg; 
+                    }
+
+                    clickedCard.ShowWarningMessage(displayMsg);
+                }
                 else
+                {
                     ShowWarning(errorMsg);
+                }
             }
         }
     }

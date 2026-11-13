@@ -51,23 +51,23 @@ public class PanelStructureCard : MonoBehaviour
         BuildCostDisplay(resourcePairPrefabTemplate);
     }
 
-    public void ShowNotEnoughWorkersWarning()
+    public void ShowWarningMessage(string message = "No Available Worker")
     {
         if (notEnoughWorkersText != null)
         {
             if (warningRoutine != null) StopCoroutine(warningRoutine);
-            warningRoutine = StartCoroutine(FlashWarningRoutine());
+            warningRoutine = StartCoroutine(FlashWarningRoutine(message));
         }
     }
 
-    private IEnumerator FlashWarningRoutine()
+    private IEnumerator FlashWarningRoutine(string message)
     {
-        // Hide both Title and Info text, show "No Available Worker" text
+        // Hide both Title and Info text, show warning text with custom message
         if (titleText != null) titleText.gameObject.SetActive(false);
         if (infoText != null) infoText.gameObject.SetActive(false);
         
         notEnoughWorkersText.gameObject.SetActive(true);
-        notEnoughWorkersText.text = "No Available Worker";
+        notEnoughWorkersText.text = message;
 
         yield return new WaitForSeconds(warningDisplayDuration);
 
