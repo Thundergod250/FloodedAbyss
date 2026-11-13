@@ -1038,6 +1038,12 @@ MonoBehaviour:
   maxHarvestCycles: 5
   resourceToProduce: {fileID: 11400000, guid: 117f5fa912aefc5448b12f16aef95518, type: 2}
   productionAmount: 1
+  EvtOnBuildingWorking:
+    m_PersistentCalls:
+      m_Calls: []
+  EvtOnBuildingNotWorking:
+    m_PersistentCalls:
+      m_Calls: []
   isWorking: 0
   isDestroying: 0
   progressPercentage: 0
@@ -1525,6 +1531,12 @@ MonoBehaviour:
   maxHarvestCycles: 5
   resourceToProduce: {fileID: 11400000, guid: 117f5fa912aefc5448b12f16aef95518, type: 2}
   productionAmount: 1
+  EvtOnBuildingWorking:
+    m_PersistentCalls:
+      m_Calls: []
+  EvtOnBuildingNotWorking:
+    m_PersistentCalls:
+      m_Calls: []
   isWorking: 0
   isDestroying: 0
   progressPercentage: 0
@@ -1790,6 +1802,12 @@ MonoBehaviour:
   maxHarvestCycles: 5
   resourceToProduce: {fileID: 11400000, guid: 09a1015edb6edc547877d148f6a43cb6, type: 2}
   productionAmount: 1
+  EvtOnBuildingWorking:
+    m_PersistentCalls:
+      m_Calls: []
+  EvtOnBuildingNotWorking:
+    m_PersistentCalls:
+      m_Calls: []
   isWorking: 0
   isDestroying: 0
   progressPercentage: 0
@@ -1898,6 +1916,12 @@ MonoBehaviour:
   maxHarvestCycles: 1
   resourceToProduce: {fileID: 11400000, guid: 42d0a33d5d93fa0468020c1672f70b5c, type: 2}
   productionAmount: 20
+  EvtOnBuildingWorking:
+    m_PersistentCalls:
+      m_Calls: []
+  EvtOnBuildingNotWorking:
+    m_PersistentCalls:
+      m_Calls: []
   isWorking: 0
   isDestroying: 0
   progressPercentage: 0
@@ -2362,6 +2386,12 @@ MonoBehaviour:
   maxHarvestCycles: 5
   resourceToProduce: {fileID: 11400000, guid: 117f5fa912aefc5448b12f16aef95518, type: 2}
   productionAmount: 20
+  EvtOnBuildingWorking:
+    m_PersistentCalls:
+      m_Calls: []
+  EvtOnBuildingNotWorking:
+    m_PersistentCalls:
+      m_Calls: []
   isWorking: 0
   isDestroying: 0
   progressPercentage: 0
@@ -2627,12 +2657,14 @@ MonoBehaviour:
   resourceFuelValues: 01000000050000000a0000001900000032000000i
   switchFuelCosts: 01000000050000000a0000001400000032000000i
   consumptionInterval: 1
-  switchFuelThresholds: 000000003200000064000000f4010000e8030000i
+  switchOpenThresholds: 000000003200000064000000f4010000e8030000i
+  switchShutdownThresholds: 000000001900000032000000fa000000f4010000i
   upgradeLevels: []
   defaultDrainagePowerPerSwitch: 50
   currentFuel: 0
   currentUpgradeLevel: 0
   switchStates: 0000000000y
+  estimatedRemainingTime: 0
 --- !u!1 &1687473556 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2992620160669360312, guid: 93962ff5bde69f746af840d31223a209, type: 3}
@@ -2658,11 +2690,6 @@ MonoBehaviour:
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4243289948176908765, guid: f8bb3ce1a7dc36c41958adbc757fa904, type: 3}
   m_PrefabInstance: {fileID: 6235901039830439554}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1896772300 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5662639418121379589, guid: 93962ff5bde69f746af840d31223a209, type: 3}
-  m_PrefabInstance: {fileID: 8397806791057057018}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1906289178 stripped
 GameObject:
@@ -2852,7 +2879,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
+  far clip plane: 1800
   field of view: 60.000004
   orthographic: 0
   orthographic size: 5
@@ -3599,7 +3626,7 @@ PrefabInstance:
     - target: {fileID: 6834249402503474105, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
       propertyPath: workersPanel
       value: 
-      objectReference: {fileID: 1896772300}
+      objectReference: {fileID: 8397806791057057019}
     - target: {fileID: 6834249402503474105, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
       propertyPath: fiberResource
       value: 
@@ -3675,7 +3702,7 @@ PrefabInstance:
     - target: {fileID: 6834249402503474105, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
       propertyPath: 'FirstScene.Array.data[1]'
       value: 
-      objectReference: {fileID: 1896772300}
+      objectReference: {fileID: 8397806791057057019}
     - target: {fileID: 6834249402503474105, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
       propertyPath: 'FirstScene.Array.data[2]'
       value: 
@@ -4050,6 +4077,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 93962ff5bde69f746af840d31223a209, type: 3}
+--- !u!1 &8397806791057057019 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8265820851614292777, guid: 93962ff5bde69f746af840d31223a209, type: 3}
+  m_PrefabInstance: {fileID: 8397806791057057018}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8397806791057057020 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1264912435257546150, guid: 93962ff5bde69f746af840d31223a209, type: 3}
