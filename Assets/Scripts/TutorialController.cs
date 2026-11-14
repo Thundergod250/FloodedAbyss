@@ -21,6 +21,7 @@ public class TutorialController : MonoBehaviour
     [SerializeField] private GameObject tutorialPanel_4point5;
     [SerializeField] private GameObject tutorialPanel_5;
     [SerializeField] private GameObject tutorialPanel_6;
+    [SerializeField] private GameObject tutorialPanel_6point5;
     [SerializeField] private GameObject tutorialPanel_7;
     [SerializeField] private GameObject tutorialPanel_8;
 
@@ -30,6 +31,7 @@ public class TutorialController : MonoBehaviour
     [Header("Finale")]
     [Tooltip("Seconds before panel 7 auto-hides. 0 = leave visible.")]
     [SerializeField] private float panel7AutoDismissSeconds = 5f;
+    [SerializeField] private float panel65AutoDismissSeconds;
 
     [Header("Specific Tutorial References")]
     [SerializeField] private GameObject resourcesPanel;
@@ -68,6 +70,7 @@ public class TutorialController : MonoBehaviour
     // Finale
     private bool allObjectivesHandled;
     private Coroutine panel7DismissRoutine;
+    private Coroutine panel65DismissRoutine;
 
     private GameObject buildingPanel;
     private ObjectivesSO previousQuest;
@@ -217,12 +220,47 @@ public class TutorialController : MonoBehaviour
             panel7DismissRoutine = StartCoroutine(AutoDismissPanel7());
     }
 
+    private IEnumerator ShowPanel65ThenPanel7()
+    {
+        if (tutorialPanel_6 != null)
+            tutorialPanel_6.SetActive(false);
+
+        if (tutorialPanel_6point5 != null)
+            tutorialPanel_6point5.SetActive(true);
+
+        yield return new WaitForSeconds(panel65AutoDismissSeconds);
+
+        if (tutorialPanel_6point5 != null)
+            tutorialPanel_6point5.SetActive(false);
+
+        if (tutorialPanel_7 != null)
+            tutorialPanel_7.SetActive(true);
+
+        panel65DismissRoutine = null;
+    }
+
     private IEnumerator AutoDismissPanel7()
     {
         yield return new WaitForSeconds(panel7AutoDismissSeconds);
         if (tutorialPanel_7 != null) tutorialPanel_7.SetActive(false);
         if (tutorialPanel_8 != null) tutorialPanel_8.SetActive(true);
+        if (GreatFloodTimer != null) GreatFloodTimer.gameObject.SetActive(true);
         panel7DismissRoutine = null;
+    }
+
+    public void SkipPanel7()
+    {
+        if (panel7DismissRoutine != null)
+        {
+            StopCoroutine(panel7DismissRoutine);
+            panel7DismissRoutine = null;
+        }
+
+        if (tutorialPanel_7 != null) tutorialPanel_7.SetActive(false);
+
+        if (tutorialPanel_8 != null) tutorialPanel_8.SetActive(true);
+
+        if (GreatFloodTimer != null) GreatFloodTimer.gameObject.SetActive(true);
     }
 
     // -------- Objective 3 state machine --------
@@ -264,9 +302,12 @@ public class TutorialController : MonoBehaviour
                 HookActivateButton();
                 if (clickedRecruitWorker && GameManager.Instance.WorkerManager.CurrentWorker > 1)
                 {
-                    obj3State = Obj3State.Complete; 
-                    GreatFloodTimer.gameObject.SetActive(true);
-                    ShowPanel(tutorialPanel_7);
+                    obj3State = Obj3State.Complete;
+
+                    if (panel65DismissRoutine != null)
+                        StopCoroutine(panel65DismissRoutine);
+
+                    panel65DismissRoutine = StartCoroutine(ShowPanel65ThenPanel7());
                 }
                 break;
         }
