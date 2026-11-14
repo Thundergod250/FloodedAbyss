@@ -245,7 +245,7 @@ public class StructureWorkersHouse : Structures
         {
             if (isOccupied || isReservedForHousing)
             {
-                workerMgr.FreeHouse();
+                workerMgr.FreeHouse(housingCapacity);
             }
         }
 
