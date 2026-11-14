@@ -36,6 +36,8 @@ public class TutorialController : MonoBehaviour
     [Header("Specific Tutorial References")]
     [SerializeField] private GameObject resourcesPanel;
     [SerializeField] private GameObject workersPanel;
+    [SerializeField] private GameObject fuelPanel;
+    [SerializeField] private GameObject tutorialTopPanel;
     [SerializeField] private Collider pumpCollider;
     [SerializeField] private GameObject floatingResourceSpawner;
     [SerializeField] private ResourceDataSO timberResource;
@@ -102,6 +104,8 @@ public class TutorialController : MonoBehaviour
         if (pumpCollider != null) pumpCollider.enabled = false;
         if (floatingResourceSpawner != null) floatingResourceSpawner.SetActive(false);
         if (GreatFloodTimer != null) GreatFloodTimer.gameObject.SetActive(false);
+        if (fuelPanel != null) fuelPanel.gameObject.SetActive(false);
+        if (tutorialTopPanel != null) tutorialTopPanel.gameObject.SetActive(false);
 
         ShowPanel(tutorialPanel_1);
 
@@ -176,6 +180,7 @@ public class TutorialController : MonoBehaviour
             {
                 if (resourcesPanel != null) resourcesPanel.SetActive(true);
                 if (workersPanel != null) workersPanel.SetActive(true);
+                if(tutorialTopPanel != null) tutorialTopPanel.SetActive(true);
                 if (floatingResourceSpawner != null) floatingResourceSpawner.SetActive(true);
 
                 ShowPanel(tutorialPanel_2);
@@ -227,6 +232,8 @@ public class TutorialController : MonoBehaviour
 
         if (tutorialPanel_6point5 != null)
             tutorialPanel_6point5.SetActive(true);
+
+        fuelPanel.gameObject.SetActive(true);
 
         yield return new WaitForSeconds(panel65AutoDismissSeconds);
 
