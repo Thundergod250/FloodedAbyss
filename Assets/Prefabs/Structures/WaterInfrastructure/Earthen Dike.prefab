@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 6637051569945788163}
   - component: {fileID: 1307559297165892002}
   - component: {fileID: 3552635865392595987}
-  - component: {fileID: 6831272328561752343}
   - component: {fileID: 1073731800697937325}
+  - component: {fileID: 2807831087705800276}
   m_Layer: 0
   m_Name: Earthen Dike
   m_TagString: Untagged
@@ -131,23 +131,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.08794131, y: 0.20006695, z: 0.024665618}
   m_Center: {x: 0, y: 0, z: 0.012332809}
---- !u!114 &6831272328561752343
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4503004250265374919}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d245e350bdc6f7e45b832ac18c1a4da7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StructureBuildableWI
-  ignoreSubmersion: 0
-  BuildablePrefab: {fileID: 7407675266156337583, guid: 07ad594ee24aa8d4798772ca1589a7b6, type: 3}
-  availableStructuresToBuild: []
-  laborCost: 1
-  spawnOffset: {x: 0, y: 0, z: 0}
 --- !u!114 &1073731800697937325
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,3 +147,34 @@ MonoBehaviour:
   outlineScale: 1.03
   matchObjectColor: 0
   fallbackOutlineColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &2807831087705800276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4503004250265374919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa1ec667b714a1e4c849135e4e65b139, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StructureWaterInfrastructure
+  ignoreSubmersion: 0
+  BuildablePrefab: {fileID: 7407675266156337583, guid: 07ad594ee24aa8d4798772ca1589a7b6, type: 3}
+  infrastructureType: 1
+  structureName: 
+  waterReduc: 1
+  requiresWorkers: 0
+  laborCost: 1
+  canStoreWater: 1
+  waterRemoveDuration: 5
+  waterStored: 0
+  maxWaterStored: 100
+  waterPerSecInc: 0
+  damageDuringGreatFlood: 1
+  greatFloodDamagePerSecond: 1
+  requiresManualActivation: 0
+  isWorking: 0
+  isDestroying: 0
+  progressPercentage: 0
+  greatFloodActive: 0

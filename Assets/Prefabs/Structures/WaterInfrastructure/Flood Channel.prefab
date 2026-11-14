@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 5014773201381263564}
   - component: {fileID: 5952617307539588524}
   - component: {fileID: 5739246455123435944}
-  - component: {fileID: 2385558379595905672}
   - component: {fileID: 4749836058080594362}
   - component: {fileID: -5460456056638910879}
+  - component: {fileID: -905537401539774952}
   m_Layer: 0
   m_Name: Flood Channel
   m_TagString: Untagged
@@ -110,23 +110,6 @@ MonoBehaviour:
   outlineScale: 1.03
   matchObjectColor: 0
   fallbackOutlineColor: {r: 1, g: 1, b: 1, a: 1}
---- !u!114 &2385558379595905672
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1385021193026505660}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d245e350bdc6f7e45b832ac18c1a4da7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StructureBuildableWI
-  ignoreSubmersion: 0
-  BuildablePrefab: {fileID: 7407675266156337583, guid: 07ad594ee24aa8d4798772ca1589a7b6, type: 3}
-  availableStructuresToBuild: []
-  laborCost: 1
-  spawnOffset: {x: 0, y: 0, z: 0}
 --- !u!65 &4749836058080594362
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -164,3 +147,34 @@ MonoBehaviour:
   onInteract:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &-905537401539774952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1385021193026505660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa1ec667b714a1e4c849135e4e65b139, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StructureWaterInfrastructure
+  ignoreSubmersion: 0
+  BuildablePrefab: {fileID: 7407675266156337583, guid: 07ad594ee24aa8d4798772ca1589a7b6, type: 3}
+  infrastructureType: 3
+  structureName: 
+  waterReduc: 1
+  requiresWorkers: 0
+  laborCost: 1
+  canStoreWater: 1
+  waterRemoveDuration: 5
+  waterStored: 0
+  maxWaterStored: 100
+  waterPerSecInc: 0
+  damageDuringGreatFlood: 1
+  greatFloodDamagePerSecond: 1
+  requiresManualActivation: 0
+  isWorking: 0
+  isDestroying: 0
+  progressPercentage: 0
+  greatFloodActive: 0

@@ -223,8 +223,8 @@ GameObject:
   - component: {fileID: 7012151912328194705}
   - component: {fileID: 5867431223766570160}
   - component: {fileID: 8240478065875000963}
-  - component: {fileID: 4628135064157034894}
   - component: {fileID: -3321077561526866826}
+  - component: {fileID: 3128488702978393218}
   m_Layer: 0
   m_Name: Flood Gate
   m_TagString: Untagged
@@ -287,23 +287,6 @@ MonoBehaviour:
   onInteract:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &4628135064157034894
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4666333454952824579}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d245e350bdc6f7e45b832ac18c1a4da7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StructureBuildableWI
-  ignoreSubmersion: 0
-  BuildablePrefab: {fileID: 4620561844946585572, guid: d3aded2ca5c2a8d4d90328555af98f9f, type: 3}
-  availableStructuresToBuild: []
-  laborCost: 1
-  spawnOffset: {x: 0, y: 0, z: 0}
 --- !u!114 &-3321077561526866826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -320,6 +303,37 @@ MonoBehaviour:
   outlineScale: 1.03
   matchObjectColor: 0
   fallbackOutlineColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &3128488702978393218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4666333454952824579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa1ec667b714a1e4c849135e4e65b139, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StructureWaterInfrastructure
+  ignoreSubmersion: 0
+  BuildablePrefab: {fileID: 4620561844946585572, guid: d3aded2ca5c2a8d4d90328555af98f9f, type: 3}
+  infrastructureType: 2
+  structureName: 
+  waterReduc: 1
+  requiresWorkers: 0
+  laborCost: 1
+  canStoreWater: 1
+  waterRemoveDuration: 5
+  waterStored: 0
+  maxWaterStored: 100
+  waterPerSecInc: 0
+  damageDuringGreatFlood: 1
+  greatFloodDamagePerSecond: 1
+  requiresManualActivation: 0
+  isWorking: 0
+  isDestroying: 0
+  progressPercentage: 0
+  greatFloodActive: 0
 --- !u!1 &8420128204405581698
 GameObject:
   m_ObjectHideFlags: 0
