@@ -41,6 +41,27 @@ public class StructureWaterInfrastructure : Structures
     [SerializeField] private bool isDestroying = false;
     [SerializeField, Range(0f, 1f)] private float progressPercentage = 0f;
 
+    [Header("Great Flood Status")]
+    [SerializeField] private bool greatFloodActive;
+
+
+    private float GetWeatherBasedWaterReduction()
+    {
+        WaterForecast wl = GameManager.Instance.uiController.GetComponent<WaterForecast>();
+
+        float weatherValue = wl.CurrentActiveWeather switch
+        {
+            WeatherType.Sunny => wl.SunnyVal,
+            WeatherType.Drizzle => wl.DrizzleVal,
+            WeatherType.Stormy => wl.StormyVal,
+            WeatherType.Typhoon => wl.TyphoonVal,
+            _ => 1f
+        };
+
+        return weatherValue * waterReduc * wl.GetWeatherMultiplier();
+    }
+
+    private float appliedWaterReduction;
     private float currentDurability;
     private bool isActivated;
     private bool needToDump;
@@ -62,6 +83,7 @@ public class StructureWaterInfrastructure : Structures
     private void Start()
     {
         waterStored = Mathf.Clamp(waterStored, 0f, maxWaterStored);
+        greatFloodActive = false;
     }
 
     protected override void Update()
@@ -133,11 +155,20 @@ public class StructureWaterInfrastructure : Structures
         if (requiresWorkers)
             workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker - laborCost);
 
-        GameManager.Instance.WaterLevel.ReduceWaterPressure(waterReduc);
+        appliedWaterReduction = GetWeatherBasedWaterReduction();
+
+        if (!greatFloodActive)
+        {
+            GameManager.Instance.WaterLevel.ReduceWaterPressure(appliedWaterReduction);
+        }
+        else
+        {
+            GameManager.Instance.WaterLevel.ReduceWaterPressure(appliedWaterReduction + 0.2f);
+        }
 
         isActivated = true;
 
-        Debug.Log($"{name} activated and reduced water pressure by {waterReduc}");
+        Debug.Log($"{name} activated. Weather-based water pressure reduction: {appliedWaterReduction}");
     }
 
     private IEnumerator WorkLoopRoutine()
@@ -174,14 +205,13 @@ public class StructureWaterInfrastructure : Structures
 
         var workerMgr = GameManager.Instance.WorkerManager;
 
-        GameManager.Instance.WaterLevel.IncWaterPressure(waterReduc);
+        GameManager.Instance.WaterLevel.IncWaterPressure(appliedWaterReduction);
 
         if (requiresWorkers && workerMgr != null)
             workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker + laborCost);
 
+        appliedWaterReduction = 0f;
         isActivated = false;
-
-        Debug.Log($"{name} deactivated and restored water pressure by {waterReduc}");
     }
 
     public void ToggleActivation()

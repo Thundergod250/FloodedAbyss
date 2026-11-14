@@ -41,6 +41,10 @@ public class WaterForecast : MonoBehaviour
     [SerializeField] private float typhoonVal;
     private float storedWaterAdjustment; // storing previous increase in water
 
+    [Header("Weather Strength Scaling")]
+    [SerializeField] private float strengthIncreasePerSwitch = 0.05f;
+
+    private int lastActiveSwitchCount = -1;
     [Header("Debug")]
     [SerializeField] private float currentTime;
     public float CurrentTime => currentTime;
@@ -92,6 +96,22 @@ public class WaterForecast : MonoBehaviour
         // 2. Fill the remaining slots of the initial count with randomized weather
         for (int i = 1; i < initialBacklogCount; i++) 
             AddRandomWeatherToBacklog();
+    }
+    private void Update()
+    {
+        int activeSwitches = GetTotalActiveSwitches();
+
+        if (activeSwitches != lastActiveSwitchCount)
+        {
+            lastActiveSwitchCount = activeSwitches;
+
+            if (isWeatherInitialized)
+            {
+                bool isSunny = currentActiveRainState == null;
+
+                ApplyWaterWeatherAdjustment(currentActiveRainState ?? rainStrength.Weak,isSunny);
+            }
+        }
     }
 
     private WeatherDefinition? GetSunnyDefinition()
@@ -239,12 +259,14 @@ public class WaterForecast : MonoBehaviour
     private void ApplyWaterWeatherAdjustment(rainStrength targetStrength, bool isSunny)
     {
         AdjustWaterLevel(-storedWaterAdjustment);
-
-        storedWaterAdjustment = 0;
+        storedWaterAdjustment = 0f;
 
         if (!isSunny)
         {
-            float newAdjustment = GetWaterAdjustment(targetStrength);
+            float baseAdjustment = GetWaterAdjustment(targetStrength);
+            float multiplier = GetWeatherMultiplier();
+
+            float newAdjustment = baseAdjustment * multiplier;
 
             AdjustWaterLevel(newAdjustment);
             storedWaterAdjustment = newAdjustment;
@@ -270,6 +292,18 @@ public class WaterForecast : MonoBehaviour
             default:
                 return 0;
         }
+    }
+    private int GetTotalActiveSwitches()
+    {
+        if (GameManager.Instance == null || GameManager.Instance.ApexPump == null)
+            return 0;
+
+        return GameManager.Instance.ApexPump.ActiveSwitchCount;
+    }
+
+    public float GetWeatherMultiplier()
+    {
+        return 1f + (GetTotalActiveSwitches() * strengthIncreasePerSwitch);
     }
 
     #region Start and Stop Weather
@@ -302,4 +336,12 @@ public class WaterForecast : MonoBehaviour
         }
     }
     #endregion
+
+    public WeatherType CurrentActiveWeather => weatherBacklog.Count > 0 ? weatherBacklog[0].Type : WeatherType.Sunny;
+    public float SunnyVal => sunnyVal;
+    public float DrizzleVal => drizzlVal;
+    public float StormyVal => stormyVal;
+    public float TyphoonVal => typhoonVal;
+
+
 }

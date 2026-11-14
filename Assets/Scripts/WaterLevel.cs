@@ -20,7 +20,9 @@ public class WaterLevel : MonoBehaviour
     [SerializeField] private bool forceStartGreatFlood = false;
     [SerializeField] private float greatFloodPressureIncrease = 15f;
     [SerializeField] private int greatFloodTimerMins;
+    [SerializeField] private int greatFloodTimerDuration;
     [SerializeField] private float greatFloodTimerProgress;
+    private float greatFloodDurationProgress = 0f;
 
     private bool greatFloodStarted = false;
 
@@ -121,9 +123,37 @@ public class WaterLevel : MonoBehaviour
         if (greatFloodStarted) return;
 
         greatFloodStarted = true;
+        greatFloodDurationProgress = 0f;
+
         pressureIncreaseRate += greatFloodPressureIncrease;
 
         Debug.Log("GREAT FLOOD STARTED!");
+
+        StartCoroutine(GreatFloodDurationTimer());
+    }
+
+    private IEnumerator GreatFloodDurationTimer()
+    {
+        float floodDuration = greatFloodTimerDuration * 60f;
+
+        while (greatFloodDurationProgress < floodDuration)
+        {
+            greatFloodDurationProgress += Time.deltaTime;
+            yield return null;
+        }
+
+        EndGreatFlood();
+    }
+
+    public void EndGreatFlood()
+    {
+        if (!greatFloodStarted) return;
+
+        greatFloodStarted = false;
+
+        pressureIncreaseRate -= greatFloodPressureIncrease;
+
+        Debug.Log("GREAT FLOOD ENDED!");
     }
 
     public void StartWaterRise(bool val)
