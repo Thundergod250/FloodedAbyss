@@ -127,6 +127,8 @@ public class WaterLevel : MonoBehaviour
 
         pressureIncreaseRate += greatFloodPressureIncrease;
 
+        StartWaterRise(true);
+
         Debug.Log("GREAT FLOOD STARTED!");
 
         StartCoroutine(GreatFloodDurationTimer());
@@ -153,13 +155,16 @@ public class WaterLevel : MonoBehaviour
 
         pressureIncreaseRate -= greatFloodPressureIncrease;
 
+        StartWaterRise(false); 
+
         Debug.Log("GREAT FLOOD ENDED!");
     }
 
     public void StartWaterRise(bool val)
     {
         startWaterPressure = val;
-        currentWaterPressureFloat += 1;
+        if (val)
+            currentWaterPressureFloat += 1;
     }
 
     public float CurrentWaterHeight => oceanTransform != null ? oceanTransform.position.y : currentWaterHeight;
