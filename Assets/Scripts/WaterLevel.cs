@@ -138,6 +138,10 @@ public class WaterLevel : MonoBehaviour
 
         EndGreatFlood();
     }
+    public void AdjustWaterLevel(float amount)
+    {
+        currentWaterPressureFloat = Mathf.Max(0f,currentWaterPressureFloat + amount);
+    }
 
     public void EndGreatFlood()
     {

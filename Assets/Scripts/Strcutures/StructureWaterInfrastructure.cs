@@ -22,32 +22,27 @@ public class StructureWaterInfrastructure : Structures
     [SerializeField] private bool requiresWorkers = false;
     [SerializeField] private int laborCost = 1;
 
-    [Header("Durability")]
-    [SerializeField] private bool canStoreWater = true;
-    [SerializeField] private float waterRemoveDuration = 5f;
-    [SerializeField] private float waterStored;
-    [SerializeField] private float maxWaterStored = 100f;
-    [SerializeField] private float waterPerSecInc;
-
-    [Header("Great Flood Durability Damage")]
-    [SerializeField] private bool damageDuringGreatFlood = true;
-    [SerializeField] private float greatFloodDamagePerSecond = 1f;
-
     [Header("Flood Gate Settings")]
     [SerializeField] private bool requiresManualActivation = false;
 
     [Header("Debug Status")]
-    [SerializeField] private bool isWorking = false;
     [SerializeField] private bool isDestroying = false;
-    [SerializeField, Range(0f, 1f)] private float progressPercentage = 0f;
 
-    [Header("Great Flood Status")]
-    [SerializeField] private bool greatFloodActive;
+    private float appliedWaterReduction;
+    private bool isActivated;
 
+    public string StructureName => structureName;
+    public int LaborCost => laborCost;
+
+    public bool GreatFloodActive =>
+        GameManager.Instance != null &&
+        GameManager.Instance.WaterLevel != null &&
+        GameManager.Instance.WaterLevel.GreatFloodStarted;
 
     private float GetWeatherBasedWaterReduction()
     {
-        WaterForecast wl = GameManager.Instance.uiController.GetComponent<WaterForecast>();
+        WaterForecast wl = GameManager.Instance.uiController
+            .GetComponent<WaterForecast>();
 
         float weatherValue = wl.CurrentActiveWeather switch
         {
@@ -58,56 +53,21 @@ public class StructureWaterInfrastructure : Structures
             _ => 1f
         };
 
-        return weatherValue * waterReduc * wl.GetWeatherMultiplier();
+        return weatherValue * waterReduc;
     }
-
-    private float appliedWaterReduction;
-    private float currentDurability;
-    private bool isActivated;
-    private bool needToDump;
-
-    public string StructureName => structureName;
-    public int LaborCost => laborCost;
 
     private UiWaterInfrastucture UIWaterInfrastructure()
     {
         if (GameManager.Instance == null ||
             GameManager.Instance.uiController == null)
-        {
             return null;
-        }
 
         return GameManager.Instance.uiController.UIWaterInfrastructure;
-    }
-
-    private void Start()
-    {
-        waterStored = Mathf.Clamp(waterStored, 0f, maxWaterStored);
-        greatFloodActive = false;
     }
 
     protected override void Update()
     {
         base.Update();
-
-        if (isActivated && canStoreWater)
-        {
-            waterStored = Mathf.Min(
-                waterStored + (waterPerSecInc * Time.deltaTime),
-                maxWaterStored
-            );
-        }
-
-        if (waterStored >= maxWaterStored && isActivated)
-        {
-            ToggleActivation();
-            needToDump = true;
-        }
-
-        if (GameManager.Instance.WaterLevel.GreatFloodStarted)
-        {
-            waterStored = Mathf.Min(waterStored + (10f * Time.deltaTime), maxWaterStored);
-        }
     }
 
     public override void Activate()
@@ -116,7 +76,9 @@ public class StructureWaterInfrastructure : Structures
 
         if (waterInfrastructureUI == null)
         {
-            Debug.LogWarning("[StructureFarm] UiFarm reference not found!");
+            Debug.LogWarning(
+                "[StructureWaterInfrastructure] UiWaterInfrastructure reference not found!"
+            );
             return;
         }
 
@@ -124,78 +86,45 @@ public class StructureWaterInfrastructure : Structures
         GameManager.Instance.uiController.OpenModal<UiWaterInfrastucture>();
     }
 
-    public void TakeDamage(float damage)
-    {
-        if (!canStoreWater || damage <= 0f) return;
-
-        currentDurability -= damage;
-
-        Debug.Log($"{name} durability: {currentDurability}/{waterStored}");
-
-        if (currentDurability <= 0f)
-        {
-            Destroyed();
-        }
-    }
-
     public void ReduceWaterPressure()
     {
+        if (GameManager.Instance == null ||
+            GameManager.Instance.WaterLevel == null)
+            return;
+
         var workerMgr = GameManager.Instance.WorkerManager;
         var waterS = UIWaterInfrastructure();
 
-        if (workerMgr == null || isActivated || needToDump)
+        if (isActivated)
             return;
 
-        if (requiresWorkers && workerMgr.CurrentWorker < laborCost)
+        if (requiresWorkers &&
+            (workerMgr == null || workerMgr.CurrentWorker < laborCost))
         {
             waterS?.ShowNotEnoughWorkersWarning();
             return;
         }
 
         if (requiresWorkers)
-            workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker - laborCost);
+        {
+            workerMgr.SetCurrentWorkers(
+                workerMgr.CurrentWorker - laborCost
+            );
+        }
 
         appliedWaterReduction = GetWeatherBasedWaterReduction();
 
-        if (!greatFloodActive)
-        {
-            GameManager.Instance.WaterLevel.ReduceWaterPressure(appliedWaterReduction);
-        }
-        else
-        {
-            GameManager.Instance.WaterLevel.ReduceWaterPressure(appliedWaterReduction + 0.2f);
-        }
+        float reduction = GreatFloodActive
+            ? appliedWaterReduction - 0.2f
+            : appliedWaterReduction;
+
+        GameManager.Instance.WaterLevel.ReduceWaterPressure(reduction);
 
         isActivated = true;
 
-        Debug.Log($"{name} activated. Weather-based water pressure reduction: {appliedWaterReduction}");
-    }
-
-    private IEnumerator WorkLoopRoutine()
-    {
-        isWorking = true;
-        isDestroying = false;
-
-        float startingWater = waterStored;
-        float elapsed = 0f;
-
-        while (elapsed < waterRemoveDuration)
-        {
-            elapsed += Time.deltaTime;
-
-            float progress = Mathf.Clamp01(elapsed / waterRemoveDuration);
-
-            waterStored = Mathf.Lerp(startingWater, 0f, progress);
-            progressPercentage = progress;
-
-            yield return null;
-        }
-
-        waterStored = 0f;
-        progressPercentage = 1f;
-
-        needToDump = false;
-        isWorking = false;
+        Debug.Log(
+            $"{name} activated. Water pressure reduction: {reduction}"
+        );
     }
 
     public void IncWaterPressure()
@@ -205,30 +134,28 @@ public class StructureWaterInfrastructure : Structures
 
         var workerMgr = GameManager.Instance.WorkerManager;
 
-        GameManager.Instance.WaterLevel.IncWaterPressure(appliedWaterReduction);
+        GameManager.Instance.WaterLevel.IncWaterPressure(
+            appliedWaterReduction
+        );
 
         if (requiresWorkers && workerMgr != null)
-            workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker + laborCost);
+        {
+            workerMgr.SetCurrentWorkers(
+                workerMgr.CurrentWorker + laborCost
+            );
+        }
 
         appliedWaterReduction = 0f;
         isActivated = false;
     }
 
+    // Activation is permanent once activated.
     public void ToggleActivation()
     {
-        if (isActivated)
-            IncWaterPressure();
-        else
+        if (!isActivated)
             ReduceWaterPressure();
     }
 
-    public void StartWaterRemoval()
-    {
-        if (!needToDump || isWorking)
-            return;
-
-        StartCoroutine(WorkLoopRoutine());
-    }
     public void DestroyStructure()
     {
         if (isDestroying)
@@ -242,14 +169,9 @@ public class StructureWaterInfrastructure : Structures
         Destroyed();
     }
 
-    public float CurrentDurability => currentDurability;
-    public float WaterStored => waterStored;
-    public bool CanStoreWater => canStoreWater;
     public bool IsActivated => isActivated;
-    public bool IsWorking => isWorking;
     public bool IsDestroying => isDestroying;
     public bool RequiresWorkers => requiresWorkers;
     public InfrastructureType Type => infrastructureType;
-    public bool CanEmptyStorage =>
-        canStoreWater && needToDump && waterStored > 0f && !isWorking;
+    public bool RequiresManualActivation => requiresManualActivation;
 }

@@ -41,10 +41,6 @@ public class WaterForecast : MonoBehaviour
     [SerializeField] private float typhoonVal;
     private float storedWaterAdjustment; // storing previous increase in water
 
-    [Header("Weather Strength Scaling")]
-    [SerializeField] private float strengthIncreasePerSwitch = 0.05f;
-
-    private int lastActiveSwitchCount = -1;
     [Header("Debug")]
     [SerializeField] private float currentTime;
     public float CurrentTime => currentTime;
@@ -96,22 +92,6 @@ public class WaterForecast : MonoBehaviour
         // 2. Fill the remaining slots of the initial count with randomized weather
         for (int i = 1; i < initialBacklogCount; i++) 
             AddRandomWeatherToBacklog();
-    }
-    private void Update()
-    {
-        int activeSwitches = GetTotalActiveSwitches();
-
-        if (activeSwitches != lastActiveSwitchCount)
-        {
-            lastActiveSwitchCount = activeSwitches;
-
-            if (isWeatherInitialized)
-            {
-                bool isSunny = currentActiveRainState == null;
-
-                ApplyWaterWeatherAdjustment(currentActiveRainState ?? rainStrength.Weak,isSunny);
-            }
-        }
     }
 
     private WeatherDefinition? GetSunnyDefinition()
@@ -246,14 +226,11 @@ public class WaterForecast : MonoBehaviour
 
     private void AdjustWaterLevel(float amount)
     {
-        if (amount >= 0) // positive
-        {
-            GameManager.Instance.WaterLevel.IncWaterPressure(amount);
-        }
-        else if (amount < 0)
-        {
-            GameManager.Instance.WaterLevel.ReduceWaterPressure(Mathf.Abs(amount));
-        }
+        if (GameManager.Instance == null ||
+        GameManager.Instance.WaterLevel == null)
+            return;
+
+        GameManager.Instance.WaterLevel.AdjustWaterLevel(amount);
     }
 
     private void ApplyWaterWeatherAdjustment(rainStrength targetStrength, bool isSunny)
@@ -263,10 +240,7 @@ public class WaterForecast : MonoBehaviour
 
         if (!isSunny)
         {
-            float baseAdjustment = GetWaterAdjustment(targetStrength);
-            float multiplier = GetWeatherMultiplier();
-
-            float newAdjustment = baseAdjustment * multiplier;
+            float newAdjustment = GetWaterAdjustment(targetStrength);
 
             AdjustWaterLevel(newAdjustment);
             storedWaterAdjustment = newAdjustment;
@@ -299,11 +273,6 @@ public class WaterForecast : MonoBehaviour
             return 0;
 
         return GameManager.Instance.ApexPump.ActiveSwitchCount;
-    }
-
-    public float GetWeatherMultiplier()
-    {
-        return 1f + (GetTotalActiveSwitches() * strengthIncreasePerSwitch);
     }
 
     #region Start and Stop Weather
