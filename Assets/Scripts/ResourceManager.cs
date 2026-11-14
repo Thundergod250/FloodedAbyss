@@ -6,6 +6,7 @@ public class ResourceManager : MonoBehaviour
 {
     [Header("Register All Game Resources Here")]
     [SerializeField] private List<ResourceDataSO> availableResources = new();
+    [SerializeField] private int maxResourceAmount = 9999;
 
     private Dictionary<ResourceDataSO, int> resourceInventory = new();
 
@@ -26,7 +27,7 @@ public class ResourceManager : MonoBehaviour
         {
             if (data != null && !resourceInventory.ContainsKey(data))
             {
-                resourceInventory.Add(data, data.StartingAmount);
+                resourceInventory.Add(data, Mathf.Clamp(data.StartingAmount, 0, maxResourceAmount));
             }
         }
     }
@@ -47,6 +48,9 @@ public class ResourceManager : MonoBehaviour
         {
             resourceInventory.Add(dataSo, amount);
         }
+
+        resourceInventory[dataSo] = Mathf.Min(resourceInventory[dataSo] + amount,maxResourceAmount);
+
         Debug.Log($"[ResourceManager] Added {amount} of {dataSo.ResourceName}. Total: {resourceInventory[dataSo]}");
         
         // Notify HUD and any listeners
