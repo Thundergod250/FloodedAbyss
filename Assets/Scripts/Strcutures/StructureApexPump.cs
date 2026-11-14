@@ -314,6 +314,23 @@ public class StructureApexPump : Structures
     public int GetSwitchShutdownThreshold(int index) => (index >= 0 && index < switchShutdownThresholds.Length) ? switchShutdownThresholds[index] : 0;
 
     public ResourceDataSO[] AcceptedResources => acceptedResources;
+
+    public int ActiveSwitchCount
+    {
+        get
+        {
+            int count = 0;
+
+            foreach (bool isActive in switchStates)
+            {
+                if (isActive)
+                    count++;
+            }
+
+            return count;
+        }
+    }
+
     public bool IsPumpActive
     {
         get

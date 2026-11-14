@@ -571,7 +571,7 @@ public class ObjectiveManager : MonoBehaviour
                 if (wl != null)
                 {
                     wl.StartCoroutine(wl.GreatFloodTimer());
-                    wl.StartWaterRise(true);
+                  //  wl.StartWaterRise(true);
                 }
 
                 GameManager.Instance.uiController.GetComponentInChildren<UIEventManager>().SetTutorialPaused(false);
