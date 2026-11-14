@@ -66,7 +66,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -7093241054615497246, guid: 311f8faec8db2e841836a3527909b5e4, type: 3}
+  - {fileID: 2100000, guid: 159ebc66945455f499b11dbb85167be8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -99,6 +99,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7034272722564529899}
+  - component: {fileID: 7871318645582374593}
+  - component: {fileID: 8669254886589239617}
+  - component: {fileID: 4873629365242081782}
+  - component: {fileID: 778999603934966810}
   m_Layer: 0
   m_Name: Water Storage
   m_TagString: Untagged
@@ -115,7 +119,7 @@ Transform:
   m_GameObject: {fileID: 4939730380025312166}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 35.70713, y: 0.00005, z: 343.52005}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -123,6 +127,76 @@ Transform:
   - {fileID: 9062776203463326420}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &7871318645582374593
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4939730380025312166}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 5, y: 7, z: 5}
+  m_Center: {x: 0, y: 3, z: 0}
+--- !u!114 &8669254886589239617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4939730380025312166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60cb8c809a19c7b41a7c6adb7aca416d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoverHighlight
+  outlineMaterial: {fileID: 2100000, guid: 7acbd91d8e966974ab6e064478f09800, type: 2}
+  outlineScale: 1.03
+  matchObjectColor: 0
+  fallbackOutlineColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &4873629365242081782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4939730380025312166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 586d09e3430c3fa4bb4b7161e1b7ee7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Interactables
+  interactionMessage: 
+  onInteract:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &778999603934966810
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4939730380025312166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d245e350bdc6f7e45b832ac18c1a4da7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StructureBuildableWI
+  ignoreSubmersion: 0
+  BuildablePrefab: {fileID: 4620561844946585572, guid: d3aded2ca5c2a8d4d90328555af98f9f, type: 3}
+  availableStructuresToBuild: []
+  laborCost: 1
+  spawnOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &6840425885437278269
 GameObject:
   m_ObjectHideFlags: 0
@@ -189,7 +263,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -7093241054615497246, guid: 311f8faec8db2e841836a3527909b5e4, type: 3}
+  - {fileID: 2100000, guid: 159ebc66945455f499b11dbb85167be8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
