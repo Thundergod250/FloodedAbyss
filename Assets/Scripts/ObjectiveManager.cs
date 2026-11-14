@@ -149,7 +149,7 @@ public class ObjectiveManager : MonoBehaviour
     private List<ObjectiveRuntimeState> objectiveStates = new List<ObjectiveRuntimeState>();
 
     private ObjectivesSO trackedQuest;
-
+    private int completedObjectiveCount = 0;
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -551,7 +551,7 @@ public class ObjectiveManager : MonoBehaviour
 
         if (allCompleted)
         {
-            Debug.Log("[ObjectiveManager] Quest completed!");
+            completedObjectiveCount += objectiveStates.Count;
 
             currentQuestIndex++;
             currentObjectiveIndex = 0;
@@ -562,7 +562,7 @@ public class ObjectiveManager : MonoBehaviour
 
             EnsureObjectiveStates();
 
-            if (AllObjectiveCompleted && !endGameSequenceStarted)
+            if (completedObjectiveCount >= 10 && !endGameSequenceStarted)
             {
                 endGameSequenceStarted = true;
 
@@ -577,12 +577,10 @@ public class ObjectiveManager : MonoBehaviour
                 GameManager.Instance.uiController.GetComponentInChildren<UIEventManager>().SetTutorialPaused(false);
 
                 EnableWeather();
+
             }
 
-            if(GameManager.Instance.uiController.GetComponentInChildren<UiTutorial>() != null)
-            {
-                GameManager.Instance.uiController.GetComponentInChildren<UiTutorial>().OpenUI();    
-            }
+            //GameManager.Instance.uiController.GetComponentInChildren<UiTutorial>().OpenUI();
         }
 
         OnObjectiveUpdated?.Invoke();
