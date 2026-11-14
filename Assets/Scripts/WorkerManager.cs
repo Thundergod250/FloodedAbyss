@@ -80,7 +80,7 @@ public class WorkerManager : MonoBehaviour
         return false;
     }
 
-    public void FreeHouse()
+    public void FreeHouse(int lostWorkers)
     {
         if (OccupiedHousesCount > 0)
         {
@@ -91,7 +91,7 @@ public class WorkerManager : MonoBehaviour
         //HomelessWorker++;
        // EvtOnHomelessChanged?.Invoke(HomelessWorker);
 
-        CurrentWorker = Mathf.Max(1, CurrentWorker - 1);
+        CurrentWorker = Mathf.Max(1, CurrentWorker - lostWorkers);
         EvtOnWorkersChanged?.Invoke(CurrentWorker);
     }
 
