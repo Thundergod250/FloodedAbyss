@@ -13,6 +13,8 @@ public class ObjectiveUI : MonoBehaviour
     [SerializeField] private UIObjectiveChecklist checklistItemPrefab;
 
     private ObjectiveManager subscribedManager;
+    private bool floodStarted = false;
+    private float floodStartTime;
 
     private void OnEnable()
     {
@@ -27,20 +29,46 @@ public class ObjectiveUI : MonoBehaviour
 
     private void Update()
     {
-        if (subscribedManager == null &&
-              ObjectiveManager.Instance != null)
+        if (subscribedManager == null && ObjectiveManager.Instance != null)
         {
             TrySubscribe();
             RefreshUI();
         }
 
+        if (GameManager.Instance == null ||
+            GameManager.Instance.WaterLevel == null ||
+            GreatFloodText == null)
+            return;
+
         WaterLevel wl = GameManager.Instance.WaterLevel;
 
-        System.TimeSpan time = System.TimeSpan.FromSeconds(
-            Mathf.Max(0, Mathf.CeilToInt(wl.TimeUntilGreatFlood))
-        );
+        // Detect when the Great Flood starts.
+        if (!floodStarted && wl.TimeUntilGreatFlood <= 0f)
+        {
+            floodStarted = true;
+            floodStartTime = Time.time;
 
-        GreatFloodText.text = $"{time.Minutes}:{time.Seconds:D2}";
+            Debug.Log("[ObjectiveUI] The Great Flood has started!");
+        }
+
+        System.TimeSpan time;
+
+        if (!floodStarted)
+        {
+            // Phase 1: Countdown until the Great Flood.
+            time = System.TimeSpan.FromSeconds(
+                Mathf.Max(0, Mathf.CeilToInt(wl.TimeUntilGreatFlood))
+            );
+        }
+        else
+        {
+            // Phase 2: Countdown during the Great Flood (3 minutes).
+            float remainingTime = GameManager.Instance.WaterLevel.GreatFloorTimerDuration - (Time.time - floodStartTime);
+
+            time = System.TimeSpan.FromSeconds(Mathf.Max(0, Mathf.CeilToInt(remainingTime)));
+        }
+
+        GreatFloodText.text = $"{(int)time.TotalMinutes}:{time.Seconds:D2}";
     }
 
     private void TrySubscribe()
