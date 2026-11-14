@@ -27,8 +27,8 @@ Transform:
   m_GameObject: {fileID: 4242945107749179861}
   serializedVersion: 2
   m_LocalRotation: {x: -0.34719634, y: -0.61599904, z: -0.6159989, w: 0.34719628}
-  m_LocalPosition: {x: 1.2543507, y: -0.0000019073486, z: 10.248467}
-  m_LocalScale: {x: 300, y: 300, z: 300}
+  m_LocalPosition: {x: 1.7647, y: 3.0218, z: 5.08}
+  m_LocalScale: {x: 212.45546, y: 212.45546, z: 212.45546}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6575247948919356931}
@@ -117,8 +117,8 @@ Transform:
   m_GameObject: {fileID: 6451910832987733057}
   serializedVersion: 2
   m_LocalRotation: {x: -0.34719634, y: -0.61599904, z: -0.6159989, w: 0.34719628}
-  m_LocalPosition: {x: -2.1408386, y: -0.0000038146973, z: -3.1451287}
-  m_LocalScale: {x: 300, y: 300, z: 300}
+  m_LocalPosition: {x: -0.63968, y: 3.0218, z: -4.405011}
+  m_LocalScale: {x: 212.45546, y: 212.45546, z: 212.45546}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6575247948919356931}
@@ -207,8 +207,8 @@ Transform:
   m_GameObject: {fileID: 6911080093307636689}
   serializedVersion: 2
   m_LocalRotation: {x: -0.34719634, y: -0.61599904, z: -0.6159989, w: 0.34719628}
-  m_LocalPosition: {x: 1.2543507, y: -0.0000019073486, z: 10.248467}
-  m_LocalScale: {x: 300, y: 300, z: 300}
+  m_LocalPosition: {x: 1.7647, y: 3.0218, z: 5.079989}
+  m_LocalScale: {x: 212.45546, y: 212.45546, z: 212.45546}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6575247948919356931}
@@ -297,8 +297,8 @@ Transform:
   m_GameObject: {fileID: 7743947520126545362}
   serializedVersion: 2
   m_LocalRotation: {x: -0.34719634, y: -0.61599904, z: -0.6159989, w: 0.34719628}
-  m_LocalPosition: {x: 0.42563498, y: 0, z: -1.5916731}
-  m_LocalScale: {x: 300, y: 300, z: 300}
+  m_LocalPosition: {x: 1.1778, y: 3.0218, z: -3.3050113}
+  m_LocalScale: {x: 212.45546, y: 212.45546, z: 212.45546}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6575247948919356931}
@@ -418,8 +418,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 6.88, y: 5, z: 12.67}
-  m_Center: {x: -1.67, y: 2.59, z: 2.8}
+  m_Size: {x: 19.405151, y: 19.719778, z: 19.501282}
+  m_Center: {x: 0.1279602, y: 10.359889, z: -0.015808105}
 --- !u!114 &1641834682561694444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -449,7 +449,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StructureHarvestResource
   ignoreSubmersion: 0
-  BuildablePrefab: {fileID: 1058038040027629035, guid: 2f578e65b9c30d144a28be802c66de7e, type: 3}
+  BuildablePrefab: {fileID: 2104639937772099258, guid: 85cc9829280f72a49a2e6f2948abba66, type: 3}
   structureTitle: 'Mining Drill '
   laborCost: 2
   productionDuration: 3
@@ -459,6 +459,12 @@ MonoBehaviour:
   maxHarvestCycles: 5
   resourceToProduce: {fileID: 11400000, guid: d6cdf2898ecf11445a9b136f67877a09, type: 2}
   productionAmount: 8
+  EvtOnBuildingWorking:
+    m_PersistentCalls:
+      m_Calls: []
+  EvtOnBuildingNotWorking:
+    m_PersistentCalls:
+      m_Calls: []
   isWorking: 0
   isDestroying: 0
   progressPercentage: 0
