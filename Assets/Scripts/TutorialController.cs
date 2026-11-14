@@ -31,7 +31,7 @@ public class TutorialController : MonoBehaviour
 
     [Header("Finale")]
     [Tooltip("Seconds before panel 7 auto-hides. 0 = leave visible.")]
-    [SerializeField] private float panel7AutoDismissSeconds = 5f;
+    [SerializeField] private float panel7AutoDismissSeconds = 10f;
     [SerializeField] private float panel65AutoDismissSeconds;
 
     [Header("Specific Tutorial References")]
@@ -40,6 +40,7 @@ public class TutorialController : MonoBehaviour
     [SerializeField] private GameObject fuelPanel;
     [SerializeField] private GameObject tutorialTopPanel;
     [SerializeField] private Collider pumpCollider;
+    [SerializeField] private Collider waterInfraDebrisCollider;
     [SerializeField] private GameObject floatingResourceSpawner;
     [SerializeField] private ResourceDataSO timberResource;
     [SerializeField] private ResourceDataSO fiberResource;
@@ -113,6 +114,7 @@ public class TutorialController : MonoBehaviour
         if (resourcesPanel != null) resourcesPanel.SetActive(false);
         if (workersPanel != null) workersPanel.SetActive(false);
         if (pumpCollider != null) pumpCollider.enabled = false;
+        if (waterInfraDebrisCollider != null) waterInfraDebrisCollider.enabled = false;
         if (floatingResourceSpawner != null) floatingResourceSpawner.SetActive(false);
         if (GreatFloodTimer != null) GreatFloodTimer.gameObject.SetActive(false);
         if (fuelPanel != null) fuelPanel.gameObject.SetActive(false);
@@ -228,6 +230,10 @@ public class TutorialController : MonoBehaviour
 
     private void OnObjective6Complete()
     {
+        // The debris becomes interactable only after the Quarry objective is complete.
+        if (waterInfraDebrisCollider != null)
+            waterInfraDebrisCollider.enabled = true;
+
         if (waterInfraTutorialShown) return;
         waterInfraTutorialShown = true;
 
