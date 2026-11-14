@@ -12,6 +12,7 @@ public class TutorialController : MonoBehaviour
     public ObjectivesSO objective1;
     public ObjectivesSO objective2;
     public ObjectivesSO objective3;
+    public ObjectivesSO objective6;
 
     [Header("Tutorial Panels (sequential 1-7)")]
     [SerializeField] private GameObject tutorialPanel_1;
@@ -77,6 +78,12 @@ public class TutorialController : MonoBehaviour
     private GameObject buildingPanel;
     private ObjectivesSO previousQuest;
 
+    // Objective 6: water infrastructure tutorial
+    private GameObject tutorialPanel9;
+    private GameObject waterInfraArrow;
+    private Coroutine waterInfraTutorialRoutine;
+    private bool waterInfraTutorialShown;
+
     private void Awake()
     {
         tutorialPanels = new[] {
@@ -92,8 +99,12 @@ public class TutorialController : MonoBehaviour
         apexPumpPanel = FindFirst("ApexPump Panel")?.gameObject;
         buildingPanel = FindFirst("Building Panel")?.gameObject;
         tutorialArrows = FindFirst("TutorialArrows")?.gameObject;
+        tutorialPanel9 = FindFirst("TutorialPanel_9")?.gameObject;
+        waterInfraArrow = FindFirst("WaterInfraArrow")?.gameObject;
 
         if (tutorialArrows != null) tutorialArrows.SetActive(false);
+        if (tutorialPanel9 != null) tutorialPanel9.SetActive(false);
+        if (waterInfraArrow != null) waterInfraArrow.SetActive(false);
 
         if (FirstScene != null)
             foreach (var obj in FirstScene)
@@ -116,16 +127,23 @@ public class TutorialController : MonoBehaviour
 
     private void Update()
     {
-        if (ObjectiveManager.Instance == null || ObjectiveManager.Instance.CurrentQuest == null) return;
+        if (ObjectiveManager.Instance == null) return;
 
         var quest = ObjectiveManager.Instance.CurrentQuest;
+
+        // Preserve the existing null-quest behavior, but still detect Objective 6
+        // completing when it is the final quest and CurrentQuest becomes null.
+        if (quest == null && previousQuest != objective6) return;
 
         if (quest != previousQuest)
         {
             if (previousQuest == objective1) OnObjective1Complete();
             else if (previousQuest == objective2) OnObjective2Complete();
+            else if (previousQuest == objective6) OnObjective6Complete();
             previousQuest = quest;
         }
+
+        if (quest == null) return;
 
         if (quest == objective1) TrackResourceCollection();
 
@@ -180,7 +198,7 @@ public class TutorialController : MonoBehaviour
             {
                 if (resourcesPanel != null) resourcesPanel.SetActive(true);
                 if (workersPanel != null) workersPanel.SetActive(true);
-                if(tutorialTopPanel != null) tutorialTopPanel.SetActive(true);
+                if (tutorialTopPanel != null) tutorialTopPanel.SetActive(true);
                 if (floatingResourceSpawner != null) floatingResourceSpawner.SetActive(true);
 
                 ShowPanel(tutorialPanel_2);
@@ -206,6 +224,45 @@ public class TutorialController : MonoBehaviour
     {
         tutorialPanel_4point5.SetActive(false);
         ShowPanel(tutorialPanel_5);
+    }
+
+    private void OnObjective6Complete()
+    {
+        if (waterInfraTutorialShown) return;
+        waterInfraTutorialShown = true;
+
+        if (waterInfraTutorialRoutine != null)
+            StopCoroutine(waterInfraTutorialRoutine);
+
+        waterInfraTutorialRoutine = StartCoroutine(ShowWaterInfraTutorial());
+    }
+
+    private IEnumerator ShowWaterInfraTutorial()
+    {
+        // Re-find either object if it was not available during Start.
+        if (tutorialPanel9 == null)
+            tutorialPanel9 = FindFirst("TutorialPanel_9")?.gameObject;
+        if (waterInfraArrow == null)
+            waterInfraArrow = FindFirst("WaterInfraArrow")?.gameObject;
+
+        if (tutorialPanel9 != null)
+            tutorialPanel9.SetActive(true);
+        else
+            Debug.LogWarning("TutorialController: Could not find GameObject named TutorialPanel_9.");
+
+        if (waterInfraArrow != null)
+            waterInfraArrow.SetActive(true);
+        else
+            Debug.LogWarning("TutorialController: Could not find GameObject named WaterInfraArrow.");
+
+        yield return new WaitForSeconds(5f);
+
+        if (tutorialPanel9 != null)
+            tutorialPanel9.SetActive(false);
+        if (waterInfraArrow != null)
+            waterInfraArrow.SetActive(false);
+
+        waterInfraTutorialRoutine = null;
     }
 
     private void OnAllObjectivesComplete()
@@ -429,7 +486,7 @@ public class TutorialController : MonoBehaviour
         HideAllPanels();
         if (panel != null) panel.SetActive(true);
 
-        if(panel == tutorialPanel_3)
+        if (panel == tutorialPanel_3)
         {
             FirstScene[0].SetActive(true);
         }
