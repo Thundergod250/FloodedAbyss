@@ -562,8 +562,9 @@ public class ObjectiveManager : MonoBehaviour
 
             EnsureObjectiveStates();
 
-            if (currentQuestIndex >= 10 && !endGameSequenceStarted)
+            if (currentQuestIndex >= 8 && !endGameSequenceStarted)
             {
+                Debug.Log("Start Flood / WEather");
                 endGameSequenceStarted = true;
 
                 WaterLevel wl = GameManager.Instance.WaterLevel;
