@@ -3,44 +3,35 @@ using UnityEngine;
 
 public class BuildingManager : MonoBehaviour
 {
-    // Dictionary mapping Structure Title -> Count owned
-    private Dictionary<string, int> ownedStructuresCount = new Dictionary<string, int>();
+    // Dictionary mapping StructureDataSO reference -> Count owned
+    private Dictionary<StructureDataSO, int> ownedStructuresCount = new();
 
-    public void RegisterStructure(string structureTitle)
+    public void RegisterStructure(StructureDataSO structureData)
     {
-        if (string.IsNullOrEmpty(structureTitle)) return;
-
-        if (ownedStructuresCount.ContainsKey(structureTitle))
-        {
-            ownedStructuresCount[structureTitle]++;
-        }
+        if (structureData == null) return;
+        if (ownedStructuresCount.ContainsKey(structureData))
+            ownedStructuresCount[structureData]++;
         else
-        {
-            ownedStructuresCount[structureTitle] = 1;
-        }
+            ownedStructuresCount[structureData] = 1;
 
-        Debug.Log($"[BuildingManager] Registered structure: {structureTitle}. Total owned: {ownedStructuresCount[structureTitle]}");
+        Debug.Log($"[BuildingManager] Registered structure: {structureData.StructureTitle}. Total owned: {ownedStructuresCount[structureData]}");
     }
 
-    public void UnregisterStructure(string structureTitle)
+    public void UnregisterStructure(StructureDataSO structureData)
     {
-        if (string.IsNullOrEmpty(structureTitle)) return;
-
-        if (ownedStructuresCount.ContainsKey(structureTitle))
+        if (structureData == null) return;
+        if (ownedStructuresCount.ContainsKey(structureData))
         {
-            ownedStructuresCount[structureTitle] = Mathf.Max(0, ownedStructuresCount[structureTitle] - 1);
-            Debug.Log($"[BuildingManager] Unregistered structure: {structureTitle}. Total owned: {ownedStructuresCount[structureTitle]}");
+            ownedStructuresCount[structureData] = Mathf.Max(0, ownedStructuresCount[structureData] - 1);
+            Debug.Log($"[BuildingManager] Unregistered structure: {structureData.StructureTitle}. Total owned: {ownedStructuresCount[structureData]}");
         }
     }
 
-    public int GetOwnedCount(string structureTitle)
+    public int GetOwnedCount(StructureDataSO structureData)
     {
-        if (string.IsNullOrEmpty(structureTitle)) return 0;
-
-        if (ownedStructuresCount.TryGetValue(structureTitle, out int count))
-        {
+        if (structureData == null) return 0;
+        if (ownedStructuresCount.TryGetValue(structureData, out int count))
             return count;
-        }
         return 0;
     }
 }
