@@ -23,13 +23,20 @@ public class UIController : MonoBehaviour
     private void Start()
     {
         if (GameManager.Instance != null && GameManager.Instance.InputManager != null) 
-            GameManager.Instance.InputManager.OnEscape.AddListener(CloseAllModals);
+        {
+            GameManager.Instance.InputManager.OnEscape.AddListener(EscapeClicked);
+            Debug.Log("[UIController] Successfully bound EscapeClicked to InputManager.OnEscape event.");
+        }
+        else
+        {
+            Debug.LogWarning("[UIController] Failed to bind OnEscape: GameManager or InputManager is null during Start().");
+        }
     }
 
     private void OnDisable()
     {
         if (GameManager.Instance != null && GameManager.Instance.InputManager != null) 
-            GameManager.Instance.InputManager.OnEscape.RemoveListener(CloseAllModals);
+            GameManager.Instance.InputManager.OnEscape.RemoveListener(EscapeClicked);
     }
     
     private void InitializeModals()
@@ -84,6 +91,12 @@ public class UIController : MonoBehaviour
         }
         else
             Debug.LogWarning($"[UIController] Tried to open modal of type {targetType.Name}, but it wasn't found or declared on the UIController.");
+    }
+
+    public void EscapeClicked()
+    {
+        Debug.LogWarning("Escape Activation Debug");
+        CloseAllModals();
     }
 
     public void CloseAllModals()
