@@ -323,8 +323,13 @@ MonoBehaviour:
   objectiveNameText: {fileID: 4451995169858931221}
   GreatFloodText: {fileID: 3001356891540706154}
   objectiveDescriptionText: {fileID: 4807545909493703692}
+  pumpTimerText: {fileID: 6383048232509499378}
   checklistParent: {fileID: 6740199474758386260}
   checklistItemPrefab: {fileID: -3059288903188095940, guid: a49d051d3d7942c4880f35e2dff64f9c, type: 3}
+  greatFloodFlickerThreshold: 60
+  pumpFlickerThreshold: 20
+  flickerSpeed: 5
+  dangerColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!114 &2055585679378836840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2124,6 +2129,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2a78d039b32a5b47b19d3b1302fc8c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIWaterForecast
+--- !u!114 &6383048232509499378 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8860508030928495658, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+  m_PrefabInstance: {fileID: 2478103047148192728}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1 &6516664671859514621 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8650335616956030757, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}

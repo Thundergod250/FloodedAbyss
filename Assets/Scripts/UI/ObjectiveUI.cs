@@ -8,11 +8,37 @@ public class ObjectiveUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI GreatFloodText;
     [SerializeField] private TextMeshProUGUI objectiveDescriptionText;
 
+    [Header("Pump Timer")]
+    [SerializeField] private TextMeshProUGUI pumpTimerText;
+
     [Header("Checklist References")]
     [SerializeField] private Transform checklistParent;
     [SerializeField] private UIObjectiveChecklist checklistItemPrefab;
 
+    [Header("Timer Danger / Flicker")]
+    [SerializeField] private float greatFloodFlickerThreshold = 60f; // 1 minute
+    [SerializeField] private float pumpFlickerThreshold = 20f;       // 20 seconds
+    [SerializeField] private float flickerSpeed = 5f;                // higher = faster flicker
+    [SerializeField] private Color dangerColor = Color.red;
+
     private ObjectiveManager subscribedManager;
+
+    // Cached original colors so we can restore them when the timer is safe
+    private Color greatFloodOriginalColor = Color.white;
+    private Color pumpOriginalColor = Color.white;
+
+    // Optional externally-set pump time. If left at 0, the script falls back
+    // to reading the value straight off pumpTimerText.
+    public float PumpTimeRemaining { get; set; } = 0f;
+
+    private void Awake()
+    {
+        if (GreatFloodText != null)
+            greatFloodOriginalColor = GreatFloodText.color;
+
+        if (pumpTimerText != null)
+            pumpOriginalColor = pumpTimerText.color;
+    }
 
     private void OnEnable()
     {
@@ -33,35 +59,128 @@ public class ObjectiveUI : MonoBehaviour
             RefreshUI();
         }
 
-        if (GameManager.Instance == null || GameManager.Instance.WaterLevel == null || GreatFloodText == null)
-            return;
-
-        WaterLevel wl = GameManager.Instance.WaterLevel;
-
-        float remainingTime;
-
-        if (!wl.GreatFloodStarted)
+        // --- Great Flood timer ---
+        if (GameManager.Instance != null && GameManager.Instance.WaterLevel != null && GreatFloodText != null)
         {
-            // Phase 1: Before Great Flood
-            remainingTime = wl.TimeUntilGreatFlood;
+            WaterLevel wl = GameManager.Instance.WaterLevel;
+
+            float remainingTime;
+
+            if (!wl.GreatFloodStarted)
+            {
+                // Phase 1: Before Great Flood
+                remainingTime = wl.TimeUntilGreatFlood;
+            }
+            else if (wl.GreatFloodStarted)
+            {
+                // Phase 2: During Great Flood
+                remainingTime = wl.GreatFloodTimeRemaining;
+            }
+            else
+            {
+                // Phase 3: Flood ended
+                remainingTime = 0f;
+            }
+
+            int totalSeconds = Mathf.CeilToInt(Mathf.Max(0f, remainingTime));
+            int minutes = totalSeconds / 60;
+            int seconds = totalSeconds % 60;
+
+            GreatFloodText.text = $"{minutes}:{seconds:D2}";
+
+            ApplyTimerVisuals(
+                GreatFloodText,
+                remainingTime,
+                greatFloodOriginalColor,
+                greatFloodFlickerThreshold
+            );
         }
-        else if (wl.GreatFloodStarted)
+
+        // --- Pump timer ---
+        // The pump timer intentionally stops at 9, so once it enters the 20s
+        // range it will keep flickering red indefinitely.
+        if (pumpTimerText != null)
         {
-            // Phase 2: During Great Flood
-            remainingTime = wl.GreatFloodTimeRemaining;
+            float pumpRemaining = GetPumpRemainingSeconds();
+            ApplyTimerVisuals(
+                pumpTimerText,
+                pumpRemaining,
+                pumpOriginalColor,
+                pumpFlickerThreshold
+            );
+        }
+    }
+
+    /// <summary>
+    /// Optional setter if another script wants to drive the pump timer directly.
+    /// Passing a value here takes precedence over reading the text.
+    /// </summary>
+    public void SetPumpTimeRemaining(float seconds)
+    {
+        PumpTimeRemaining = seconds;
+
+        if (pumpTimerText != null)
+            pumpTimerText.text = Mathf.CeilToInt(Mathf.Max(0f, seconds)).ToString();
+    }
+
+    /// <summary>
+    /// Returns the pump time in seconds. Prefers an externally-set
+    /// <see cref="PumpTimeRemaining"/>; otherwise parses whatever is currently
+    /// shown in <see cref="pumpTimerText"/> ("20", "0:20", "00:20").
+    /// </summary>
+    private float GetPumpRemainingSeconds()
+    {
+        if (PumpTimeRemaining > 0f)
+            return PumpTimeRemaining;
+
+        if (pumpTimerText == null)
+            return 0f;
+
+        string s = pumpTimerText.text?.Trim();
+        if (string.IsNullOrEmpty(s))
+            return 0f;
+
+        if (s.Contains(":"))
+        {
+            string[] parts = s.Split(':');
+            if (parts.Length == 2 &&
+                int.TryParse(parts[0], out int m) &&
+                int.TryParse(parts[1], out int sec))
+                return m * 60 + sec;
+        }
+
+        if (float.TryParse(s, out float v))
+            return v;
+
+        return 0f;
+    }
+
+    /// <summary>
+    /// Turns the text red and flickers it while 0 &lt; remainingTime &lt;= threshold.
+    /// Otherwise restores the original color at full opacity.
+    /// </summary>
+    private void ApplyTimerVisuals(TextMeshProUGUI text, float remainingTime, Color originalColor, float threshold)
+    {
+        if (text == null) return;
+
+        bool isInDanger = remainingTime > 0f && remainingTime <= threshold;
+
+        if (isInDanger)
+        {
+            // Flicker between 0.2 and 1.0 alpha while red
+            float pingPong = Mathf.PingPong(Time.time * flickerSpeed, 1f);
+            float alpha = Mathf.Lerp(0.2f, 1f, pingPong);
+
+            Color c = dangerColor;
+            c.a = alpha;
+            text.color = c;
         }
         else
         {
-            // Phase 3: Flood ended
-            remainingTime = 0f;
+            Color c = originalColor;
+            c.a = 1f;
+            text.color = c;
         }
-
-        int totalSeconds = Mathf.CeilToInt(Mathf.Max(0f, remainingTime));
-
-        int minutes = totalSeconds / 60;
-        int seconds = totalSeconds % 60;
-
-        GreatFloodText.text = $"{minutes}:{seconds:D2}";
     }
 
     private void TrySubscribe()
