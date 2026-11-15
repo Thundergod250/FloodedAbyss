@@ -198,11 +198,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3375f9685735cec4f90eec10d72830fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraMovement
---- !u!1 &217514557 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 452810078188748022, guid: 93962ff5bde69f746af840d31223a209, type: 3}
-  m_PrefabInstance: {fileID: 8397806791057057018}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &221064829
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -300,16 +295,11 @@ MonoBehaviour:
   ignoreSubmersion: 0
   BuildablePrefab: {fileID: 0}
   structureTitle: Worker's House
-  actionDuration: 3
   destructionDuration: 3
-  recruitmentCostResource: {fileID: 11400000, guid: 01dc29f87c71c4646b9184c0d72979aa, type: 2}
-  recruitmentCostAmount: 5
-  isOccupied: 0
-  isWorking: 0
   isDestroying: 0
-  isReservedForHousing: 0
   progressPercentage: 0
   housingCapacity: 2
+  currentWorkers: 1
 --- !u!1001 &427313218
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -407,16 +397,11 @@ MonoBehaviour:
   ignoreSubmersion: 0
   BuildablePrefab: {fileID: 0}
   structureTitle: Worker's House
-  actionDuration: 3
   destructionDuration: 3
-  recruitmentCostResource: {fileID: 11400000, guid: 01dc29f87c71c4646b9184c0d72979aa, type: 2}
-  recruitmentCostAmount: 5
-  isOccupied: 0
-  isWorking: 0
   isDestroying: 0
-  isReservedForHousing: 0
   progressPercentage: 0
   housingCapacity: 2
+  currentWorkers: 1
 --- !u!1 &448467732
 GameObject:
   m_ObjectHideFlags: 0
@@ -2356,11 +2341,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5da3bb1c05e689046993596746c2a0b0, type: 3}
---- !u!1 &1504374286 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2930326000173314896, guid: 93962ff5bde69f746af840d31223a209, type: 3}
-  m_PrefabInstance: {fileID: 8397806791057057018}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1565185247
 GameObject:
   m_ObjectHideFlags: 0
@@ -2899,7 +2879,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1800
+  far clip plane: 2500
   field of view: 60.000004
   orthographic: 0
   orthographic size: 5
@@ -3690,7 +3670,7 @@ PrefabInstance:
     - target: {fileID: 6834249402503474105, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
       propertyPath: tutorialPanel_6
       value: 
-      objectReference: {fileID: 1504374286}
+      objectReference: {fileID: 0}
     - target: {fileID: 6834249402503474105, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
       propertyPath: tutorialPanel_7
       value: 
@@ -3714,7 +3694,7 @@ PrefabInstance:
     - target: {fileID: 6834249402503474105, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
       propertyPath: tutorialPanel_4point5
       value: 
-      objectReference: {fileID: 217514557}
+      objectReference: {fileID: 8397806791057057022}
     - target: {fileID: 6834249402503474105, guid: c58b6dfaab3aa2e4eadf6a8040036f51, type: 3}
       propertyPath: tutorialPanel_5point5
       value: 
@@ -4095,6 +4075,11 @@ GameObject:
 --- !u!1 &8397806791057057021 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8265820851614292777, guid: 93962ff5bde69f746af840d31223a209, type: 3}
+  m_PrefabInstance: {fileID: 8397806791057057018}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8397806791057057022 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8462924296069656193, guid: 93962ff5bde69f746af840d31223a209, type: 3}
   m_PrefabInstance: {fileID: 8397806791057057018}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8705858321877633922
