@@ -30,9 +30,10 @@ public class WaterForecast : MonoBehaviour
     [Header("Available Weather Types Pool")]
     [SerializeField] private List<WeatherDefinition> weatherDatabase = new();
 
-    [Header("Active Weather Queue (Backlog)")]
-    [SerializeField] private List<WeatherDefinition> weatherBacklog = new();
-    [SerializeField] private int initialBacklogCount = 4;
+    [Header("Initial Weather Backlog")]
+    [SerializeField] private WeatherDefinition[] initialWeatherBacklog = new WeatherDefinition[8];
+
+    private List<WeatherDefinition> weatherBacklog = new List<WeatherDefinition>();
 
     [Header("Active Weather Water Adjustment")]
     [SerializeField] private float sunnyVal;
@@ -105,34 +106,9 @@ public class WaterForecast : MonoBehaviour
     {
         weatherBacklog.Clear();
 
-        WeatherType[] initialWeatherOrder =
+        foreach (WeatherDefinition weather in initialWeatherBacklog)
         {
-        WeatherType.Sunny,
-        WeatherType.Drizzle,
-        WeatherType.Stormy,
-        WeatherType.Typhoon
-    };
-
-        foreach (WeatherType weatherType in initialWeatherOrder)
-        {
-            WeatherDefinition? definition = GetWeatherDefinition(weatherType);
-
-            if (definition.HasValue)
-            {
-                weatherBacklog.Add(definition.Value);
-            }
-            else
-            {
-                Debug.LogWarning(
-                    $"[WaterForecast] {weatherType} not found in weather database!"
-                );
-            }
-        }
-
-        // Fill any remaining backlog slots randomly.
-        while (weatherBacklog.Count < initialBacklogCount)
-        {
-            AddRandomWeatherToBacklog();
+            weatherBacklog.Add(weather);
         }
     }
 
