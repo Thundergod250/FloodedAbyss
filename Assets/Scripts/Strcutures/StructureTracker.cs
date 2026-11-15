@@ -2,22 +2,19 @@ using UnityEngine;
 
 public class StructureTracker : MonoBehaviour
 {
-    [SerializeField] private string customStructureTitle = "";
+    [SerializeField] private StructureDataSO structureDataSO;
 
-    private void Start() => RegisterWithManager();
+    private void Start()
+    {
+        if (structureDataSO != null && GameManager.Instance != null && GameManager.Instance.BuildingManager != null)
+            GameManager.Instance.BuildingManager.RegisterStructure(structureDataSO);
+        else if (structureDataSO == null) 
+            Debug.LogWarning($"[StructureTracker] StructureDataSO is not assigned on prefab: {gameObject.name}", gameObject);
+    }
 
     private void OnDestroy()
     {
-        if (!string.IsNullOrEmpty(customStructureTitle) && GameManager.Instance != null && GameManager.Instance.BuildingManager != null)
-            GameManager.Instance.BuildingManager.UnregisterStructure(customStructureTitle.Trim());
-    }
-
-    private void RegisterWithManager()
-    {
-        if (!string.IsNullOrEmpty(customStructureTitle) && GameManager.Instance != null &&
-            GameManager.Instance.BuildingManager != null)
-            GameManager.Instance.BuildingManager.RegisterStructure(customStructureTitle.Trim());
-        else if (string.IsNullOrEmpty(customStructureTitle)) 
-            Debug.LogWarning($"[StructureTracker] Custom Structure Title is not set on {gameObject.name}!", gameObject);
+        if (structureDataSO != null && GameManager.Instance != null && GameManager.Instance.BuildingManager != null)
+            GameManager.Instance.BuildingManager.UnregisterStructure(structureDataSO);
     }
 }
