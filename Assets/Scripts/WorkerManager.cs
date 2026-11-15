@@ -49,12 +49,6 @@ public class WorkerManager : MonoBehaviour
             ResolveWorkerDeficit(remainingToKill);
         }
 
-        // 3. SAFETY FLOOR: If all houses are wiped out, guarantee the final immortal worker survives to prevent soft-locks
-        if (TotalHousingCapacity <= 0 && CurrentWorker < 1)
-        {
-            CurrentWorker = 1;
-        }
-
         EvtOnWorkersChanged?.Invoke(CurrentWorker);
         if (housedWorkers > 0) 
             EvtOnWorkerReduced?.Invoke(CurrentWorker);
