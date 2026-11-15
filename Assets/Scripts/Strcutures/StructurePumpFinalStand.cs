@@ -26,7 +26,8 @@ public class StructurePumpFinalStand : MonoBehaviour
         if (finalStandActivated || finalStandRunning)
             return;
 
-        finalStand = GameManager.Instance.WaterLevel.CurrentWaterHeight >= finalStandWaterLevel;
+        finalStand = GameManager.Instance.WaterLevel.CurrentWaterHeight
+                     >= finalStandWaterLevel;
 
         if (finalStand)
             StartCoroutine(StillWater());

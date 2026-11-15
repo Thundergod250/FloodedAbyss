@@ -1,19 +1,35 @@
+using System.Resources;
 using UnityEngine;
 using UnityEngine.Events;
 using System.Collections.Generic;
+using System.Collections;
 
 public class WorkerManager : MonoBehaviour
 {
-    [field: SerializeField] public int CurrentWorker { get; private set; } = 0;
-    [field: SerializeField] public int TotalHousingCapacity { get; private set; } = 0;
+    [field: SerializeField] public int CurrentWorker { get; private set; } = 1;
+    [field: SerializeField] public int HomelessWorker { get; private set; } = 1; // Starts with 1 homeless worker
+    [field: SerializeField] public int OccupiedHousesCount { get; private set; } = 0;
+    [field: SerializeField] public int TotalHousingCapacity { get; private set; }
 
     [Header("Events")]
     public UnityEvent<int> EvtOnWorkersChanged = new();
+    public UnityEvent<int> EvtOnHomelessChanged = new();
     public UnityEvent<int> EvtOnWorkerReduced = new();
 
-    private List<StructureWorkersHouse> workerHouses = new();
+    [Header("Worker Resource Consumption Unused")]
+    [SerializeField] private ResourceDataSO resourceToConsume;
+    [SerializeField] private int consumptionPerWorker = 1;
+    [SerializeField] private float consumptionInterval = 10f;
 
-    private void Start() => EvtOnWorkersChanged?.Invoke(CurrentWorker);
+    private List<StructureWorkersHouse> workerHouses = new List<StructureWorkersHouse>();
+
+    private void Start() 
+    {
+        EvtOnWorkersChanged?.Invoke(CurrentWorker);
+     //   EvtOnHomelessChanged?.Invoke(HomelessWorker);
+
+      // StartCoroutine(WorkerConsumptionRoutine());
+    }
 
     public void SetCurrentWorkers(int amount)
     {
@@ -21,33 +37,10 @@ public class WorkerManager : MonoBehaviour
         EvtOnWorkersChanged?.Invoke(CurrentWorker);
     }
 
-    // Called when a new house is built
-    public void RegisterHouse(int capacity, int initialWorkers)
+    public void AddHomelessWorker(int amount)
     {
-        TotalHousingCapacity += capacity;
-        CurrentWorker += initialWorkers;
-        EvtOnWorkersChanged?.Invoke(CurrentWorker);
-    }
-
-    // Called when a house is destroyed (Workers in the house die)
-    public void UnregisterHouse(int capacity, int housedWorkers)
-    {
-        TotalHousingCapacity = Mathf.Max(0, TotalHousingCapacity - capacity);
-        
-        int workersLost = Mathf.Min(CurrentWorker, housedWorkers);
-        CurrentWorker = Mathf.Max(0, CurrentWorker - workersLost);
-
-        EvtOnWorkersChanged?.Invoke(CurrentWorker);
-        if (workersLost > 0) 
-            EvtOnWorkerReduced?.Invoke(CurrentWorker);
-    }
-
-    // Called when a house is upgraded
-    public void UpdateHouseCapacityAndWorkers(int addedCapacity, int addedWorkers)
-    {
-        TotalHousingCapacity += addedCapacity;
-        CurrentWorker += addedWorkers;
-        EvtOnWorkersChanged?.Invoke(CurrentWorker);
+        HomelessWorker = Mathf.Max(0, HomelessWorker + amount);
+        EvtOnHomelessChanged?.Invoke(HomelessWorker);
     }
 
     public void ReduceWorker(int val)
@@ -60,15 +53,96 @@ public class WorkerManager : MonoBehaviour
         for (int i = 0; i < workersToRemove; i++)
         {
             StructureWorkersHouse occupiedHouse =
-                workerHouses.Find(h => h != null && h.CurrentWorkers > 0);
+                workerHouses.Find(h => h != null && h.IsOccupied);
 
-            if (occupiedHouse != null) 
+            if (occupiedHouse != null)
+            {
                 occupiedHouse.RemoveWorkerDueToDeath();
+                OccupiedHousesCount--;
+            }
         }
 
         CurrentWorker -= workersToRemove;
+
         EvtOnWorkersChanged?.Invoke(CurrentWorker);
         EvtOnWorkerReduced?.Invoke(CurrentWorker);
+    }
+
+    public bool TryHouseWorker()
+    {
+        if (HomelessWorker > 0)
+        {
+            HomelessWorker--;
+            OccupiedHousesCount++;
+            EvtOnHomelessChanged?.Invoke(HomelessWorker);
+            return true;
+        }
+        return false;
+    }
+
+    public void FreeHouse(int lostWorkers)
+    {
+        if (OccupiedHousesCount > 0)
+        {
+            OccupiedHousesCount--;
+        }
+        // When an occupied house is destroyed, the housed worker becomes homeless again!
+
+        //HomelessWorker++;
+       // EvtOnHomelessChanged?.Invoke(HomelessWorker);
+
+        CurrentWorker = Mathf.Max(1, CurrentWorker - lostWorkers);
+        EvtOnWorkersChanged?.Invoke(CurrentWorker);
+    }
+
+    public void RecruitNewWorker(Structures recruitingBuilding)
+    {
+        if (recruitingBuilding == null)
+            return;
+
+        CurrentWorker++;
+        EvtOnWorkersChanged?.Invoke(CurrentWorker);
+
+        if (ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance.NotifyWorkerRecruited(recruitingBuilding);
+        }
+    }
+
+    public void CancelHouseReservation()
+    {
+        if (OccupiedHousesCount > 0)
+        {
+            OccupiedHousesCount--;
+        }
+        //HomelessWorker++;
+       // EvtOnHomelessChanged?.Invoke(HomelessWorker);
+    }
+
+    private IEnumerator WorkerConsumptionRoutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(consumptionInterval);
+
+            if (resourceToConsume == null)
+                continue;
+
+            int totalConsumption = CurrentWorker * consumptionPerWorker;
+
+            if (totalConsumption > 0)
+            {
+                GameManager.Instance.ResourceManager.ConsumeResource(
+                    resourceToConsume,
+                    totalConsumption
+                );
+            }
+        }
+    }
+
+    public void AddHousingCapacity(int amount)
+    {
+        TotalHousingCapacity += amount;
     }
 
     public void RegisterWorkerHouse(StructureWorkersHouse house)
