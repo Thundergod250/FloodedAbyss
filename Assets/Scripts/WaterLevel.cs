@@ -122,6 +122,16 @@ public class WaterLevel : MonoBehaviour
         pressureIncreaseRate += greatFloodPressureIncrease;
         GreatFloodCompleted = false;
 
+        if (GameManager.Instance != null && GameManager.Instance.uiController != null)
+        {
+            WaterForecast forecast = GameManager.Instance.uiController.GetComponentInChildren<WaterForecast>();
+
+            if (forecast != null) forecast.StopWeather();
+
+        }
+
+        GameManager.Instance.VFXController.PlayRain(rainStrength.Strong);
+
         StartWaterRise(true);
 
         Debug.Log("GREAT FLOOD STARTED!");

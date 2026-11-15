@@ -51,6 +51,11 @@ public class WaterForecast : MonoBehaviour
     // State caching guards to prevent redundant calls and hitching
     private rainStrength? currentActiveRainState = null;
     private bool isWeatherInitialized = false;
+    private bool stoppedForGreatFlood;
+    private bool IsGreatFloodActive()
+    {
+        return GameManager.Instance != null && GameManager.Instance.WaterLevel != null && GameManager.Instance.WaterLevel.GreatFloodStarted;
+    }
 
     private void OnEnable()
     {
@@ -68,11 +73,26 @@ public class WaterForecast : MonoBehaviour
             Debug.LogWarning("[WaterForecast] Weather database is empty! Please add weather definitions in the Inspector.", this);
             return;
         }
-
-        //StartWeather();
     }
 
     private void OnDisable() => StopWeather();
+
+    private void Update()
+    {
+        if (!IsGreatFloodActive())
+        {
+            stoppedForGreatFlood = false;
+            return;
+        }
+
+        if (!stoppedForGreatFlood)
+        {
+            StopWeather();
+            stoppedForGreatFlood = true;
+
+            Debug.Log("[WaterForecast] Weather stopped because the Great Flood started.");
+        }
+    }
 
     private void BuildInitialBacklog()
     {
@@ -108,6 +128,29 @@ public class WaterForecast : MonoBehaviour
     {
         while (true)
         {
+            if (IsGreatFloodActive())
+            {
+                timelineCoroutine = null;
+                timelinePaused = true;
+
+                if (storedWaterAdjustment != 0f)
+                {
+                    AdjustWaterLevel(-storedWaterAdjustment);
+                    storedWaterAdjustment = 0f;
+                }
+
+                if (GameManager.Instance.VFXController != null)
+                    GameManager.Instance.VFXController.StopRain();
+
+                if (GameManager.Instance.SoundManager != null)
+                    GameManager.Instance.SoundManager.Stop("SFXRaining");
+
+                currentActiveRainState = null;
+                isWeatherInitialized = false;
+
+                yield break;
+            }
+
             currentTime = 0f;
 
             while (currentTime < eventDuration)
@@ -278,6 +321,12 @@ public class WaterForecast : MonoBehaviour
     #region Start and Stop Weather
     public void StartWeather()
     {
+        if (IsGreatFloodActive())
+        {
+            Debug.Log("[WaterForecast] Cannot start weather during the Great Flood.");
+            return;
+        }
+
         if (timelineCoroutine != null) return;
         if (weatherBacklog.Count == 0) return;
 
@@ -290,23 +339,34 @@ public class WaterForecast : MonoBehaviour
     public void StopWeather()
     {
         timelinePaused = true;
+
         if (timelineCoroutine != null)
         {
             StopCoroutine(timelineCoroutine);
             timelineCoroutine = null;
         }
-        
+
         if (GameManager.Instance != null)
         {
             if (GameManager.Instance.VFXController != null)
                 GameManager.Instance.VFXController.StopRain();
+
             if (GameManager.Instance.SoundManager != null)
                 GameManager.Instance.SoundManager.Stop("SFXRaining");
         }
+
+        if (storedWaterAdjustment != 0f)
+        {
+            AdjustWaterLevel(-storedWaterAdjustment);
+            storedWaterAdjustment = 0f;
+        }
+
+        currentActiveRainState = null;
+        isWeatherInitialized = false;
     }
     #endregion
 
-    public WeatherType CurrentActiveWeather => weatherBacklog.Count > 0 ? weatherBacklog[0].Type : WeatherType.Sunny;
+    public WeatherType CurrentActiveWeather => IsGreatFloodActive() ? WeatherType.Sunny : weatherBacklog.Count > 0 ? weatherBacklog[0].Type : WeatherType.Sunny;
     public float SunnyVal => sunnyVal;
     public float DrizzleVal => drizzlVal;
     public float StormyVal => stormyVal;

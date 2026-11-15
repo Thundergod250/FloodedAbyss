@@ -115,7 +115,7 @@ public class StructureWaterInfrastructure : Structures
         appliedWaterReduction = GetWeatherBasedWaterReduction();
 
         float reduction = GreatFloodActive
-            ? appliedWaterReduction - 0.2f
+            ? appliedWaterReduction * 0.8f
             : appliedWaterReduction;
 
         GameManager.Instance.WaterLevel.ReduceWaterPressure(reduction);
