@@ -32,6 +32,8 @@ public class WaterLevel : MonoBehaviour
     private float currentWaterPressureFloat;
     private float currentWaterHeight;
 
+    public int GreatFloorTimerDuration => greatFloodTimerDuration;
+
     private void Awake()
     {
         if (oceanTransform == null)
