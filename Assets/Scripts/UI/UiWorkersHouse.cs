@@ -103,7 +103,7 @@ public class UiWorkersHouse : UiModals
     {
         // "Current Workers Text" is left alone as static UI. We only update the numbers:
         if (workersNumbersTxt != null && currentHouse != null) 
-            workersNumbersTxt.text = $"{currentHouse.CurrentWorkers} / {currentHouse.HousingCapacity}";
+            workersNumbersTxt.text = $"{currentHouse.CurrentWorkers} / 3";
     }
 
     public bool IsShowingHouse(StructureWorkersHouse house) => IsOpen && currentHouse == house;
