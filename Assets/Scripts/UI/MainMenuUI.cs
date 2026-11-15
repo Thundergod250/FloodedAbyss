@@ -7,6 +7,8 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private string mainMenuSceneName = "Main Menu";
     [SerializeField] private string gameSceneName = "MainScene";
 
+    public GameObject losePanel;
+
     public void LoadMainMenu()
     {
         if(Time.timeScale == 0)
