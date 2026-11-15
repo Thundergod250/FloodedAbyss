@@ -1636,12 +1636,28 @@ MonoBehaviour:
     weatherSprite: {fileID: 21300000, guid: 5d99cf30b1e503a45b3c246b92662913, type: 3}
   - weatherType: 3
     weatherSprite: {fileID: 21300000, guid: cfb16cd5c41f1f14a8681d586f0c59b4, type: 3}
-  weatherBacklog: []
-  initialBacklogCount: 4
+  initialWeatherBacklog:
+  - weatherType: 0
+    weatherSprite: {fileID: 21300000, guid: 59f56e69dc57c144e98da1d0d29c8570, type: 3}
+  - weatherType: 1
+    weatherSprite: {fileID: 21300000, guid: 2470f015f6b662746bba91550557e948, type: 3}
+  - weatherType: 0
+    weatherSprite: {fileID: 21300000, guid: 59f56e69dc57c144e98da1d0d29c8570, type: 3}
+  - weatherType: 0
+    weatherSprite: {fileID: 21300000, guid: 59f56e69dc57c144e98da1d0d29c8570, type: 3}
+  - weatherType: 1
+    weatherSprite: {fileID: 21300000, guid: 2470f015f6b662746bba91550557e948, type: 3}
+  - weatherType: 2
+    weatherSprite: {fileID: 21300000, guid: 5d99cf30b1e503a45b3c246b92662913, type: 3}
+  - weatherType: 0
+    weatherSprite: {fileID: 21300000, guid: 59f56e69dc57c144e98da1d0d29c8570, type: 3}
+  - weatherType: 3
+    weatherSprite: {fileID: 21300000, guid: cfb16cd5c41f1f14a8681d586f0c59b4, type: 3}
   sunnyVal: 0
   drizzlVal: 60
   stormyVal: 120
   typhoonVal: 180
+  weatherRiseSpeed: 10
   currentTime: 0
 --- !u!114 &567766620380257450
 MonoBehaviour:

@@ -30,9 +30,10 @@ public class WaterForecast : MonoBehaviour
     [Header("Available Weather Types Pool")]
     [SerializeField] private List<WeatherDefinition> weatherDatabase = new();
 
-    [Header("Active Weather Queue (Backlog)")]
-    [SerializeField] private List<WeatherDefinition> weatherBacklog = new();
-    [SerializeField] private int initialBacklogCount = 4;
+    [Header("Initial Weather Backlog")]
+    [SerializeField] private WeatherDefinition[] initialWeatherBacklog = new WeatherDefinition[8];
+
+    private List<WeatherDefinition> weatherBacklog = new List<WeatherDefinition>();
 
     [Header("Active Weather Water Adjustment")]
     [SerializeField] private float sunnyVal;
@@ -40,6 +41,12 @@ public class WaterForecast : MonoBehaviour
     [SerializeField] private float stormyVal;
     [SerializeField] private float typhoonVal;
     private float storedWaterAdjustment; // storing previous increase in water
+
+    [Header("Gradual Weather Water Rise")]
+    [SerializeField] private float weatherRiseSpeed = 2f;
+
+    private float currentWeatherAdjustment;
+    private float targetWeatherAdjustment;
 
     [Header("Debug")]
     [SerializeField] private float currentTime;
@@ -82,6 +89,7 @@ public class WaterForecast : MonoBehaviour
         if (!IsGreatFloodActive())
         {
             stoppedForGreatFlood = false;
+            UpdateWeatherWaterRise();
             return;
         }
 
@@ -98,34 +106,9 @@ public class WaterForecast : MonoBehaviour
     {
         weatherBacklog.Clear();
 
-        WeatherType[] initialWeatherOrder =
+        foreach (WeatherDefinition weather in initialWeatherBacklog)
         {
-        WeatherType.Sunny,
-        WeatherType.Drizzle,
-        WeatherType.Stormy,
-        WeatherType.Typhoon
-    };
-
-        foreach (WeatherType weatherType in initialWeatherOrder)
-        {
-            WeatherDefinition? definition = GetWeatherDefinition(weatherType);
-
-            if (definition.HasValue)
-            {
-                weatherBacklog.Add(definition.Value);
-            }
-            else
-            {
-                Debug.LogWarning(
-                    $"[WaterForecast] {weatherType} not found in weather database!"
-                );
-            }
-        }
-
-        // Fill any remaining backlog slots randomly.
-        while (weatherBacklog.Count < initialBacklogCount)
-        {
-            AddRandomWeatherToBacklog();
+            weatherBacklog.Add(weather);
         }
     }
 
@@ -148,17 +131,16 @@ public class WaterForecast : MonoBehaviour
                 timelineCoroutine = null;
                 timelinePaused = true;
 
-                if (storedWaterAdjustment != 0f)
+                targetWeatherAdjustment = 0f;
+
+                if (GameManager.Instance != null)
                 {
-                    AdjustWaterLevel(-storedWaterAdjustment);
-                    storedWaterAdjustment = 0f;
+                    if (GameManager.Instance.VFXController != null)
+                        GameManager.Instance.VFXController.StopRain();
+
+                    if (GameManager.Instance.SoundManager != null)
+                        GameManager.Instance.SoundManager.Stop("SFXRaining");
                 }
-
-                if (GameManager.Instance.VFXController != null)
-                    GameManager.Instance.VFXController.StopRain();
-
-                if (GameManager.Instance.SoundManager != null)
-                    GameManager.Instance.SoundManager.Stop("SFXRaining");
 
                 currentActiveRainState = null;
                 isWeatherInitialized = false;
@@ -293,16 +275,13 @@ public class WaterForecast : MonoBehaviour
 
     private void ApplyWaterWeatherAdjustment(rainStrength targetStrength, bool isSunny)
     {
-        AdjustWaterLevel(-storedWaterAdjustment);
-        storedWaterAdjustment = 0f;
-
-        if (!isSunny)
+        if (isSunny)
         {
-            float newAdjustment = GetWaterAdjustment(targetStrength);
-
-            AdjustWaterLevel(newAdjustment);
-            storedWaterAdjustment = newAdjustment;
+            targetWeatherAdjustment = 0f;
+            return;
         }
+
+        targetWeatherAdjustment = GetWaterAdjustment(targetStrength);
     }
 
     private float GetWaterAdjustment(rainStrength rainStr)
@@ -325,6 +304,7 @@ public class WaterForecast : MonoBehaviour
                 return 0;
         }
     }
+
     private int GetTotalActiveSwitches()
     {
         if (GameManager.Instance == null || GameManager.Instance.ApexPump == null)
@@ -342,6 +322,25 @@ public class WaterForecast : MonoBehaviour
         }
 
         return null;
+    }
+
+    private void UpdateWeatherWaterRise()
+    {
+        if (Mathf.Approximately(currentWeatherAdjustment, targetWeatherAdjustment))
+            return;
+
+        float previousAdjustment = currentWeatherAdjustment;
+
+        currentWeatherAdjustment = Mathf.MoveTowards(
+            currentWeatherAdjustment,
+            targetWeatherAdjustment,
+            weatherRiseSpeed * Time.deltaTime
+        );
+
+        float adjustmentDifference =
+            currentWeatherAdjustment - previousAdjustment;
+
+        AdjustWaterLevel(adjustmentDifference);
     }
 
     #region Start and Stop Weather
@@ -381,11 +380,8 @@ public class WaterForecast : MonoBehaviour
                 GameManager.Instance.SoundManager.Stop("SFXRaining");
         }
 
-        if (storedWaterAdjustment != 0f)
-        {
-            AdjustWaterLevel(-storedWaterAdjustment);
-            storedWaterAdjustment = 0f;
-        }
+        // Gradually remove the existing weather contribution.
+        targetWeatherAdjustment = 0f;
 
         currentActiveRainState = null;
         isWeatherInitialized = false;
