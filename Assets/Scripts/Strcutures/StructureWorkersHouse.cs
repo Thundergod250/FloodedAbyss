@@ -20,15 +20,27 @@ public class StructureWorkersHouse : Structures
     
     private Coroutine destroyRoutine;
     private bool isRegisteredWithManager = false;
+    private bool hasUnregistered = false;
 
-    private void OnEnable()
+    private void Start()
     {
-        if (GameManager.Instance != null && GameManager.Instance.WorkerManager != null && !isRegisteredWithManager)
+        StartCoroutine(RegisterWhenReadyRoutine());
+    }
+
+    private IEnumerator RegisterWhenReadyRoutine()
+    {
+        // Wait until GameManager and WorkerManager are fully initialized in the scene
+        while (GameManager.Instance == null || GameManager.Instance.WorkerManager == null)
+        {
+            yield return null;
+        }
+
+        if (!isRegisteredWithManager)
         {
             GameManager.Instance.WorkerManager.RegisterWorkerHouse(this);
-            // Report initial building creation and workers to WorkerManager
             GameManager.Instance.WorkerManager.RegisterHouse(housingCapacity, currentWorkers);
             isRegisteredWithManager = true;
+            hasUnregistered = false;
         }
     }
 
@@ -39,9 +51,11 @@ public class StructureWorkersHouse : Structures
 
     private void UnregisterFromManager()
     {
-        if (isRegisteredWithManager && GameManager.Instance != null && GameManager.Instance.WorkerManager != null)
+        if (isRegisteredWithManager && !hasUnregistered && GameManager.Instance != null && GameManager.Instance.WorkerManager != null)
         {
             GameManager.Instance.WorkerManager.UnregisterWorkerHouse(this);
+            GameManager.Instance.WorkerManager.UnregisterHouse(housingCapacity, currentWorkers);
+            hasUnregistered = true;
             isRegisteredWithManager = false;
         }
     }
@@ -130,11 +144,7 @@ public class StructureWorkersHouse : Structures
 
     private void ExecuteFinalDestruction()
     {
-        // When house is destroyed, all workers inside die and get reduced in WorkerManager
-        if (GameManager.Instance != null && GameManager.Instance.WorkerManager != null && isRegisteredWithManager)
-        {
-            GameManager.Instance.WorkerManager.UnregisterHouse(housingCapacity, currentWorkers);
-        }
+        // Instantly unregister and reduce workers in WorkerManager
         UnregisterFromManager();
 
         var houseUI = GameManager.Instance.uiController.UiWorkersHouse;
