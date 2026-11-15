@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     public UIMainMenu UIMainMenu;
     public VFXController VFXController;
     public TutorialController TutorialController;
+    public BuildingManager BuildingManager;
 
     private void Awake()
     {

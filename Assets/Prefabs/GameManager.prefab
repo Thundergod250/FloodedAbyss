@@ -45,6 +45,7 @@ Transform:
   - {fileID: 4713799066178294086}
   - {fileID: 278172118400894733}
   - {fileID: 7525670379845598122}
+  - {fileID: 4096755319894429351}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5441983127171556320
@@ -76,6 +77,7 @@ MonoBehaviour:
   UIMainMenu: {fileID: 112280731675947394}
   VFXController: {fileID: 0}
   TutorialController: {fileID: 6834249402503474105}
+  BuildingManager: {fileID: 1481365789525865169}
 --- !u!114 &6157991707012487289
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -412,6 +414,7 @@ MonoBehaviour:
   fuelPanel: {fileID: 0}
   tutorialTopPanel: {fileID: 0}
   pumpCollider: {fileID: 0}
+  waterInfraDebrisCollider: {fileID: 0}
   floatingResourceSpawner: {fileID: 0}
   timberResource: {fileID: 11400000, guid: 01dc29f87c71c4646b9184c0d72979aa, type: 2}
   fiberResource: {fileID: 11400000, guid: 42d0a33d5d93fa0468020c1672f70b5c, type: 2}
@@ -835,6 +838,79 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 7402235485121368526, guid: 1a1104ba0336ec74da2781aec80ea6ab, type: 3}
   m_PrefabInstance: {fileID: 6706072792804955873}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &6712203443597266248
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3096870024065945765}
+    m_Modifications:
+    - target: {fileID: 1592087981698786948, guid: b9501e8a39cffb340a683b63c918193e, type: 3}
+      propertyPath: m_Name
+      value: Building Manager
+      objectReference: {fileID: 0}
+    - target: {fileID: 7348766533763138543, guid: b9501e8a39cffb340a683b63c918193e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7348766533763138543, guid: b9501e8a39cffb340a683b63c918193e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7348766533763138543, guid: b9501e8a39cffb340a683b63c918193e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7348766533763138543, guid: b9501e8a39cffb340a683b63c918193e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7348766533763138543, guid: b9501e8a39cffb340a683b63c918193e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7348766533763138543, guid: b9501e8a39cffb340a683b63c918193e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7348766533763138543, guid: b9501e8a39cffb340a683b63c918193e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7348766533763138543, guid: b9501e8a39cffb340a683b63c918193e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7348766533763138543, guid: b9501e8a39cffb340a683b63c918193e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7348766533763138543, guid: b9501e8a39cffb340a683b63c918193e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b9501e8a39cffb340a683b63c918193e, type: 3}
+--- !u!114 &1481365789525865169 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5307588017427201945, guid: b9501e8a39cffb340a683b63c918193e, type: 3}
+  m_PrefabInstance: {fileID: 6712203443597266248}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6e9109cdee67214f810641b5112a259, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingManager
+--- !u!4 &4096755319894429351 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7348766533763138543, guid: b9501e8a39cffb340a683b63c918193e, type: 3}
+  m_PrefabInstance: {fileID: 6712203443597266248}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7123864120500686433
 PrefabInstance:
