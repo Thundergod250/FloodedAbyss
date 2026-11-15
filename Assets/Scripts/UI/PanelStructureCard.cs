@@ -42,13 +42,13 @@ public class PanelStructureCard : MonoBehaviour
         if (notEnoughWorkersText != null)
             notEnoughWorkersText.gameObject.SetActive(false);
 
-        // Fetch owned count globally from BuildingManager
+        // Fetch owned count globally from BuildingManager using the ScriptableObject reference
         if (ownedText != null && data != null)
         {
             int ownedCount = 0;
             if (GameManager.Instance != null && GameManager.Instance.BuildingManager != null)
             {
-                ownedCount = GameManager.Instance.BuildingManager.GetOwnedCount(data.StructureTitle);
+                ownedCount = GameManager.Instance.BuildingManager.GetOwnedCount(data);
             }
             ownedText.text = $"Owned: {ownedCount}";
         }
