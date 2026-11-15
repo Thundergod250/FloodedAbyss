@@ -40,23 +40,22 @@ public class ResourceManager : MonoBehaviour
 
     public void AddResource(ResourceDataSO dataSo, int amount)
     {
+        if (dataSo == null || amount <= 0)
+            return;
+
         if (resourceInventory.ContainsKey(dataSo))
         {
-            resourceInventory[dataSo] += amount;
+            resourceInventory[dataSo] = Mathf.Min(resourceInventory[dataSo] + amount, maxResourceAmount);
         }
         else
         {
-            resourceInventory.Add(dataSo, amount);
+            resourceInventory.Add(dataSo,Mathf.Min(amount, maxResourceAmount));
         }
 
-        resourceInventory[dataSo] = Mathf.Min(resourceInventory[dataSo] + amount,maxResourceAmount);
-
         Debug.Log($"[ResourceManager] Added {amount} of {dataSo.ResourceName}. Total: {resourceInventory[dataSo]}");
-        
-        // Notify HUD and any listeners
+
         OnResourceUpdated?.Invoke(dataSo, resourceInventory[dataSo]);
 
-        // NEW: Notify the objective system of resources gathered.
         if (ObjectiveManager.Instance != null)
         {
             ObjectiveManager.Instance.NotifyResourceGathered(dataSo, amount);

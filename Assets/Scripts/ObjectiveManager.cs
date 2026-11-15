@@ -562,7 +562,7 @@ public class ObjectiveManager : MonoBehaviour
 
             EnsureObjectiveStates();
 
-            if (completedObjectiveCount >= 10 && !endGameSequenceStarted)
+            if (currentQuestIndex >= 10 && !endGameSequenceStarted)
             {
                 endGameSequenceStarted = true;
 
