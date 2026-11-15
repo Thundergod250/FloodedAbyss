@@ -453,7 +453,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuUI
   mainMenuSceneName: MainScene
   gameSceneName: MainScene
-  losePanel: {fileID: 790771493039601403}
+  losePanel: {fileID: 11755558825129364}
+  winPanel: {fileID: 9125204414439683042}
 --- !u!1001 &385735366890332532
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1274,6 +1275,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 587942571370284558, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7484418998779390639}
     - target: {fileID: 764586711321014993, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -1514,6 +1519,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 4e8a7b40d2bcbf04d9476c0e89b57527, type: 3}
+    - target: {fileID: 3049161515548588469, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7484418998779390639}
     - target: {fileID: 3063739458387482983, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 25
@@ -2055,6 +2064,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+--- !u!1 &11755558825129364 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2470855557464766028, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+  m_PrefabInstance: {fileID: 2478103047148192728}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &790771493039601403 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2925826744817923363, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
@@ -2198,6 +2212,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!1 &9125204414439683042 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6683553532191453242, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+  m_PrefabInstance: {fileID: 2478103047148192728}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3818972154078465917
 PrefabInstance:
   m_ObjectHideFlags: 0

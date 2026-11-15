@@ -120,6 +120,7 @@ public class WaterLevel : MonoBehaviour
         greatFloodDurationProgress = 0f;
 
         pressureIncreaseRate += greatFloodPressureIncrease;
+        GreatFloodCompleted = false;
 
         StartWaterRise(true);
 
@@ -152,6 +153,7 @@ public class WaterLevel : MonoBehaviour
         greatFloodStarted = false;
 
         pressureIncreaseRate -= greatFloodPressureIncrease;
+        GreatFloodCompleted = true;
 
         StartWaterRise(false); 
 
@@ -170,7 +172,8 @@ public class WaterLevel : MonoBehaviour
     public float TimeUntilGreatFlood => Mathf.Max(0f, (greatFloodTimerMins * 60f) - greatFloodTimerProgress);
     public float MaxTimeUntilGreatFlood => greatFloodTimerMins * 60;
     public bool GreatFloodStarted => greatFloodStarted;
-    public float GreatFloodTimeRemaining => Mathf.Max(0f, (greatFloodTimerDuration * 60f) - greatFloodDurationProgress);
+    public float GreatFloodTimeRemaining => Mathf.Max(0f, (greatFloodTimerDuration * 60f) - greatFloodDurationProgress); 
+    public bool GreatFloodCompleted { get; private set; } = false;
     // Water Pressure casts to an integer for your red HUD text so it displays whole numbers (1, 2, 3...) 
     // while the underlying float increments smoothly.
     public int WaterPressure => Mathf.FloorToInt(currentWaterPressureFloat);
