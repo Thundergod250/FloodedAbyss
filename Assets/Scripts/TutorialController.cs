@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,7 +21,7 @@ public class TutorialController : MonoBehaviour
     [SerializeField] private GameObject tutorialPanel_4;
     [SerializeField] private GameObject tutorialPanel_4point5;
     [SerializeField] private GameObject tutorialPanel_5;
-    [SerializeField] private GameObject tutorialPanel_6;
+    // tutorialPanel_6 is intentionally kept for inspector compatibility but never shown.
     [SerializeField] private GameObject tutorialPanel_6point5;
     [SerializeField] private GameObject tutorialPanel_7;
     [SerializeField] private GameObject tutorialPanel_8;
@@ -55,14 +55,11 @@ public class TutorialController : MonoBehaviour
     private bool pumpUIHooked;
     private bool clickedResource, clickedAmount, clickedActivate;
 
-    // Objective 3
-    private enum Obj3State { Inactive, ShowArrows, ShowBuildClick, ShowHouseArrow, ShowRecruitClick, Complete }
+    // Objective 3 — house build → auto-complete
+    private enum Obj3State { Inactive, ShowArrows, ShowBuildClick, Complete }
     private Obj3State obj3State = Obj3State.Inactive;
     private GameObject tutorialArrows;
-    private StructureWorkersHouse builtHouse;
     private int housesAtTutorialStart;
-    private bool clickedRecruitWorker;
-    private bool activateButtonHooked;
 
     // Panel progression
     private int resourcesCollectedCount;
@@ -89,7 +86,7 @@ public class TutorialController : MonoBehaviour
     {
         tutorialPanels = new[] {
             tutorialPanel_1, tutorialPanel_2, tutorialPanel_3, tutorialPanel_4,
-            tutorialPanel_5, tutorialPanel_6, tutorialPanel_7
+            tutorialPanel_5, tutorialPanel_7
         };
     }
 
@@ -133,8 +130,6 @@ public class TutorialController : MonoBehaviour
 
         var quest = ObjectiveManager.Instance.CurrentQuest;
 
-        // Preserve the existing null-quest behavior, but still detect Objective 6
-        // completing when it is the final quest and CurrentQuest becomes null.
         if (quest == null && previousQuest != objective6) return;
 
         if (quest != previousQuest)
@@ -219,7 +214,6 @@ public class TutorialController : MonoBehaviour
     {
         if (pumpCollider != null) pumpCollider.enabled = true;
         ShowPanel(tutorialPanel_4);
-
     }
 
     private void OnObjective2Complete()
@@ -245,7 +239,6 @@ public class TutorialController : MonoBehaviour
 
     private IEnumerator ShowWaterInfraTutorial()
     {
-        // Re-find either object if it was not available during Start.
         if (tutorialPanel9 == null)
             tutorialPanel9 = FindFirst("TutorialPanel_9")?.gameObject;
         if (waterInfraArrow == null)
@@ -290,9 +283,6 @@ public class TutorialController : MonoBehaviour
 
     private IEnumerator ShowPanel65ThenPanel7()
     {
-        if (tutorialPanel_6 != null)
-            tutorialPanel_6.SetActive(false);
-
         if (tutorialPanel_6point5 != null)
             tutorialPanel_6point5.SetActive(true);
 
@@ -354,24 +344,7 @@ public class TutorialController : MonoBehaviour
                 var houses = FindObjectsByType<StructureWorkersHouse>(FindObjectsInactive.Exclude);
                 if (houses.Length > housesAtTutorialStart)
                 {
-                    builtHouse = houses[houses.Length - 1];
-                    obj3State = Obj3State.ShowHouseArrow;
-                    ShowPanel(tutorialPanel_6);
-                }
-                break;
-
-            case Obj3State.ShowHouseArrow:
-                if (IsHousePanelOpen())
-                {
-                    //if (tutorialPanel_6 != null) tutorialPanel_6.SetActive(false);
-                    obj3State = Obj3State.ShowRecruitClick;
-                }
-                break;
-
-            case Obj3State.ShowRecruitClick:
-                HookActivateButton();
-                if (clickedRecruitWorker && GameManager.Instance.WorkerManager.CurrentWorker > 1)
-                {
+                    // House auto-recruits a worker on build now — skip straight to the finale.
                     obj3State = Obj3State.Complete;
 
                     if (panel65DismissRoutine != null)
@@ -389,8 +362,6 @@ public class TutorialController : MonoBehaviour
     {
         bool showArrows = obj3State == Obj3State.ShowArrows;
         bool showBuildClick = obj3State == Obj3State.ShowBuildClick;
-        bool showHouseArrow = obj3State == Obj3State.ShowHouseArrow;
-        bool showRecruitClick = obj3State == Obj3State.ShowRecruitClick;
 
         if (tutorialArrows == null) tutorialArrows = FindFirst("TutorialArrows")?.gameObject;
         if (tutorialArrows != null && tutorialArrows.activeSelf != showArrows)
@@ -399,19 +370,6 @@ public class TutorialController : MonoBehaviour
         foreach (var g in FindAll("ClickBuildStructure"))
             if (g.gameObject.activeSelf != showBuildClick)
                 g.gameObject.SetActive(showBuildClick);
-
-        if (builtHouse != null)
-            foreach (var c in builtHouse.GetComponentsInChildren<Transform>(true))
-                if (c.name == "HouseArrow")
-                {
-                    if (c.gameObject.activeSelf != showHouseArrow)
-                        c.gameObject.SetActive(showHouseArrow);
-                    break;
-                }
-
-        foreach (var g in FindAll("ClickRecruitWorker"))
-            if (g.gameObject.activeSelf != showRecruitClick)
-                g.gameObject.SetActive(showRecruitClick);
     }
 
     // -------- Objectives 1 & 2 arrows --------
@@ -502,43 +460,6 @@ public class TutorialController : MonoBehaviour
     {
         foreach (var p in tutorialPanels)
             if (p != null && p.activeSelf) p.SetActive(false);
-    }
-
-    private bool IsHousePanelOpen()
-    {
-        if (builtHouse == null) return false;
-        var houseUI = GameManager.Instance?.uiController?.UiWorkersHouse;
-        if (houseUI == null) return false;
-        if (houseUI.IsShowingHouse(builtHouse)) return true;
-
-        var modal = houseUI.transform.Find("Workers House");
-        return modal != null && modal.gameObject.activeInHierarchy;
-    }
-
-    private void HookActivateButton()
-    {
-        if (activateButtonHooked) return;
-        var houseUI = GameManager.Instance?.uiController?.UiWorkersHouse;
-        if (houseUI == null) return;
-
-        Transform modal = null;
-        foreach (var t in houseUI.GetComponentsInChildren<Transform>(true))
-            if (t.name == "Workers House") { modal = t; break; }
-        if (modal == null) return;
-
-        foreach (var btn in modal.GetComponentsInChildren<Button>(true))
-        {
-            if (btn.name != "Activate Button") continue;
-
-            var trigger = btn.gameObject.GetComponent<EventTrigger>();
-            if (trigger == null) trigger = btn.gameObject.AddComponent<EventTrigger>();
-            var entry = new EventTrigger.Entry { eventID = EventTriggerType.PointerClick };
-            entry.callback.AddListener(_ => clickedRecruitWorker = true);
-            trigger.triggers.Add(entry);
-
-            activateButtonHooked = true;
-            return;
-        }
     }
 
     private Transform FindFirst(string name)
