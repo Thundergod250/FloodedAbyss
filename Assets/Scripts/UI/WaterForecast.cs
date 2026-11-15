@@ -97,21 +97,36 @@ public class WaterForecast : MonoBehaviour
     private void BuildInitialBacklog()
     {
         weatherBacklog.Clear();
-        if (weatherDatabase.Count == 0) return;
 
-        // 1. Always force the very first weather event to be Sunny
-        WeatherDefinition? sunnyDef = GetSunnyDefinition();
-        if (sunnyDef.HasValue)
-            weatherBacklog.Add(sunnyDef.Value);
-        else
+        WeatherType[] initialWeatherOrder =
         {
-            Debug.LogWarning("[WaterForecast] 'Sunny' weather type not found in database! Using database entry 0 as fallback.");
-            weatherBacklog.Add(weatherDatabase[0]);
+        WeatherType.Sunny,
+        WeatherType.Drizzle,
+        WeatherType.Stormy,
+        WeatherType.Typhoon
+    };
+
+        foreach (WeatherType weatherType in initialWeatherOrder)
+        {
+            WeatherDefinition? definition = GetWeatherDefinition(weatherType);
+
+            if (definition.HasValue)
+            {
+                weatherBacklog.Add(definition.Value);
+            }
+            else
+            {
+                Debug.LogWarning(
+                    $"[WaterForecast] {weatherType} not found in weather database!"
+                );
+            }
         }
 
-        // 2. Fill the remaining slots of the initial count with randomized weather
-        for (int i = 1; i < initialBacklogCount; i++) 
+        // Fill any remaining backlog slots randomly.
+        while (weatherBacklog.Count < initialBacklogCount)
+        {
             AddRandomWeatherToBacklog();
+        }
     }
 
     private WeatherDefinition? GetSunnyDefinition()
@@ -318,6 +333,17 @@ public class WaterForecast : MonoBehaviour
         return GameManager.Instance.ApexPump.ActiveSwitchCount;
     }
 
+    private WeatherDefinition? GetWeatherDefinition(WeatherType type)
+    {
+        foreach (var def in weatherDatabase)
+        {
+            if (def.Type == type)
+                return def;
+        }
+
+        return null;
+    }
+
     #region Start and Stop Weather
     public void StartWeather()
     {
@@ -371,6 +397,4 @@ public class WaterForecast : MonoBehaviour
     public float DrizzleVal => drizzlVal;
     public float StormyVal => stormyVal;
     public float TyphoonVal => typhoonVal;
-
-
 }
