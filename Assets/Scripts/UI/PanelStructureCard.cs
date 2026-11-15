@@ -9,7 +9,8 @@ public class PanelStructureCard : MonoBehaviour
     [SerializeField] private Image structureImage;
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI infoText;
-    [SerializeField] private TextMeshProUGUI notEnoughWorkersText; // Red warning text (now handles all shortages)
+    [SerializeField] private TextMeshProUGUI notEnoughWorkersText; // Red warning text
+    [SerializeField] private TextMeshProUGUI ownedText;            // Owned count text
     [SerializeField] private float warningDisplayDuration = 2f;    // Editable duration
     [SerializeField] private Transform costContainer; // Container holding the ResourcePair prefabs for costs
     [SerializeField] private Button cardButton;
@@ -20,7 +21,6 @@ public class PanelStructureCard : MonoBehaviour
 
     private void OnEnable()
     {
-        // Ensure the warning text is disabled at start / when enabled
         if (notEnoughWorkersText != null)
             notEnoughWorkersText.gameObject.SetActive(false);
     }
@@ -42,6 +42,17 @@ public class PanelStructureCard : MonoBehaviour
         if (notEnoughWorkersText != null)
             notEnoughWorkersText.gameObject.SetActive(false);
 
+        // Fetch owned count globally from BuildingManager
+        if (ownedText != null && data != null)
+        {
+            int ownedCount = 0;
+            if (GameManager.Instance != null && GameManager.Instance.BuildingManager != null)
+            {
+                ownedCount = GameManager.Instance.BuildingManager.GetOwnedCount(data.StructureTitle);
+            }
+            ownedText.text = $"Owned: {ownedCount}";
+        }
+
         if (cardButton != null)
         {
             cardButton.onClick.RemoveAllListeners();
@@ -62,7 +73,6 @@ public class PanelStructureCard : MonoBehaviour
 
     private IEnumerator FlashWarningRoutine(string message)
     {
-        // Hide both Title and Info text, show compiled multi-line warning
         if (titleText != null) titleText.gameObject.SetActive(false);
         if (infoText != null) infoText.gameObject.SetActive(false);
         
@@ -71,7 +81,6 @@ public class PanelStructureCard : MonoBehaviour
 
         yield return new WaitForSeconds(warningDisplayDuration);
 
-        // Revert both back
         notEnoughWorkersText.gameObject.SetActive(false);
         if (titleText != null) titleText.gameObject.SetActive(true);
         if (infoText != null) infoText.gameObject.SetActive(true);
