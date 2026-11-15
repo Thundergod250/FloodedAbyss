@@ -5,41 +5,44 @@ public class StructureWorkersHouse : Structures
 {
     [Header("House Info")]
     [SerializeField] private string structureTitle = "Worker's House";
-    [SerializeField] private float actionDuration = 3f;
     [SerializeField] private float destructionDuration = 3f;
 
-    [Header("Recruitment Costs (When no homeless workers)")]
-    [SerializeField] private ResourceDataSO recruitmentCostResource;
-    [SerializeField] private int recruitmentCostAmount = 5;
-
     [Header("Debug Status")]
-    [SerializeField] private bool isOccupied = false;
-    [SerializeField] private bool isWorking = false;
     [SerializeField] private bool isDestroying = false;
-    [SerializeField] private bool isReservedForHousing = false;
     [SerializeField, Range(0f, 1f)] private float progressPercentage = 0f;
 
-    [Header("Housing Capacity")]
-    [SerializeField] private int housingCapacity = 2;
+    [Header("Housing Capacity & Local Workers")]
+    [SerializeField] private int housingCapacity = 1;
+    [SerializeField] private int currentWorkers = 1; // Starts with 1 worker upon build
 
     public int HousingCapacity => housingCapacity;
-    private Coroutine actionRoutine;
+    public int CurrentWorkers => currentWorkers;
+    
     private Coroutine destroyRoutine;
+    private bool isRegisteredWithManager = false;
+
     private void OnEnable()
     {
-        if (GameManager.Instance != null &&
-            GameManager.Instance.WorkerManager != null)
+        if (GameManager.Instance != null && GameManager.Instance.WorkerManager != null && !isRegisteredWithManager)
         {
             GameManager.Instance.WorkerManager.RegisterWorkerHouse(this);
+            // Report initial building creation and workers to WorkerManager
+            GameManager.Instance.WorkerManager.RegisterHouse(housingCapacity, currentWorkers);
+            isRegisteredWithManager = true;
         }
     }
 
     private void OnDisable()
     {
-        if (GameManager.Instance != null &&
-            GameManager.Instance.WorkerManager != null)
+        UnregisterFromManager();
+    }
+
+    private void UnregisterFromManager()
+    {
+        if (isRegisteredWithManager && GameManager.Instance != null && GameManager.Instance.WorkerManager != null)
         {
             GameManager.Instance.WorkerManager.UnregisterWorkerHouse(this);
+            isRegisteredWithManager = false;
         }
     }
 
@@ -55,144 +58,32 @@ public class StructureWorkersHouse : Structures
 
     protected override void HandleSubmergedShutdown()
     {
-        if (isWorking) StopAction();
-
         var houseUI = GameManager.Instance.uiController.UiWorkersHouse;
         if (houseUI != null && houseUI.IsShowingHouse(this))
         {
             GameManager.Instance.uiController.CloseAllModals();
         }
 
-        // House gets destroyed by flood
         ExecuteFinalDestruction();
     }
 
-    public void ToggleHouseAction()
+    public void AddWorkerCapacity(int amount = 1)
     {
-        if (isOccupied || isDestroying || isSubmerged) return;
-        if (isWorking) StopAction();
-        else TryStartAction();
-    }
+        housingCapacity += amount;
+        currentWorkers += amount; // Instant +1 worker on upgrade
 
-    private void TryStartAction()
-    {
-        if (isWorking || isOccupied || isSubmerged) return;
-
-        var workerMgr = GameManager.Instance.WorkerManager;
-        if (workerMgr == null) return;
-
-        if (recruitmentCostResource != null)
+        if (GameManager.Instance != null && GameManager.Instance.WorkerManager != null)
         {
-            var resourceMgr = GameManager.Instance.ResourceManager;
-            if (resourceMgr != null)
-            {
-                if (resourceMgr.GetResourceAmount(recruitmentCostResource) < recruitmentCostAmount)
-                {
-                    Debug.Log("[StructureWorkersHouse] Not enough resources to recruit worker!");
-                    return;
-                }
-
-                resourceMgr.ConsumeResource(recruitmentCostResource, recruitmentCostAmount);
-            }
-        }
-        actionRoutine = StartCoroutine(ActionRoutine(false));
-
-        /*bool housingMode = workerMgr.HomelessWorker > 0;
-
-        if (housingMode)
-        {
-            if (!workerMgr.TryHouseWorker())
-            {
-                Debug.Log("[StructureWorkersHouse] No homeless workers available to house!");
-                return;
-            }
-            isReservedForHousing = true;
-        }
-        else
-        {
-            
-        }*/
-
-    }
-
-    private void StopAction()
-    {
-        if (!isWorking) return;
-
-        if (actionRoutine != null)
-        {
-            StopCoroutine(actionRoutine);
-            actionRoutine = null;
-        }
-
-        var workerMgr = GameManager.Instance.WorkerManager;
-        if (workerMgr != null)
-        {
-            if (isReservedForHousing)
-            {
-                workerMgr.CancelHouseReservation();
-                isReservedForHousing = false;
-            }
-            else if (recruitmentCostResource != null)
-            {
-                GameManager.Instance.ResourceManager.AddResource(recruitmentCostResource, recruitmentCostAmount);
-            }
-        }
-
-        isWorking = false;
-        progressPercentage = 0f;
-    }
-
-    private IEnumerator ActionRoutine(bool housingMode)
-    {
-        isWorking = true;
-        progressPercentage = 0f;
-        float elapsed = 0f;
-
-        while (elapsed < actionDuration)
-        {
-            if (isDestroying || isSubmerged) yield break;
-            elapsed += Time.deltaTime;
-            progressPercentage = Mathf.Clamp01(elapsed / actionDuration);
-            yield return null;
-        }
-
-        progressPercentage = 1f;
-        ExecuteCompletion(housingMode);
-    }
-
-    private void ExecuteCompletion(bool housingMode)
-    {
-        var workerMgr = GameManager.Instance.WorkerManager;
-        if (workerMgr != null)
-        {
-            if (!housingMode)
-            {
-                workerMgr.RecruitNewWorker(this);
-            }
-        }
-
-        isOccupied = true;
-        isWorking = false;
-        isReservedForHousing = false;
-
-        var houseUI = GameManager.Instance.uiController.UiWorkersHouse;
-        if (houseUI != null && houseUI.IsShowingHouse(this))
-        {
-            houseUI.CompleteProgress();
+            GameManager.Instance.WorkerManager.UpdateHouseCapacityAndWorkers(amount, amount);
         }
     }
 
     public void RemoveWorkerDueToDeath()
     {
-        if (!isOccupied) return;
-
-        isOccupied = false;
-    }
-
-    public void SetHousingCapacity(int amount)
-    {
-        housingCapacity = Mathf.Max(1, amount);
+        if (currentWorkers > 0)
+        {
+            currentWorkers--;
+        }
     }
 
     public void ToggleDestroying()
@@ -204,7 +95,6 @@ public class StructureWorkersHouse : Structures
     private void StartDestroying()
     {
         if (isDestroying || isSubmerged) return;
-        if (isWorking) StopAction();
 
         isDestroying = true;
         progressPercentage = 0f;
@@ -240,14 +130,12 @@ public class StructureWorkersHouse : Structures
 
     private void ExecuteFinalDestruction()
     {
-        var workerMgr = GameManager.Instance.WorkerManager;
-        if (workerMgr != null)
+        // When house is destroyed, all workers inside die and get reduced in WorkerManager
+        if (GameManager.Instance != null && GameManager.Instance.WorkerManager != null && isRegisteredWithManager)
         {
-            if (isOccupied || isReservedForHousing)
-            {
-                workerMgr.FreeHouse(housingCapacity);
-            }
+            GameManager.Instance.WorkerManager.UnregisterHouse(housingCapacity, currentWorkers);
         }
+        UnregisterFromManager();
 
         var houseUI = GameManager.Instance.uiController.UiWorkersHouse;
         if (houseUI != null && houseUI.IsShowingHouse(this))
@@ -256,17 +144,12 @@ public class StructureWorkersHouse : Structures
             GameManager.Instance.uiController.CloseAllModals();
         }
 
-        // Spawns Debris, re-enables terminal, destroys self
         Destroyed();
     }
 
-    public bool IsOccupied => isOccupied;
-    public bool IsWorking => isWorking;
+    public bool IsOccupied => currentWorkers > 0;
     public bool IsDestroying => isDestroying;
-    public bool IsReservedForHousing => isReservedForHousing;
     public float ProgressPercentage => progressPercentage;
     public string StructureTitle => structureTitle;
-    public ResourceDataSO RecruitmentCostResource => recruitmentCostResource;
-    public int RecruitmentCostAmount => recruitmentCostAmount;
-    public string ProgressDescription => isDestroying ? "Destroying House..." : (isReservedForHousing ? "Housing Worker..." : "Recruiting Worker...");
+    public string ProgressDescription => isDestroying ? "Destroying House..." : "";
 }

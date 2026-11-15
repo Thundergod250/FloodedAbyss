@@ -8,26 +8,22 @@ public class UiWorkersHouse : UiModals
 {
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI titleText;
-    [SerializeField] private Button actionButton;
-    [SerializeField] private TextMeshProUGUI actionButtonText;
-    [SerializeField] private TextMeshProUGUI actionMissingResourceText; // Red warning text for action button
-    [SerializeField] private GameObject resourceRequirementContainer; // The orange container panel
-    [SerializeField] private Transform resourceCostParent;            // Parent container inside the orange box where PanelResourcePair is spawned
-    [SerializeField] private GameObject resourcePairPrefab;           // PanelResourcePair prefab reference
+    [SerializeField] private TextMeshProUGUI workersNumbersTxt;   // Maps to "Workers Numbers Txt" (displays 1 / 3)
 
     [Header("Upgrade References")]
-    [SerializeField] private Button upgradeButton;
+    [SerializeField] private Button upgradeButton;                 // Maps to "Upgrade House Button"
     [SerializeField] private TextMeshProUGUI upgradeButtonText;
     [SerializeField] private TextMeshProUGUI upgradeMissingResourceText; // Red warning text for upgrade button
     [SerializeField] private GameObject upgradeRequirementContainer;
     [SerializeField] private Transform upgradeCostParent;
+    [SerializeField] private GameObject resourcePairPrefab;           // PanelResourcePair prefab reference
 
     [Header("Destroy Button References")]
-    [SerializeField] private Button destroyButton;
+    [SerializeField] private Button destroyButton;                 // Maps to "Destroy Structure Button"
     [SerializeField] private TextMeshProUGUI destroyButtonText;
 
     [Header("Progress Bar References")]
-    [SerializeField] private GameObject productionBarContainer;
+    [SerializeField] private GameObject productionBarContainer;    // Maps to "Production Bar"
     [SerializeField] private Image fillImage;
     [SerializeField] private TextMeshProUGUI progressDescriptionText;
 
@@ -35,18 +31,11 @@ public class UiWorkersHouse : UiModals
     [SerializeField] private float warningDisplayDuration = 2f;
 
     private StructureWorkersHouse currentHouse;
-    private Coroutine actionWarningRoutine;
     private Coroutine upgradeWarningRoutine;
 
     protected override void Initialize()
     {
         base.Initialize();
-
-        if (actionButton != null)
-        {
-            actionButton.onClick.RemoveAllListeners();
-            actionButton.onClick.AddListener(OnActionClicked);
-        }
 
         if (destroyButton != null)
         {
@@ -66,9 +55,6 @@ public class UiWorkersHouse : UiModals
         if (resourcePairPrefab != null)
             resourcePairPrefab.SetActive(false);
 
-        if (actionMissingResourceText != null)
-            actionMissingResourceText.gameObject.SetActive(false);
-
         if (upgradeMissingResourceText != null)
             upgradeMissingResourceText.gameObject.SetActive(false);
     }
@@ -84,7 +70,7 @@ public class UiWorkersHouse : UiModals
                 return;
             }
 
-            bool showBar = currentHouse.IsWorking || currentHouse.IsDestroying;
+            bool showBar = currentHouse.IsDestroying;
             if (productionBarContainer != null && productionBarContainer.activeSelf != showBar) 
                 productionBarContainer.SetActive(showBar);
 
@@ -94,7 +80,8 @@ public class UiWorkersHouse : UiModals
             if (progressDescriptionText != null) 
                 progressDescriptionText.text = currentHouse.ProgressDescription;
 
-            UpdateActionButtonVisuals();
+            UpdateWorkersStatusDisplay();
+            UpdateUpgradeCostsVisuals();
             UpdateDestroyButtonVisuals();
         }
     }
@@ -104,63 +91,22 @@ public class UiWorkersHouse : UiModals
         currentHouse = house;
         if (titleText != null) titleText.text = house.StructureTitle;
 
-        if (actionMissingResourceText != null) actionMissingResourceText.gameObject.SetActive(false);
-        if (upgradeMissingResourceText != null) upgradeMissingResourceText.gameObject.SetActive(false);
+        if (upgradeMissingResourceText != null)
+            upgradeMissingResourceText.gameObject.SetActive(false);
 
-        BuildResourceCosts();
+        UpdateWorkersStatusDisplay();
         UpdateUpgradeCostsVisuals();
-        UpdateActionButtonVisuals();
         UpdateDestroyButtonVisuals();
     }
 
-    private void BuildResourceCosts()
+    private void UpdateWorkersStatusDisplay()
     {
-        if (resourceCostParent == null || resourcePairPrefab == null || currentHouse == null) return;
-
-        foreach (Transform child in resourceCostParent)
-        {
-            if (child.gameObject != resourcePairPrefab) 
-                Destroy(child.gameObject);
-        }
-
-        if (currentHouse.RecruitmentCostResource != null)
-        {
-            GameObject costGO = Instantiate(resourcePairPrefab, resourceCostParent);
-            costGO.SetActive(true);
-
-            PanelResourcePair panel = costGO.GetComponent<PanelResourcePair>();
-            if (panel != null) 
-                panel.Setup(currentHouse.RecruitmentCostResource, currentHouse.RecruitmentCostAmount);
-        }
+        // "Current Workers Text" is left alone as static UI. We only update the numbers:
+        if (workersNumbersTxt != null && currentHouse != null) 
+            workersNumbersTxt.text = $"{currentHouse.CurrentWorkers} / 3";
     }
 
     public bool IsShowingHouse(StructureWorkersHouse house) => IsOpen && currentHouse == house;
-
-    private void UpdateActionButtonVisuals()
-    {
-        if (actionButton != null && currentHouse != null)
-        {
-            bool isHousingAction = currentHouse.IsReservedForHousing;
-
-            if (resourceRequirementContainer != null) 
-                resourceRequirementContainer.SetActive(!isHousingAction && !currentHouse.IsOccupied);
-
-            actionButton.gameObject.SetActive(true);
-            actionButton.interactable = !currentHouse.IsOccupied && !currentHouse.IsDestroying;
-
-            if (actionButtonText != null)
-            {
-                if (currentHouse.IsOccupied)
-                    actionButtonText.text = "Occupied";
-                else
-                {
-                    actionButtonText.text = currentHouse.IsWorking 
-                        ? (isHousingAction ? "Stop Housing" : "Stop Recruiting") 
-                        : (isHousingAction ? "House Worker" : "Recruit Worker");
-                }
-            }
-        }
-    }
 
     private void UpdateDestroyButtonVisuals()
     {
@@ -273,77 +219,15 @@ public class UiWorkersHouse : UiModals
         bool upgraded = upgrade.TryUpgradeHouse();
         if (!upgraded) return;
 
+        // Instantly add +1 worker / capacity upon successful upgrade
+        currentHouse.AddWorkerCapacity(1);
+
         if (titleText != null)
             titleText.text = currentHouse.StructureTitle;
 
-        BuildResourceCosts();
+        UpdateWorkersStatusDisplay();
         UpdateUpgradeCostsVisuals();
-        UpdateActionButtonVisuals();
         UpdateDestroyButtonVisuals();
-    }
-
-    private void OnActionClicked()
-    {
-        if (currentHouse != null)
-        {
-            // If already working, clicking toggles/stops it successfully without needing checks
-            if (currentHouse.IsWorking)
-            {
-                currentHouse.ToggleHouseAction();
-                return;
-            }
-
-            // If trying to start, check if requirements are met
-            List<string> missingList = new List<string>();
-
-            // Check recruitment resource cost if applicable
-            if (!currentHouse.IsReservedForHousing && currentHouse.RecruitmentCostResource != null)
-            {
-                var resourceManager = GameManager.Instance.ResourceManager;
-                if (resourceManager != null)
-                {
-                    int hasAmount = resourceManager.GetResourceAmount(currentHouse.RecruitmentCostResource);
-                    if (hasAmount < currentHouse.RecruitmentCostAmount)
-                    {
-                        int needed = currentHouse.RecruitmentCostAmount - hasAmount;
-                        missingList.Add($"Needs {needed} {currentHouse.RecruitmentCostResource.ResourceName}");
-                    }
-                }
-            }
-
-            if (missingList.Count > 0)
-            {
-                string message = string.Join("\n", missingList);
-                ShowActionWarning(message);
-                return;
-            }
-
-            currentHouse.ToggleHouseAction();
-        }
-    }
-
-    private void ShowActionWarning(string message)
-    {
-        if (actionMissingResourceText != null)
-        {
-            if (actionWarningRoutine != null) StopCoroutine(actionWarningRoutine);
-            actionWarningRoutine = StartCoroutine(FlashActionWarningRoutine(message));
-        }
-    }
-
-    private IEnumerator FlashActionWarningRoutine(string message)
-    {
-        if (actionButtonText != null) actionButtonText.gameObject.SetActive(false);
-        if (resourceRequirementContainer != null) resourceRequirementContainer.SetActive(false);
-
-        actionMissingResourceText.gameObject.SetActive(true);
-        actionMissingResourceText.text = message;
-
-        yield return new WaitForSeconds(warningDisplayDuration);
-
-        actionMissingResourceText.gameObject.SetActive(false);
-        if (actionButtonText != null) actionButtonText.gameObject.SetActive(true);
-        UpdateActionButtonVisuals(); // restores container correctly based on state
     }
 
     private void ShowUpgradeWarning(string message)
@@ -378,6 +262,7 @@ public class UiWorkersHouse : UiModals
 
     public void CompleteProgress()
     {
-        if (productionBarContainer != null) productionBarContainer.SetActive(false);
+        if (productionBarContainer != null) 
+            productionBarContainer.SetActive(false);
     }
 }
