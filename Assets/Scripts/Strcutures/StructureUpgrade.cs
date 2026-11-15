@@ -1,18 +1,15 @@
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class StructureUpgrade : MonoBehaviour
 {
     [Header("Upgrade Info")]
-    [SerializeField] private List<StructureDataSO> houseLevels = new List<StructureDataSO>();
+    [SerializeField] private List<StructureDataSO> houseLevels = new();
     [SerializeField, Range(1, 3)] private int houseLevelVal = 1;
 
     private StructureBuildable owningTerminal;
 
-    public void SetOwningTerminal(StructureBuildable terminal)
-    {
-        owningTerminal = terminal;
-    }
+    public void SetOwningTerminal(StructureBuildable terminal) => owningTerminal = terminal;
 
     public bool TryUpgradeHouse()
     {
@@ -45,6 +42,7 @@ public class StructureUpgrade : MonoBehaviour
         if (resourceMgr == null)
             return false;
 
+        // 1. Check if player has enough resources
         foreach (ResourceCostEntry cost in upgradeData.Costs)
         {
             if (cost.resourceDataSo == null || cost.amount < 0)
@@ -60,6 +58,18 @@ public class StructureUpgrade : MonoBehaviour
             }
         }
 
+        // 2. Consume resources first
+        foreach (ResourceCostEntry cost in upgradeData.Costs)
+        {
+            if (cost.amount > 0 &&
+                !resourceMgr.ConsumeResource(cost.resourceDataSo, cost.amount))
+            {
+                Debug.LogError("[StructureUpgrade] Failed to consume upgrade costs!", this);
+                return false;
+            }
+        }
+
+        // 3. Instantiate the upgraded prefab
         Vector3 spawnPosition = transform.position;
         Quaternion spawnRotation = transform.rotation;
         Transform oldParent = transform.parent;
@@ -97,37 +107,19 @@ public class StructureUpgrade : MonoBehaviour
             upgradedUpgrade.SetHouseLevel(houseLevelVal + 1);
         }
 
-        int capacityDifference = upgradedHouse.HousingCapacity - house.HousingCapacity;
-
-        GameManager.Instance.WorkerManager.AddHousingCapacity(capacityDifference);
-
-        foreach (ResourceCostEntry cost in upgradeData.Costs)
-        {
-            if (cost.amount > 0 &&
-                !resourceMgr.ConsumeResource(cost.resourceDataSo, cost.amount))
-            {
-                Debug.LogError("[StructureUpgrade] Failed to consume upgrade costs!", this);
-                Destroy(upgradedObject);
-                return false;
-            }
-        }
-
+        // 4. Update UI modal focus if it was open for this house
         UiWorkersHouse houseUI = GameManager.Instance.uiController.UiWorkersHouse;
 
-        if (houseUI != null && houseUI.IsShowingHouse(house))
-        {
+        if (houseUI != null && houseUI.IsShowingHouse(house)) 
             houseUI.Setup(upgradedHouse);
-        }
 
+        // 5. Destroy the old building object (its OnDisable unregisters it cleanly)
         Destroy(gameObject);
-
         return true;
     }
 
-    public void SetHouseLevel(int level)
-    {
+    public void SetHouseLevel(int level) => 
         houseLevelVal = level;
-    }
 
     public int HouseLevelVal => houseLevelVal;
     public List<StructureDataSO> HouseLevels => houseLevels;
