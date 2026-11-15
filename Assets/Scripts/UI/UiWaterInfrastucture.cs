@@ -13,9 +13,6 @@ public class UiWaterInfrastucture : UiModals
     [SerializeField] private Button activateButton;
     [SerializeField] private TextMeshProUGUI activateButtonText;
 
-    [SerializeField] private Button emptyStorageButton;
-    [SerializeField] private TextMeshProUGUI emptyStorageButtonText;
-
     [SerializeField] private Button destroyStructureButton;
 
     private StructureWaterInfrastructure waterInfrastructure;
@@ -27,19 +24,11 @@ public class UiWaterInfrastucture : UiModals
         if (activateButtonText == null && activateButton != null)
             activateButtonText = activateButton.GetComponentInChildren<TextMeshProUGUI>();
 
-        if (emptyStorageButtonText == null && emptyStorageButton != null)
-            emptyStorageButtonText = emptyStorageButton.GetComponentInChildren<TextMeshProUGUI>();
 
         if (activateButton != null)
         {
             activateButton.onClick.RemoveAllListeners();
             activateButton.onClick.AddListener(OnActivateClicked);
-        }
-
-        if (emptyStorageButton != null)
-        {
-            emptyStorageButton.onClick.RemoveAllListeners();
-            emptyStorageButton.onClick.AddListener(OnEmptyStorageClicked);
         }
 
         if (destroyStructureButton != null)
@@ -95,45 +84,38 @@ public class UiWaterInfrastucture : UiModals
         if (waterInfrastructure == null)
             return;
 
+        bool isDestroying = waterInfrastructure.IsDestroying;
+        bool isActivated = waterInfrastructure.IsActivated;
+
         if (activateButtonText != null)
         {
-            activateButtonText.text = waterInfrastructure.IsActivated ? "Deactivate": "Activate";
-        }
-
-        if (emptyStorageButtonText != null)
-        {
-            emptyStorageButtonText.text = waterInfrastructure.IsWorking ? "Emptying...": "Empty Storage";
+            activateButtonText.text = isActivated ? "Activated" : "Activate";
         }
 
         if (activateButton != null)
-            activateButton.interactable = !waterInfrastructure.IsWorking;
-
-        if (emptyStorageButton != null)
-            emptyStorageButton.interactable = waterInfrastructure.CanEmptyStorage && !waterInfrastructure.IsWorking;
+        {
+            activateButton.interactable = !isActivated && !isDestroying;
+        }
 
         if (destroyStructureButton != null)
-            destroyStructureButton.interactable = !waterInfrastructure.IsDestroying;
-
-        if (emptyStorageButton != null)
         {
-            emptyStorageButton.gameObject.SetActive(waterInfrastructure.CanEmptyStorage);
-
-            emptyStorageButton.interactable = waterInfrastructure.CanEmptyStorage && !waterInfrastructure.IsWorking;
+            destroyStructureButton.interactable = !isDestroying;
         }
     }
 
     private void OnActivateClicked()
     {
-        waterInfrastructure?.ToggleActivation();
-    }
+        if (waterInfrastructure == null || waterInfrastructure.IsDestroying)
+            return;
 
-    private void OnEmptyStorageClicked()
-    {
-        waterInfrastructure?.StartWaterRemoval();
+        waterInfrastructure?.ToggleActivation();
     }
 
     private void OnDestroyStructureClicked()
     {
+        if (waterInfrastructure == null || waterInfrastructure.IsDestroying)
+            return;
+
         waterInfrastructure?.DestroyStructure();
     }
 }

@@ -36,7 +36,10 @@ public class StructureApexPump : Structures
 
     [Header("Discharge Pressure Upgrades")]
     [SerializeField] private PumpUpgradeData[] upgradeLevels; // Configurable upgrade tiers (up to 5 levels)
-    [SerializeField] private float defaultDrainagePowerPerSwitch = 50f; 
+    [SerializeField] private float defaultDrainagePowerPerSwitch = 50f;
+
+    [Header("Great Flood Fuel Settings")]
+    [SerializeField] private float greatFloodFuelMultiplier = 2f;
 
     [Header("Debug Status")]
     [SerializeField] private int currentFuel = 0;
@@ -208,7 +211,7 @@ public class StructureApexPump : Structures
                         continue;
                     }
 
-                    totalFuelCost += GetSwitchCost(i);
+                    totalFuelCost += GetAdjustedFuelCost(i);
                     activeSwitchCount++;
                 }
             }
@@ -277,6 +280,20 @@ public class StructureApexPump : Structures
             GameManager.Instance.WaterLevel.SetDischargePower(0f);
     }
 
+    private int GetAdjustedFuelCost(int switchIndex)
+    {
+        int baseCost = GetSwitchCost(switchIndex);
+
+        if (GameManager.Instance != null &&
+            GameManager.Instance.WaterLevel != null &&
+            GameManager.Instance.WaterLevel.GreatFloodStarted)
+        {
+            return Mathf.CeilToInt(baseCost * greatFloodFuelMultiplier);
+        }
+
+        return baseCost;
+    }
+
     public PumpUpgradeData GetNextUpgradeData()
     {
         if (upgradeLevels != null && currentUpgradeLevel < upgradeLevels.Length)
@@ -292,7 +309,7 @@ public class StructureApexPump : Structures
             for (int i = 0; i < switchStates.Length; i++)
             {
                 if (switchStates[i]) 
-                    totalCostPerInterval += GetSwitchCost(i);
+                    totalCostPerInterval += GetAdjustedFuelCost(i);
             }
 
             if (totalCostPerInterval <= 0 || currentFuel <= 0 || consumptionInterval <= 0f)

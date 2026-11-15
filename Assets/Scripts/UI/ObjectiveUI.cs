@@ -13,8 +13,6 @@ public class ObjectiveUI : MonoBehaviour
     [SerializeField] private UIObjectiveChecklist checklistItemPrefab;
 
     private ObjectiveManager subscribedManager;
-    private bool floodStarted = false;
-    private float floodStartTime;
 
     private void OnEnable()
     {
@@ -35,40 +33,35 @@ public class ObjectiveUI : MonoBehaviour
             RefreshUI();
         }
 
-        if (GameManager.Instance == null ||
-            GameManager.Instance.WaterLevel == null ||
-            GreatFloodText == null)
+        if (GameManager.Instance == null || GameManager.Instance.WaterLevel == null || GreatFloodText == null)
             return;
 
         WaterLevel wl = GameManager.Instance.WaterLevel;
 
-        // Detect when the Great Flood starts.
-        if (!floodStarted && wl.TimeUntilGreatFlood <= 0f)
-        {
-            floodStarted = true;
-            floodStartTime = Time.time;
+        float remainingTime;
 
-            Debug.Log("[ObjectiveUI] The Great Flood has started!");
+        if (!wl.GreatFloodStarted)
+        {
+            // Phase 1: Before Great Flood
+            remainingTime = wl.TimeUntilGreatFlood;
         }
-
-        System.TimeSpan time;
-
-        if (!floodStarted)
+        else if (wl.GreatFloodStarted)
         {
-            // Phase 1: Countdown until the Great Flood.
-            time = System.TimeSpan.FromSeconds(
-                Mathf.Max(0, Mathf.CeilToInt(wl.TimeUntilGreatFlood))
-            );
+            // Phase 2: During Great Flood
+            remainingTime = wl.GreatFloodTimeRemaining;
         }
         else
         {
-            // Phase 2: Countdown during the Great Flood (3 minutes).
-            float remainingTime = GameManager.Instance.WaterLevel.GreatFloorTimerDuration - (Time.time - floodStartTime);
-
-            time = System.TimeSpan.FromSeconds(Mathf.Max(0, Mathf.CeilToInt(remainingTime)));
+            // Phase 3: Flood ended
+            remainingTime = 0f;
         }
 
-        GreatFloodText.text = $"{(int)time.TotalMinutes}:{time.Seconds:D2}";
+        int totalSeconds = Mathf.CeilToInt(Mathf.Max(0f, remainingTime));
+
+        int minutes = totalSeconds / 60;
+        int seconds = totalSeconds % 60;
+
+        GreatFloodText.text = $"{minutes}:{seconds:D2}";
     }
 
     private void TrySubscribe()
