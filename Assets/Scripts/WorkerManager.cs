@@ -49,6 +49,13 @@ public class WorkerManager : MonoBehaviour
             ResolveWorkerDeficit(remainingToKill);
         }
 
+        // SAFETY CHECK: Ensure we never drop below 1 total available worker when all housing is gone, 
+        // preventing any blockers or soft-locks.
+        if (TotalHousingCapacity <= 0 && CurrentWorker < 1)
+        {
+            CurrentWorker = 1;
+        }
+
         EvtOnWorkersChanged?.Invoke(CurrentWorker);
         if (housedWorkers > 0) 
             EvtOnWorkerReduced?.Invoke(CurrentWorker);
@@ -56,6 +63,7 @@ public class WorkerManager : MonoBehaviour
 
     private void ResolveWorkerDeficit(int deficit)
     {
+        // Shut down active workplaces until the worker deficit is cleared
         while (deficit > 0 && activeWorkplaces.Count > 0)
         {
             int randomIndex = Random.Range(0, activeWorkplaces.Count);
@@ -63,8 +71,9 @@ public class WorkerManager : MonoBehaviour
 
             if (workplace != null)
             {
+                // Subtract the labor cost of this workplace (e.g., 2 workers freed/lost)
                 deficit -= workplace.LaborCost;
-                workplace.ForceStopByWorkerShortage(); // Shuts down workplace and claims working workers as casualties
+                workplace.ForceStopByWorkerShortage(); // Shuts down workplace and forces workers to return/perish
                 activeWorkplaces.RemoveAt(randomIndex);
             }
             else
