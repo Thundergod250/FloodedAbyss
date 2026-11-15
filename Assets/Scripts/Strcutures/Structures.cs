@@ -68,7 +68,7 @@ public abstract class Structures : MonoBehaviour
     }
 
     // The centralized destruction function
-    public virtual void Destroyed()
+    public void Destroyed()
     {
         // 1. Re-enable the building terminal
         if (owningTerminal != null)

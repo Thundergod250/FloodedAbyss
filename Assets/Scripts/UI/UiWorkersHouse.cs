@@ -8,22 +8,22 @@ public class UiWorkersHouse : UiModals
 {
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI titleText;
-    [SerializeField] private TextMeshProUGUI workersNumbersTxt;   // Maps to "Workers Numbers Txt" (displays 1 / 3)
+    [SerializeField] private TextMeshProUGUI workersNumbersTxt;
 
     [Header("Upgrade References")]
-    [SerializeField] private Button upgradeButton;                 // Maps to "Upgrade House Button"
+    [SerializeField] private Button upgradeButton;
     [SerializeField] private TextMeshProUGUI upgradeButtonText;
-    [SerializeField] private TextMeshProUGUI upgradeMissingResourceText; // Red warning text for upgrade button
+    [SerializeField] private TextMeshProUGUI upgradeMissingResourceText;
     [SerializeField] private GameObject upgradeRequirementContainer;
     [SerializeField] private Transform upgradeCostParent;
-    [SerializeField] private GameObject resourcePairPrefab;           // PanelResourcePair prefab reference
+    [SerializeField] private GameObject resourcePairPrefab;
 
     [Header("Destroy Button References")]
-    [SerializeField] private Button destroyButton;                 // Maps to "Destroy Structure Button"
+    [SerializeField] private Button destroyButton;
     [SerializeField] private TextMeshProUGUI destroyButtonText;
 
     [Header("Progress Bar References")]
-    [SerializeField] private GameObject productionBarContainer;    // Maps to "Production Bar"
+    [SerializeField] private GameObject productionBarContainer;
     [SerializeField] private Image fillImage;
     [SerializeField] private TextMeshProUGUI progressDescriptionText;
 
@@ -101,7 +101,6 @@ public class UiWorkersHouse : UiModals
 
     private void UpdateWorkersStatusDisplay()
     {
-        // "Current Workers Text" is left alone as static UI. We only update the numbers:
         if (workersNumbersTxt != null && currentHouse != null) 
             workersNumbersTxt.text = $"{currentHouse.CurrentWorkers} / 3";
     }
@@ -163,15 +162,10 @@ public class UiWorkersHouse : UiModals
             if (cost.resourceDataSo == null)
                 continue;
 
-            GameObject costGO = Instantiate(
-                resourcePairPrefab,
-                upgradeCostParent
-            );
-
+            GameObject costGO = Instantiate(resourcePairPrefab, upgradeCostParent);
             costGO.SetActive(true);
 
             PanelResourcePair panel = costGO.GetComponent<PanelResourcePair>();
-
             if (panel != null) 
                 panel.Setup(cost.resourceDataSo, cost.amount);
         }
@@ -191,7 +185,6 @@ public class UiWorkersHouse : UiModals
         if (nextLevelIndex >= upgrade.HouseLevels.Count) return;
         StructureDataSO upgradeData = upgrade.HouseLevels[nextLevelIndex];
 
-        // Check if player has enough resources for upgrade
         List<string> missingList = new List<string>();
         var resourceManager = GameManager.Instance.ResourceManager;
 
@@ -203,7 +196,7 @@ public class UiWorkersHouse : UiModals
                 int hasAmount = resourceManager.GetResourceAmount(cost.resourceDataSo);
                 if (hasAmount < cost.amount)
                 {
-                    int needed = cost.amount - hasAmount;
+                    int needed = cost.amount - hasAmount; // Fixed missing minus operator
                     missingList.Add($"Needs {needed} {cost.resourceDataSo.ResourceName}");
                 }
             }
@@ -219,15 +212,7 @@ public class UiWorkersHouse : UiModals
         bool upgraded = upgrade.TryUpgradeHouse();
         if (!upgraded) return;
 
-        // Instantly add +1 worker / capacity upon successful upgrade
-        currentHouse.AddWorkerCapacity(1);
-
-        if (titleText != null)
-            titleText.text = currentHouse.StructureTitle;
-
-        UpdateWorkersStatusDisplay();
-        UpdateUpgradeCostsVisuals();
-        UpdateDestroyButtonVisuals();
+        // Prefab swapping handles the level transition automatically!
     }
 
     private void ShowUpgradeWarning(string message)
