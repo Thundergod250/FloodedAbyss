@@ -20,11 +20,11 @@ public struct PumpUpgradeData
 
 public class StructureApexPump : Structures
 {
-    // PLACEHOLDER: Replace "SFXDestruction" with the real pump-start clip name
-    // once the audio asset exists. Uses the same SFX key convention as
-    // WaterForecast ("SFXRaining") so it resolves against the SoundManager child
-    // GameObject of the same name.
-    private const string PumpStartSFXName = "SFXDestruction";
+    // PLACEHOLDER: Replace "SFXDestruction" with the real pump-running loop
+    // clip name once the audio asset exists. Matches the SFX key convention
+    // used elsewhere (e.g. WaterForecast → "SFXRaining"), resolving against
+    // the SoundManager child GameObject of the same name.
+    private const string PumpRunningSFXName = "SFXGenerator";
 
     [Header("Pump Fuel & Resource Settings")]
     [SerializeField] private ResourceDataSO[] acceptedResources;
@@ -55,11 +55,27 @@ public class StructureApexPump : Structures
 
     private Coroutine consumptionRoutine;
 
+    // Tracks previous frame's pump-active state so we only Play/Stop the
+    // looping SFX on transitions (0 → 1 switch, or any → 0 switches).
+    private bool wasPumpActive = false;
+
     private void Start() => consumptionRoutine = StartCoroutine(ConsumeFuelRoutine());
 
     private void Update()
     {
         estimatedRemainingTime = CalculatedEstimatedRemainingTime;
+
+        // ── Looping pump SFX: state-change polling ──────────────────────
+        // Catches every way the pump can turn on/off (manual toggle,
+        // low-fuel auto-shutdown, out-of-fuel full shutdown, drainage
+        // threshold rejects) with a single hook.
+        bool isPumpActiveNow = IsPumpActive;
+        if (isPumpActiveNow != wasPumpActive)
+        {
+            wasPumpActive = isPumpActiveNow;
+            UpdatePumpRunningSFX(isPumpActiveNow);
+        }
+        // ────────────────────────────────────────────────────────────────
     }
 
     private void OnDisable()
@@ -67,6 +83,26 @@ public class StructureApexPump : Structures
         if (consumptionRoutine != null)
             StopCoroutine(consumptionRoutine);
         ClearDischargePower();
+
+        // Ensure the looped SFX is killed when the pump is disabled/destroyed,
+        // since Update() won't run again to detect the transition.
+        if (wasPumpActive)
+        {
+            wasPumpActive = false;
+            if (GameManager.Instance != null && GameManager.Instance.SoundManager != null)
+                GameManager.Instance.SoundManager.Stop(PumpRunningSFXName);
+        }
+    }
+
+    private void UpdatePumpRunningSFX(bool shouldPlay)
+    {
+        if (GameManager.Instance == null || GameManager.Instance.SoundManager == null)
+            return;
+
+        if (shouldPlay)
+            GameManager.Instance.SoundManager.Play(PumpRunningSFXName, true);  // looped
+        else
+            GameManager.Instance.SoundManager.Stop(PumpRunningSFXName);
     }
 
     public override void Activate()
@@ -361,21 +397,8 @@ public class StructureApexPump : Structures
 
     public void NotifyPumpActivated()
     {
-        // ── Pump start SFX (placeholder: destruction clip) ─────────────
-        // Fires only when the pump goes from inactive (0 switches) to
-        // active (1 switch). Turning on additional switches after that
-        // does NOT re-trigger — the pump was already running.
-        //
-        // To play on EVERY switch activation instead, remove the
-        // `ActiveSwitchCount == 1 &&` part of the guard below.
-        if (ActiveSwitchCount == 1 &&
-            GameManager.Instance != null &&
-            GameManager.Instance.SoundManager != null)
-        {
-            GameManager.Instance.SoundManager.Play(PumpStartSFXName);
-        }
-        // ─────────────────────────────────────────────────────────────
-
+        // SFX handled centrally in Update() via IsPumpActive polling,
+        // so no audio call needed here anymore.
         if (ObjectiveManager.Instance != null)
             ObjectiveManager.Instance.NotifyPumpActivated(this);
     }
