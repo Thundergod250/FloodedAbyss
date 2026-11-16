@@ -24,8 +24,10 @@ public struct WeatherDefinition
 public class WaterForecast : MonoBehaviour
 {
     // Must match the child GameObject names on the SoundManager prefab.
-    private const string RainSFXName = "SFXRaining";
+    private const string RainSFXName = "SFXRaining"; // Drizzle
     private const string SunnySFXName = "SFXSunny";
+    private const string StormSFXName = "SFXStorm";
+    private const string TyphoonSFXName = "SFXTyphoon";
 
     [Header("Timeline Settings")]
     [SerializeField] private float eventDuration = 60f;
@@ -63,6 +65,12 @@ public class WaterForecast : MonoBehaviour
     private rainStrength? currentActiveRainState = null;
     private bool isWeatherInitialized = false;
     private bool stoppedForGreatFlood;
+
+    // Tracks which weather ambience loop is currently playing so transitions
+    // stop exactly one source and start exactly one source.
+    // null/empty = no weather audio playing.
+    private string currentWeatherSFXName = null;
+
     private bool IsGreatFloodActive()
     {
         return GameManager.Instance != null && GameManager.Instance.WaterLevel != null && GameManager.Instance.WaterLevel.GreatFloodStarted;
@@ -141,13 +149,9 @@ public class WaterForecast : MonoBehaviour
                 {
                     if (GameManager.Instance.VFXController != null)
                         GameManager.Instance.VFXController.StopRain();
-
-                    if (GameManager.Instance.SoundManager != null)
-                    {
-                        GameManager.Instance.SoundManager.Stop(RainSFXName);
-                        GameManager.Instance.SoundManager.Stop(SunnySFXName);
-                    }
                 }
+
+                StopCurrentWeatherSFX();
 
                 currentActiveRainState = null;
                 isWeatherInitialized = false;
@@ -252,22 +256,22 @@ public class WaterForecast : MonoBehaviour
                 GameManager.Instance.VFXController.PlayRain(targetStrength);
         }
 
-        // Handle Audio (Passed true for isLooped so ambience loops seamlessly without restarting instances)
-        // Transitions:
-        //   sunny → non-sunny:  Stop SFXSunny,   Play SFXRaining
-        //   non-sunny → sunny:  Stop SFXRaining, Play SFXSunny
-        //   same-state:         skipped entirely by the optimization check above
+        // Handle Audio: each weather type has its own loop. Only stop the
+        // previously-playing one and start the new one, so we never briefly
+        // silence every loop or double-play.
         if (GameManager.Instance.SoundManager != null)
         {
-            if (isSunny)
+            string nextSFX = GetWeatherSFXName(weatherType);
+
+            if (nextSFX != currentWeatherSFXName)
             {
-                GameManager.Instance.SoundManager.Stop(RainSFXName);
-                GameManager.Instance.SoundManager.Play(SunnySFXName, true);
-            }
-            else
-            {
-                GameManager.Instance.SoundManager.Stop(SunnySFXName);
-                GameManager.Instance.SoundManager.Play(RainSFXName, true);
+                if (!string.IsNullOrEmpty(currentWeatherSFXName))
+                    GameManager.Instance.SoundManager.Stop(currentWeatherSFXName);
+
+                if (!string.IsNullOrEmpty(nextSFX))
+                    GameManager.Instance.SoundManager.Play(nextSFX, true);
+
+                currentWeatherSFXName = nextSFX;
             }
         }
 
@@ -275,6 +279,37 @@ public class WaterForecast : MonoBehaviour
 
         currentActiveRainState = isSunny ? null : targetStrength;
         isWeatherInitialized = true;
+    }
+
+    /// <summary>
+    /// Maps a weather type to the name of its looping ambience SFX child
+    /// GameObject on the SoundManager prefab.
+    /// </summary>
+    private string GetWeatherSFXName(WeatherType weatherType)
+    {
+        switch (weatherType)
+        {
+            case WeatherType.Sunny: return SunnySFXName;
+            case WeatherType.Drizzle: return RainSFXName;
+            case WeatherType.Stormy: return StormSFXName;
+            case WeatherType.Typhoon: return TyphoonSFXName;
+            default: return null;
+        }
+    }
+
+    /// <summary>
+    /// Stops whichever weather ambience loop is currently playing and
+    /// clears the tracking field. Safe to call even when nothing is playing.
+    /// </summary>
+    private void StopCurrentWeatherSFX()
+    {
+        if (string.IsNullOrEmpty(currentWeatherSFXName))
+            return;
+
+        if (GameManager.Instance != null && GameManager.Instance.SoundManager != null)
+            GameManager.Instance.SoundManager.Stop(currentWeatherSFXName);
+
+        currentWeatherSFXName = null;
     }
 
     private void AdjustWaterLevel(float amount)
@@ -388,13 +423,9 @@ public class WaterForecast : MonoBehaviour
         {
             if (GameManager.Instance.VFXController != null)
                 GameManager.Instance.VFXController.StopRain();
-
-            if (GameManager.Instance.SoundManager != null)
-            {
-                GameManager.Instance.SoundManager.Stop(RainSFXName);
-                GameManager.Instance.SoundManager.Stop(SunnySFXName);
-            }
         }
+
+        StopCurrentWeatherSFX();
 
         // Gradually remove the existing weather contribution.
         targetWeatherAdjustment = 0f;
