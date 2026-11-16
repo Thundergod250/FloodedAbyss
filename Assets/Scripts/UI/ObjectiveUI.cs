@@ -10,7 +10,6 @@ public class ObjectiveUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI objectiveNameText;
     [SerializeField] private TextMeshProUGUI GreatFloodText;
     [SerializeField] private TextMeshProUGUI objectiveDescriptionText;
-    [SerializeField] private GameObject newObjBubble;
 
     [Header("Pump Timer")]
     [SerializeField] private TextMeshProUGUI pumpTimerText;
@@ -26,27 +25,25 @@ public class ObjectiveUI : MonoBehaviour
     [SerializeField] private Color dangerColor = Color.red;
 
     [Header("Low Fuel Beep Tiers (Fuel Remaining)")]
-    [Tooltip("Fuel at or below this value starts the first (moderate) beep tier.")]
+    [Tooltip("Fuel at or below this value starts the first (very slow) beep tier. Above this = silent.")]
     [SerializeField] private float beepTier1Threshold = 100f;
-    [Tooltip("Fuel at or below this value switches to the second (faster) beep tier.")]
+    [Tooltip("Fuel at or below this value switches to the second (moderate) beep tier.")]
     [SerializeField] private float beepTier2Threshold = 50f;
-    [Tooltip("Fuel at or below this value switches to the third (fastest) beep tier.")]
-    [SerializeField] private float beepTier3Threshold = 20f;
+    [Tooltip("Fuel at or below this value switches to the third (very fast) beep tier. Fuel of 0 is silent (pump empty).")]
+    [SerializeField] private float beepTier3Threshold = 9f;
 
-    [Tooltip("Seconds between beeps in Tier 1.")]
-    [SerializeField] private float beepIntervalTier1 = 1.2f;
-    [Tooltip("Seconds between beeps in Tier 2.")]
-    [SerializeField] private float beepIntervalTier2 = 0.6f;
-    [Tooltip("Seconds between beeps in Tier 3.")]
-    [SerializeField] private float beepIntervalTier3 = 0.3f;
+    [Tooltip("Seconds between beeps in Tier 1 (very slow, 100–51 fuel).")]
+    [SerializeField] private float beepIntervalTier1 = 2.0f;
+    [Tooltip("Seconds between beeps in Tier 2 (moderate, 50–10 fuel).")]
+    [SerializeField] private float beepIntervalTier2 = 0.8f;
+    [Tooltip("Seconds between beeps in Tier 3 (very fast, 9–1 fuel).")]
+    [SerializeField] private float beepIntervalTier3 = 0.25f;
 
     private ObjectiveManager subscribedManager;
 
     // Cached original colors so we can restore them when the timer is safe
     private Color greatFloodOriginalColor = Color.white;
     private Color pumpOriginalColor = Color.white;
-    private int lastCQI = -1;
-    private bool hasInitializedCQI = false;
 
     // Low-fuel beep state: current tier (0 = silent) and a countdown timer
     // that determines when the next beep fires.
@@ -76,9 +73,8 @@ public class ObjectiveUI : MonoBehaviour
     {
         Unsubscribe();
 
-        // Reset low-fuel beep state. The beep is a one-shot, so there's
-        // nothing playing to Stop — just clear the scheduling state so a
-        // re-enable starts fresh.
+        // Reset low-fuel beep state. Any in-flight one-shot finishes
+        // naturally; no new beeps are scheduled.
         currentFuelBeepTier = 0;
         lowFuelBeepTimer = 0f;
     }
@@ -91,7 +87,7 @@ public class ObjectiveUI : MonoBehaviour
             RefreshUI();
         }
 
-        // --- Great Flood timer (visuals only; audio is handled elsewhere) ---
+        // --- Great Flood timer (visuals only) ---
         if (GameManager.Instance != null && GameManager.Instance.WaterLevel != null && GreatFloodText != null)
         {
             WaterLevel wl = GameManager.Instance.WaterLevel;
@@ -99,20 +95,11 @@ public class ObjectiveUI : MonoBehaviour
             float remainingTime;
 
             if (!wl.GreatFloodStarted)
-            {
-                // Phase 1: Before Great Flood
                 remainingTime = wl.TimeUntilGreatFlood;
-            }
             else if (wl.GreatFloodStarted)
-            {
-                // Phase 2: During Great Flood
                 remainingTime = wl.GreatFloodTimeRemaining;
-            }
             else
-            {
-                // Phase 3: Flood ended
                 remainingTime = 0f;
-            }
 
             int totalSeconds = Mathf.CeilToInt(Mathf.Max(0f, remainingTime));
             int minutes = totalSeconds / 60;
@@ -129,9 +116,6 @@ public class ObjectiveUI : MonoBehaviour
         }
 
         // --- Pump timer + low-fuel beeping ---
-        // Beeping is driven by whatever fuel value GetPumpRemainingSeconds()
-        // returns, so it works even if pumpTimerText is null (as long as
-        // PumpTimeRemaining has been set externally).
         float pumpRemaining = GetPumpRemainingSeconds();
 
         if (pumpTimerText != null)
@@ -192,8 +176,20 @@ public class ObjectiveUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Shared danger predicate used by the visual flicker on both timers,
-    /// so the red/flicker timing stays consistent.
+    /// True while the pump is running (at least one active switch).
+    /// Falls back to <c>true</c> if ApexPump isn't wired up, so the beep
+    /// system still works in scenes that don't use the pump.
+    /// </summary>
+    private bool IsPumpActive()
+    {
+        if (GameManager.Instance == null || GameManager.Instance.ApexPump == null)
+            return true; // can't detect → assume pump may be running
+
+        return GameManager.Instance.ApexPump.ActiveSwitchCount > 0;
+    }
+
+    /// <summary>
+    /// Shared danger predicate used by the visual flicker on both timers.
     /// </summary>
     private static bool IsInDanger(float remainingTime, float threshold)
     {
@@ -201,22 +197,32 @@ public class ObjectiveUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Returns the current low-fuel beep tier (0 = silent, 1/2/3 = beeping
-    /// with progressively shorter intervals).
+    /// Returns the current low-fuel beep tier:
+    ///   0 = silent (pump off, fuel 0, or fuel > 100)
+    ///   1 = very slow (fuel 51–100)
+    ///   2 = moderate  (fuel 10–50)
+    ///   3 = very fast (fuel 1–9)
     /// </summary>
     private int GetFuelBeepTier(float fuel)
     {
-        if (fuel <= 0f) return 3; // empty tank → keep beeping at fastest rate
-        if (fuel <= beepTier3Threshold) return 3;
-        if (fuel <= beepTier2Threshold) return 2;
-        if (fuel <= beepTier1Threshold) return 1;
-        return 0;
+        // Pump off → no beeping at all, regardless of fuel value.
+        if (!IsPumpActive()) return 0;
+
+        // Empty tank → silent (pump is off / out of fuel).
+        if (fuel <= 0f) return 0;
+
+        if (fuel <= beepTier3Threshold) return 3; // ≤ 9
+        if (fuel <= beepTier2Threshold) return 2; // ≤ 50
+        if (fuel <= beepTier1Threshold) return 1; // ≤ 100
+        return 0;                                  // > 100
     }
 
     /// <summary>
     /// Plays a one-shot low-fuel beep on a tier-dependent cadence.
-    /// Fires immediately whenever the tier changes so crossing 100/50/20
+    /// Fires immediately whenever the tier changes so crossing 100/50/9
     /// is heard right away, then respects the new tier's interval.
+    /// When the tier drops to 0 (pump off, empty, or full), no further
+    /// beeps are scheduled — any currently-playing beep finishes naturally.
     /// </summary>
     private void UpdateLowFuelBeep(int tier)
     {
@@ -228,7 +234,7 @@ public class ObjectiveUI : MonoBehaviour
         }
 
         if (tier <= 0)
-            return; // silent above the first threshold
+            return; // silent
 
         lowFuelBeepTimer -= Time.deltaTime;
         if (lowFuelBeepTimer > 0f)
@@ -264,7 +270,6 @@ public class ObjectiveUI : MonoBehaviour
 
         if (isInDanger)
         {
-            // Flicker between 0.2 and 1.0 alpha while red
             float pingPong = Mathf.PingPong(Time.time * flickerSpeed, 1f);
             float alpha = Mathf.Lerp(0.2f, 1f, pingPong);
 
@@ -317,7 +322,6 @@ public class ObjectiveUI : MonoBehaviour
             ClearChecklist();
             return;
         }
-        CheckForNewQuest(manager);
 
         ObjectivesSO quest = manager.CurrentQuest;
 
@@ -336,7 +340,6 @@ public class ObjectiveUI : MonoBehaviour
         if (objectiveDescriptionText != null)
             objectiveDescriptionText.text = "";
 
-        // Rebuild the checklist once.
         RefreshChecklist(manager);
     }
 
@@ -353,7 +356,6 @@ public class ObjectiveUI : MonoBehaviour
 
     private void RefreshChecklist(ObjectiveManager manager)
     {
-        // Clear previous checklist items.
         foreach (Transform child in checklistParent)
         {
             Destroy(child.gameObject);
@@ -369,26 +371,5 @@ public class ObjectiveUI : MonoBehaviour
                 manager.IsChecklistItemCompleted(i)
             );
         }
-    }
-    private void CheckForNewQuest(ObjectiveManager manager)
-    {
-        int currentCQI = manager.CQI;
-
-        // Initial setup: remember the starting quest.
-        if (!hasInitializedCQI)
-        {
-            lastCQI = currentCQI;
-            hasInitializedCQI = true;
-            return;
-        }
-
-        // Show bubble whenever the quest index increases.
-        if (currentCQI > lastCQI)
-        {
-            if (newObjBubble != null)
-                newObjBubble.SetActive(true);
-        }
-
-        lastCQI = currentCQI;
     }
 }
