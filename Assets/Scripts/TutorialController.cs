@@ -85,9 +85,7 @@ public class TutorialController : MonoBehaviour
     private bool waterInfraTutorialCompleted;
     private bool panel65Started;
     private GameObject waterInfraArrow; 
-    private bool lastAnyOpen;
     private bool waterInfraTutorialShown;
-    private bool infraPanelWasOpen;
     private bool loggedCompletionMember;
 
     private void Awake()
@@ -136,7 +134,7 @@ public class TutorialController : MonoBehaviour
 
         var quest = ObjectiveManager.Instance.CurrentQuest;
 
-        // Quest transitions (also fires when quest becomes null)
+        // Quest transitions
         if (quest != previousQuest)
         {
             Debug.Log($"Quest changed: {(previousQuest ? previousQuest.name : "null")} -> {(quest ? quest.name : "null")}");
@@ -146,19 +144,24 @@ public class TutorialController : MonoBehaviour
 
             if (completedQuest != null)
             {
-                if (completedQuest == objective1) OnObjective1Complete();
-                else if (completedQuest == objective2) OnObjective2Complete();
-                else if (completedQuest == objective6) OnObjective6Complete();
+                if (completedQuest == objective1)
+                    OnObjective1Complete();
+                else if (completedQuest == objective2)
+                    OnObjective2Complete();
+                else if (completedQuest == objective6)
+                    OnObjective6Complete();
             }
         }
 
-        // Objective 6 completion detection (when it stays as CurrentQuest)
-        if (!objective6Completed && objective6 != null && quest == objective6)
+        if (quest == objective6 && !waterInfraTutorialShown)
         {
-            if (IsObjective6Done())
-                OnObjective6Complete();
-            else if (triggerPanel6WhenObjective6Active)
-                OnObjective6Complete();
+            TryShowWaterInfraTutorial();
+        }
+
+        // Detect actual Objective 6 completion while it remains the active quest.
+        if (!objective6Completed && quest == objective6 && IsObjective6Done())
+        {
+            OnObjective6Complete();
         }
 
         if (quest == objective1) TrackResourceCollection();
@@ -186,28 +189,23 @@ public class TutorialController : MonoBehaviour
                 tutorialPanel5Dismissed = true;
                 if (tutorialPanel_5 != null) tutorialPanel_5.SetActive(false);
                 Debug.Log("Panel 5 dismissed. Building UI opened.");
-                TryShowWaterInfraTutorial();
+                //TryShowWaterInfraTutorial();
             }
         }
 
-        // Dismiss Panel 6 only after the infra panel was seen closed, then opened
-        if (waterInfraTutorialShown && !waterInfraTutorialCompleted && waterInfrastructurePanel != null)
+        if (waterInfrastructurePanel != null && tutorialPanel_6.activeSelf)
         {
-            tutorialPanel_6.SetActive(false);
-            bool infraVisible = waterInfrastructurePanel.GetComponent<CanvasGroup>().alpha > 0f;
+            GameObject wI = waterInfrastructurePanel.gameObject;
 
-            if (infraVisible)
+            Debug.Log("Panel 6 open");
+
+            if(wI.activeSelf)
             {
-                infraPanelWasOpen = true;
-            }
-            else if (infraPanelWasOpen)
-            {
-                infraPanelWasOpen = false;
-
-                Debug.Log("[P6] Water Infrastructure CanvasGroup alpha is 0. Starting Panel 6.5.");
-
-                CompleteWaterInfraTutorial();
-            }
+                Debug.Log("Opened Panel");
+                tutorialPanel_6.SetActive(false);
+                waterInfraArrow.SetActive(false);
+}
+           
         }
 
         // All objectives done
@@ -329,27 +327,28 @@ public class TutorialController : MonoBehaviour
     private void OnObjective6Complete()
     {
         if (objective6Completed) return;
+
         objective6Completed = true;
 
         if (waterInfraDebrisCollider != null)
             waterInfraDebrisCollider.enabled = true;
 
-        TryShowWaterInfraTutorial();
+        Debug.Log("[Tutorial] Objective 6 completed. Showing Panel 6.5.");
+
+        CompleteWaterInfraTutorial();
     }
 
     private void TryShowWaterInfraTutorial()
-    { 
-        if (!objective6Completed || !tutorialPanel5Dismissed) return;
+    {
         if (waterInfraTutorialShown) return;
 
         if (tutorialPanel_6 == null)
         {
-            Debug.LogError("Panel 6 reference is missing in Inspector!");
+            Debug.LogError("[Tutorial] Panel 6 reference is missing!");
             return;
         }
 
         waterInfraTutorialShown = true;
-        infraPanelWasOpen = false;
 
         if (waterInfraArrow == null)
             waterInfraArrow = FindFirst("WaterInfraArrow")?.gameObject;
@@ -358,6 +357,8 @@ public class TutorialController : MonoBehaviour
 
         if (waterInfraArrow != null)
             waterInfraArrow.SetActive(true);
+
+        Debug.Log("[Tutorial] Panel 6 displayed. Waiting for Objective 6 completion.");
     }
 
     private void CompleteWaterInfraTutorial()
@@ -398,30 +399,48 @@ public class TutorialController : MonoBehaviour
 
     private IEnumerator ShowPanel65ThenPanel7()
     {
-        if (tutorialPanel_6 != null) tutorialPanel_6.SetActive(false);
-        if (waterInfraArrow != null) waterInfraArrow.SetActive(false);
+        if (tutorialPanel_6 != null)
+            tutorialPanel_6.SetActive(false);
 
-        if (tutorialPanel_6point5 != null) tutorialPanel_6point5.SetActive(true);
-        if (fuelPanel != null) fuelPanel.SetActive(true);
+        if (waterInfraArrow != null)
+            waterInfraArrow.SetActive(false);
 
-        float wait = panel65AutoDismissSeconds > 0f ? panel65AutoDismissSeconds : 5f;
-        yield return new WaitForSeconds(wait);
+        if (tutorialPanel_6point5 != null)
+            tutorialPanel_6point5.SetActive(true);
 
-        if (tutorialPanel_6point5 != null) tutorialPanel_6point5.SetActive(false);
-        if (tutorialPanel_7 != null) tutorialPanel_7.SetActive(true);
+        if (fuelPanel != null)
+            fuelPanel.SetActive(true);
+
+        Debug.Log("[Tutorial] Panel 6.5 is now visible.");
+
+        float wait = panel65AutoDismissSeconds > 0f
+            ? panel65AutoDismissSeconds
+            : 5f;
+
+        yield return new WaitForSecondsRealtime(wait);
+
+        if (tutorialPanel_6point5 != null)
+            tutorialPanel_6point5.SetActive(false);
+
+        if (tutorialPanel_7 != null)
+            tutorialPanel_7.SetActive(true);
+
+        Debug.Log("[Tutorial] Panel 7 is now visible.");
 
         panel65DismissRoutine = null;
 
         if (panel7AutoDismissSeconds > 0f && tutorialPanel_7 != null)
         {
-            if (panel7DismissRoutine != null) StopCoroutine(panel7DismissRoutine);
+            if (panel7DismissRoutine != null)
+                StopCoroutine(panel7DismissRoutine);
+
             panel7DismissRoutine = StartCoroutine(AutoDismissPanel7());
         }
     }
 
     private IEnumerator AutoDismissPanel7()
     {
-        yield return new WaitForSeconds(panel7AutoDismissSeconds);
+        yield return new WaitForSecondsRealtime(panel7AutoDismissSeconds);
         if (tutorialPanel_7 != null) tutorialPanel_7.SetActive(false);
         if (tutorialPanel_8 != null) tutorialPanel_8.SetActive(true);
         if (GreatFloodTimer != null) GreatFloodTimer.gameObject.SetActive(true);

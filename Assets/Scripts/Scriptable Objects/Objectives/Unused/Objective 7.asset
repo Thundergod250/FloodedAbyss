@@ -10,18 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5c5ac3280672e664cbf9288fcc10183c, type: 3}
-  m_Name: Objective 18
+  m_Name: Objective 7
   m_EditorClassIdentifier: Assembly-CSharp::ObjectivesSO
   objectiveName: Prepare for the Great Flood
   objectives:
-  - objectiveDescription: Deposit 80 Refined Fuel into the Pump!
-    objectiveType: 2
-    structureToBuild: {fileID: 0}
+  - objectiveDescription: Assign a worker to the quarry
+    objectiveType: 6
+    structureToBuild: {fileID: 11400000, guid: 2c44a2b9bda758b468eaf1167c5df7d4, type: 2}
     requiredAmount: 1
-    resourcesToDeposit:
-    - resource: {fileID: 11400000, guid: 662a9021b731c8245acf263628d158a4, type: 2}
-      requiredAmount: 80
+    resourcesToDeposit: []
     requiredUIName: 
     resourcesToGather: []
-    structureToAssignWorkers: {fileID: 0}
+    structureToAssignWorkers: {fileID: 11400000, guid: fa1251407a8e1ca4cbcec107b2deeeba, type: 2}
     requiredWorkers: 1

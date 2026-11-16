@@ -10,18 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5c5ac3280672e664cbf9288fcc10183c, type: 3}
-  m_Name: Objective 17
+  m_Name: Objective 5
   m_EditorClassIdentifier: Assembly-CSharp::ObjectivesSO
   objectiveName: Prepare for the Great Flood
   objectives:
-  - objectiveDescription: Find a way to create Refined Fuel
-    objectiveType: 2
-    structureToBuild: {fileID: 0}
+  - objectiveDescription: Recruit a worker, but if there is a homeless worker, house them first
+    objectiveType: 5
+    structureToBuild: {fileID: 11400000, guid: 8a930be30284f194abfdc58ddff5b98c, type: 2}
     requiredAmount: 1
     resourcesToDeposit: []
     requiredUIName: 
-    resourcesToGather:
-    - resource: {fileID: 11400000, guid: 662a9021b731c8245acf263628d158a4, type: 2}
-      requiredAmount: 1
+    resourcesToGather: []
     structureToAssignWorkers: {fileID: 0}
     requiredWorkers: 1
