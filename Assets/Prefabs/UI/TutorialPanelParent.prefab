@@ -917,14 +917,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2228989522909695892}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.18867922, g: 0.18867922, b: 0.18867922, a: 0.5372549}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -2457,6 +2457,7 @@ GameObject:
   - component: {fileID: 2540476742155647203}
   - component: {fileID: 2431227643381527714}
   - component: {fileID: 4324238995138575415}
+  - component: {fileID: 7666569592754894490}
   m_Layer: 5
   m_Name: TutorialPanel_7
   m_TagString: Untagged
@@ -2525,6 +2526,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7666569592754894490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4678719763657508522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d572207af190b041a875b096b57b8d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIMovementLockOnActive
+  unlockOnDisable: 1
+  showDebugLogs: 0
 --- !u!1 &4836183968292849781
 GameObject:
   m_ObjectHideFlags: 0
@@ -4482,6 +4497,7 @@ GameObject:
   - component: {fileID: 6450441816226105779}
   - component: {fileID: 2152425589453964961}
   - component: {fileID: 8167120482260198695}
+  - component: {fileID: 534310544588230770}
   m_Layer: 5
   m_Name: TutorialPanel_8
   m_TagString: Untagged
@@ -4550,6 +4566,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &534310544588230770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8582815664078492973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d572207af190b041a875b096b57b8d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIMovementLockOnActive
+  unlockOnDisable: 1
+  showDebugLogs: 0
 --- !u!1 &8775653130165297244
 GameObject:
   m_ObjectHideFlags: 0

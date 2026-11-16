@@ -1,10 +1,14 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 
 public class Interactables : MonoBehaviour
 {
+    // Matches the SFXButtonClick child GameObject in SoundManager.prefab
+    // (same key the UI buttons already use).
+    private const string StructureClickSFXName = "SFXButtonClick";
+
     [Header("UI Message")]
-    public string interactionMessage; 
+    public string interactionMessage;
 
     [Header("Interaction Settings")]
     [SerializeField] private UnityEvent onInteract;
@@ -12,7 +16,7 @@ public class Interactables : MonoBehaviour
     private Item item;
     private Structures structure;
 
-    private void Awake() 
+    private void Awake()
     {
         item = GetComponent<Item>();
         structure = GetComponent<Structures>();
@@ -24,11 +28,15 @@ public class Interactables : MonoBehaviour
         Debug.Log($"Interacted with {gameObject.name}");
 
         // Activate Item if it exists on this GameObject
-        if (item != null) 
+        if (item != null)
             item.Activate();
 
         // Activate Structure if it exists on this GameObject
-        if (structure != null) 
+        if (structure != null)
+        {
+            if (GameManager.Instance != null && GameManager.Instance.SoundManager != null)
+                GameManager.Instance.SoundManager.Play(StructureClickSFXName);
             structure.Activate();
+        }
     }
 }

@@ -1,7 +1,9 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class StructureBuildable : Structures
 {
+    private const string BuildSFXName = "SFXBuilding"; // Swap to "Building" if your SoundManager keys off the sounds[] array names
+
     [Header("Buildable Configuration")]
     [SerializeField] private StructureDataSO[] availableStructuresToBuild;
     [SerializeField] private int laborCost = 1;
@@ -110,6 +112,13 @@ public class StructureBuildable : Structures
 
         Vector3 spawnPosition = transform.TransformPoint(spawnOffset);
         GameObject spawnedGO = Instantiate(structureData.StructurePrefab, spawnPosition, transform.rotation);
+
+        // ── Build SFX (one-shot) ─────────────────────────────────────────
+        // Played only after Instantiate succeeds, so the player never hears
+        // a "build" sound on a failed validation or a bad prefab reference.
+        if (GameManager.Instance.SoundManager != null)
+            GameManager.Instance.SoundManager.Play(BuildSFXName);
+        // ─────────────────────────────────────────────────────────────────
 
         StructureUpgrade structureUpgrade = spawnedGO.GetComponent<StructureUpgrade>();
         if (structureUpgrade != null)
