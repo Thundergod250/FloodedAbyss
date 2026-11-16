@@ -84,9 +84,10 @@ public class TutorialController : MonoBehaviour
     private bool objective6Completed;
     private bool waterInfraTutorialCompleted;
     private bool panel65Started;
-    private GameObject waterInfraArrow;
+    private GameObject waterInfraArrow; 
+    private bool lastAnyOpen;
     private bool waterInfraTutorialShown;
-    private bool infraPanelSeenClosed;
+    private bool infraPanelWasOpen;
     private bool loggedCompletionMember;
 
     private void Awake()
@@ -192,9 +193,21 @@ public class TutorialController : MonoBehaviour
         // Dismiss Panel 6 only after the infra panel was seen closed, then opened
         if (waterInfraTutorialShown && !waterInfraTutorialCompleted && waterInfrastructurePanel != null)
         {
-            bool open = waterInfrastructurePanel.activeInHierarchy;
-            if (!open) infraPanelSeenClosed = true;
-            else if (infraPanelSeenClosed) CompleteWaterInfraTutorial();
+            tutorialPanel_6.SetActive(false);
+            bool infraVisible = waterInfrastructurePanel.GetComponent<CanvasGroup>().alpha > 0f;
+
+            if (infraVisible)
+            {
+                infraPanelWasOpen = true;
+            }
+            else if (infraPanelWasOpen)
+            {
+                infraPanelWasOpen = false;
+
+                Debug.Log("[P6] Water Infrastructure CanvasGroup alpha is 0. Starting Panel 6.5.");
+
+                CompleteWaterInfraTutorial();
+            }
         }
 
         // All objectives done
@@ -325,12 +338,7 @@ public class TutorialController : MonoBehaviour
     }
 
     private void TryShowWaterInfraTutorial()
-    {
-        Debug.Log(
-            $"Panel 6 check | Objective6: {objective6Completed} | " +
-            $"Panel5Dismissed: {tutorialPanel5Dismissed} | " +
-            $"AlreadyShown: {waterInfraTutorialShown}");
-
+    { 
         if (!objective6Completed || !tutorialPanel5Dismissed) return;
         if (waterInfraTutorialShown) return;
 
@@ -341,6 +349,7 @@ public class TutorialController : MonoBehaviour
         }
 
         waterInfraTutorialShown = true;
+        infraPanelWasOpen = false;
 
         if (waterInfraArrow == null)
             waterInfraArrow = FindFirst("WaterInfraArrow")?.gameObject;
@@ -349,30 +358,25 @@ public class TutorialController : MonoBehaviour
 
         if (waterInfraArrow != null)
             waterInfraArrow.SetActive(true);
-
-        Debug.Log($"SUCCESS: Panel 6 opened! activeInHierarchy={tutorialPanel_6.activeInHierarchy}");
     }
 
     private void CompleteWaterInfraTutorial()
     {
         if (waterInfraTutorialCompleted) return;
+
         waterInfraTutorialCompleted = true;
 
-        if (tutorialPanel_6 != null) tutorialPanel_6.SetActive(false);
-        if (waterInfraArrow != null) waterInfraArrow.SetActive(false);
+        if (tutorialPanel_6 != null)
+            tutorialPanel_6.SetActive(false);
 
-        TryStartPanel65();
-    }
+        if (waterInfraArrow != null)
+            waterInfraArrow.SetActive(false);
 
-    private void TryStartPanel65()
-    {
-        if (panel65Started ||
-            !waterInfraTutorialCompleted ||
-            obj3State != Obj3State.Complete)
-            return;
-
-        panel65Started = true;
-        panel65DismissRoutine = StartCoroutine(ShowPanel65ThenPanel7());
+        if (!panel65Started)
+        {
+            panel65Started = true;
+            panel65DismissRoutine = StartCoroutine(ShowPanel65ThenPanel7());
+        }
     }
 
     private void OnAllObjectivesComplete()
@@ -394,10 +398,14 @@ public class TutorialController : MonoBehaviour
 
     private IEnumerator ShowPanel65ThenPanel7()
     {
+        if (tutorialPanel_6 != null) tutorialPanel_6.SetActive(false);
+        if (waterInfraArrow != null) waterInfraArrow.SetActive(false);
+
         if (tutorialPanel_6point5 != null) tutorialPanel_6point5.SetActive(true);
         if (fuelPanel != null) fuelPanel.SetActive(true);
 
-        yield return new WaitForSeconds(panel65AutoDismissSeconds);
+        float wait = panel65AutoDismissSeconds > 0f ? panel65AutoDismissSeconds : 5f;
+        yield return new WaitForSeconds(wait);
 
         if (tutorialPanel_6point5 != null) tutorialPanel_6point5.SetActive(false);
         if (tutorialPanel_7 != null) tutorialPanel_7.SetActive(true);
@@ -455,7 +463,6 @@ public class TutorialController : MonoBehaviour
                 if (houses.Length > housesAtTutorialStart)
                 {
                     obj3State = Obj3State.Complete;
-                    TryStartPanel65();
                 }
                 break;
         }
