@@ -1,23 +1,27 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using Unity.Cinemachine;
 using System.Collections;
 
 public class UIMainMenu : MonoBehaviour
 {
+    // Must match the child GameObject names on the SoundManager prefab.
+    private const string UnderwaterSFXName = "SFXUnderwater";
+    private const string OceanSFXName = "SFXOcean";
+
     [Header("UI References")]
     [SerializeField] private Button startButton;
     [SerializeField] private Button exitButton;
     [SerializeField] private GameObject mainMenuUI;
-    [SerializeField] private GameObject mainUI; 
+    [SerializeField] private GameObject mainUI;
 
     [Header("Camera References")]
-    [SerializeField] private GameObject menuCameraGameObject;     
-    [SerializeField] private GameObject gameplayCameraGameObject; 
-    [SerializeField] private CinemachineBrain cinemachineBrain; 
+    [SerializeField] private GameObject menuCameraGameObject;
+    [SerializeField] private GameObject gameplayCameraGameObject;
+    [SerializeField] private CinemachineBrain cinemachineBrain;
 
     [Header("Gameplay Script Reference")]
-    [SerializeField] private MonoBehaviour cameraMovementScript; 
+    [SerializeField] private MonoBehaviour cameraMovementScript;
 
     private void Start()
     {
@@ -34,12 +38,20 @@ public class UIMainMenu : MonoBehaviour
         if (menuCameraGameObject != null) menuCameraGameObject.SetActive(true);
         if (gameplayCameraGameObject != null) gameplayCameraGameObject.SetActive(false);
 
-        if (cinemachineBrain == null && Camera.main != null) 
+        if (cinemachineBrain == null && Camera.main != null)
             cinemachineBrain = Camera.main.GetComponent<CinemachineBrain>();
+
+        // ── Menu ambience: underwater ON, ocean OFF ──────────────────
+        ApplyMenuAmbience();
+        // ─────────────────────────────────────────────────────────────
     }
 
     private void OnStartClicked()
     {
+        // ── Gameplay ambience: underwater OFF, ocean ON ──────────────
+        ApplyGameplayAmbience();
+        // ─────────────────────────────────────────────────────────────
+
         // 1. Hide the Main Menu UI immediately
         if (mainMenuUI != null) mainMenuUI.SetActive(false);
 
@@ -56,7 +68,7 @@ public class UIMainMenu : MonoBehaviour
         if (cinemachineBrain != null)
         {
             // Wait a frame for the blend to register as active
-            yield return null; 
+            yield return null;
 
             // While Cinemachine is actively blending between cameras, pause here
             while (cinemachineBrain.IsBlending)
@@ -79,11 +91,44 @@ public class UIMainMenu : MonoBehaviour
 
     private void OnExitClicked()
     {
+        // Stop both ambience loops before quitting so they don't trail off
+        // on the last frame of Application.Quit() in the editor.
+        var sm = GameManager.Instance != null ? GameManager.Instance.SoundManager : null;
+        if (sm != null)
+        {
+            sm.Stop(UnderwaterSFXName);
+            sm.Stop(OceanSFXName);
+        }
+
         Debug.Log("[UIMainMenu] Quitting application...");
         Application.Quit();
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
-        #endif
+#endif
+    }
+
+    /// <summary>
+    /// Menu-state ambience: underwater loop plays, ocean loop is silenced.
+    /// </summary>
+    private void ApplyMenuAmbience()
+    {
+        var sm = GameManager.Instance != null ? GameManager.Instance.SoundManager : null;
+        if (sm == null) return;
+
+        sm.Stop(OceanSFXName);
+        sm.Play(UnderwaterSFXName, true); // loop
+    }
+
+    /// <summary>
+    /// Gameplay-state ambience: underwater loop stops, ocean loop plays.
+    /// </summary>
+    private void ApplyGameplayAmbience()
+    {
+        var sm = GameManager.Instance != null ? GameManager.Instance.SoundManager : null;
+        if (sm == null) return;
+
+        sm.Stop(UnderwaterSFXName);
+        sm.Play(OceanSFXName, true); // loop
     }
 }
