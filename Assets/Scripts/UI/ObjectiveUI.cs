@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class ObjectiveUI : MonoBehaviour
 {
+    // ── SFX names (must match the SoundManager entry / child GameObject) ──
+    private const string LowFuelSFXName = "SFX_LowFuel";
+
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI objectiveNameText;
     [SerializeField] private TextMeshProUGUI GreatFloodText;
@@ -21,11 +24,31 @@ public class ObjectiveUI : MonoBehaviour
     [SerializeField] private float flickerSpeed = 5f;                // higher = faster flicker
     [SerializeField] private Color dangerColor = Color.red;
 
+    [Header("Low Fuel Beep Tiers (Fuel Remaining)")]
+    [Tooltip("Fuel at or below this value starts the first (moderate) beep tier.")]
+    [SerializeField] private float beepTier1Threshold = 100f;
+    [Tooltip("Fuel at or below this value switches to the second (faster) beep tier.")]
+    [SerializeField] private float beepTier2Threshold = 50f;
+    [Tooltip("Fuel at or below this value switches to the third (fastest) beep tier.")]
+    [SerializeField] private float beepTier3Threshold = 20f;
+
+    [Tooltip("Seconds between beeps in Tier 1.")]
+    [SerializeField] private float beepIntervalTier1 = 1.2f;
+    [Tooltip("Seconds between beeps in Tier 2.")]
+    [SerializeField] private float beepIntervalTier2 = 0.6f;
+    [Tooltip("Seconds between beeps in Tier 3.")]
+    [SerializeField] private float beepIntervalTier3 = 0.3f;
+
     private ObjectiveManager subscribedManager;
 
     // Cached original colors so we can restore them when the timer is safe
     private Color greatFloodOriginalColor = Color.white;
     private Color pumpOriginalColor = Color.white;
+
+    // Low-fuel beep state: current tier (0 = silent) and a countdown timer
+    // that determines when the next beep fires.
+    private int currentFuelBeepTier = 0;
+    private float lowFuelBeepTimer = 0f;
 
     // Optional externally-set pump time. If left at 0, the script falls back
     // to reading the value straight off pumpTimerText.
@@ -49,6 +72,12 @@ public class ObjectiveUI : MonoBehaviour
     private void OnDisable()
     {
         Unsubscribe();
+
+        // Reset low-fuel beep state. The beep is a one-shot, so there's
+        // nothing playing to Stop — just clear the scheduling state so a
+        // re-enable starts fresh.
+        currentFuelBeepTier = 0;
+        lowFuelBeepTimer = 0f;
     }
 
     private void Update()
@@ -59,7 +88,7 @@ public class ObjectiveUI : MonoBehaviour
             RefreshUI();
         }
 
-        // --- Great Flood timer ---
+        // --- Great Flood timer (visuals only; audio is handled elsewhere) ---
         if (GameManager.Instance != null && GameManager.Instance.WaterLevel != null && GreatFloodText != null)
         {
             WaterLevel wl = GameManager.Instance.WaterLevel;
@@ -96,12 +125,14 @@ public class ObjectiveUI : MonoBehaviour
             );
         }
 
-        // --- Pump timer ---
-        // The pump timer intentionally stops at 9, so once it enters the 20s
-        // range it will keep flickering red indefinitely.
+        // --- Pump timer + low-fuel beeping ---
+        // Beeping is driven by whatever fuel value GetPumpRemainingSeconds()
+        // returns, so it works even if pumpTimerText is null (as long as
+        // PumpTimeRemaining has been set externally).
+        float pumpRemaining = GetPumpRemainingSeconds();
+
         if (pumpTimerText != null)
         {
-            float pumpRemaining = GetPumpRemainingSeconds();
             ApplyTimerVisuals(
                 pumpTimerText,
                 pumpRemaining,
@@ -109,6 +140,8 @@ public class ObjectiveUI : MonoBehaviour
                 pumpFlickerThreshold
             );
         }
+
+        UpdateLowFuelBeep(GetFuelBeepTier(pumpRemaining));
     }
 
     /// <summary>
@@ -124,7 +157,7 @@ public class ObjectiveUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Returns the pump time in seconds. Prefers an externally-set
+    /// Returns the pump time / fuel value. Prefers an externally-set
     /// <see cref="PumpTimeRemaining"/>; otherwise parses whatever is currently
     /// shown in <see cref="pumpTimerText"/> ("20", "0:20", "00:20").
     /// </summary>
@@ -156,6 +189,67 @@ public class ObjectiveUI : MonoBehaviour
     }
 
     /// <summary>
+    /// Shared danger predicate used by the visual flicker on both timers,
+    /// so the red/flicker timing stays consistent.
+    /// </summary>
+    private static bool IsInDanger(float remainingTime, float threshold)
+    {
+        return remainingTime > 0f && remainingTime <= threshold;
+    }
+
+    /// <summary>
+    /// Returns the current low-fuel beep tier (0 = silent, 1/2/3 = beeping
+    /// with progressively shorter intervals).
+    /// </summary>
+    private int GetFuelBeepTier(float fuel)
+    {
+        if (fuel <= 0f) return 3; // empty tank → keep beeping at fastest rate
+        if (fuel <= beepTier3Threshold) return 3;
+        if (fuel <= beepTier2Threshold) return 2;
+        if (fuel <= beepTier1Threshold) return 1;
+        return 0;
+    }
+
+    /// <summary>
+    /// Plays a one-shot low-fuel beep on a tier-dependent cadence.
+    /// Fires immediately whenever the tier changes so crossing 100/50/20
+    /// is heard right away, then respects the new tier's interval.
+    /// </summary>
+    private void UpdateLowFuelBeep(int tier)
+    {
+        // On a tier change, fire a beep this frame and reset the timer.
+        if (tier != currentFuelBeepTier)
+        {
+            currentFuelBeepTier = tier;
+            lowFuelBeepTimer = 0f;
+        }
+
+        if (tier <= 0)
+            return; // silent above the first threshold
+
+        lowFuelBeepTimer -= Time.deltaTime;
+        if (lowFuelBeepTimer > 0f)
+            return;
+
+        var sm = GameManager.Instance != null ? GameManager.Instance.SoundManager : null;
+        if (sm != null)
+            sm.Play(LowFuelSFXName); // one-shot
+
+        lowFuelBeepTimer = GetBeepInterval(tier);
+    }
+
+    private float GetBeepInterval(int tier)
+    {
+        switch (tier)
+        {
+            case 1: return beepIntervalTier1;
+            case 2: return beepIntervalTier2;
+            case 3: return beepIntervalTier3;
+            default: return float.MaxValue;
+        }
+    }
+
+    /// <summary>
     /// Turns the text red and flickers it while 0 &lt; remainingTime &lt;= threshold.
     /// Otherwise restores the original color at full opacity.
     /// </summary>
@@ -163,7 +257,7 @@ public class ObjectiveUI : MonoBehaviour
     {
         if (text == null) return;
 
-        bool isInDanger = remainingTime > 0f && remainingTime <= threshold;
+        bool isInDanger = IsInDanger(remainingTime, threshold);
 
         if (isInDanger)
         {
