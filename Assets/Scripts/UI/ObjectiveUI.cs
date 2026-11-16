@@ -7,6 +7,7 @@ public class ObjectiveUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI objectiveNameText;
     [SerializeField] private TextMeshProUGUI GreatFloodText;
     [SerializeField] private TextMeshProUGUI objectiveDescriptionText;
+    [SerializeField] private GameObject newObjBubble;
 
     [Header("Pump Timer")]
     [SerializeField] private TextMeshProUGUI pumpTimerText;
@@ -26,6 +27,8 @@ public class ObjectiveUI : MonoBehaviour
     // Cached original colors so we can restore them when the timer is safe
     private Color greatFloodOriginalColor = Color.white;
     private Color pumpOriginalColor = Color.white;
+    private int lastCQI = -1;
+    private bool hasInitializedCQI = false;
 
     // Optional externally-set pump time. If left at 0, the script falls back
     // to reading the value straight off pumpTimerText.
@@ -220,6 +223,7 @@ public class ObjectiveUI : MonoBehaviour
             ClearChecklist();
             return;
         }
+        CheckForNewQuest(manager);
 
         ObjectivesSO quest = manager.CurrentQuest;
 
@@ -271,5 +275,26 @@ public class ObjectiveUI : MonoBehaviour
                 manager.IsChecklistItemCompleted(i)
             );
         }
+    }
+    private void CheckForNewQuest(ObjectiveManager manager)
+    {
+        int currentCQI = manager.CQI;
+
+        // Initial setup: remember the starting quest.
+        if (!hasInitializedCQI)
+        {
+            lastCQI = currentCQI;
+            hasInitializedCQI = true;
+            return;
+        }
+
+        // Show bubble whenever the quest index increases.
+        if (currentCQI > lastCQI)
+        {
+            if (newObjBubble != null)
+                newObjBubble.SetActive(true);
+        }
+
+        lastCQI = currentCQI;
     }
 }
