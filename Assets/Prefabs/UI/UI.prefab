@@ -327,6 +327,8 @@ MonoBehaviour:
   pumpFlickerThreshold: 20
   flickerSpeed: 5
   dangerColor: {r: 1, g: 0, b: 0, a: 1}
+  greatFloodSirenSFX: SFX_GreatFloodSiren
+  lowFuelSFX: SFX_LowFuel
 --- !u!114 &2055585679378836840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1680,7 +1682,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2470855557464766028, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2606257943296671534, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
       propertyPath: m_IsActive
@@ -1702,6 +1704,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 503.1
       objectReference: {fileID: 0}
+    - target: {fileID: 2925826744817923363, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2975489435176400168, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
       propertyPath: m_RaycastTarget
       value: 1
@@ -1718,6 +1724,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 7484418998779390639}
+    - target: {fileID: 3049161515548588469, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 3465174450414830660}
     - target: {fileID: 3063739458387482983, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 25
@@ -2156,7 +2166,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6683553532191453242, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6807071427009508266, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
       propertyPath: m_fontSize
@@ -2218,6 +2228,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8399300031275210879, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 3465174450414830660}
     - target: {fileID: 8610271834158805666, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
       propertyPath: m_RaycastTarget
       value: 1
@@ -2339,6 +2353,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!82 &3465174450414830660 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 1330031224888526748, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+  m_PrefabInstance: {fileID: 2478103047148192728}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &4451995169858931221 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2282013926997002701, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
@@ -2658,7 +2677,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7957867799687880786, guid: 5bc22c5a0fe2a1e4090144e260b8f095, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8159991207829500943, guid: 5bc22c5a0fe2a1e4090144e260b8f095, type: 3}
       propertyPath: m_hasFontAssetChanged
