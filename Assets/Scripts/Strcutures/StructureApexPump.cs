@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 [System.Serializable]
@@ -12,30 +12,36 @@ public struct PumpResourceCost
 public struct PumpUpgradeData
 {
     [Header("Upgrade Cost")]
-    public PumpResourceCost[] upgradeCosts; // Array of resources required for this specific upgrade level
+    public PumpResourceCost[] upgradeCosts;
 
     [Header("Power Boost")]
-    public float drainagePowerPerSwitch; // Total power per switch for this level
+    public float drainagePowerPerSwitch;
 }
 
 public class StructureApexPump : Structures
 {
+    // PLACEHOLDER: Replace "SFXDestruction" with the real pump-start clip name
+    // once the audio asset exists. Uses the same SFX key convention as
+    // WaterForecast ("SFXRaining") so it resolves against the SoundManager child
+    // GameObject of the same name.
+    private const string PumpStartSFXName = "SFXDestruction";
+
     [Header("Pump Fuel & Resource Settings")]
-    [SerializeField] private ResourceDataSO[] acceptedResources; 
-    [SerializeField] private int[] resourceFuelValues = { 1, 5, 10, 25, 50 }; 
-    
+    [SerializeField] private ResourceDataSO[] acceptedResources;
+    [SerializeField] private int[] resourceFuelValues = { 1, 5, 10, 25, 50 };
+
     [Header("Switch Consumption Settings")]
-    [SerializeField] private int[] switchFuelCosts = { 1, 5, 10, 20, 50 }; 
-    [SerializeField] private float consumptionInterval = 1f; // How often fuel is burned
+    [SerializeField] private int[] switchFuelCosts = { 1, 5, 10, 20, 50 };
+    [SerializeField] private float consumptionInterval = 1f;
 
     [Header("Switch Activation Requirements (Min Fuel to Open)")]
-    [SerializeField] private int[] switchOpenThresholds = { 0, 50, 100, 500, 1000 }; // Minimum fuel required to turn on each switch
+    [SerializeField] private int[] switchOpenThresholds = { 0, 50, 100, 500, 1000 };
 
     [Header("Switch Safety Shutdown Thresholds (Auto-Off Cutoff)")]
-    [SerializeField] private int[] switchShutdownThresholds = { 0, 25, 50, 250, 500 }; // Fuel level that triggers an automatic shutdown
+    [SerializeField] private int[] switchShutdownThresholds = { 0, 25, 50, 250, 500 };
 
     [Header("Discharge Pressure Upgrades")]
-    [SerializeField] private PumpUpgradeData[] upgradeLevels; // Configurable upgrade tiers (up to 5 levels)
+    [SerializeField] private PumpUpgradeData[] upgradeLevels;
     [SerializeField] private float defaultDrainagePowerPerSwitch = 50f;
 
     [Header("Great Flood Fuel Settings")]
@@ -44,8 +50,8 @@ public class StructureApexPump : Structures
     [Header("Debug Status")]
     [SerializeField] private int currentFuel = 0;
     [SerializeField] private int currentUpgradeLevel = 0;
-    [SerializeField] private bool[] switchStates = new bool[5]; 
-    [SerializeField] private float estimatedRemainingTime = 0f; // ETA
+    [SerializeField] private bool[] switchStates = new bool[5];
+    [SerializeField] private float estimatedRemainingTime = 0f;
 
     private Coroutine consumptionRoutine;
 
@@ -53,13 +59,12 @@ public class StructureApexPump : Structures
 
     private void Update()
     {
-        // Continuously update the Inspector ETA debug field
         estimatedRemainingTime = CalculatedEstimatedRemainingTime;
     }
 
     private void OnDisable()
     {
-        if (consumptionRoutine != null) 
+        if (consumptionRoutine != null)
             StopCoroutine(consumptionRoutine);
         ClearDischargePower();
     }
@@ -132,7 +137,6 @@ public class StructureApexPump : Structures
             return false;
         }
 
-        // 1. Check if player has enough resources for this upgrade tier
         if (nextUpgrade.upgradeCosts != null)
         {
             foreach (var cost in nextUpgrade.upgradeCosts)
@@ -146,7 +150,6 @@ public class StructureApexPump : Structures
                 }
             }
 
-            // 2. Consume the upgrade resources
             foreach (var cost in nextUpgrade.upgradeCosts)
             {
                 if (cost.resourceDataSo == null) continue;
@@ -154,7 +157,6 @@ public class StructureApexPump : Structures
             }
         }
 
-        // 3. Advance upgrade level
         currentUpgradeLevel++;
         Debug.Log($"[StructureApexPump] Pump successfully upgraded to Tier {currentUpgradeLevel}!");
 
@@ -167,7 +169,6 @@ public class StructureApexPump : Structures
         errorMessage = string.Empty;
         if (switchIndex < 0 || switchIndex >= switchStates.Length) return false;
 
-        // If trying to turn ON the switch, verify the activation opening requirement
         if (!switchStates[switchIndex])
         {
             int requiredThreshold = GetSwitchOpenThreshold(switchIndex);
@@ -182,7 +183,7 @@ public class StructureApexPump : Structures
         switchStates[switchIndex] = !switchStates[switchIndex];
         Debug.Log($"[StructureApexPump] Switch {switchIndex + 1} is now {(switchStates[switchIndex] ? "ON (Green)" : "OFF (Red)")}");
 
-        if (switchStates[switchIndex]) 
+        if (switchStates[switchIndex])
             NotifyPumpActivated();
 
         EvaluateAndApplyDrainage();
@@ -202,7 +203,6 @@ public class StructureApexPump : Structures
             {
                 if (switchStates[i])
                 {
-                    // Check if current fuel dropped below this switch's safety shutdown cutoff threshold
                     int shutdownLimit = GetSwitchShutdownThreshold(i);
                     if (currentFuel < shutdownLimit)
                     {
@@ -227,7 +227,7 @@ public class StructureApexPump : Structures
                 {
                     Debug.LogWarning("[StructureApexPump] Out of fuel! Shutting down all switches.");
                     currentFuel = 0;
-                    for (int i = 0; i < switchStates.Length; i++) 
+                    for (int i = 0; i < switchStates.Length; i++)
                         switchStates[i] = false;
                     ClearDischargePower();
                 }
@@ -244,7 +244,6 @@ public class StructureApexPump : Structures
         {
             if (switchStates[i])
             {
-                // Ensure switch shuts down if safety shutdown cutoff threshold is violated
                 int shutdownLimit = GetSwitchShutdownThreshold(i);
                 if (currentFuel < shutdownLimit)
                 {
@@ -276,7 +275,7 @@ public class StructureApexPump : Structures
 
     private void ClearDischargePower()
     {
-        if (GameManager.Instance != null && GameManager.Instance.WaterLevel != null) 
+        if (GameManager.Instance != null && GameManager.Instance.WaterLevel != null)
             GameManager.Instance.WaterLevel.SetDischargePower(0f);
     }
 
@@ -308,7 +307,7 @@ public class StructureApexPump : Structures
             int totalCostPerInterval = 0;
             for (int i = 0; i < switchStates.Length; i++)
             {
-                if (switchStates[i]) 
+                if (switchStates[i])
                     totalCostPerInterval += GetAdjustedFuelCost(i);
             }
 
@@ -325,8 +324,7 @@ public class StructureApexPump : Structures
     public int CurrentFuel => currentFuel;
     public int CurrentUpgradeLevel => currentUpgradeLevel;
     public int GetSwitchCost(int index) => (index >= 0 && index < switchFuelCosts.Length) ? switchFuelCosts[index] : 0;
-    
-    // Separate getters for open requirements and shutdown thresholds
+
     public int GetSwitchOpenThreshold(int index) => (index >= 0 && index < switchOpenThresholds.Length) ? switchOpenThresholds[index] : 0;
     public int GetSwitchShutdownThreshold(int index) => (index >= 0 && index < switchShutdownThresholds.Length) ? switchShutdownThresholds[index] : 0;
 
@@ -360,9 +358,25 @@ public class StructureApexPump : Structures
             return false;
         }
     }
+
     public void NotifyPumpActivated()
     {
-        if (ObjectiveManager.Instance != null) 
+        // ── Pump start SFX (placeholder: destruction clip) ─────────────
+        // Fires only when the pump goes from inactive (0 switches) to
+        // active (1 switch). Turning on additional switches after that
+        // does NOT re-trigger — the pump was already running.
+        //
+        // To play on EVERY switch activation instead, remove the
+        // `ActiveSwitchCount == 1 &&` part of the guard below.
+        if (ActiveSwitchCount == 1 &&
+            GameManager.Instance != null &&
+            GameManager.Instance.SoundManager != null)
+        {
+            GameManager.Instance.SoundManager.Play(PumpStartSFXName);
+        }
+        // ─────────────────────────────────────────────────────────────
+
+        if (ObjectiveManager.Instance != null)
             ObjectiveManager.Instance.NotifyPumpActivated(this);
     }
 }
