@@ -2,9 +2,15 @@
 using UnityEngine;
 using UnityEngine.Events;
 
+public interface IWorkerUser
+{
+    int LaborCost { get; }
+    void ForceStopByWorkerShortage();
+}
+
 public enum HarvestMode { Consumable, Depletable, Infinite }
 
-public class StructureHarvestResource : Structures
+public class StructureHarvestResource : Structures, IWorkerUser
 {
     [Header("Structure Info")]
     [SerializeField] private string structureTitle = "Wood Source";
@@ -83,6 +89,7 @@ public class StructureHarvestResource : Structures
         }
 
         workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker - laborCost);
+        workerMgr.RegisterActiveWorkplace(this);
 
         if (ObjectiveManager.Instance != null) 
             ObjectiveManager.Instance.NotifyWorkersAssigned(this, laborCost);
@@ -100,17 +107,41 @@ public class StructureHarvestResource : Structures
             harvestRoutine = null;
         }
 
-        if (returnWorkers)
+        var workerMgr = GameManager.Instance.WorkerManager;
+        if (workerMgr != null)
         {
-            var workerMgr = GameManager.Instance.WorkerManager;
-            if (workerMgr != null) 
+            workerMgr.UnregisterActiveWorkplace(this);
+            if (returnWorkers)
+            {
                 workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker + laborCost);
+            }
         }
 
         isWorking = false;
         progressPercentage = 0f;
         
         EvtOnBuildingNotWorking?.Invoke();
+    }
+
+    public void ForceStopByWorkerShortage()
+    {
+        if (harvestRoutine != null)
+        {
+            StopCoroutine(harvestRoutine);
+            harvestRoutine = null;
+        }
+
+        isWorking = false;
+        progressPercentage = 0f;
+        // Workers perished with their house, so do not return them to pool!
+
+        EvtOnBuildingNotWorking?.Invoke();
+
+        var harvestUI = GameManager.Instance.uiController.UiResourceHarvest;
+        if (harvestUI != null && harvestUI.IsShowingStructure(this))
+        {
+            harvestUI.CompleteProgress();
+        }
     }
 
     public void ToggleDestroying()
@@ -247,4 +278,6 @@ public class StructureHarvestResource : Structures
     public string ProductionDescription => isDestroying
         ? "Destroying Building..."
         : $"Producing {productionAmount} {(resourceToProduce != null ? resourceToProduce.ResourceName : "Resource")}";
+
+    public int LaborCostProp => laborCost;
 }

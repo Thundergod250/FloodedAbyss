@@ -7,13 +7,13 @@ public class StructureWorkersHouse : Structures
     [SerializeField] private string structureTitle = "Worker's House";
     [SerializeField] private float destructionDuration = 3f;
 
+    [Header("Housing Capacity & Local Workers")]
+    [SerializeField] private int housingCapacity = 3; 
+    [SerializeField] private int currentWorkers = 1; // 1 for Level 1, 2 for Level 2, 3 for Level 3
+
     [Header("Debug Status")]
     [SerializeField] private bool isDestroying = false;
     [SerializeField, Range(0f, 1f)] private float progressPercentage = 0f;
-
-    [Header("Housing Capacity & Local Workers")]
-    [SerializeField] private int housingCapacity = 1;
-    [SerializeField] private int currentWorkers = 1; // Starts with 1 worker upon build
 
     public int HousingCapacity => housingCapacity;
     public int CurrentWorkers => currentWorkers;
@@ -29,7 +29,6 @@ public class StructureWorkersHouse : Structures
 
     private IEnumerator RegisterWhenReadyRoutine()
     {
-        // Wait until GameManager and WorkerManager are fully initialized in the scene
         while (GameManager.Instance == null || GameManager.Instance.WorkerManager == null)
         {
             yield return null;
@@ -79,17 +78,6 @@ public class StructureWorkersHouse : Structures
         }
 
         ExecuteFinalDestruction();
-    }
-
-    public void AddWorkerCapacity(int amount = 1)
-    {
-        housingCapacity += amount;
-        currentWorkers += amount; // Instant +1 worker on upgrade
-
-        if (GameManager.Instance != null && GameManager.Instance.WorkerManager != null)
-        {
-            GameManager.Instance.WorkerManager.UpdateHouseCapacityAndWorkers(amount, amount);
-        }
     }
 
     public void RemoveWorkerDueToDeath()
@@ -144,7 +132,6 @@ public class StructureWorkersHouse : Structures
 
     private void ExecuteFinalDestruction()
     {
-        // Instantly unregister and reduce workers in WorkerManager
         UnregisterFromManager();
 
         var houseUI = GameManager.Instance.uiController.UiWorkersHouse;
@@ -154,7 +141,7 @@ public class StructureWorkersHouse : Structures
             GameManager.Instance.uiController.CloseAllModals();
         }
 
-        Destroyed();
+        Destroyed(); // Calls base.Destroyed() which re-enables owningTerminal and spawns BuildablePrefab!
     }
 
     public bool IsOccupied => currentWorkers > 0;
