@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,6 +23,10 @@ public struct WeatherDefinition
 
 public class WaterForecast : MonoBehaviour
 {
+    // Must match the child GameObject names on the SoundManager prefab.
+    private const string RainSFXName = "SFXRaining";
+    private const string SunnySFXName = "SFXSunny";
+
     [Header("Timeline Settings")]
     [SerializeField] private float eventDuration = 60f;
     public float EventDuration => eventDuration;
@@ -72,7 +76,7 @@ public class WaterForecast : MonoBehaviour
             return;
         }
 
-        if (weatherBacklog.Count == 0) 
+        if (weatherBacklog.Count == 0)
             BuildInitialBacklog();
 
         if (weatherBacklog.Count == 0)
@@ -139,7 +143,10 @@ public class WaterForecast : MonoBehaviour
                         GameManager.Instance.VFXController.StopRain();
 
                     if (GameManager.Instance.SoundManager != null)
-                        GameManager.Instance.SoundManager.Stop("SFXRaining");
+                    {
+                        GameManager.Instance.SoundManager.Stop(RainSFXName);
+                        GameManager.Instance.SoundManager.Stop(SunnySFXName);
+                    }
                 }
 
                 currentActiveRainState = null;
@@ -152,7 +159,7 @@ public class WaterForecast : MonoBehaviour
 
             while (currentTime < eventDuration)
             {
-                if (!timelinePaused) 
+                if (!timelinePaused)
                     currentTime += Time.deltaTime;
                 yield return null;
             }
@@ -203,7 +210,7 @@ public class WaterForecast : MonoBehaviour
 
     private void PlayCurrentWeather()
     {
-        if (weatherBacklog.Count > 0) 
+        if (weatherBacklog.Count > 0)
             ApplyWeatherEffects(weatherBacklog[0].Type);
     }
 
@@ -245,16 +252,22 @@ public class WaterForecast : MonoBehaviour
                 GameManager.Instance.VFXController.PlayRain(targetStrength);
         }
 
-        // Handle Audio (Passed true for isLooped so rain ambiance loops seamlessly without restarting instances)
+        // Handle Audio (Passed true for isLooped so ambience loops seamlessly without restarting instances)
+        // Transitions:
+        //   sunny → non-sunny:  Stop SFXSunny,   Play SFXRaining
+        //   non-sunny → sunny:  Stop SFXRaining, Play SFXSunny
+        //   same-state:         skipped entirely by the optimization check above
         if (GameManager.Instance.SoundManager != null)
         {
             if (isSunny)
             {
-                GameManager.Instance.SoundManager.Stop("SFXRaining");
+                GameManager.Instance.SoundManager.Stop(RainSFXName);
+                GameManager.Instance.SoundManager.Play(SunnySFXName, true);
             }
             else
             {
-                GameManager.Instance.SoundManager.Play("SFXRaining", true);
+                GameManager.Instance.SoundManager.Stop(SunnySFXName);
+                GameManager.Instance.SoundManager.Play(RainSFXName, true);
             }
         }
 
@@ -298,7 +311,7 @@ public class WaterForecast : MonoBehaviour
                 return typhoonVal;
 
             case rainStrength.Sunny:
-                 return sunnyVal;
+                return sunnyVal;
 
             default:
                 return 0;
@@ -377,7 +390,10 @@ public class WaterForecast : MonoBehaviour
                 GameManager.Instance.VFXController.StopRain();
 
             if (GameManager.Instance.SoundManager != null)
-                GameManager.Instance.SoundManager.Stop("SFXRaining");
+            {
+                GameManager.Instance.SoundManager.Stop(RainSFXName);
+                GameManager.Instance.SoundManager.Stop(SunnySFXName);
+            }
         }
 
         // Gradually remove the existing weather contribution.
