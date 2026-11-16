@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class StructureWaterInfrastructure : Structures
+public class StructureWaterInfrastructure : Structures, IWorkerUser
 {
     public enum InfrastructureType
     {
@@ -98,18 +98,14 @@ public class StructureWaterInfrastructure : Structures
         if (isActivated)
             return;
 
-        if (requiresWorkers &&
-            (workerMgr == null || workerMgr.CurrentWorker < laborCost))
-        {
-            waterS?.ShowNotEnoughWorkersWarning();
-            return;
-        }
-
         if (requiresWorkers)
         {
-            workerMgr.SetCurrentWorkers(
-                workerMgr.CurrentWorker - laborCost
-            );
+            if (workerMgr == null || !workerMgr.TryConsumeWorkersForLabor(laborCost))
+            {
+                waterS?.ShowNotEnoughWorkersWarning();
+                return;
+            }
+            workerMgr.RegisterActiveWorkplace(this);
         }
 
         appliedWaterReduction = GetWeatherBasedWaterReduction();
@@ -140,9 +136,28 @@ public class StructureWaterInfrastructure : Structures
 
         if (requiresWorkers && workerMgr != null)
         {
-            workerMgr.SetCurrentWorkers(
-                workerMgr.CurrentWorker + laborCost
-            );
+            workerMgr.UnregisterActiveWorkplace(this);
+            workerMgr.ReturnWorkersFromLabor(laborCost);
+        }
+
+        appliedWaterReduction = 0f;
+        isActivated = false;
+    }
+
+    public void ForceStopByWorkerShortage()
+    {
+        if (!isActivated)
+            return;
+
+        var workerMgr = GameManager.Instance.WorkerManager;
+
+        GameManager.Instance.WaterLevel.IncWaterPressure(
+            appliedWaterReduction
+        );
+
+        if (requiresWorkers && workerMgr != null)
+        {
+            workerMgr.UnregisterActiveWorkplace(this);
         }
 
         appliedWaterReduction = 0f;
