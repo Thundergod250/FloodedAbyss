@@ -562,7 +562,7 @@ public class ObjectiveManager : MonoBehaviour
 
             EnsureObjectiveStates();
 
-            if (currentQuestIndex >= 8 && !endGameSequenceStarted)
+            if (currentQuestIndex >= 7 && !endGameSequenceStarted)
             {
                 Debug.Log("Start Flood / WEather");
                 endGameSequenceStarted = true;
