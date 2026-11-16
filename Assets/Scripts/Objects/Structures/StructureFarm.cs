@@ -1,7 +1,8 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class StructureFarm : Structures
+public class StructureFarm : Structures, IWorkerUser
 {
     [Header("Farm Info")]
     [SerializeField] private string structureTitle = "Farm";
@@ -24,9 +25,6 @@ public class StructureFarm : Structures
     private Coroutine workRoutine;
     private Coroutine destroyRoutine;
 
-    // ------------------------------------------------------------------
-    // UI ACCESS (mirrors existing pattern; UiFarm lives on the UI root)
-    // ------------------------------------------------------------------
     private UiFarm GetFarmUI()
     {
         if (GameManager.Instance == null ||
@@ -62,9 +60,6 @@ public class StructureFarm : Structures
         ExecuteFinalDestruction();
     }
 
-    // ------------------------------------------------------------------
-    // WORK CONTROLS
-    // ------------------------------------------------------------------
     public void ToggleWorking()
     {
         if (isDestroying) return;
@@ -80,13 +75,14 @@ public class StructureFarm : Structures
         var farmUI = GetFarmUI();
         if (workerMgr == null) return;
 
-        if (workerMgr.CurrentWorker < laborCost)
+        // Use priority worker consumption system
+        if (!workerMgr.TryConsumeWorkersForLabor(laborCost))
         {
             if (farmUI != null) farmUI.ShowNotEnoughWorkersWarning();
             return;
         }
 
-        workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker - laborCost);
+        workerMgr.RegisterActiveWorkplace(this);
         workRoutine = StartCoroutine(WorkLoopRoutine());
     }
 
@@ -100,20 +96,39 @@ public class StructureFarm : Structures
             workRoutine = null;
         }
 
-        if (returnWorkers)
+        var workerMgr = GameManager.Instance.WorkerManager;
+        if (workerMgr != null)
         {
-            var workerMgr = GameManager.Instance.WorkerManager;
-            if (workerMgr != null)
-                workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker + laborCost);
+            workerMgr.UnregisterActiveWorkplace(this);
+            if (returnWorkers)
+            {
+                workerMgr.ReturnWorkersFromLabor(laborCost);
+            }
         }
 
         isWorking = false;
         progressPercentage = 0f;
     }
 
-    // ------------------------------------------------------------------
-    // DESTRUCTION
-    // ------------------------------------------------------------------
+    public void ForceStopByWorkerShortage()
+    {
+        if (workRoutine != null)
+        {
+            StopCoroutine(workRoutine);
+            workRoutine = null;
+        }
+
+        isWorking = false;
+        progressPercentage = 0f;
+        // Workers perished with housing, so do not return them to pool here
+
+        var farmUI = GetFarmUI();
+        if (farmUI != null && farmUI.IsShowingStructure(this))
+        {
+            farmUI.CompleteProgress();
+        }
+    }
+
     public void ToggleDestroying()
     {
         if (!canBeDestroyed) return;
@@ -183,9 +198,6 @@ public class StructureFarm : Structures
         Destroy(gameObject);
     }
 
-    // ------------------------------------------------------------------
-    // PRODUCTION LOOP
-    // ------------------------------------------------------------------
     private IEnumerator WorkLoopRoutine()
     {
         isWorking = true;
@@ -214,9 +226,6 @@ public class StructureFarm : Structures
         }
     }
 
-    // ------------------------------------------------------------------
-    // GETTERS (used by UiFarm)
-    // ------------------------------------------------------------------
     public bool IsWorking => isWorking;
     public bool IsDestroying => isDestroying;
     public bool CanBeDestroyed => canBeDestroyed;

@@ -82,13 +82,13 @@ public class StructureHarvestResource : Structures, IWorkerUser
 
         if (workerMgr == null) return;
 
-        if (workerMgr.CurrentWorker < laborCost)
+        // Use the new priority worker consumption system
+        if (!workerMgr.TryConsumeWorkersForLabor(laborCost))
         {
             if (harvestUI != null) harvestUI.ShowNotEnoughWorkersWarning();
             return;
         }
 
-        workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker - laborCost);
         workerMgr.RegisterActiveWorkplace(this);
 
         if (ObjectiveManager.Instance != null) 
@@ -113,7 +113,7 @@ public class StructureHarvestResource : Structures, IWorkerUser
             workerMgr.UnregisterActiveWorkplace(this);
             if (returnWorkers)
             {
-                workerMgr.SetCurrentWorkers(workerMgr.CurrentWorker + laborCost);
+                workerMgr.ReturnWorkersFromLabor(laborCost);
             }
         }
 
@@ -133,7 +133,7 @@ public class StructureHarvestResource : Structures, IWorkerUser
 
         isWorking = false;
         progressPercentage = 0f;
-        // Workers perished with their house, so do not return them to pool!
+        // Workers perished with their housing or had to be unassigned due to deficits, so do not return them here!
 
         EvtOnBuildingNotWorking?.Invoke();
 

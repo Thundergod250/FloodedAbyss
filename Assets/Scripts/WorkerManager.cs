@@ -4,7 +4,13 @@ using System.Collections.Generic;
 
 public class WorkerManager : MonoBehaviour
 {
-    [field: SerializeField] public int CurrentWorker { get; private set; } = 1; // Starts at 1 available unhoused worker
+    [field: SerializeField, HideInInspector] public int CurrentWorker { get; private set; } = 1; // Purely for UI display
+
+    [Header("Worker Pools")]
+    [SerializeField] private int unhousedWorkers = 1; // Editable in inspector, defaults to 1 immortal baseline
+    [SerializeField, HideInInspector] private int housedWorkers = 0;     // Workers living in active houses
+    [SerializeField, HideInInspector] private int assignedWorkers = 0;   // Workers currently assigned to workplaces
+
     [field: SerializeField] public int TotalHousingCapacity { get; private set; } = 0;
 
     [Header("Events")]
@@ -14,56 +20,66 @@ public class WorkerManager : MonoBehaviour
     private List<StructureWorkersHouse> workerHouses = new();
     private List<IWorkerUser> activeWorkplaces = new();
 
-    private void Awake()
+    private void Awake() => RecalculateUI();
+
+    private void RecalculateUI()
     {
+        // CurrentWorker is now exclusively for UI use: Total alive workers minus what's currently working
+        int totalAliveWorkers = unhousedWorkers + housedWorkers;
+        CurrentWorker = Mathf.Max(0, totalAliveWorkers - assignedWorkers);
         EvtOnWorkersChanged?.Invoke(CurrentWorker);
     }
 
-    public void SetCurrentWorkers(int amount)
-    {
-        CurrentWorker = Mathf.Max(0, amount); // Allows 0 when all available workers are deployed to work!
-        EvtOnWorkersChanged?.Invoke(CurrentWorker);
-    }
-
-    // Called when a new house is built
+    // Called when a new house is built or upgraded
     public void RegisterHouse(int capacity, int initialWorkers)
     {
         TotalHousingCapacity += capacity;
-        CurrentWorker += initialWorkers;
-        EvtOnWorkersChanged?.Invoke(CurrentWorker);
+        housedWorkers += initialWorkers;
+        RecalculateUI();
     }
 
-    // Called when a house is destroyed (Workers in the house die)
-    public void UnregisterHouse(int capacity, int housedWorkers)
+    // Called when a house is destroyed or submerged
+    public void UnregisterHouse(int capacity, int housedWorkersInHouse)
     {
         TotalHousingCapacity = Mathf.Max(0, TotalHousingCapacity - capacity);
-        
-        // 1. Remove as many dying workers as possible from the idle pool (CurrentWorker)
-        int idleToRemove = Mathf.Min(housedWorkers, CurrentWorker);
-        CurrentWorker -= idleToRemove;
-        
-        // 2. If more house workers died than were idle, the rest must have been out working!
-        int remainingToKill = housedWorkers - idleToRemove;
-        if (remainingToKill > 0)
+
+        // House destruction ONLY kills housed workers. The unhoused worker is untouched!
+        int actualHousedKilled = Mathf.Min(housedWorkersInHouse, housedWorkers);
+        housedWorkers = Mathf.Max(0, housedWorkers - actualHousedKilled);
+
+        // If active assignments exceed total alive workers, shut down workplaces to resolve deficit
+        int totalAliveWorkers = unhousedWorkers + housedWorkers;
+        int deficit = assignedWorkers - totalAliveWorkers;
+        if (deficit > 0)
         {
-            ResolveWorkerDeficit(remainingToKill);
+            ResolveWorkerDeficit(deficit);
         }
 
-        // SAFETY CHECK: Ensure we never drop below 1 total available worker when all housing is gone, 
-        // preventing any blockers or soft-locks.
-        if (TotalHousingCapacity <= 0 && CurrentWorker < 1)
-        {
-            CurrentWorker = 1;
-        }
-
-        EvtOnWorkersChanged?.Invoke(CurrentWorker);
-        if (housedWorkers > 0) 
+        RecalculateUI();
+        if (actualHousedKilled > 0) 
             EvtOnWorkerReduced?.Invoke(CurrentWorker);
+    }
+
+    // Priority Check when assigning work: Housed workers first, then Unhoused
+    public bool TryConsumeWorkersForLabor(int laborCost)
+    {
+        int totalAvailable = (unhousedWorkers + housedWorkers) - assignedWorkers;
+        if (totalAvailable < laborCost) return false;
+
+        assignedWorkers += laborCost;
+        RecalculateUI();
+        return true;
+    }
+
+    // Returning workers when a workplace stops naturally
+    public void ReturnWorkersFromLabor(int laborCost)
+    {
+        assignedWorkers = Mathf.Max(0, assignedWorkers - laborCost);
+        RecalculateUI();
     }
 
     private void ResolveWorkerDeficit(int deficit)
     {
-        // Shut down active workplaces until the worker deficit is cleared
         while (deficit > 0 && activeWorkplaces.Count > 0)
         {
             int randomIndex = Random.Range(0, activeWorkplaces.Count);
@@ -71,32 +87,24 @@ public class WorkerManager : MonoBehaviour
 
             if (workplace != null)
             {
-                // Subtract the labor cost of this workplace (e.g., 2 workers freed/lost)
-                deficit -= workplace.LaborCost;
-                workplace.ForceStopByWorkerShortage(); // Shuts down workplace and forces workers to return/perish
+                int cost = workplace.LaborCost;
+                deficit -= cost;
+                assignedWorkers = Mathf.Max(0, assignedWorkers - cost);
+                workplace.ForceStopByWorkerShortage(); 
                 activeWorkplaces.RemoveAt(randomIndex);
             }
             else
-            {
                 activeWorkplaces.RemoveAt(randomIndex);
-            }
         }
-    }
-
-    // Called when a house is upgraded
-    public void UpdateHouseCapacityAndWorkers(int addedCapacity, int addedWorkers)
-    {
-        TotalHousingCapacity += addedCapacity;
-        CurrentWorker += addedWorkers;
-        EvtOnWorkersChanged?.Invoke(CurrentWorker);
     }
 
     public void ReduceWorker(int val)
     {
-        if (val <= 0 || CurrentWorker <= 0)
+        if (val <= 0 || housedWorkers <= 0)
             return;
 
-        int workersToRemove = Mathf.Min(val, CurrentWorker);
+        int workersToRemove = Mathf.Min(val, housedWorkers);
+        housedWorkers -= workersToRemove;
 
         for (int i = 0; i < workersToRemove; i++)
         {
@@ -107,20 +115,19 @@ public class WorkerManager : MonoBehaviour
                 occupiedHouse.RemoveWorkerDueToDeath();
         }
 
-        CurrentWorker -= workersToRemove;
-        EvtOnWorkersChanged?.Invoke(CurrentWorker);
+        RecalculateUI();
         EvtOnWorkerReduced?.Invoke(CurrentWorker);
     }
 
     public void RegisterActiveWorkplace(IWorkerUser workplace)
     {
-        if (workplace != null && !activeWorkplaces.Contains(workplace))
+        if (workplace != null && !activeWorkplaces.Contains(workplace)) 
             activeWorkplaces.Add(workplace);
     }
 
     public void UnregisterActiveWorkplace(IWorkerUser workplace)
     {
-        if (workplace != null)
+        if (workplace != null) 
             activeWorkplaces.Remove(workplace);
     }
 
