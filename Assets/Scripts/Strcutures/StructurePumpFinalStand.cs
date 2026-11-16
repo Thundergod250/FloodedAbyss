@@ -39,18 +39,24 @@ public class StructurePumpFinalStand : MonoBehaviour
 
         finalStandRunning = true;
 
+        WaterLevel waterLevel = GameManager.Instance.WaterLevel;
+
+        // Save the original maximum height.
+        float originalMaxHeight = waterLevel.MaxWaterHeight;
+
         float elapsedTime = 0f;
 
+        // Temporarily cap the water.
         while (elapsedTime < finalStandDuration)
         {
-            GameManager.Instance.WaterLevel.SetOceanHeight(finalStandWaterLevel);
+            waterLevel.SetOceanHeight(finalStandWaterLevel);
 
             elapsedTime += Time.deltaTime;
-
             yield return null;
         }
 
-        GameManager.Instance.WaterLevel.SetOceanHeight(300);
+        // Remove the temporary cap.
+        waterLevel.SetOceanHeight(Mathf.RoundToInt(originalMaxHeight));
 
         finalStandActivated = true;
         finalStandRunning = false;
