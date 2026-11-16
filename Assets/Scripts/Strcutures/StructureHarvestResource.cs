@@ -12,6 +12,9 @@ public enum HarvestMode { Consumable, Depletable, Infinite }
 
 public class StructureHarvestResource : Structures, IWorkerUser
 {
+    // Matches the SFXConfirm child GameObject in SoundManager.prefab.
+    private const string HarvestConfirmSFXName = "SFXConfirm";
+
     [Header("Structure Info")]
     [SerializeField] private string structureTitle = "Wood Source";
     [SerializeField] private int laborCost = 1;
@@ -91,7 +94,7 @@ public class StructureHarvestResource : Structures, IWorkerUser
 
         workerMgr.RegisterActiveWorkplace(this);
 
-        if (ObjectiveManager.Instance != null) 
+        if (ObjectiveManager.Instance != null)
             ObjectiveManager.Instance.NotifyWorkersAssigned(this, laborCost);
 
         harvestRoutine = StartCoroutine(HarvestLoopRoutine());
@@ -119,7 +122,7 @@ public class StructureHarvestResource : Structures, IWorkerUser
 
         isWorking = false;
         progressPercentage = 0f;
-        
+
         EvtOnBuildingNotWorking?.Invoke();
     }
 
@@ -239,8 +242,17 @@ public class StructureHarvestResource : Structures, IWorkerUser
 
             try
             {
-                if (resourceToProduce != null && GameManager.Instance.ResourceManager != null) 
+                if (resourceToProduce != null && GameManager.Instance.ResourceManager != null)
+                {
                     GameManager.Instance.ResourceManager.AddResource(resourceToProduce, productionAmount);
+
+                    if (harvestMode == HarvestMode.Consumable)
+                    {
+                        var sm = GameManager.Instance.SoundManager;
+                        if (sm != null)
+                            sm.Play(HarvestConfirmSFXName);
+                    }
+                }
             }
             catch (System.Exception e)
             {
