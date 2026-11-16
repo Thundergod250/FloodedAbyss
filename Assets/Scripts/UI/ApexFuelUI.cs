@@ -9,9 +9,10 @@ public class ApexFuelUI : MonoBehaviour
 
     private Coroutine updateRoutine;
 
-    // Update is called once per frame
     private void OnEnable()
     {
+        UpdateFuelUI();
+
         if (updateRoutine == null)
             updateRoutine = StartCoroutine(UpdateUIRoutine());
     }
@@ -24,18 +25,27 @@ public class ApexFuelUI : MonoBehaviour
             updateRoutine = null;
         }
     }
+
     private IEnumerator UpdateUIRoutine()
     {
-        WaitForSeconds wait = new WaitForSeconds(updateInterval);
+        WaitForSeconds wait = new WaitForSeconds(
+            Mathf.Max(0.1f, updateInterval)
+        );
 
         while (true)
         {
-            if (fuelText != null)
-            {
-                fuelText.text = GameManager.Instance.ApexPump.CurrentFuel.ToString();
-            }
-
+            UpdateFuelUI();
             yield return wait;
         }
+    }
+
+    private void UpdateFuelUI()
+    {
+        if (fuelText == null ||
+            GameManager.Instance == null ||
+            GameManager.Instance.ApexPump == null)
+            return;
+
+        fuelText.text = GameManager.Instance.ApexPump.CurrentFuel.ToString();
     }
 }
