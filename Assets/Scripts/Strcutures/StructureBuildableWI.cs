@@ -109,7 +109,18 @@ public class StructureBuildableWI : Structures
         }
 
         Vector3 spawnPosition = transform.TransformPoint(spawnOffset);
-        GameObject spawnedGO = Instantiate(structureData.StructurePrefab, spawnPosition, transform.rotation);
+        Quaternion prefabRotation = structureData.StructurePrefab.transform.rotation;
+
+        if (Mathf.Approximately(transform.eulerAngles.y, 270f))
+        {
+            Debug.Log("Hort");
+            GameObject spawnedGO = Instantiate(structureData.StructurePrefab,spawnPosition, structureData.StructurePrefab.transform.rotation);
+        }
+        else
+        {
+            GameObject spawnedGO = Instantiate(structureData.StructurePrefab, spawnPosition, prefabRotation * Quaternion.Euler(0f, 90f, 0f)
+            );
+        }
 
         Debug.Log($"[StructureBuildable] Successfully built {structureData.StructureTitle}. Disabling terminal.");
 
