@@ -9,23 +9,20 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private float masterVolume = 1f;
 
     // Dictionary mapping sound names to their corresponding AudioSources on child objects
-    private Dictionary<string, AudioSource> soundSources = new Dictionary<string, AudioSource>();
+    private Dictionary<string, AudioSource> soundSources = new();
 
     // Tracks active disable coroutines for non-looping sounds so they don't conflict
-    private Dictionary<string, Coroutine> activeCoroutines = new Dictionary<string, Coroutine>();
+    private Dictionary<string, Coroutine> activeCoroutines = new();
 
-    private void Awake()
-    {
-        InitializeSoundSources();
-    }
+    // Caches the default inspector volumes for each source so we can scale them relative to master volume
+    private Dictionary<string, float> inspectorVolumes = new();
 
-    /// <summary>
-    /// Automatically finds and maps all AudioSource components on immediate child objects,
-    /// and prewarms them to prevent first-time activation lag spikes.
-    /// </summary>
+    private void Awake() => InitializeSoundSources();
+
     private void InitializeSoundSources()
     {
         soundSources.Clear();
+        inspectorVolumes.Clear();
         AudioSource[] childSources = GetComponentsInChildren<AudioSource>(true);
 
         foreach (var src in childSources)
@@ -42,12 +39,11 @@ public class SoundManager : MonoBehaviour
             }
 
             soundSources.Add(soundName, src);
+            inspectorVolumes.Add(soundName, src.volume); // Cache the volume set in the Inspector (e.g. 0.35)
 
             // 1. Preload the audio clip data into memory so it doesn't hitch on first play
-            if (src.clip != null)
-            {
+            if (src.clip != null) 
                 src.clip.LoadAudioData();
-            }
 
             // 2. Briefly activate and deactivate the GameObject to prewarm Unity's audio components and mixer routing
             GameObject soundObj = src.gameObject;
@@ -57,15 +53,7 @@ public class SoundManager : MonoBehaviour
             soundObj.SetActive(false);
         }
     }
-
-    // ------------------------------------------------------------------
-    // PUBLIC API
-    // ------------------------------------------------------------------
-
-    /// <summary>
-    /// Play a sound by name. Defaults to not looped. 
-    /// Non-looped sounds will enable the child object, play, and auto-disable when finished.
-    /// </summary>
+    
     public void Play(string name, bool isLooped = false)
     {
         if (!TryGetAudioSource(name, out AudioSource source)) return;
@@ -81,12 +69,13 @@ public class SoundManager : MonoBehaviour
         soundObj.SetActive(true);
 
         source.loop = isLooped;
-        source.volume = masterVolume; // You can multiply by individual volume if you add a per-object setting
+        
+        // Multiplies the inspector volume (e.g. 0.35) by the master volume slider, preserving your custom tweaks!
+        float baseVolume = inspectorVolumes.TryGetValue(name, out float vol) ? vol : 1f;
+        source.volume = baseVolume * masterVolume;
 
-        if (!source.isPlaying)
-        {
+        if (!source.isPlaying) 
             source.Play();
-        }
 
         // If it's not looped, start a coroutine to disable it after the clip finishes
         if (!isLooped)
@@ -103,10 +92,7 @@ public class SoundManager : MonoBehaviour
             }
         }
     }
-
-    /// <summary>
-    /// Stops a sound and immediately disables its child object.
-    /// </summary>
+    
     public void Stop(string name)
     {
         if (!TryGetAudioSource(name, out AudioSource source)) return;
@@ -120,60 +106,6 @@ public class SoundManager : MonoBehaviour
         source.Stop();
         source.gameObject.SetActive(false);
     }
-
-    /// <summary>
-    /// Stops and disables all sound child objects.
-    /// </summary>
-    public void StopAll()
-    {
-        foreach (var kvp in activeCoroutines)
-        {
-            if (kvp.Value != null) StopCoroutine(kvp.Value);
-        }
-        activeCoroutines.Clear();
-
-        foreach (var source in soundSources.Values)
-        {
-            if (source != null)
-            {
-                source.Stop();
-                source.gameObject.SetActive(false);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Global master volume multiplier (0 to 1).
-    /// </summary>
-    public void SetMasterVolume(float v)
-    {
-        masterVolume = Mathf.Clamp01(v);
-        foreach (var source in soundSources.Values)
-        {
-            if (source != null)
-            {
-                source.volume = masterVolume;
-            }
-        }
-    }
-
-    public float MasterVolume => masterVolume;
-
-    /// <summary>
-    /// Returns true if the sound's child object is active and playing.
-    /// </summary>
-    public bool IsPlaying(string name)
-    {
-        if (soundSources.TryGetValue(name, out AudioSource source))
-        {
-            return source != null && source.isPlaying;
-        }
-        return false;
-    }
-
-    // ------------------------------------------------------------------
-    // INTERNALS
-    // ------------------------------------------------------------------
 
     private bool TryGetAudioSource(string name, out AudioSource source)
     {
@@ -194,10 +126,8 @@ public class SoundManager : MonoBehaviour
         if (soundObj != null)
         {
             // Make sure it didn't get restarted in the meantime
-            if (soundSources.TryGetValue(name, out AudioSource src) && !src.isPlaying)
-            {
+            if (soundSources.TryGetValue(name, out AudioSource src) && !src.isPlaying) 
                 soundObj.SetActive(false);
-            }
         }
 
         activeCoroutines.Remove(name);

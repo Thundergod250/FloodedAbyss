@@ -184,6 +184,7 @@ public class WaterLevel : MonoBehaviour
     public bool GreatFloodStarted => greatFloodStarted;
     public float GreatFloodTimeRemaining => Mathf.Max(0f, (greatFloodTimerDuration * 60f) - greatFloodDurationProgress); 
     public bool GreatFloodCompleted { get; private set; } = false;
+    public float MaxWaterHeight => maxWaterHeight;
     // Water Pressure casts to an integer for your red HUD text so it displays whole numbers (1, 2, 3...) 
     // while the underlying float increments smoothly.
     public int WaterPressure => Mathf.FloorToInt(currentWaterPressureFloat);

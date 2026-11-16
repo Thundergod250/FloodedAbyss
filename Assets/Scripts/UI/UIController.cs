@@ -7,7 +7,7 @@ public class UIController : MonoBehaviour
 {
     private Dictionary<Type, UiModals> modalDictionary = new();
 
-    // Developers ONLY need to declare their new UI modal property here:
+    // Devs ONLY need to declare their new UI modal property in here
     public UIHUD UiHUD { get; private set; }
     public UiApexPump UiApexPump { get; private set; }
     public UiResourceHarvest UiResourceHarvest { get; private set; }
@@ -19,17 +19,18 @@ public class UIController : MonoBehaviour
     public UiWaterInfrastucture UIWaterInfrastructure { get; private set; }
 
     private void Awake() => InitializeModals();
-
-    private void Start()
+    
+    private void OnEnable()
     {
         if (GameManager.Instance != null && GameManager.Instance.InputManager != null) 
         {
+            GameManager.Instance.InputManager.OnEscape.RemoveListener(EscapeClicked);
             GameManager.Instance.InputManager.OnEscape.AddListener(EscapeClicked);
             Debug.Log("[UIController] Successfully bound EscapeClicked to InputManager.OnEscape event.");
         }
         else
         {
-            Debug.LogWarning("[UIController] Failed to bind OnEscape: GameManager or InputManager is null during Start().");
+            Debug.Log("[UIController] Failed to bind OnEscape: GameManager or InputManager is null during OnEnable().");
         }
     }
 

@@ -5,7 +5,10 @@ public class UISlideDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 {
     [Header("Slide Settings")]
     [SerializeField] private Vector2 slideOffset = new(300f, 0f); 
-    [SerializeField] private float slideSpeed = 12f;    
+    [SerializeField] private float slideSpeed = 12f;
+
+    [Header("Objective Notification")]
+    [SerializeField] private GameObject newObjBubble;
 
     private RectTransform rectTransform;
     private Vector2 shownPosition;
@@ -35,7 +38,10 @@ public class UISlideDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void OnPointerEnter(PointerEventData eventData)
     {
         isHovered = true;
-        hasBeenHovered = true; 
+        hasBeenHovered = true;
+
+        if (newObjBubble != null)
+            newObjBubble.SetActive(false);
     }
 
     public void OnPointerExit(PointerEventData eventData) => isHovered = false;

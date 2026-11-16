@@ -34,14 +34,8 @@ public class Interactables : MonoBehaviour
         // Activate Structure if it exists on this GameObject
         if (structure != null)
         {
-            // ── Structure click SFX ──────────────────────────────────
-            // Played right before Activate() so the player always gets
-            // click feedback on their input, even if the panel itself
-            // decides not to open (e.g. submerged structure).
             if (GameManager.Instance != null && GameManager.Instance.SoundManager != null)
                 GameManager.Instance.SoundManager.Play(StructureClickSFXName);
-            // ─────────────────────────────────────────────────────────
-
             structure.Activate();
         }
     }
