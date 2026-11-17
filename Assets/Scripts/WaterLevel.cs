@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class WaterLevel : MonoBehaviour
 {
@@ -22,6 +23,13 @@ public class WaterLevel : MonoBehaviour
     [SerializeField] private int greatFloodTimerMins;
     [SerializeField] private int greatFloodTimerDuration;
     [SerializeField] private float greatFloodTimerProgress;
+
+    [Header("Infrastructure Reduction")]
+    [SerializeField] private float infrastructureReductionPerStructure = 60f;
+
+    private HashSet<StructureWaterInfrastructure> activeInfrastructures =
+        new HashSet<StructureWaterInfrastructure>();
+
     private float greatFloodDurationProgress = 0f;
 
     private bool greatFloodStarted = false;
@@ -150,6 +158,35 @@ public class WaterLevel : MonoBehaviour
         }
 
         EndGreatFlood();
+    }
+
+    public void RegisterInfrastructure(StructureWaterInfrastructure structure)
+    {
+        if (structure != null)
+            activeInfrastructures.Add(structure);
+    }
+
+    public void UnregisterInfrastructure(StructureWaterInfrastructure structure)
+    {
+        if (structure != null)
+            activeInfrastructures.Remove(structure);
+    }
+
+    public float TotalInfrastructureReduction
+    {
+        get
+        {
+            float effectiveness = greatFloodStarted ? 0.8f : 1f;
+
+            return activeInfrastructures.Count *
+                   infrastructureReductionPerStructure *
+                   effectiveness;
+        }
+    }
+
+    public float GetAdjustedWeatherTarget(float weatherAmount)
+    {
+        return Mathf.Max(0f, weatherAmount - TotalInfrastructureReduction);
     }
     public void AdjustWaterLevel(float amount)
     {

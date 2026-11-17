@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 public class StructureWaterInfrastructure : Structures, IWorkerUser
@@ -15,9 +14,6 @@ public class StructureWaterInfrastructure : Structures, IWorkerUser
     [SerializeField] private InfrastructureType infrastructureType;
     [SerializeField] private string structureName;
 
-    [Header("Water Pressure Reduction")]
-    [SerializeField] private float waterReduc = 1f;
-
     [Header("Worker Requirements")]
     [SerializeField] private bool requiresWorkers = false;
     [SerializeField] private int laborCost = 1;
@@ -28,33 +24,10 @@ public class StructureWaterInfrastructure : Structures, IWorkerUser
     [Header("Debug Status")]
     [SerializeField] private bool isDestroying = false;
 
-    private float appliedWaterReduction;
     private bool isActivated;
 
     public string StructureName => structureName;
     public int LaborCost => laborCost;
-
-    public bool GreatFloodActive =>
-        GameManager.Instance != null &&
-        GameManager.Instance.WaterLevel != null &&
-        GameManager.Instance.WaterLevel.GreatFloodStarted;
-
-    private float GetWeatherBasedWaterReduction()
-    {
-        WaterForecast wl = GameManager.Instance.uiController
-            .GetComponent<WaterForecast>();
-
-        float weatherValue = wl.CurrentActiveWeather switch
-        {
-            WeatherType.Sunny => wl.SunnyVal,
-            WeatherType.Drizzle => wl.DrizzleVal,
-            WeatherType.Stormy => wl.StormyVal,
-            WeatherType.Typhoon => wl.TyphoonVal,
-            _ => 1f
-        };
-
-        return weatherValue * waterReduc;
-    }
 
     private UiWaterInfrastucture UIWaterInfrastructure()
     {
@@ -65,11 +38,6 @@ public class StructureWaterInfrastructure : Structures, IWorkerUser
         return GameManager.Instance.uiController.UIWaterInfrastructure;
     }
 
-    protected override void Update()
-    {
-        base.Update();
-    }
-
     public override void Activate()
     {
         var waterInfrastructureUI = UIWaterInfrastructure();
@@ -77,7 +45,7 @@ public class StructureWaterInfrastructure : Structures, IWorkerUser
         if (waterInfrastructureUI == null)
         {
             Debug.LogWarning(
-                "[StructureWaterInfrastructure] UiWaterInfrastructure reference not found!"
+                "[StructureWaterInfrastructure] UI reference not found!"
             );
             return;
         }
@@ -92,35 +60,28 @@ public class StructureWaterInfrastructure : Structures, IWorkerUser
             GameManager.Instance.WaterLevel == null)
             return;
 
-        var workerMgr = GameManager.Instance.WorkerManager;
-        var waterS = UIWaterInfrastructure();
-
         if (isActivated)
             return;
 
+        var workerMgr = GameManager.Instance.WorkerManager;
+        var waterS = UIWaterInfrastructure();
+
         if (requiresWorkers)
         {
-            if (workerMgr == null || !workerMgr.TryConsumeWorkersForLabor(laborCost))
+            if (workerMgr == null ||
+                !workerMgr.TryConsumeWorkersForLabor(laborCost))
             {
                 waterS?.ShowNotEnoughWorkersWarning();
                 return;
             }
+
             workerMgr.RegisterActiveWorkplace(this);
         }
 
-        appliedWaterReduction = GetWeatherBasedWaterReduction();
-
-        float reduction = GreatFloodActive
-            ? appliedWaterReduction * 0.8f
-            : appliedWaterReduction;
-
-        GameManager.Instance.WaterLevel.ReduceWaterPressure(reduction);
-
         isActivated = true;
 
-        Debug.Log(
-            $"{name} activated. Water pressure reduction: {reduction}"
-        );
+        // Register this active infrastructure.
+        GameManager.Instance.WaterLevel.RegisterInfrastructure(this);
     }
 
     public void IncWaterPressure()
@@ -130,9 +91,8 @@ public class StructureWaterInfrastructure : Structures, IWorkerUser
 
         var workerMgr = GameManager.Instance.WorkerManager;
 
-        GameManager.Instance.WaterLevel.IncWaterPressure(
-            appliedWaterReduction
-        );
+        // Remove this infrastructure's reduction.
+        GameManager.Instance.WaterLevel.UnregisterInfrastructure(this);
 
         if (requiresWorkers && workerMgr != null)
         {
@@ -140,7 +100,6 @@ public class StructureWaterInfrastructure : Structures, IWorkerUser
             workerMgr.ReturnWorkersFromLabor(laborCost);
         }
 
-        appliedWaterReduction = 0f;
         isActivated = false;
     }
 
@@ -151,16 +110,14 @@ public class StructureWaterInfrastructure : Structures, IWorkerUser
 
         var workerMgr = GameManager.Instance.WorkerManager;
 
-        GameManager.Instance.WaterLevel.IncWaterPressure(
-            appliedWaterReduction
-        );
+        // Remove this infrastructure's reduction.
+        GameManager.Instance.WaterLevel.UnregisterInfrastructure(this);
 
         if (requiresWorkers && workerMgr != null)
         {
             workerMgr.UnregisterActiveWorkplace(this);
         }
 
-        appliedWaterReduction = 0f;
         isActivated = false;
     }
 
