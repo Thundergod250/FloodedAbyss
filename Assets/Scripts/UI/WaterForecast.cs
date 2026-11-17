@@ -374,14 +374,25 @@ public class WaterForecast : MonoBehaviour
 
     private void UpdateWeatherWaterRise()
     {
-        if (Mathf.Approximately(currentWeatherAdjustment, targetWeatherAdjustment))
+        float adjustedTarget = targetWeatherAdjustment;
+
+        if (GameManager.Instance != null &&
+            GameManager.Instance.WaterLevel != null)
+        {
+            adjustedTarget =
+                GameManager.Instance.WaterLevel.GetAdjustedWeatherTarget(
+                    targetWeatherAdjustment
+                );
+        }
+
+        if (Mathf.Approximately(currentWeatherAdjustment, adjustedTarget))
             return;
 
         float previousAdjustment = currentWeatherAdjustment;
 
         currentWeatherAdjustment = Mathf.MoveTowards(
             currentWeatherAdjustment,
-            targetWeatherAdjustment,
+            adjustedTarget,
             weatherRiseSpeed * Time.deltaTime
         );
 
