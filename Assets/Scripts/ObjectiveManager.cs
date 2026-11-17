@@ -562,6 +562,8 @@ public class ObjectiveManager : MonoBehaviour
 
             EnsureObjectiveStates();
 
+            GameManager.Instance.uiController.GetComponentInChildren<UISlideDrawer>().OpenExclamationPoint();
+
             if (currentQuestIndex >= 7 && !endGameSequenceStarted)
             {
                 Debug.Log("Start Flood / WEather");
