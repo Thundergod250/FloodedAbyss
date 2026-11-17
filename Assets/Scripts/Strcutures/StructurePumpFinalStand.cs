@@ -40,6 +40,7 @@ public class StructurePumpFinalStand : MonoBehaviour
             yield break;
 
         finalStandRunning = true;
+        finalStandActivated = true;
 
         WaterLevel waterLevel = GameManager.Instance.WaterLevel;
 
@@ -62,7 +63,7 @@ public class StructurePumpFinalStand : MonoBehaviour
         // Remove the temporary cap.
         waterLevel.SetOceanHeight(Mathf.RoundToInt(originalMaxHeight));
 
-        finalStandActivated = true;
+
         finalStandRunning = false;
     }
 
