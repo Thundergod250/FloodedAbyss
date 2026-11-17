@@ -6,6 +6,9 @@ using System.Collections.Generic;
 
 public class UiApexPump : UiModals
 {
+    // Must match the child GameObject name on the SoundManager prefab.
+    private const string ErrorSFXName = "SFXError";
+
     [Header("UI Containers")]
     [SerializeField] private GameObject resourceButtonContainer;
     [SerializeField] private GameObject amountButtonContainer;
@@ -18,9 +21,9 @@ public class UiApexPump : UiModals
     [SerializeField] private Button upgradeButton;                   // The upgrade button
 
     [Header("Interactive Buttons")]
-    [SerializeField] private Button[] resourceButtons; 
-    [SerializeField] private Button[] amountButtonInstances; 
-    [SerializeField] private Button[] switchButtons; 
+    [SerializeField] private Button[] resourceButtons;
+    [SerializeField] private Button[] amountButtonInstances;
+    [SerializeField] private Button[] switchButtons;
 
     private StructureApexPump currentPump;
     private int selectedResourceIndex = -1;
@@ -91,13 +94,13 @@ public class UiApexPump : UiModals
                 {
                     ColorBlock colors = switchButtons[i].colors;
                     Color targetColor = currentPump.IsSwitchActive(i) ? Color.green : Color.red;
-                    
+
                     colors.normalColor = targetColor;
                     colors.highlightedColor = targetColor;
                     colors.pressedColor = targetColor;
                     colors.selectedColor = targetColor;
                     colors.disabledColor = targetColor;
-                    
+
                     switchButtons[i].colors = colors;
                 }
             }
@@ -240,12 +243,25 @@ public class UiApexPump : UiModals
 
     private void ShowNotEnoughResourceWarning(string message)
     {
+        PlayErrorSfx();
+
         if (notEnoughResourceText != null)
         {
             notEnoughResourceText.text = message;
             if (warningRoutine != null) StopCoroutine(warningRoutine);
             warningRoutine = StartCoroutine(FlashWarningRoutine());
         }
+    }
+
+    private void PlayErrorSfx()
+    {
+        if (GameManager.Instance == null || GameManager.Instance.SoundManager == null)
+            return;
+
+        // Stop first so the error cue restarts cleanly even if the previous
+        // play is still finishing (rapid repeated presses).
+        GameManager.Instance.SoundManager.Stop(ErrorSFXName);
+        GameManager.Instance.SoundManager.Play(ErrorSFXName, false);
     }
 
     private IEnumerator FlashWarningRoutine()

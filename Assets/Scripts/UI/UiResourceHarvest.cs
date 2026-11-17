@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
@@ -8,6 +8,7 @@ public class UiResourceHarvest : UiModals
     // Must match the child GameObject names on the SoundManager prefab.
     private const string EnableSFXName = "SFXEnable";
     private const string DisableSFXName = "SFXDisable";
+    private const string ErrorSFXName = "SFXError";
 
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI titleText;
@@ -186,7 +187,8 @@ public class UiResourceHarvest : UiModals
             }
             else
             {
-                // Not enough workers -> show warning, keep UI open, no SFX.
+                // Not enough workers -> warning + error SFX fire inside
+                // ShowNotEnoughWorkersWarning(), so no extra call needed here.
                 ShowNotEnoughWorkersWarning();
             }
         }
@@ -209,6 +211,13 @@ public class UiResourceHarvest : UiModals
     {
         if (notEnoughWorkersText != null && currentStructure != null)
         {
+            // ── Error SFX ─────────────────────────────────────────────
+            // Fires here (not at the call sites) so every entry point into
+            // this method — button click AND TryStartHarvest() — plays the
+            // error sound exactly once.
+            PlayClickSfx(ErrorSFXName);
+            // ──────────────────────────────────────────────────────────
+
             int cost = currentStructure.LaborCost;
             string workerUnit = cost == 1 ? "Worker" : "Workers";
             notEnoughWorkersText.text = $"Needs {cost} Available {workerUnit}";

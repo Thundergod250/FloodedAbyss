@@ -1,10 +1,12 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 
 public class PanelStructureCard : MonoBehaviour
 {
+    private const string ErrorSFXName = "SFXError";
+
     [Header("Card References")]
     [SerializeField] private Image structureImage;
     [SerializeField] private TextMeshProUGUI titleText;
@@ -66,6 +68,14 @@ public class PanelStructureCard : MonoBehaviour
     {
         if (notEnoughWorkersText != null)
         {
+            // ── Error SFX ─────────────────────────────────────────────
+            // Fires on every warning, whether it's "not enough workers"
+            // or "not enough resources". Single entry point, single call.
+            var sm = GameManager.Instance != null ? GameManager.Instance.SoundManager : null;
+            if (sm != null)
+                sm.Play(ErrorSFXName);
+            // ──────────────────────────────────────────────────────────
+
             if (warningRoutine != null) StopCoroutine(warningRoutine);
             warningRoutine = StartCoroutine(FlashWarningRoutine(message));
         }
@@ -75,7 +85,7 @@ public class PanelStructureCard : MonoBehaviour
     {
         if (titleText != null) titleText.gameObject.SetActive(false);
         if (infoText != null) infoText.gameObject.SetActive(false);
-        
+
         notEnoughWorkersText.gameObject.SetActive(true);
         notEnoughWorkersText.text = message;
 
@@ -92,7 +102,7 @@ public class PanelStructureCard : MonoBehaviour
 
         foreach (Transform child in costContainer)
         {
-            if (child.gameObject != resourcePairPrefabTemplate) 
+            if (child.gameObject != resourcePairPrefabTemplate)
                 Destroy(child.gameObject);
         }
 
@@ -104,7 +114,7 @@ public class PanelStructureCard : MonoBehaviour
             costGO.SetActive(true);
 
             PanelResourcePair pairPanel = costGO.GetComponent<PanelResourcePair>();
-            if (pairPanel != null) 
+            if (pairPanel != null)
                 pairPanel.Setup(cost.resourceDataSo, cost.amount);
         }
     }
