@@ -44,5 +44,10 @@ public class UISlideDrawer : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             newObjBubble.SetActive(false);
     }
 
+    public void OpenExclamationPoint()
+    {
+        newObjBubble.SetActive(true);
+    }
+
     public void OnPointerExit(PointerEventData eventData) => isHovered = false;
 }
