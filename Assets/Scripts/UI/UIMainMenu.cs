@@ -8,6 +8,7 @@ public class UIMainMenu : MonoBehaviour
     private const string UnderwaterSFXName = "SFXUnderwater";
     private const string OceanSFXName = "SFXOcean";
     private const string WooshSFXName = "SFXWoosh";
+    private const string BackgroundMusicName = "SFXBackgroundMusic";
 
     [Header("UI References")]
     [SerializeField] private Button startButton;
@@ -57,11 +58,16 @@ public class UIMainMenu : MonoBehaviour
         // ── Woosh: one-shot transition sting ────────────────────────
         // Fires on the click frame, alongside the crossfade. SoundManager
         // handles the auto-disable after the clip's length.
-        var sm = GameManager.Instance != null ? GameManager.Instance.SoundManager : null;
+        var sm = GameManager.Instance != null
+        ? GameManager.Instance.SoundManager
+        : null;
+
+        //──────────────────────────────────────────────────────────────
+
         if (sm != null)
             sm.Play(WooshSFXName);
-        // ─────────────────────────────────────────────────────────────
 
+        StartCoroutine(PlayBackgroundMusicAfterWoosh());
         StartCoroutine(CrossfadeAmbienceToGameplay());
 
         if (mainMenuUI != null) mainMenuUI.SetActive(false);
@@ -143,6 +149,22 @@ public class UIMainMenu : MonoBehaviour
             oceanTargetVolume = ocean.volume;
             ocean.volume = 0f;
         }
+    }
+
+    private IEnumerator PlayBackgroundMusicAfterWoosh()
+    {
+        var sm = GameManager.Instance != null
+            ? GameManager.Instance.SoundManager
+            : null;
+
+        if (sm == null) yield break;
+
+        AudioSource woosh = FindSFXAudioSource(sm, WooshSFXName);
+
+        if (woosh != null && woosh.isPlaying)
+            yield return new WaitWhile(() => woosh != null && woosh.isPlaying);
+
+        sm.Play(BackgroundMusicName, true);
     }
 
     /// <summary>
