@@ -9,6 +9,8 @@ public class StructurePumpFinalStand : MonoBehaviour
     [SerializeField] private int finalStandWaterLevel;
     [SerializeField] private int finalStandDuration;
     [SerializeField] private bool finalStandActivated;
+    [SerializeField] private Color warningColor = Color.red;
+    [SerializeField] private string warningMessage = "FINAL STAND ACTIVE";
 
     [Header("Reset Final Stand")]
     [SerializeField] private bool resetFinalStand;
@@ -41,12 +43,12 @@ public class StructurePumpFinalStand : MonoBehaviour
 
         WaterLevel waterLevel = GameManager.Instance.WaterLevel;
 
-        // Save the original maximum height.
         float originalMaxHeight = waterLevel.MaxWaterHeight;
 
         float elapsedTime = 0f;
 
-        // Temporarily cap the water.
+        GameManager.Instance.uiController.GetComponent<UINotification>().SetNotificationActive(true, warningMessage, warningColor);
+
         while (elapsedTime < finalStandDuration)
         {
             waterLevel.SetOceanHeight(finalStandWaterLevel);
@@ -55,10 +57,14 @@ public class StructurePumpFinalStand : MonoBehaviour
             yield return null;
         }
 
+        GameManager.Instance.uiController.GetComponent<UINotification>().SetNotificationActive(false);
+
         // Remove the temporary cap.
         waterLevel.SetOceanHeight(Mathf.RoundToInt(originalMaxHeight));
 
         finalStandActivated = true;
         finalStandRunning = false;
     }
+
+    public bool FinalStandActivated => finalStandActivated;
 }

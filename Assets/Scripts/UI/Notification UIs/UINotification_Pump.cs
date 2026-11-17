@@ -46,12 +46,15 @@ public class UINotification_Pump : MonoBehaviour
                 bool isZeroFuel = apexPump.CurrentFuel <= 0;
                 bool isLowFuel = apexPump.CurrentFuel < lowFuelThreshold;
 
-                if (isZeroFuel)
-                    uiNotification.SetNotificationActive(true, warningMessage2, warningColor);
-                else if(isLowFuel)
-                    uiNotification.SetNotificationActive(true, warningMessage, warningColor);
-                else
-                    uiNotification.SetNotificationActive(false);
+                if(GameManager.Instance.ApexPump.GetComponent<StructurePumpFinalStand>().FinalStandActivated != true)
+                {
+                    if (isZeroFuel)
+                        uiNotification.SetNotificationActive(true, warningMessage2, warningColor);
+                    else if (isLowFuel)
+                        uiNotification.SetNotificationActive(true, warningMessage, warningColor);
+                    else
+                        uiNotification.SetNotificationActive(false);
+                }
             }
 
             yield return wait;
