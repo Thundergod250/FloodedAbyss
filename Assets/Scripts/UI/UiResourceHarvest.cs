@@ -5,13 +5,17 @@ using System.Collections;
 
 public class UiResourceHarvest : UiModals
 {
+    // Must match the child GameObject names on the SoundManager prefab.
+    private const string EnableSFXName = "SFXEnable";
+    private const string DisableSFXName = "SFXDisable";
+
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI laborCostText;
     [SerializeField] private TextMeshProUGUI notEnoughWorkersText;
     [SerializeField] private Button activateButton;
-    [SerializeField] private TextMeshProUGUI activateButtonText; 
-    
+    [SerializeField] private TextMeshProUGUI activateButtonText;
+
     [Header("Destroy Button References")]
     [SerializeField] private Button destroyButton;
     [SerializeField] private TextMeshProUGUI destroyButtonText;
@@ -72,13 +76,13 @@ public class UiResourceHarvest : UiModals
             }
 
             bool showBar = currentStructure.IsWorking || currentStructure.IsDestroying;
-            if (productionBarContainer != null && productionBarContainer.activeSelf != showBar) 
+            if (productionBarContainer != null && productionBarContainer.activeSelf != showBar)
                 productionBarContainer.SetActive(showBar);
 
-            if (showBar && fillImage != null) 
+            if (showBar && fillImage != null)
                 fillImage.fillAmount = currentStructure.ProgressPercentage;
 
-            if (progressDescriptionText != null) 
+            if (progressDescriptionText != null)
                 progressDescriptionText.text = currentStructure.ProductionDescription;
 
             UpdateActivateButtonVisuals();
@@ -95,7 +99,7 @@ public class UiResourceHarvest : UiModals
         if (notEnoughWorkersText != null) notEnoughWorkersText.gameObject.SetActive(false);
 
         // Show or hide destroy button based on structure configuration
-        if (destroyButton != null) 
+        if (destroyButton != null)
             destroyButton.gameObject.SetActive(structure.CanBeDestroyed);
 
         UpdateActivateButtonVisuals();
@@ -109,16 +113,16 @@ public class UiResourceHarvest : UiModals
         if (activateButton != null && currentStructure != null)
         {
             bool isWorking = currentStructure.IsWorking;
-            
-            if (activateButtonText != null) 
+
+            if (activateButtonText != null)
             {
                 activateButtonText.text = isWorking ? "Deactivate" : "Activate";
-                activateButtonText.color = isWorking ? deactivateTextColor : activateTextColor; 
+                activateButtonText.color = isWorking ? deactivateTextColor : activateTextColor;
             }
 
             ColorBlock colors = activateButton.colors;
             Color targetColor = isWorking ? deactivateButtonColor : activateButtonColor;
-            
+
             colors.normalColor = targetColor;
             colors.highlightedColor = targetColor;
             colors.pressedColor = targetColor;
@@ -135,11 +139,11 @@ public class UiResourceHarvest : UiModals
         {
             bool isDestroying = currentStructure.IsDestroying;
 
-            if (destroyButtonText != null) 
+            if (destroyButtonText != null)
                 destroyButtonText.text = isDestroying ? "Cancel" : "Destroy Structure";
 
             ColorBlock colors = destroyButton.colors;
-            Color targetColor = isDestroying ? Color.red : new Color(1f, 0.85f, 0f); 
+            Color targetColor = isDestroying ? Color.red : new Color(1f, 0.85f, 0f);
 
             colors.normalColor = targetColor;
             colors.highlightedColor = targetColor;
@@ -151,36 +155,54 @@ public class UiResourceHarvest : UiModals
 
     private void OnActivateClicked()
     {
-        if (currentStructure != null)
+        if (currentStructure == null) return;
+
+        // Consumable harvests get their own SFX on collection (SFXConfirm in
+        // StructureHarvestResource). The activate/deactivate click sounds
+        // are only for Depletable and Infinite modes.
+        bool playClickSfx = currentStructure.HarvestMode != HarvestMode.Consumable;
+
+        if (currentStructure.IsWorking)
         {
-            // If it's already working, deactivating always succeeds -> toggle & close UI
-            if (currentStructure.IsWorking)
+            // Deactivate path: ToggleHarvesting() stops the harvest.
+            currentStructure.ToggleHarvesting();
+
+            if (playClickSfx) PlayClickSfx(DisableSFXName);
+
+            GameManager.Instance.uiController.CloseAllModals();
+        }
+        else
+        {
+            // Check if we have enough workers before activating
+            var workerMgr = GameManager.Instance.WorkerManager;
+            if (workerMgr != null && workerMgr.CurrentWorker >= currentStructure.LaborCost)
             {
+                // Activate path: ToggleHarvesting() starts the harvest.
                 currentStructure.ToggleHarvesting();
+
+                if (playClickSfx) PlayClickSfx(EnableSFXName);
+
                 GameManager.Instance.uiController.CloseAllModals();
             }
             else
             {
-                // Check if we have enough workers before activating
-                var workerMgr = GameManager.Instance.WorkerManager;
-                if (workerMgr != null && workerMgr.CurrentWorker >= currentStructure.LaborCost)
-                {
-                    currentStructure.ToggleHarvesting();
-                    GameManager.Instance.uiController.CloseAllModals();
-                }
-                else
-                {
-                    // Not enough workers -> show warning with dynamic worker count and keep UI open
-                    ShowNotEnoughWorkersWarning();
-                }
+                // Not enough workers -> show warning, keep UI open, no SFX.
+                ShowNotEnoughWorkersWarning();
             }
         }
     }
 
     private void OnDestroyClicked()
     {
-        if (currentStructure != null) 
+        if (currentStructure != null)
             currentStructure.ToggleDestroying();
+    }
+
+    private void PlayClickSfx(string name)
+    {
+        var sm = GameManager.Instance != null ? GameManager.Instance.SoundManager : null;
+        if (sm != null)
+            sm.Play(name);
     }
 
     public void ShowNotEnoughWorkersWarning()
@@ -206,7 +228,7 @@ public class UiResourceHarvest : UiModals
 
     public void CompleteProgress()
     {
-        if (productionBarContainer != null) 
+        if (productionBarContainer != null)
             productionBarContainer.SetActive(false);
     }
 }
