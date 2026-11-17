@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2140452367360343903}
-  - component: {fileID: 5214407979443557597}
+  - component: {fileID: 4661242761955578859}
   m_Layer: 0
   m_Name: TutorialManager
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5214407979443557597
+--- !u!114 &4661242761955578859
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -44,11 +44,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96d478fe2a9f67b4793dc7e5ba79931d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TutorialArrowController
-  timberArrow: {fileID: 0}
-  fiberArrow: {fileID: 0}
-  pumpArrow: {fileID: 0}
-  timberHarvest: {fileID: 0}
-  fiberHarvest: {fileID: 0}
-  apexPump: {fileID: 0}
-  objective1: {fileID: 0}
-  objective2: {fileID: 0}
+  objective1: {fileID: 11400000, guid: 881dcdbe2362dd7488ecfc4792faf035, type: 2}
+  objective2: {fileID: 11400000, guid: cf4848ee01a557c4481786f95bbe49e8, type: 2}
+  objective3: {fileID: 11400000, guid: 3fa67603e44bcbb478c8654b1e76ecf0, type: 2}
+  objective6: {fileID: 11400000, guid: 686552951f792c740b1d163286499c01, type: 2}
+  tutorialPanel_1: {fileID: 0}
+  tutorialPanel_2: {fileID: 0}
+  tutorialPanel_3: {fileID: 0}
+  tutorialPanel_4: {fileID: 0}
+  tutorialPanel_4point5: {fileID: 0}
+  tutorialPanel_5: {fileID: 0}
+  tutorialPanel_6: {fileID: 0}
+  tutorialPanel_6point5: {fileID: 0}
+  tutorialPanel_7: {fileID: 0}
+  tutorialPanel_8: {fileID: 0}
+  FirstScene:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  panel7AutoDismissSeconds: 1000000
+  panel65AutoDismissSeconds: 5
+  triggerPanel6WhenObjective6Active: 0
+  resourcesPanel: {fileID: 0}
+  workersPanel: {fileID: 0}
+  fuelPanel: {fileID: 0}
+  tutorialTopPanel: {fileID: 0}
+  waterInfrastructurePanel: {fileID: 0}
+  pumpCollider: {fileID: 0}
+  waterInfraDebrisCollider: {fileID: 0}
+  floatingResourceSpawner: {fileID: 0}
+  timberResource: {fileID: 11400000, guid: 01dc29f87c71c4646b9184c0d72979aa, type: 2}
+  fiberResource: {fileID: 11400000, guid: 42d0a33d5d93fa0468020c1672f70b5c, type: 2}
+  GreatFloodTimer: {fileID: 0}
