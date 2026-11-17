@@ -143,12 +143,6 @@ public class WaterForecast : MonoBehaviour
 
                 targetWeatherAdjustment = 0f;
 
-                if (GameManager.Instance != null)
-                {
-                    if (GameManager.Instance.VFXController != null)
-                        GameManager.Instance.VFXController.StopRain();
-                }
-
                 StopCurrentWeatherSFX();
 
                 currentActiveRainState = null;
@@ -491,13 +485,7 @@ public class WaterForecast : MonoBehaviour
         {
             StopCoroutine(timelineCoroutine);
             timelineCoroutine = null;
-        }
-
-        if (GameManager.Instance != null)
-        {
-            if (GameManager.Instance.VFXController != null)
-                GameManager.Instance.VFXController.StopRain();
-        }
+        }     
 
         StopCurrentWeatherSFX();
 
