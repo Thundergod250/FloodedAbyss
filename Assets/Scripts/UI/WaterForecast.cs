@@ -17,8 +17,12 @@ public struct WeatherDefinition
     [SerializeField] private WeatherType weatherType;
     [SerializeField] private Sprite weatherSprite;
 
+    [Header("Spawn Settings")]
+    [SerializeField, Min(0f)] private float spawnWeight;
+
     public WeatherType Type => weatherType;
     public Sprite Sprite => weatherSprite;
+    public float SpawnWeight => spawnWeight;
 }
 
 public class WaterForecast : MonoBehaviour
@@ -124,16 +128,6 @@ public class WaterForecast : MonoBehaviour
         }
     }
 
-    private WeatherDefinition? GetSunnyDefinition()
-    {
-        foreach (var def in weatherDatabase)
-        {
-            if (def.Type == WeatherType.Sunny)
-                return def;
-        }
-        return null;
-    }
-
     private IEnumerator ProgressTimeline()
     {
         while (true)
@@ -188,28 +182,70 @@ public class WaterForecast : MonoBehaviour
 
     private void AddRandomWeatherToBacklog()
     {
-        if (weatherDatabase.Count == 0) return;
+        if (weatherDatabase.Count == 0)
+            return;
 
-        WeatherDefinition chosenWeather;
+        float totalWeight = 0f;
 
-        // Prevent instant back-to-back duplicate weather types if possible
-        if (weatherDatabase.Count > 1 && weatherBacklog.Count > 0)
+        WeatherType? previousType = null;
+
+        if (weatherBacklog.Count > 0)
+            previousType = weatherBacklog[weatherBacklog.Count - 1].Type;
+
+        foreach (WeatherDefinition weather in weatherDatabase)
         {
-            WeatherDefinition lastWeather = weatherBacklog[weatherBacklog.Count - 1];
-            int safety = 0;
-            do
+            if (weather.SpawnWeight <= 0f)
+                continue;
+
+            if (previousType.HasValue &&
+                weather.Type == previousType.Value)
+                continue;
+
+            totalWeight += weather.SpawnWeight;
+        }
+
+        bool excludePrevious = totalWeight > 0f;
+
+        if (!excludePrevious)
+        {
+            foreach (WeatherDefinition weather in weatherDatabase)
             {
-                chosenWeather = weatherDatabase[Random.Range(0, weatherDatabase.Count)];
-                safety++;
+                if (weather.SpawnWeight > 0f)
+                    totalWeight += weather.SpawnWeight;
             }
-            while (chosenWeather.Type == lastWeather.Type && safety < 10);
-        }
-        else
-        {
-            chosenWeather = weatherDatabase[Random.Range(0, weatherDatabase.Count)];
         }
 
-        weatherBacklog.Add(chosenWeather);
+        if (totalWeight <= 0f)
+        {
+            WeatherDefinition fallback =
+                weatherDatabase[Random.Range(0, weatherDatabase.Count)];
+
+            weatherBacklog.Add(fallback);
+            return;
+        }
+
+        float randomWeight = Random.Range(0f, totalWeight);
+
+        foreach (WeatherDefinition weather in weatherDatabase)
+        {
+            if (weather.SpawnWeight <= 0f)
+                continue;
+
+            if (excludePrevious &&
+                previousType.HasValue &&
+                weather.Type == previousType.Value)
+                continue;
+
+            randomWeight -= weather.SpawnWeight;
+
+            if (randomWeight <= 0f)
+            {
+                weatherBacklog.Add(weather);
+                return;
+            }
+        }
+
+        weatherBacklog.Add(weatherDatabase[weatherDatabase.Count - 1]);
     }
 
     private void PlayCurrentWeather()
@@ -347,25 +383,6 @@ public class WaterForecast : MonoBehaviour
             default:
                 return 0;
         }
-    }
-
-    private int GetTotalActiveSwitches()
-    {
-        if (GameManager.Instance == null || GameManager.Instance.ApexPump == null)
-            return 0;
-
-        return GameManager.Instance.ApexPump.ActiveSwitchCount;
-    }
-
-    private WeatherDefinition? GetWeatherDefinition(WeatherType type)
-    {
-        foreach (var def in weatherDatabase)
-        {
-            if (def.Type == type)
-                return def;
-        }
-
-        return null;
     }
 
     private void UpdateWeatherWaterRise()
