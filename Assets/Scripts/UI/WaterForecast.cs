@@ -55,6 +55,10 @@ public class WaterForecast : MonoBehaviour
     [Header("Gradual Weather Water Rise")]
     [SerializeField] private float weatherRiseSpeed = 2f;
 
+    [Header("Typhoon Pity System")]
+    [SerializeField] private int typhoonPityLimit = 6;
+    [SerializeField] private int typhoonPityCounter = 0;
+
     private float currentWeatherAdjustment;
     private float targetWeatherAdjustment;
 
@@ -185,6 +189,27 @@ public class WaterForecast : MonoBehaviour
         if (weatherDatabase.Count == 0)
             return;
 
+        // Guarantee Typhoon after reaching pity limit.
+        if (typhoonPityCounter >= typhoonPityLimit)
+        {
+            WeatherDefinition? guaranteedTyphoon =
+                GetWeatherDefinition(WeatherType.Typhoon);
+
+            if (!guaranteedTyphoon.HasValue)
+            {
+                Debug.LogError(
+                    "[WaterForecast] Typhoon missing from weatherDatabase!"
+                );
+                return;
+            }
+
+            weatherBacklog.Add(guaranteedTyphoon.Value);
+            typhoonPityCounter = 0;
+
+            Debug.Log("[WaterForecast] Typhoon pity activated!");
+            return;
+        }
+
         float totalWeight = 0f;
 
         WeatherType? previousType = null;
@@ -217,14 +242,14 @@ public class WaterForecast : MonoBehaviour
 
         if (totalWeight <= 0f)
         {
-            WeatherDefinition fallback =
-                weatherDatabase[Random.Range(0, weatherDatabase.Count)];
-
-            weatherBacklog.Add(fallback);
+            Debug.LogWarning("[WaterForecast] No valid weather weights!");
             return;
         }
 
+        // WEIGHTED RANDOM SELECTION STARTS HERE
         float randomWeight = Random.Range(0f, totalWeight);
+
+        WeatherDefinition? selectedWeather = null;
 
         foreach (WeatherDefinition weather in weatherDatabase)
         {
@@ -238,14 +263,40 @@ public class WaterForecast : MonoBehaviour
 
             randomWeight -= weather.SpawnWeight;
 
-            if (randomWeight <= 0f)
+            if (randomWeight < 0f)
             {
-                weatherBacklog.Add(weather);
-                return;
+                selectedWeather = weather;
+                break;
             }
         }
 
-        weatherBacklog.Add(weatherDatabase[weatherDatabase.Count - 1]);
+        if (!selectedWeather.HasValue)
+            return;
+
+        WeatherDefinition chosenWeather = selectedWeather.Value;
+
+        weatherBacklog.Add(chosenWeather);
+
+        if (chosenWeather.Type == WeatherType.Typhoon)
+            typhoonPityCounter = 0;
+        else
+            typhoonPityCounter++;
+
+        Debug.Log(
+            $"[WaterForecast] Spawned {chosenWeather.Type}. " +
+            $"Typhoon pity: {typhoonPityCounter}/{typhoonPityLimit}"
+        );
+    }
+
+    private WeatherDefinition? GetWeatherDefinition(WeatherType type)
+    {
+        foreach (WeatherDefinition def in weatherDatabase)
+        {
+            if (def.Type == type)
+                return def;
+        }
+
+        return null;
     }
 
     private void PlayCurrentWeather()
