@@ -43,18 +43,29 @@ public class StructureWaterInfrastructure : Structures, IWorkerUser
 
     public override void Activate()
     {
-        var waterInfrastructureUI = UIWaterInfrastructure();
-
-        if (waterInfrastructureUI == null)
+        if(requiresWorkers)
         {
-            Debug.LogWarning(
-                "[StructureWaterInfrastructure] UI reference not found!"
-            );
-            return;
-        }
+            var waterInfrastructureUI = UIWaterInfrastructure();
 
-        waterInfrastructureUI.Setup(this);
-        GameManager.Instance.uiController.OpenModal<UiWaterInfrastucture>();
+            if (waterInfrastructureUI == null)
+            {
+                Debug.LogWarning(
+                    "[StructureWaterInfrastructure] UI reference not found!"
+                );
+                return;
+            }
+
+            waterInfrastructureUI.Setup(this);
+            GameManager.Instance.uiController.OpenModal<UiWaterInfrastucture>();
+        }
+    }
+
+    private void Start()
+    {
+        if (!requiresWorkers)
+        {
+            ReduceWaterPressure();
+        }
     }
 
     public void ReduceWaterPressure()
