@@ -104,7 +104,7 @@ public class WaterLevel : MonoBehaviour
 
     public void ReduceWaterPressure(float amount)
     {
-        pressureIncreaseRate -= Mathf.Max(0f, pressureIncreaseRate - amount);
+        pressureIncreaseRate = Mathf.Max(0f, pressureIncreaseRate - Mathf.Max(0f, amount));
     }
 
     public void IncWaterPressure(float amount)
