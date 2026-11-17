@@ -7,6 +7,7 @@ public class UIMainMenu : MonoBehaviour
 {
     private const string UnderwaterSFXName = "SFXUnderwater";
     private const string OceanSFXName = "SFXOcean";
+    private const string WooshSFXName = "SFXWoosh";
 
     [Header("UI References")]
     [SerializeField] private Button startButton;
@@ -53,6 +54,14 @@ public class UIMainMenu : MonoBehaviour
 
     private void OnStartClicked()
     {
+        // ── Woosh: one-shot transition sting ────────────────────────
+        // Fires on the click frame, alongside the crossfade. SoundManager
+        // handles the auto-disable after the clip's length.
+        var sm = GameManager.Instance != null ? GameManager.Instance.SoundManager : null;
+        if (sm != null)
+            sm.Play(WooshSFXName);
+        // ─────────────────────────────────────────────────────────────
+
         StartCoroutine(CrossfadeAmbienceToGameplay());
 
         if (mainMenuUI != null) mainMenuUI.SetActive(false);
