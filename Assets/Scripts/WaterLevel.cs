@@ -64,8 +64,14 @@ public class WaterLevel : MonoBehaviour
 
         if (startWaterPressure)
         {
-            // 1. Water Pressure accumulates smoothly over time as a float rate
-            currentWaterPressureFloat += pressureIncreaseRate * Time.deltaTime;
+            float effectivePressureIncrease = pressureIncreaseRate;
+
+            if (greatFloodStarted)
+            {
+                effectivePressureIncrease = Mathf.Max(0f, pressureIncreaseRate - (TotalInfrastructureReduction / 60f));
+            }
+
+            currentWaterPressureFloat += effectivePressureIncrease * Time.deltaTime;
         }
 
         // 2. Target Water Height = Base Starting Height + Water Pressure - Discharge Pressure
@@ -176,11 +182,20 @@ public class WaterLevel : MonoBehaviour
     {
         get
         {
+            float reduction = 0f;
+
+            foreach (var infrastructure in activeInfrastructures)
+            {
+                if (infrastructure != null)
+                {
+                    reduction += infrastructureReductionPerStructure *
+                                 infrastructure.ReductionMultiplier;
+                }
+            }
+
             float effectiveness = greatFloodStarted ? 0.8f : 1f;
 
-            return activeInfrastructures.Count *
-                   infrastructureReductionPerStructure *
-                   effectiveness;
+            return reduction * effectiveness;
         }
     }
 

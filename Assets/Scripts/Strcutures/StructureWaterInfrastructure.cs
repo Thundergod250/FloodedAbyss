@@ -21,6 +21,9 @@ public class StructureWaterInfrastructure : Structures, IWorkerUser
     [Header("Flood Gate Settings")]
     [SerializeField] private bool requiresManualActivation = false;
 
+    [Header("Water Reduction Settings")]
+    [SerializeField] private float reductionMultiplier = 1f;
+
     [Header("Debug Status")]
     [SerializeField] private bool isDestroying = false;
 
@@ -145,5 +148,6 @@ public class StructureWaterInfrastructure : Structures, IWorkerUser
     public bool IsDestroying => isDestroying;
     public bool RequiresWorkers => requiresWorkers;
     public InfrastructureType Type => infrastructureType;
-    public bool RequiresManualActivation => requiresManualActivation;
+    public bool RequiresManualActivation => requiresManualActivation; 
+    public float ReductionMultiplier => reductionMultiplier;
 }

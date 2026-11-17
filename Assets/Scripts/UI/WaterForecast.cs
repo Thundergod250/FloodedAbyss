@@ -323,13 +323,9 @@ public class WaterForecast : MonoBehaviour
 
     private void ApplyWaterWeatherAdjustment(rainStrength targetStrength, bool isSunny)
     {
-        if (isSunny)
-        {
-            targetWeatherAdjustment = 0f;
-            return;
-        }
-
-        targetWeatherAdjustment = GetWaterAdjustment(targetStrength);
+        targetWeatherAdjustment = isSunny
+            ? 0f
+            : GetWaterAdjustment(targetStrength);
     }
 
     private float GetWaterAdjustment(rainStrength rainStr)
@@ -374,16 +370,15 @@ public class WaterForecast : MonoBehaviour
 
     private void UpdateWeatherWaterRise()
     {
-        float adjustedTarget = targetWeatherAdjustment;
+        if (GameManager.Instance == null ||
+        GameManager.Instance.WaterLevel == null)
+            return;
 
-        if (GameManager.Instance != null &&
-            GameManager.Instance.WaterLevel != null)
-        {
-            adjustedTarget =
-                GameManager.Instance.WaterLevel.GetAdjustedWeatherTarget(
-                    targetWeatherAdjustment
-                );
-        }
+        // Calculate weather contribution after infrastructure reduction.
+        float adjustedTarget =
+            GameManager.Instance.WaterLevel.GetAdjustedWeatherTarget(
+                targetWeatherAdjustment
+            );
 
         if (Mathf.Approximately(currentWeatherAdjustment, adjustedTarget))
             return;
