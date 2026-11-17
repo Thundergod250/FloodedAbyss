@@ -21,6 +21,12 @@ public class UiResourceHarvest : UiModals
     [SerializeField] private Image fillImage;
     [SerializeField] private TextMeshProUGUI progressDescriptionText;
 
+    [Header("Button Customization")]
+    [SerializeField] private Color activateButtonColor = new Color(0.15f, 0.6f, 0.5f); // Clean teal/green for activate
+    [SerializeField] private Color activateTextColor = Color.white;
+    [SerializeField] private Color deactivateButtonColor = new Color(0.85f, 0.15f, 0.15f); // Rich red for deactivate
+    [SerializeField] private Color deactivateTextColor = new Color(1f, 0.92f, 0.016f); // Bright yellow text
+
     private StructureHarvestResource currentStructure;
     private Coroutine warningRoutine;
 
@@ -103,11 +109,16 @@ public class UiResourceHarvest : UiModals
         if (activateButton != null && currentStructure != null)
         {
             bool isWorking = currentStructure.IsWorking;
+            
             if (activateButtonText != null) 
+            {
                 activateButtonText.text = isWorking ? "Deactivate" : "Activate";
+                activateButtonText.color = isWorking ? deactivateTextColor : activateTextColor; 
+            }
 
             ColorBlock colors = activateButton.colors;
-            Color targetColor = isWorking ? new Color(1f, 0.6f, 0f) : Color.white;
+            Color targetColor = isWorking ? deactivateButtonColor : activateButtonColor;
+            
             colors.normalColor = targetColor;
             colors.highlightedColor = targetColor;
             colors.pressedColor = targetColor;
