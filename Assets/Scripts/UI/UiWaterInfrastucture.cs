@@ -109,6 +109,12 @@ public class UiWaterInfrastucture : UiModals
         if (activateButtonText != null) activateButtonText.enabled = false;
     }
 
+    public void OpenActivateButton()
+    {
+        if (activateButton != null) activateButton.enabled = true;
+        if (activateButtonText != null) activateButtonText.enabled = true;
+    }
+
     private void OnActivateClicked()
     {
         if (waterInfrastructure == null || waterInfrastructure.IsDestroying)

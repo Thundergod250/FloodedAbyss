@@ -60,6 +60,10 @@ public class StructureWaterInfrastructure : Structures, IWorkerUser
         {
             GameManager.Instance.uiController.GetComponent<UiWaterInfrastucture>().HideActivateButton();
         }
+        else
+        {
+            GameManager.Instance.uiController.GetComponent<UiWaterInfrastucture>().OpenActivateButton();
+        }
     }
 
     private void Start()
