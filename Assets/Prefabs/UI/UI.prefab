@@ -540,6 +540,7 @@ MonoBehaviour:
   menuPanel: {fileID: 801587419120674022}
   settingsPanel: {fileID: 6516664671859514621}
   objectivePanel: {fileID: 8568805820011494669}
+  returnToMainMenuPanel: {fileID: 0}
 --- !u!114 &4666582622243682405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1395,6 +1396,18 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 7484418998779390639}
+    - target: {fileID: 663221723857867840, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7484418998779390639}
+    - target: {fileID: 663221723857867840, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: LoadMainMenu
+      objectReference: {fileID: 0}
+    - target: {fileID: 663221723857867840, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MainMenuUI, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 764586711321014993, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -1435,18 +1448,6 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 993643829036618089, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
-      propertyPath: menuPanel
-      value: 
-      objectReference: {fileID: 790771493039601403}
-    - target: {fileID: 993643829036618089, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
-      propertyPath: settingsPanel
-      value: 
-      objectReference: {fileID: 2278415624432904458}
-    - target: {fileID: 993643829036618089, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
-      propertyPath: objectivePanel
-      value: 
-      objectReference: {fileID: 2992620160669360312}
     - target: {fileID: 1133283006027590990, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
       propertyPath: m_Name
       value: Non-Maskable
@@ -2230,11 +2231,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2470855557464766028, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
   m_PrefabInstance: {fileID: 2478103047148192728}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &790771493039601403 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2925826744817923363, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
-  m_PrefabInstance: {fileID: 2478103047148192728}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &801587419120674022 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2989319319500416830, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
@@ -2256,11 +2252,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!1 &2278415624432904458 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4466853295315561170, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
-  m_PrefabInstance: {fileID: 2478103047148192728}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2843186802258320385 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 366756133772943321, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
@@ -2269,11 +2260,6 @@ GameObject:
 --- !u!224 &2954262432296546569 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 764586711321014993, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
-  m_PrefabInstance: {fileID: 2478103047148192728}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &2992620160669360312 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 856829318499296096, guid: c1b00437cab5cc6459d6d60cf86d0d4f, type: 3}
   m_PrefabInstance: {fileID: 2478103047148192728}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &3001356891540706154 stripped

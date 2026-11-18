@@ -6,6 +6,7 @@ public class UIMenu : MonoBehaviour
     [SerializeField] private GameObject menuPanel;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject objectivePanel;
+    [SerializeField] private GameObject returnToMainMenuPanel;
 
     public void OpenMenu()
     {
@@ -28,6 +29,7 @@ public class UIMenu : MonoBehaviour
     {
         menuPanel.SetActive(false);
         settingsPanel.SetActive(false);
+        returnToMainMenuPanel.SetActive(false);
 
         UpdatePauseState();
     }
@@ -39,5 +41,11 @@ public class UIMenu : MonoBehaviour
             settingsPanel.activeSelf;
 
         Time.timeScale = shouldPause ? 0f : 1f;
+    }
+
+    public void ReturnToMainMenu()
+    {
+        returnToMainMenuPanel.SetActive(!returnToMainMenuPanel.activeSelf);
+        UpdatePauseState();
     }
 }
