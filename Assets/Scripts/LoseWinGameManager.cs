@@ -26,19 +26,18 @@ public class LoseWinGameManager : MonoBehaviour
         WaterLevel wl = GameManager.Instance.WaterLevel;
         if (wl.CurrentWaterHeight >= waterHeightBeforeLosing && !hasPlayerLost)
         {
-            Time.timeScale = 0;
-            hasPlayerLost = true;
             losePanel.SetActive(true);
+            Time.timeScale = 0;
+
+            hasPlayerLost = true;
         }
 
         if (wl.GreatFloodCompleted&& !hasPlayerLost && !hasPlayerWon)
         {
-            Debug.Log("VICTPORY");
-
             hasPlayerWon = true;
+            winPanel.SetActive(true);
 
             Time.timeScale = 0f;
-            winPanel.SetActive(true);
         }
     }
 }
