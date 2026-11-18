@@ -2901,7 +2901,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 2500
+  far clip plane: 1000
   field of view: 60.000004
   orthographic: 0
   orthographic size: 5
@@ -3436,6 +3436,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cinemachine Follow Camera
       objectReference: {fileID: 0}
+    - target: {fileID: 4243289948176908765, guid: f8bb3ce1a7dc36c41958adbc757fa904, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6695614411823887820, guid: f8bb3ce1a7dc36c41958adbc757fa904, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -3489,8 +3493,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3578574932785480550}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.44721365, y: -0.00000003174384, z: 0.000000015871924, w: 0.8944272}
-  m_LocalPosition: {x: 0, y: 680, z: -94}
+  m_LocalRotation: {x: 0.029610766, y: -0.83752704, z: 0.045614496, w: 0.5436828}
+  m_LocalPosition: {x: 173.9, y: 300.8, z: 283.5}
   m_LocalScale: {x: 0.54744995, y: 0.54745, z: 0.54744995}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4116,33 +4120,37 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cinemachine Menu Camera
       objectReference: {fileID: 0}
+    - target: {fileID: 3357105849546780018, guid: 7ef48e606520b314eb45415a36c6e366, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3485161903534701787, guid: 7ef48e606520b314eb45415a36c6e366, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 173.9
       objectReference: {fileID: 0}
     - target: {fileID: 3485161903534701787, guid: 7ef48e606520b314eb45415a36c6e366, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 43.1
+      value: 300.8
       objectReference: {fileID: 0}
     - target: {fileID: 3485161903534701787, guid: 7ef48e606520b314eb45415a36c6e366, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -100
+      value: 283.5
       objectReference: {fileID: 0}
     - target: {fileID: 3485161903534701787, guid: 7ef48e606520b314eb45415a36c6e366, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9793712
+      value: 0.54368293
       objectReference: {fileID: 0}
     - target: {fileID: 3485161903534701787, guid: 7ef48e606520b314eb45415a36c6e366, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.20206979
+      value: 0.029610774
       objectReference: {fileID: 0}
     - target: {fileID: 3485161903534701787, guid: 7ef48e606520b314eb45415a36c6e366, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000030085825
+      value: -0.83752704
       objectReference: {fileID: 0}
     - target: {fileID: 3485161903534701787, guid: 7ef48e606520b314eb45415a36c6e366, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.0000000062074896
+      value: 0.045614496
       objectReference: {fileID: 0}
     - target: {fileID: 3485161903534701787, guid: 7ef48e606520b314eb45415a36c6e366, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
