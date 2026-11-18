@@ -20,6 +20,7 @@ public class WaterLevel : MonoBehaviour
     [Header("Great Flood Settings")]
     [SerializeField] private bool forceStartGreatFlood = false;
     [SerializeField] private float greatFloodPressureIncrease = 15f;
+    [SerializeField] private float greatFloodMaxWaterHeightCap = 250f;
     [SerializeField] private int greatFloodTimerMins;
     [SerializeField] private int greatFloodTimerDuration;
     [SerializeField] private float greatFloodTimerProgress;
@@ -76,13 +77,22 @@ public class WaterLevel : MonoBehaviour
 
         // 2. Target Water Height = Base Starting Height + Water Pressure - Discharge Pressure
         float targetHeight = baseWaterHeight + currentWaterPressureFloat - netDischargePower;
-        targetHeight = Mathf.Clamp(targetHeight, minWaterHeight, maxWaterHeight);
 
+        targetHeight = Mathf.Clamp(targetHeight, minWaterHeight, maxWaterHeight);
         // 3. Smoothly interpolate (Lerp) current water height toward the target height.
         // This makes drainage fast and responsive when pumps turn on, but eliminates instant snapping.
-        currentWaterHeight = Mathf.Lerp(currentWaterHeight, targetHeight, drainSmoothSpeed * Time.deltaTime);
+        // Great Flood: Rise at the same rate as greatFloodPressureIncrease
+        if (greatFloodStarted)
+        {
+            targetHeight = Mathf.Min(greatFloodMaxWaterHeightCap, currentWaterHeight + greatFloodPressureIncrease * Time.deltaTime);
+        }
 
-        // Physically move the ocean object smoothly based on the interpolated height
+        currentWaterHeight = Mathf.Lerp(
+            currentWaterHeight,
+            targetHeight,
+            drainSmoothSpeed * Time.deltaTime
+        );
+
         if (oceanTransform != null)
         {
             Vector3 pos = oceanTransform.position;
