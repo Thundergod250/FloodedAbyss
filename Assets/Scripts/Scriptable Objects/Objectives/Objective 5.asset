@@ -23,12 +23,14 @@ MonoBehaviour:
     resourcesToGather: []
     structureToAssignWorkers: {fileID: 0}
     requiredWorkers: 1
-  - objectiveDescription: Assign a Worker in the Quarry
-    objectiveType: 6
+  - objectiveDescription: Assign a Worker in the Quarry to gather Rocks
+    objectiveType: 2
     structureToBuild: {fileID: 0}
     requiredAmount: 1
     resourcesToDeposit: []
     requiredUIName: 
-    resourcesToGather: []
-    structureToAssignWorkers: {fileID: 11400000, guid: 2c44a2b9bda758b468eaf1167c5df7d4, type: 2}
+    resourcesToGather:
+    - resource: {fileID: 11400000, guid: 09a1015edb6edc547877d148f6a43cb6, type: 2}
+      requiredAmount: 1
+    structureToAssignWorkers: {fileID: 0}
     requiredWorkers: 1
