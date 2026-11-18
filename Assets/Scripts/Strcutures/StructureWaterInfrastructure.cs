@@ -43,20 +43,22 @@ public class StructureWaterInfrastructure : Structures, IWorkerUser
 
     public override void Activate()
     {
-        if(requiresWorkers)
+        var waterInfrastructureUI = UIWaterInfrastructure();
+
+        if (waterInfrastructureUI == null)
         {
-            var waterInfrastructureUI = UIWaterInfrastructure();
+            Debug.LogWarning(
+                "[StructureWaterInfrastructure] UI reference not found!"
+            );
+            return;
+        }
 
-            if (waterInfrastructureUI == null)
-            {
-                Debug.LogWarning(
-                    "[StructureWaterInfrastructure] UI reference not found!"
-                );
-                return;
-            }
+        waterInfrastructureUI.Setup(this);
+        GameManager.Instance.uiController.OpenModal<UiWaterInfrastucture>();
 
-            waterInfrastructureUI.Setup(this);
-            GameManager.Instance.uiController.OpenModal<UiWaterInfrastucture>();
+        if(!requiresWorkers) // if doesn't need workers
+        {
+            GameManager.Instance.uiController.GetComponent<UiWaterInfrastucture>().HideActivateButton();
         }
     }
 

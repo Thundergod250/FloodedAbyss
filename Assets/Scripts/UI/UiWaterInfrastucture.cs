@@ -103,6 +103,12 @@ public class UiWaterInfrastucture : UiModals
         }
     }
 
+    public void HideActivateButton()
+    {
+        if (activateButton != null) activateButton.enabled = false;
+        if (activateButtonText != null) activateButtonText.enabled = false;
+    }
+
     private void OnActivateClicked()
     {
         if (waterInfrastructure == null || waterInfrastructure.IsDestroying)
