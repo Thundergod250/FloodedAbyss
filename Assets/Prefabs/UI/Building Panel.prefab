@@ -39,10 +39,10 @@ RectTransform:
   - {fileID: 1107802992796848936}
   m_Father: {fileID: 6032784400156970210}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -484, y: 0}
-  m_SizeDelta: {x: -1250, y: -100}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -10.3, y: 0}
+  m_SizeDelta: {x: 1600, y: 977}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &376248902926577007
 CanvasRenderer:
@@ -72,7 +72,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 2c9d4801a7b39c04ebb05fe569674902, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8441f5f825222e048aa9d340e691b673, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -240,8 +240,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -2.1609, y: -85.05641}
-  m_SizeDelta: {x: 622.5183, y: 768.8416}
+  m_AnchoredPosition: {x: -2.1609, y: -63.1}
+  m_SizeDelta: {x: 1384, y: 653.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6810193709816753924
 CanvasRenderer:
@@ -862,7 +862,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1174.7, y: -145.53879}
+  m_AnchoredPosition: {x: -327, y: -146.9}
   m_SizeDelta: {x: 73.7335, y: 80.9694}
   m_Pivot: {x: 1, y: 1}
 --- !u!222 &2540911279358048119
@@ -982,7 +982,7 @@ GameObject:
   - component: {fileID: 7034848666569318029}
   - component: {fileID: 6042318471112310857}
   - component: {fileID: 3262260787073292597}
-  - component: {fileID: 2336546251507026499}
+  - component: {fileID: 5396138675030960922}
   m_Layer: 5
   m_Name: Structure to Build Container
   m_TagString: Untagged
@@ -1047,7 +1047,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2336546251507026499
+--- !u!114 &5396138675030960922
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1056,23 +1056,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 6782662395091713879}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.VerticalLayoutGroup
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GridLayoutGroup
   m_Padding:
     m_Left: 0
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 1
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
+  m_ChildAlignment: 0
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 450, y: 360}
+  m_Spacing: {x: 15, y: 15}
+  m_Constraint: 0
+  m_ConstraintCount: 2
 --- !u!1 &6808923857136299295
 GameObject:
   m_ObjectHideFlags: 0
