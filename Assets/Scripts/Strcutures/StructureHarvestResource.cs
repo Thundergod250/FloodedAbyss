@@ -55,6 +55,19 @@ public class StructureHarvestResource : Structures, IWorkerUser
     {
         if (isSubmerged && !ignoreSubmersion) return;
 
+        // Consumables toggle harvest directly on click instead of opening the harvest UI
+        if (harvestMode == HarvestMode.Consumable)
+        {
+            if (isDestroying) return;
+
+            if (isWorking)
+                StopHarvesting(true);
+            else
+                TryStartHarvest();
+
+            return;
+        }
+
         var harvestUI = GameManager.Instance.uiController.UiResourceHarvest;
         if (harvestUI != null)
         {
@@ -88,7 +101,8 @@ public class StructureHarvestResource : Structures, IWorkerUser
         // Use the new priority worker consumption system
         if (!workerMgr.TryConsumeWorkersForLabor(laborCost))
         {
-            if (harvestUI != null) harvestUI.ShowNotEnoughWorkersWarning();
+            if (harvestMode != HarvestMode.Consumable && harvestUI != null)
+                harvestUI.ShowNotEnoughWorkersWarning();
             return;
         }
 
