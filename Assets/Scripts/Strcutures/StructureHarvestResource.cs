@@ -33,6 +33,10 @@ public class StructureHarvestResource : Structures, IWorkerUser
     [SerializeField] private ResourceDataSO resourceToProduce;
     [SerializeField] private int productionAmount = 1;
 
+    [Header("Overworld Gain Popup")]
+    [SerializeField] private UIOverworld_ResourcePair overworldGainPrefab;
+    [SerializeField] private Vector3 popupSpawnOffset = new Vector3(0f, 3f, 0f);
+
     [Header("Events")]
     [HideInInspector] public UnityEvent EvtOnBuildingWorking;
     [HideInInspector] public UnityEvent EvtOnBuildingNotWorking;
@@ -54,6 +58,19 @@ public class StructureHarvestResource : Structures, IWorkerUser
     public override void Activate()
     {
         if (isSubmerged && !ignoreSubmersion) return;
+
+        // Consumables toggle harvest directly on click instead of opening the harvest UI
+        if (harvestMode == HarvestMode.Consumable)
+        {
+            if (isDestroying) return;
+
+            if (isWorking)
+                StopHarvesting(true);
+            else
+                TryStartHarvest();
+
+            return;
+        }
 
         var harvestUI = GameManager.Instance.uiController.UiResourceHarvest;
         if (harvestUI != null)
@@ -88,7 +105,8 @@ public class StructureHarvestResource : Structures, IWorkerUser
         // Use the new priority worker consumption system
         if (!workerMgr.TryConsumeWorkersForLabor(laborCost))
         {
-            if (harvestUI != null) harvestUI.ShowNotEnoughWorkersWarning();
+            if (harvestMode != HarvestMode.Consumable && harvestUI != null)
+                harvestUI.ShowNotEnoughWorkersWarning();
             return;
         }
 
@@ -245,6 +263,7 @@ public class StructureHarvestResource : Structures, IWorkerUser
                 if (resourceToProduce != null && GameManager.Instance.ResourceManager != null)
                 {
                     GameManager.Instance.ResourceManager.AddResource(resourceToProduce, productionAmount);
+                    SpawnOverworldGainPopup(resourceToProduce, productionAmount);
 
                     if (harvestMode == HarvestMode.Consumable)
                     {
@@ -276,6 +295,14 @@ public class StructureHarvestResource : Structures, IWorkerUser
 
             yield return new WaitForSeconds(0.2f);
         }
+    }
+
+    private void SpawnOverworldGainPopup(ResourceDataSO resourceData, int amount)
+    {
+        if (overworldGainPrefab == null || resourceData == null) return;
+
+        UIOverworld_ResourcePair popup = Pool.Instantiate(overworldGainPrefab, null);
+        popup.SetupAndFloat(resourceData, amount, transform.position + popupSpawnOffset);
     }
 
     private void FinishAndDestroyAutomatically() => ForceCleanupAndDestroy();
