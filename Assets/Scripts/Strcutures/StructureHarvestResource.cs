@@ -20,6 +20,7 @@ public class StructureHarvestResource : Structures, IWorkerUser
     [SerializeField] private int laborCost = 1;
     [SerializeField] private float productionDuration = 3f;
     [SerializeField] private float destructionDuration = 3f;
+    [SerializeField] private float activateCooldown = 0.5f;
 
     [Header("Destruction Settings")]
     [SerializeField] private bool canBeDestroyed = true;
@@ -48,6 +49,7 @@ public class StructureHarvestResource : Structures, IWorkerUser
 
     private Coroutine harvestRoutine;
     private Coroutine destroyRoutine;
+    private float nextAllowedActivateTime = 0f;
 
     protected override void Awake()
     {
@@ -63,6 +65,9 @@ public class StructureHarvestResource : Structures, IWorkerUser
         if (harvestMode == HarvestMode.Consumable)
         {
             if (isDestroying) return;
+            if (Time.unscaledTime < nextAllowedActivateTime) return;
+
+            nextAllowedActivateTime = Time.unscaledTime + activateCooldown;
 
             if (isWorking)
                 StopHarvesting(true);
