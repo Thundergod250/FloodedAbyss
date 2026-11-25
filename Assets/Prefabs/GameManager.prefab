@@ -179,6 +179,7 @@ Transform:
   - {fileID: 278172118400894733}
   - {fileID: 7525670379845598122}
   - {fileID: 4096755319894429351}
+  - {fileID: 8584398384284642305}
   - {fileID: 5530925574313285053}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -212,6 +213,7 @@ MonoBehaviour:
   VFXController: {fileID: 0}
   TutorialController: {fileID: 6834249402503474105}
   BuildingManager: {fileID: 1481365789525865169}
+  EndGameStatsManager: {fileID: 7831251004523485694}
 --- !u!114 &6157991707012487289
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1303,3 +1305,76 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4080382e461fbe643a8dc754b5991ec3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TimeManager
+--- !u!1001 &8941190050960169432
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3096870024065945765}
+    m_Modifications:
+    - target: {fileID: 807433114086667737, guid: b587ed14bf7052143b0598975a89c013, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 807433114086667737, guid: b587ed14bf7052143b0598975a89c013, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 807433114086667737, guid: b587ed14bf7052143b0598975a89c013, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 807433114086667737, guid: b587ed14bf7052143b0598975a89c013, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 807433114086667737, guid: b587ed14bf7052143b0598975a89c013, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 807433114086667737, guid: b587ed14bf7052143b0598975a89c013, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 807433114086667737, guid: b587ed14bf7052143b0598975a89c013, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 807433114086667737, guid: b587ed14bf7052143b0598975a89c013, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 807433114086667737, guid: b587ed14bf7052143b0598975a89c013, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 807433114086667737, guid: b587ed14bf7052143b0598975a89c013, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4095546494056649323, guid: b587ed14bf7052143b0598975a89c013, type: 3}
+      propertyPath: m_Name
+      value: EndGameStatsManager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b587ed14bf7052143b0598975a89c013, type: 3}
+--- !u!114 &7831251004523485694 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1205642749587996710, guid: b587ed14bf7052143b0598975a89c013, type: 3}
+  m_PrefabInstance: {fileID: 8941190050960169432}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 602163bb828717b4fa733790b2861a8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EndGameStatsManager
+--- !u!4 &8584398384284642305 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 807433114086667737, guid: b587ed14bf7052143b0598975a89c013, type: 3}
+  m_PrefabInstance: {fileID: 8941190050960169432}
+  m_PrefabAsset: {fileID: 0}

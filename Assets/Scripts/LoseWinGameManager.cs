@@ -4,21 +4,18 @@ public class LoseWinGameManager : MonoBehaviour
 {
     [Header("Lose Panel")]
     [SerializeField] private int waterHeightBeforeLosing;
-    private GameObject losePanel;
-    private GameObject winPanel;
+
+    private MainMenuUI mainMenu;
 
     private bool hasPlayerLost;
     private bool hasPlayerWon;
 
     private void Start()
     {
-        if(losePanel== null) losePanel = GameManager.Instance.uiController.GetComponent<MainMenuUI>().losePanel;
-        if(winPanel == null) winPanel = GameManager.Instance.uiController.GetComponent<MainMenuUI>().winPanel;
+        mainMenu = GameManager.Instance.uiController.GetComponent<MainMenuUI>();
 
         hasPlayerLost = false;
         hasPlayerWon = false;
-        losePanel.SetActive(false);
-        winPanel.SetActive(false);
     }
 
     void Update()
@@ -26,16 +23,16 @@ public class LoseWinGameManager : MonoBehaviour
         WaterLevel wl = GameManager.Instance.WaterLevel;
         if (wl.CurrentWaterHeight >= waterHeightBeforeLosing && !hasPlayerLost)
         {
-            losePanel.SetActive(true);
-            Time.timeScale = 0;
-
             hasPlayerLost = true;
+            mainMenu.OpenLostWinScreen(false);
+
+            Time.timeScale = 0;
         }
 
         if (wl.GreatFloodCompleted&& !hasPlayerLost && !hasPlayerWon)
         {
             hasPlayerWon = true;
-            winPanel.SetActive(true);
+            mainMenu.OpenLostWinScreen(true);
 
             Time.timeScale = 0f;
         }

@@ -17,8 +17,9 @@ public class StructureWorkersHouse : Structures
 
     public int HousingCapacity => housingCapacity;
     public int CurrentWorkers => currentWorkers;
-    
+
     private Coroutine destroyRoutine;
+    private bool hasFlooded = false;
     private bool isRegisteredWithManager = false;
     private bool hasUnregistered = false;
 
@@ -71,10 +72,19 @@ public class StructureWorkersHouse : Structures
 
     protected override void HandleSubmergedShutdown()
     {
+        if (hasFlooded) return;
+
+        hasFlooded = true;
+
         var houseUI = GameManager.Instance.uiController.UiWorkersHouse;
         if (houseUI != null && houseUI.IsShowingHouse(this))
         {
             GameManager.Instance.uiController.CloseAllModals();
+        }
+
+        if (endGameStatsManager != null)
+        {
+            endGameStatsManager.WorkersDied(currentWorkers);
         }
 
         ExecuteFinalDestruction();

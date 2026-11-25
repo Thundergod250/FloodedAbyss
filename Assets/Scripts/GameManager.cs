@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     public VFXController VFXController;
     public TutorialController TutorialController;
     public BuildingManager BuildingManager;
+    public EndGameStatsManager EndGameStatsManager;
 
     private void Awake()
     {

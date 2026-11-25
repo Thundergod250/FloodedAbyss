@@ -9,9 +9,12 @@ public abstract class Structures : MonoBehaviour
     [Tooltip("The Buildable/Debris prefab spawned when this structure is destroyed.")]
     [SerializeField] protected GameObject BuildablePrefab;
 
+    protected EndGameStatsManager endGameStatsManager;
     protected StructureBuildable owningTerminal;
     private Collider structureCollider;
     protected bool isSubmerged = false;
+
+    private bool hasBeenDestroyed = false;
 
     protected virtual void Awake()
     {
@@ -21,6 +24,11 @@ public abstract class Structures : MonoBehaviour
 
     protected virtual void Update()
     {
+        if(endGameStatsManager == null)
+        {
+            endGameStatsManager = GameManager.Instance.EndGameStatsManager;
+        }
+
         if (!ignoreSubmersion)
         {
             CheckSubmersion();
@@ -68,8 +76,12 @@ public abstract class Structures : MonoBehaviour
     }
 
     // The centralized destruction function
-    public void Destroyed()
+    protected virtual void Destroyed()
     {
+        if (hasBeenDestroyed) return;
+
+        hasBeenDestroyed = true;
+
         // 1. Re-enable the building terminal
         if (owningTerminal != null)
         {
@@ -80,6 +92,11 @@ public abstract class Structures : MonoBehaviour
         if (BuildablePrefab != null)
         {
             Instantiate(BuildablePrefab, transform.position, transform.rotation);
+        }
+
+        if (endGameStatsManager != null)
+        {
+            endGameStatsManager.StructuresDestroyed(1);
         }
 
         // 3. Destroy this structure
