@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class HoverHighlight : MonoBehaviour
 {
@@ -74,21 +75,34 @@ public class HoverHighlight : MonoBehaviour
         }
     }
 
-    private void OnMouseEnter()
+    private void Update()
     {
-        foreach (var container in outlineContainers)
+        if (Mouse.current == null || Camera.main == null)
+            return;
+
+        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+
+        int ignoreLayer = LayerMask.NameToLayer("IgnoreMouse");
+        int layerMask = ~(1 << ignoreLayer);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, layerMask))
         {
-            if (container != null) 
-                container.SetActive(true);
+            if (hit.collider.gameObject == gameObject)
+            {
+                SetOutlineVisibility(true);
+                return;
+            }
         }
+
+        SetOutlineVisibility(false);
     }
 
-    private void OnMouseExit()
+    private void SetOutlineVisibility(bool isVisible)
     {
         foreach (var container in outlineContainers)
         {
-            if (container != null) 
-                container.SetActive(false);
+            if (container != null)
+                container.SetActive(isVisible);
         }
     }
 
