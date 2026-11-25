@@ -24,7 +24,7 @@ public class UIEventManager : UiModals
     [Header("Tutorial")]
     [SerializeField] private bool pauseDuringTutorial = true;
 
-    private WorkerManager workerManager; 
+    private WorkerManager workerManager;
     private ResourceManager resourceManager;
     private readonly Dictionary<ResourceEventsUI, float> eventTimers = new();
     private readonly Dictionary<ResourceEventsUI, float> eventTimerDurations = new();
@@ -67,8 +67,8 @@ public class UIEventManager : UiModals
 
     private void Update()
     {
-       // if (pauseDuringTutorial)
-          // return;
+        // if (pauseDuringTutorial)
+        // return;
 
         if (eventOnCooldown)
         {
@@ -192,6 +192,8 @@ public class UIEventManager : UiModals
 
         eventText.text = selectedEvent.EventMessage;
 
+        PlayNotifySFX();
+
         GameManager.Instance.uiController.OpenModal<UIEventManager>();
 
         eventOnCooldown = true;
@@ -232,5 +234,13 @@ public class UIEventManager : UiModals
     public void SetTutorialPaused(bool paused)
     {
         pauseDuringTutorial = paused;
+    }
+
+    private void PlayNotifySFX()
+    {
+        if (GameManager.Instance == null) return;
+        var sm = GameManager.Instance.SoundManager;
+        if (sm == null) return;
+        sm.Play("SFXNotify");
     }
 }

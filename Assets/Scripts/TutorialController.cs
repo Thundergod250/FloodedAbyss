@@ -84,7 +84,7 @@ public class TutorialController : MonoBehaviour
     private bool objective6Completed;
     private bool waterInfraTutorialCompleted;
     private bool panel65Started;
-    private GameObject waterInfraArrow; 
+    private GameObject waterInfraArrow;
     private bool waterInfraTutorialShown;
     private bool loggedCompletionMember;
 
@@ -178,6 +178,7 @@ public class TutorialController : MonoBehaviour
             tutorialPanel4Dismissed = true;
             tutorialPanel_4.SetActive(false);
             tutorialPanel_4point5.SetActive(true);
+            PlayNotifySFX();
         }
 
         // Dismiss Panel 5 when Building UI opens
@@ -189,7 +190,6 @@ public class TutorialController : MonoBehaviour
                 tutorialPanel5Dismissed = true;
                 if (tutorialPanel_5 != null) tutorialPanel_5.SetActive(false);
                 Debug.Log("Panel 5 dismissed. Building UI opened.");
-                //TryShowWaterInfraTutorial();
             }
         }
 
@@ -199,13 +199,12 @@ public class TutorialController : MonoBehaviour
 
             Debug.Log("Panel 6 open");
 
-            if(wI.activeSelf)
+            if (wI.activeSelf)
             {
                 Debug.Log("Opened Panel");
                 tutorialPanel_6.SetActive(false);
                 waterInfraArrow.SetActive(false);
-}
-           
+            }
         }
 
         // All objectives done
@@ -411,6 +410,7 @@ public class TutorialController : MonoBehaviour
         if (fuelPanel != null)
             fuelPanel.SetActive(true);
 
+        PlayNotifySFX();
         Debug.Log("[Tutorial] Panel 6.5 is now visible.");
 
         float wait = panel65AutoDismissSeconds > 0f
@@ -425,6 +425,7 @@ public class TutorialController : MonoBehaviour
         if (tutorialPanel_7 != null)
             tutorialPanel_7.SetActive(true);
 
+        PlayNotifySFX();
         Debug.Log("[Tutorial] Panel 7 is now visible.");
 
         panel65DismissRoutine = null;
@@ -444,6 +445,7 @@ public class TutorialController : MonoBehaviour
         if (tutorialPanel_7 != null) tutorialPanel_7.SetActive(false);
         if (tutorialPanel_8 != null) tutorialPanel_8.SetActive(true);
         if (GreatFloodTimer != null) GreatFloodTimer.gameObject.SetActive(true);
+        PlayNotifySFX();
         panel7DismissRoutine = null;
     }
 
@@ -458,6 +460,7 @@ public class TutorialController : MonoBehaviour
         if (tutorialPanel_7 != null) tutorialPanel_7.SetActive(false);
         if (tutorialPanel_8 != null) tutorialPanel_8.SetActive(true);
         if (GreatFloodTimer != null) GreatFloodTimer.gameObject.SetActive(true);
+        PlayNotifySFX();
     }
 
     // -------- Objective 3 state machine --------
@@ -583,12 +586,22 @@ public class TutorialController : MonoBehaviour
 
         if (panel == tutorialPanel_3 && FirstScene != null && FirstScene.Length > 0 && FirstScene[0] != null)
             FirstScene[0].SetActive(true);
+
+        if (panel != null) PlayNotifySFX();
     }
 
     private void HideAllPanels()
     {
         foreach (var p in tutorialPanels)
             if (p != null && p.activeSelf) p.SetActive(false);
+    }
+
+    private void PlayNotifySFX()
+    {
+        if (GameManager.Instance == null) return;
+        var sm = GameManager.Instance.SoundManager;
+        if (sm == null) return;
+        sm.Play("SFXNotify");
     }
 
     private Transform FindFirst(string name)
