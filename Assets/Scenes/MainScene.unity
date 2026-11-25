@@ -1028,11 +1028,14 @@ MonoBehaviour:
   laborCost: 1
   productionDuration: 5
   destructionDuration: 3
+  activateCooldown: 0.5
   canBeDestroyed: 1
   harvestMode: 0
   maxHarvestCycles: 5
   resourceToProduce: {fileID: 11400000, guid: 117f5fa912aefc5448b12f16aef95518, type: 2}
   productionAmount: 1
+  overworldGainPrefab: {fileID: 0}
+  popupSpawnOffset: {x: 0, y: 3, z: 0}
   EvtOnBuildingWorking:
     m_PersistentCalls:
       m_Calls: []
@@ -1459,6 +1462,102 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2371719749276474248, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2371719749276474248, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2371719749276474248, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2371719749276474248, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2371719749276474248, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2371719749276474248, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3056532706855064966, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3056532706855064966, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3056532706855064966, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3056532706855064966, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3056532706855064966, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3056532706855064966, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426982424669315668, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426982424669315668, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426982424669315668, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426982424669315668, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426982424669315668, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426982424669315668, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3591854007482928101, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3591854007482928101, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3591854007482928101, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3591854007482928101, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3591854007482928101, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3591854007482928101, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5413460866843635017, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
       propertyPath: m_Name
       value: WorldMap 1
@@ -1482,6 +1581,30 @@ PrefabInstance:
     - target: {fileID: 7412902345681484438, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
       propertyPath: m_LocalPosition.z
       value: -19.26
+      objectReference: {fileID: 0}
+    - target: {fileID: 8789076397040783230, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8789076397040783230, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8789076397040783230, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8789076397040783230, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8789076397040783230, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8789076397040783230, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8907031791401415356, guid: d551b650fe898324eb63d35dfe3c4be3, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1542,11 +1665,14 @@ MonoBehaviour:
   laborCost: 1
   productionDuration: 5
   destructionDuration: 3
+  activateCooldown: 0.5
   canBeDestroyed: 1
   harvestMode: 0
   maxHarvestCycles: 5
   resourceToProduce: {fileID: 11400000, guid: 117f5fa912aefc5448b12f16aef95518, type: 2}
   productionAmount: 1
+  overworldGainPrefab: {fileID: 0}
+  popupSpawnOffset: {x: 0, y: 3, z: 0}
   EvtOnBuildingWorking:
     m_PersistentCalls:
       m_Calls: []
@@ -1813,11 +1939,14 @@ MonoBehaviour:
   laborCost: 1
   productionDuration: 5
   destructionDuration: 3
+  activateCooldown: 0.5
   canBeDestroyed: 1
   harvestMode: 0
   maxHarvestCycles: 5
   resourceToProduce: {fileID: 11400000, guid: 09a1015edb6edc547877d148f6a43cb6, type: 2}
   productionAmount: 1
+  overworldGainPrefab: {fileID: 0}
+  popupSpawnOffset: {x: 0, y: 3, z: 0}
   EvtOnBuildingWorking:
     m_PersistentCalls:
       m_Calls: []
@@ -1932,11 +2061,14 @@ MonoBehaviour:
   laborCost: 1
   productionDuration: 3
   destructionDuration: 3
+  activateCooldown: 0.5
   canBeDestroyed: 1
   harvestMode: 0
   maxHarvestCycles: 1
   resourceToProduce: {fileID: 11400000, guid: 42d0a33d5d93fa0468020c1672f70b5c, type: 2}
   productionAmount: 20
+  overworldGainPrefab: {fileID: 0}
+  popupSpawnOffset: {x: 0, y: 3, z: 0}
   EvtOnBuildingWorking:
     m_PersistentCalls:
       m_Calls: []
@@ -2402,11 +2534,14 @@ MonoBehaviour:
   laborCost: 1
   productionDuration: 5
   destructionDuration: 3
+  activateCooldown: 0.5
   canBeDestroyed: 1
   harvestMode: 0
   maxHarvestCycles: 5
   resourceToProduce: {fileID: 11400000, guid: 117f5fa912aefc5448b12f16aef95518, type: 2}
   productionAmount: 20
+  overworldGainPrefab: {fileID: 0}
+  popupSpawnOffset: {x: 0, y: 3, z: 0}
   EvtOnBuildingWorking:
     m_PersistentCalls:
       m_Calls: []
@@ -3819,7 +3954,7 @@ PrefabInstance:
       objectReference: {fileID: 8397806791057057019}
     - target: {fileID: 2278415624432904458, guid: 93962ff5bde69f746af840d31223a209, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2323359550110102850, guid: 93962ff5bde69f746af840d31223a209, type: 3}
       propertyPath: m_sharedMaterial
