@@ -64,6 +64,7 @@ GameObject:
   - component: {fileID: 1784266355187973490}
   - component: {fileID: 620789801668064919}
   - component: {fileID: -3152030326674612445}
+  - component: {fileID: -4322428370193193793}
   m_Layer: 0
   m_Name: Fiber
   m_TagString: Untagged
@@ -106,6 +107,7 @@ MonoBehaviour:
   laborCost: 1
   productionDuration: 1.5
   destructionDuration: 3
+  activateCooldown: 0.5
   canBeDestroyed: 1
   harvestMode: 0
   maxHarvestCycles: 5
@@ -153,6 +155,8 @@ MonoBehaviour:
   speed: 20
   lifetime: 180
   moveDirection: {x: 1, y: 0, z: 0}
+  sinkVal: 0.1
+  isSinking: 0
 --- !u!65 &620789801668064919
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -190,6 +194,19 @@ MonoBehaviour:
   outlineScale: 1
   matchObjectColor: 0
   fallbackOutlineColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &-4322428370193193793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9216641677476395219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 102c9685dba0cd341923008bc8308a4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FloatingObjects
+  floatingObjSinkVal: 25
 --- !u!1001 &775479098212268674
 PrefabInstance:
   m_ObjectHideFlags: 0

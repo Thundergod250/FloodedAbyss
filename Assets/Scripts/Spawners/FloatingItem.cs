@@ -6,6 +6,8 @@ public class FloatingItem : MonoBehaviour
     public float speed = 20f;
     public float lifetime = 180f;
     public Vector3 moveDirection = Vector3.right;
+    public float sinkVal = 0.1f;
+    public bool isSinking = false;
 
     private bool isVisible = false;
     private float currentLifetime;
