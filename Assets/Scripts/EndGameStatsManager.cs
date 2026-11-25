@@ -7,11 +7,9 @@ public class EndGameStatsManager : MonoBehaviour
     [SerializeField] private int structuresDestroyed;
     [SerializeField] private int workersDied;
     [SerializeField] private float timePlayed;
+    [SerializeField] private TextMeshProUGUI timePlayedText;
 
     private MainMenuUI mainMenu;
-    private TextMeshProUGUI timePlayedText;
-    private TextMeshProUGUI structuresDestroyedText;
-    private TextMeshProUGUI workersDiedText;
 
     private string TimeToMinuteSecond()
     {
@@ -50,5 +48,6 @@ public class EndGameStatsManager : MonoBehaviour
         timePlayedText.text = TimeToMinuteSecond();
     }
 
-
+    public int StructuresDestroyedTracker => structuresDestroyed;
+    public int WorkersDiedTracker => workersDied;
 }

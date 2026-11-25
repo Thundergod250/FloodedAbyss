@@ -243,6 +243,16 @@ public class StructureHarvestResource : Structures, IWorkerUser
         Destroyed();
     }
 
+    public override void Destroyed()
+    {
+        if (harvestMode == HarvestMode.Consumable)
+        {
+            endGameStatsManager.StructuresDestroyed(-1);
+        }
+
+        base.Destroyed();
+    }
+
     private IEnumerator HarvestLoopRoutine()
     {
         isWorking = true;

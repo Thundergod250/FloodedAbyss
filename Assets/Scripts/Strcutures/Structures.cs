@@ -76,7 +76,7 @@ public abstract class Structures : MonoBehaviour
     }
 
     // The centralized destruction function
-    protected virtual void Destroyed()
+    public virtual void Destroyed()
     {
         if (hasBeenDestroyed) return;
 

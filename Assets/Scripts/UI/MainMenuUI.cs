@@ -54,6 +54,8 @@ public class MainMenuUI : MonoBehaviour
             losePanel.SetActive(true);
             playerStatsGO.SetActive(true);
         }
+
+        ApplyValuesToStats();
     }
 
     private void LoadScene(string sceneName)
@@ -75,6 +77,12 @@ public class MainMenuUI : MonoBehaviour
         }
 
         SceneManager.LoadScene(sceneName);
+    }
+
+    private void ApplyValuesToStats()
+    {
+        structuresDestroyedText.text = GameManager.Instance.EndGameStatsManager.StructuresDestroyedTracker.ToString();
+        workersDiedText.text = GameManager.Instance.EndGameStatsManager.WorkersDiedTracker.ToString();
     }
 
     public void QuitGame()
