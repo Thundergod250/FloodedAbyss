@@ -12,29 +12,50 @@ public class LoseWinGameManager : MonoBehaviour
 
     private void Start()
     {
-        mainMenu = GameManager.Instance.uiController.GetComponent<MainMenuUI>();
+        mainMenu = GameManager.Instance.uiController
+            .GetComponent<MainMenuUI>();
 
         hasPlayerLost = false;
         hasPlayerWon = false;
+
+        Time.timeScale = 1f;
     }
 
-    void Update()
+    private void Update()
     {
+        if (hasPlayerLost || hasPlayerWon)
+            return;
+
         WaterLevel wl = GameManager.Instance.WaterLevel;
-        if (wl.CurrentWaterHeight >= waterHeightBeforeLosing && !hasPlayerLost)
+
+        if (wl == null)
+            return;
+
+        if (wl.GreatFloodCompleted)
         {
-            hasPlayerLost = true;
-            mainMenu.OpenLostWinScreen(false);
-
-            Time.timeScale = 0;
+            WinGame();
         }
-
-        if (wl.GreatFloodCompleted&& !hasPlayerLost && !hasPlayerWon)
+        else if (wl.CurrentWaterHeight >= waterHeightBeforeLosing)
         {
-            hasPlayerWon = true;
-            mainMenu.OpenLostWinScreen(true);
-
-            Time.timeScale = 0f;
+            LoseGame();
         }
+    }
+
+    private void WinGame()
+    {
+        hasPlayerWon = true;
+
+        mainMenu.OpenLostWinScreen(true);
+
+        Time.timeScale = 0f;
+    }
+
+    private void LoseGame()
+    {
+        hasPlayerLost = true;
+
+        mainMenu.OpenLostWinScreen(false);
+
+        Time.timeScale = 0f;
     }
 }
